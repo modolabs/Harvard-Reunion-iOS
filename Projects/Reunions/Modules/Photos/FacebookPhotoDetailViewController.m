@@ -33,16 +33,6 @@
 #pragma mark -
 
 - (void)displayPost {
-    /*
-    if (!_thumbnail) {
-        CGRect frame = self.view.bounds;
-        frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio
-        _thumbnail = [[MITThumbnailView alloc] initWithFrame:frame];
-        _thumbnail.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleBottomMargin;
-        _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
-        self.tableView.tableHeaderView = _thumbnail;
-    }
-    */
     _thumbnail.imageURL = self.photo.src;
     _thumbnail.imageData = self.photo.data;
     [_thumbnail loadImage];

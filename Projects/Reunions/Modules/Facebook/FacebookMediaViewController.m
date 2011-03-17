@@ -42,15 +42,28 @@
     } else {
         _loginView.hidden = YES;
     }
+    
+    [self showSignedInUserView:nil];
+}
 
+- (void)showSignedInUserView:(NSNotification *)aNotification {
+    NSString *username;
     FacebookUser *user = [[KGOSocialMediaController sharedController] currentFacebookUser];
     if (user) {
-        NSString *html = [NSString stringWithFormat:
-                          @"<body style=\"background-color:transparent\">"
-                          "Logged in as %@ (<a href=\"#\" style=\"color:#9999ff\">Not You?</a>)"
-                          "</body>", user.name];
-        [_signedInUserView loadHTMLString:html baseURL:nil];
+        username = user.name;
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookDidGetSelfInfoNotification object:nil];
+    } else {
+        username = @"(retrieving details...)";
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(showSignedInUserView:)
+                                                     name:FacebookDidGetSelfInfoNotification
+                                                   object:nil];
     }
+    NSString *html = [NSString stringWithFormat:
+                      @"<body style=\"background-color:transparent\">"
+                      "Logged in as %@ (<a href=\"#\" style=\"color:#9999ff\">Not You?</a>)"
+                      "</body>", username];
+    [_signedInUserView loadHTMLString:html baseURL:nil];
 }
 
 #pragma mark - Web view delegate
@@ -85,11 +98,19 @@
 - (void)facebookDidLogin:(NSNotification *)aNotification
 {
     [self hideLoginView];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(facebookDidLogout:)
+                                                 name:FacebookDidLogoutNotification
+                                               object:nil];
 }
 
 - (void)facebookDidLogout:(NSNotification *)aNotification
 {
     [self showLoginView];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(facebookDidLogin:)
+                                                 name:FacebookDidLoginNotification
+                                               object:nil];
 }
 
 #pragma mark - View lifecycle
@@ -105,19 +126,9 @@
 - (void)viewWillAppear:(BOOL)animated {
     
     if (![[KGOSocialMediaController sharedController] isFacebookLoggedIn]) {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(facebookDidLogin:)
-                                                     name:FacebookDidLoginNotification
-                                                   object:nil];
-        [[KGOSocialMediaController sharedController] loginFacebook];
+        [self facebookDidLogout:nil];
     } else {
-        [self hideLoginView];
         [self facebookDidLogin:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(facebookDidLogout:)
-                                                     name:FacebookDidLogoutNotification
-                                                   object:nil];
     }
 }
 

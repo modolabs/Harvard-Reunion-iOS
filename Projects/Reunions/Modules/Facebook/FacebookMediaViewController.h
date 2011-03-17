@@ -19,9 +19,7 @@
 
 - (void)showLoginView;
 - (void)hideLoginView;
-
-//- (void)didReceiveGroups:(id)result;
-//- (void)didReceiveFeed:(id)result;
+- (void)showSignedInUserView:(NSNotification *)aNotification;
 
 - (void)facebookDidLogout:(NSNotification *)aNotification;
 - (void)facebookDidLogin:(NSNotification *)aNotification;

@@ -1,5 +1,7 @@
 #import "KGOSocialMediaController.h"
 
+extern NSString * const FacebookDidGetSelfInfoNotification;
+
 @class FacebookPost, FacebookParentPost, FacebookUser;
 
 @protocol FacebookPhotoUploadDelegate <NSObject>
@@ -23,8 +25,6 @@
 // TODO: as with other POST methods, have these follow the upload delegate convention
 - (BOOL)likeFacebookPost:(FacebookParentPost *)post receiver:(id)receiver callback:(SEL)callback;
 - (BOOL)unlikeFacebookPost:(FacebookParentPost *)post receiver:(id)receiver callback:(SEL)callback;
-
-//- (BOOL)addComment:(NSString *)comment toFacebookPost:(FacebookParentPost *)post receiver:(id)receiver callback:(SEL)callback;
 
 - (BOOL)addComment:(NSString *)comment toFacebookPost:(FacebookParentPost *)post delegate:(id<FacebookUploadDelegate>)delegate;
 - (BOOL)uploadPhoto:(UIImage *)photo

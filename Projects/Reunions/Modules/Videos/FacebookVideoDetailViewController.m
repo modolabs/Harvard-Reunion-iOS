@@ -30,17 +30,6 @@
 }
 
 - (void)displayPost {
-    /*
-    if (!_thumbnail) {
-        
-        CGRect frame = self.view.bounds;
-        frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio
-        _thumbnail = [[MITThumbnailView alloc] initWithFrame:frame];
-        _thumbnail.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleBottomMargin;
-        _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
-        self.tableView.tableHeaderView = _thumbnail;
-    }
-    */
     _thumbnail.imageURL = self.video.thumbSrc;
     _thumbnail.imageData = self.video.thumbData;
     [_thumbnail loadImage];

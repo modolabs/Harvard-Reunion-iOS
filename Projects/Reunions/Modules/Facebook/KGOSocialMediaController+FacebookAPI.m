@@ -3,6 +3,8 @@
 #import "Foundation+KGOAdditions.h"
 #import "CoreDataManager.h"
 
+NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
+
 @interface FBRequestIdentifier : NSObject
 
 @property (nonatomic, assign) SEL callback;
@@ -172,6 +174,7 @@
     FacebookUser *user = [FacebookUser userWithDictionary:result];
     user.isSelf = [NSNumber numberWithBool:YES];
     [[CoreDataManager sharedManager] saveData];
+    [[NSNotificationCenter defaultCenter] postNotificationName:FacebookDidGetSelfInfoNotification object:self];
 }
 
 - (FacebookUser *)currentFacebookUser {
