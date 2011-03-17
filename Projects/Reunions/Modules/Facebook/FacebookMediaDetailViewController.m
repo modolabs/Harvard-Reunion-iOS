@@ -121,6 +121,16 @@
         self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:pager] autorelease];
     }
     
+    CGRect frame = self.view.bounds;
+    frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio
+    UIView *tableHeaderView = [[[UIView alloc] initWithFrame:frame] autorelease];
+
+    _thumbnail = [[MITThumbnailView alloc] initWithFrame:CGRectMake(5, 5, frame.size.width - 10, frame.size.height - 10)];
+    _thumbnail.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
+    [tableHeaderView addSubview:_thumbnail];
+    self.tableView.tableHeaderView = tableHeaderView;
+    
     [self displayPost];
 }
 
@@ -133,8 +143,24 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return YES;
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    CGFloat height;
+    if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+        CGRect frame = self.view.frame;
+        height = frame.size.width * self.view.transform.c + frame.size.height * self.view.transform.d;
+        height -= _bottomToolbar.frame.size.height;
+    } else {
+        height = floor(_tableView.frame.size.width * 9 / 16);
+    }
+    
+    _tableView.tableHeaderView.frame = CGRectMake(0, 0, _tableView.frame.size.width, height);
+    _tableView.tableHeaderView = _tableView.tableHeaderView;
+    [_tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    
+    _tableView.scrollEnabled = UIInterfaceOrientationIsPortrait(self.interfaceOrientation);
 }
 
 - (void)displayPost {

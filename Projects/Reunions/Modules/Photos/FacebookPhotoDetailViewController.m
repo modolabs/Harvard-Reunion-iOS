@@ -33,6 +33,7 @@
 #pragma mark -
 
 - (void)displayPost {
+    /*
     if (!_thumbnail) {
         CGRect frame = self.view.bounds;
         frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio
@@ -41,7 +42,7 @@
         _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
         self.tableView.tableHeaderView = _thumbnail;
     }
-    
+    */
     _thumbnail.imageURL = self.photo.src;
     _thumbnail.imageData = self.photo.data;
     [_thumbnail loadImage];
@@ -72,12 +73,6 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 #pragma mark - Table view methods

@@ -4,7 +4,7 @@
 
 @interface FacebookVideoDetailViewController : FacebookMediaDetailViewController {
     
-    MITThumbnailView *_thumbnail;
+    //MITThumbnailView *_thumbnail;
 }
 
 @property(nonatomic, retain) FacebookVideo *video;

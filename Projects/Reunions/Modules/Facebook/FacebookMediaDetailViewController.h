@@ -12,6 +12,9 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
     IBOutlet UIBarButtonItem *_commentButton;
     IBOutlet UIBarButtonItem *_likeButton;
     IBOutlet UIBarButtonItem *_bookmarkButton;
+    IBOutlet UIToolbar *_bottomToolbar;
+    
+    MITThumbnailView *_thumbnail;
     
     NSArray *_comments;
 }

@@ -30,6 +30,7 @@
 }
 
 - (void)displayPost {
+    /*
     if (!_thumbnail) {
         
         CGRect frame = self.view.bounds;
@@ -39,7 +40,7 @@
         _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
         self.tableView.tableHeaderView = _thumbnail;
     }
-    
+    */
     _thumbnail.imageURL = self.video.thumbSrc;
     _thumbnail.imageData = self.video.thumbData;
     [_thumbnail loadImage];
@@ -108,12 +109,6 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
