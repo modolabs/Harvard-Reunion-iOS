@@ -174,28 +174,39 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
     FacebookUser *user = [FacebookUser userWithDictionary:result];
     user.isSelf = [NSNumber numberWithBool:YES];
     [[CoreDataManager sharedManager] saveData];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:user.name forKey:FacebookUsernameKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:FacebookDidGetSelfInfoNotification object:self];
 }
 
 - (FacebookUser *)currentFacebookUser {
+    // if we logged out, this will become nil
+    NSString *username = [[NSUserDefaults standardUserDefaults] stringForKey:FacebookUsernameKey];
+    
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"isSelf = YES"];
     FacebookUser *user = [[[CoreDataManager sharedManager] objectsForEntity:FacebookUserEntityName matchingPredicate:pred] lastObject];
     DLog(@"cached facebook user: %@", [user description]);
-    if (user && [_facebook isSessionValid]) {
-        return user;
-    } else if ([_facebook isSessionValid]) {
-        NSLog(@"getting facebook profile info");
-        [self requestFacebookGraphPath:@"me" receiver:self callback:@selector(didReceiveSelfInfo:)];
-        return nil;
-    } else {
-        DLog(@"have user but facebook session invalid");
+
+    if (!username || ![_facebook isSessionValid]) {
         if (user) {
+            DLog(@"have user but facebook session invalid");
             user.isSelf = nil;
             [[CoreDataManager sharedManager] saveData];
         }
-        [self loginFacebook];
-        return nil;
+        user = nil;
+        if (![_facebook isSessionValid]) {
+            [self loginFacebook];
+        }
     }
+    
+    if (!user) {
+        NSLog(@"getting facebook profile info");
+        [self requestFacebookGraphPath:@"me" receiver:self callback:@selector(didReceiveSelfInfo:)];
+    }
+
+    return user;
 }
 
 #pragma mark FBRequestDelegate
