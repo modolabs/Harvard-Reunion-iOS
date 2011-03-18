@@ -8,15 +8,15 @@
 
     NSArray *_latestTweets;
     
-    // TODO: parse the date and use that instead
-    NSString *_lastUpdate;
-    
+    NSDate *_lastUpdate;
+    NSDateFormatter *_twitterDateFormatter;
 }
 
 - (void)startPollingStatusUpdates;
 - (void)stopPollingStatusUpdates;
 - (void)requestStatusUpdates:(NSTimer *)aTimer;
 
+@property (nonatomic, readonly) NSDateFormatter *twitterDateFormatter;
 @property (nonatomic, readonly) NSArray *latestTweets;
 
 @end

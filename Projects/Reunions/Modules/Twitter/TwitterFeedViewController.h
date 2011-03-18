@@ -1,11 +1,20 @@
-#import <UIKit/UIKit.h>
+#import "KGOTableViewController.h"
 
+@class TwitterModule;
 
-@interface TwitterFeedViewController : UIViewController {
+@interface TwitterFeedViewController : KGOTableViewController {
     
-    UITextView *_textView;
-    UITableView *_tableView;
+    // keep a copy ourselves since TwitterModule's might update on us
+    TwitterModule *twitterModule;
     
+    UIView *_loginView;
+    UIView *_sendTweetView;
 }
+
+@property(nonatomic, retain) NSArray *latestTweets;
+
+- (void)twitterFeedDidUpdate:(NSNotification *)aNotification;
+- (void)loginButtonPressed:(UIButton *)sender;
+- (void)sendButtonPressed:(UIButton *)sender;
 
 @end

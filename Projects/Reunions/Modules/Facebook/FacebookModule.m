@@ -49,23 +49,6 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     return date;
 }
 
-+ (NSString *)agoStringFromDate:(NSDate *)date {
-    NSString *result = nil;
-    double minutes = -[date timeIntervalSinceNow] / 60;
-    if (minutes < 60) {
-        result = [NSString stringWithFormat:@"%.0f %@", minutes, NSLocalizedString(@"minutes ago", nil)];
-    } else {
-        double hours = minutes / 60;
-        if (hours < 24) {
-            result = [NSString stringWithFormat:@"%.0f %@", hours, NSLocalizedString(@"hours ago", nil)];
-        } else {
-            double days = hours / 24;
-            result = [NSString stringWithFormat:@"%.0f %@", days, NSLocalizedString(@"days ago", nil)];
-        }
-    }
-    return result;
-}
-
 #pragma mark polling
 
 - (void)setupPolling {
@@ -100,7 +83,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     
     if (!_statusPoller) {
         NSLog(@"scheduling timer...");
-        NSTimeInterval interval = 15;
+        NSTimeInterval interval = 60;
         _statusPoller = [[NSTimer timerWithTimeInterval:interval
                                                  target:self
                                                selector:@selector(requestStatusUpdates:)
@@ -219,7 +202,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
                     self.chatBubble.hidden = NO;
                     self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:
                                                          @"%@ %@", user.name,
-                                                         [FacebookModule agoStringFromDate:_lastMessageDate]];
+                                                         [_lastMessageDate agoString]];
                     self.chatBubbleTitleLabel.text = message;
                     
                     [[NSNotificationCenter defaultCenter] postNotificationName:FacebookStatusDidUpdateNotification object:nil];

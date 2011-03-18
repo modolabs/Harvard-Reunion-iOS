@@ -5,6 +5,7 @@
 #import "UIKit+KGOAdditions.h"
 #import "Foundation+KGOAdditions.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
+#import "TwitterFeedViewController.h"
 
 #define TWITTER_BUTTON_WIDTH_IPHONE 120
 #define TWITTER_BUTTON_HEIGHT_IPHONE 51
@@ -12,7 +13,23 @@
 #define TWITTER_BUTTON_WIDTH_IPAD 75
 #define TWITTER_BUTTON_HEIGHT_IPAD 100
 
+NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
+
 @implementation TwitterModule
+
+- (NSDateFormatter *)twitterDateFormatter {
+    if (!_twitterDateFormatter) {
+        _twitterDateFormatter = [[NSDateFormatter alloc] init];
+        NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+        [_twitterDateFormatter setLocale:enUSPOSIXLocale];
+        [_twitterDateFormatter setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss Z"];        
+    }
+    return _twitterDateFormatter;
+}
+
+- (NSArray *)latestTweets {
+    return _latestTweets;
+}
 
 - (id)initWithDictionary:(NSDictionary *)moduleDict {
     self = [super initWithDictionary:moduleDict];
@@ -36,7 +53,11 @@
 }
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
-    return nil;
+    UIViewController *vc = nil;
+    if ([pageName isEqualToString:LocalPathPageNameHome]) {
+        vc = [[[TwitterFeedViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
+    }
+    return vc;
 }
 
 - (void)applicationDidFinishLaunching {
@@ -71,7 +92,7 @@
     
     if (!_statusPoller) {
         NSLog(@"scheduling timer...");
-        NSTimeInterval interval = 15;
+        NSTimeInterval interval = 60;
         _statusPoller = [[NSTimer timerWithTimeInterval:interval
                                                  target:self
                                                selector:@selector(requestStatusUpdates:)
@@ -107,14 +128,15 @@
         NSLog(@"%@", aTweet);
         NSString *title = [aTweet stringForKey:@"text" nilIfEmpty:YES];
         NSString *user = [aTweet stringForKey:@"from_user" nilIfEmpty:YES];
-        NSString *date = [aTweet stringForKey:@"created_at" nilIfEmpty:YES];
+        NSString *dateString = [aTweet stringForKey:@"created_at" nilIfEmpty:YES];
+        NSDate *date = [[self twitterDateFormatter] dateFromString:dateString];
         
-        if (![_lastUpdate isEqualToString:date]) {
+        if (!_lastUpdate || [_lastUpdate compare:date] == NSOrderedAscending) {
             [_lastUpdate release];
             _lastUpdate = [date retain];
             self.chatBubble.hidden = NO;
             self.chatBubbleTitleLabel.text = title;
-            self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:@"%@ at %@", user, date];
+            self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:@"%@ at %@", user, [date agoString]];
             [[NSNotificationCenter defaultCenter] postNotificationName:TwitterStatusDidUpdateNotification object:nil];
         }
     }

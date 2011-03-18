@@ -130,7 +130,6 @@
 		EB48913A1331173C0036AEBF /* MicroblogModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB4891391331173C0036AEBF /* MicroblogModule.m */; };
 		EB48913D1331699F0036AEBF /* TwitterSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = EB48913C1331699E0036AEBF /* TwitterSearch.m */; };
 		EB489140133265090036AEBF /* NewsDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EB48913F133265080036AEBF /* NewsDataManager.m */; };
-		EB4891921332CEA30036AEBF /* TwitterFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB4891901332CEA00036AEBF /* TwitterFeedViewController.m */; };
 		EB4891971333AA660036AEBF /* secret in Resources */ = {isa = PBXBuildFile; fileRef = EB4891961333AA660036AEBF /* secret */; };
 		EB4C2CDF127F138100058748 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EB4C2CDE127F138100058748 /* libsqlite3.dylib */; };
 		EB4C2CE1127F138900058748 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB4C2CE0127F138900058748 /* CFNetwork.framework */; };
@@ -170,6 +169,7 @@
 		EB8B365313079999005DBB8F /* KGOMapCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8B364F13079999005DBB8F /* KGOMapCategory.m */; };
 		EB8B365513079999005DBB8F /* KGOPlacemark.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8B365113079999005DBB8F /* KGOPlacemark.m */; };
 		EB8B36871307BB28005DBB8F /* MapZoomLevel.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8B36851307BB28005DBB8F /* MapZoomLevel.m */; };
+		EB8BF5951333DC07009ED854 /* TwitterFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8BF5941333DC07009ED854 /* TwitterFeedViewController.m */; };
 		EB99B28212F377480065EE93 /* libProj.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB138E9312F24EB2004DBB7C /* libProj.a */; };
 		EB99B28312F377520065EE93 /* libfacebook_ios_sdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB138EED12F251EB004DBB7C /* libfacebook_ios_sdk.a */; };
 		EB99B28412F377560065EE93 /* libTwitter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB99B08E12F36F3D0065EE93 /* libTwitter.a */; };
@@ -455,8 +455,6 @@
 		EB48913C1331699E0036AEBF /* TwitterSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterSearch.m; sourceTree = "<group>"; };
 		EB48913E133265070036AEBF /* NewsDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsDataManager.h; sourceTree = "<group>"; };
 		EB48913F133265080036AEBF /* NewsDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsDataManager.m; sourceTree = "<group>"; };
-		EB48918F1332CEA00036AEBF /* TwitterFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterFeedViewController.h; sourceTree = "<group>"; };
-		EB4891901332CEA00036AEBF /* TwitterFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterFeedViewController.m; sourceTree = "<group>"; };
 		EB4891961333AA660036AEBF /* secret */ = {isa = PBXFileReference; lastKnownFileType = folder; path = secret; sourceTree = "<group>"; };
 		EB4C2CDE127F138100058748 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		EB4C2CE0127F138900058748 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -516,6 +514,8 @@
 		EB8B365113079999005DBB8F /* KGOPlacemark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOPlacemark.m; sourceTree = "<group>"; };
 		EB8B36841307BB28005DBB8F /* MapZoomLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapZoomLevel.h; sourceTree = "<group>"; };
 		EB8B36851307BB28005DBB8F /* MapZoomLevel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapZoomLevel.m; sourceTree = "<group>"; };
+		EB8BF5931333DC07009ED854 /* TwitterFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterFeedViewController.h; sourceTree = "<group>"; };
+		EB8BF5941333DC07009ED854 /* TwitterFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterFeedViewController.m; sourceTree = "<group>"; };
 		EB99B08912F36F3D0065EE93 /* Twitter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Twitter.xcodeproj; path = Twitter/Twitter.xcodeproj; sourceTree = "<group>"; };
 		EB99B38C12F37FDC0065EE93 /* JSON.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JSON.xcodeproj; path = JSON/JSON.xcodeproj; sourceTree = "<group>"; };
 		EB99B67312F3A8E40065EE93 /* OAuthConsumer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthConsumer.xcodeproj; path = OAuth/OAuthConsumer.xcodeproj; sourceTree = "<group>"; };
@@ -965,8 +965,8 @@
 				EB4891391331173C0036AEBF /* MicroblogModule.m */,
 				EB48913B1331699D0036AEBF /* TwitterSearch.h */,
 				EB48913C1331699E0036AEBF /* TwitterSearch.m */,
-				EB48918F1332CEA00036AEBF /* TwitterFeedViewController.h */,
-				EB4891901332CEA00036AEBF /* TwitterFeedViewController.m */,
+				EB8BF5931333DC07009ED854 /* TwitterFeedViewController.h */,
+				EB8BF5941333DC07009ED854 /* TwitterFeedViewController.m */,
 			);
 			path = Twitter;
 			sourceTree = "<group>";
@@ -1524,7 +1524,7 @@
 				EB48913A1331173C0036AEBF /* MicroblogModule.m in Sources */,
 				EB48913D1331699F0036AEBF /* TwitterSearch.m in Sources */,
 				EB489140133265090036AEBF /* NewsDataManager.m in Sources */,
-				EB4891921332CEA30036AEBF /* TwitterFeedViewController.m in Sources */,
+				EB8BF5951333DC07009ED854 /* TwitterFeedViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
