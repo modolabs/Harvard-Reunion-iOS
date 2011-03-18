@@ -193,11 +193,11 @@ Established in 1636, Harvard is the oldest institution of higher education in th
 		<key>Facebook</key>
 		<dict>
 			<key>APIKey</key>
-			<string>2a9b642ca820ba3fd5ae279f4719dc81</string>
+			<string></string>
 			<key>APISecret</key>
-			<string>05a64a59e4ee8db3acae85673fb91795</string>
+			<string></string>
 			<key>AppID</key>
-			<string>193872970635695</string>
+			<string></string>
 		</dict>
 		<key>Twitter</key>
 		<dict>

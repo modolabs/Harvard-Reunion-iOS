@@ -4,6 +4,7 @@
 #import "KGOTheme.h"
 #import "UIKit+KGOAdditions.h"
 #import "Foundation+KGOAdditions.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
 
 #define TWITTER_BUTTON_WIDTH_IPHONE 120
 #define TWITTER_BUTTON_HEIGHT_IPHONE 51
@@ -18,7 +19,18 @@
     if (self) {
         self.buttonImage = [UIImage imageWithPathName:@"modules/twitter/button-twitter.png"];
         self.labelText = @"#hr14";
-        self.chatBubbleCaratOffset = 0.25;
+        
+        // TODO: we are cheating here as we know where twitter and facebook will
+        // be placed on the home screen under each condition.  if/when there is
+        // a home screen notification module/widget for Kurogo, replace the chat
+        // bubble with that
+        KGOAppDelegate *appDelegate = (KGOAppDelegate *)[[UIApplication sharedApplication] delegate];
+        KGONavigationStyle navStyle = [appDelegate navigationStyle];
+        if (navStyle == KGONavigationStyleTabletSidebar) {
+            self.chatBubbleCaratOffset = 0.25;
+        } else {
+            self.chatBubbleCaratOffset = 0.75;
+        }
     }
     return self;
 }
@@ -26,17 +38,7 @@
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
     return nil;
 }
-/*
-- (void)launch {
-    [super launch];
-    [[KGOSocialMediaController sharedController] startupTwitter];
-}
 
-- (void)terminate {
-    [super terminate];
-    [[KGOSocialMediaController sharedController] shutdownTwitter];
-}
-*/
 - (void)applicationDidFinishLaunching {
     [self startPollingStatusUpdates];
 }
@@ -98,7 +100,10 @@
 
 - (void)twitterSearch:(TwitterSearch *)twitterSearch didReceiveSearchResults:(NSArray *)results {
     if (results.count) {
-        NSDictionary *aTweet = [results objectAtIndex:0];
+        [_latestTweets release];
+        _latestTweets = [results retain];
+        
+        NSDictionary *aTweet = [_latestTweets objectAtIndex:0];
         NSLog(@"%@", aTweet);
         NSString *title = [aTweet stringForKey:@"text" nilIfEmpty:YES];
         NSString *user = [aTweet stringForKey:@"from_user" nilIfEmpty:YES];

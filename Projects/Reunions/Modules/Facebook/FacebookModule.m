@@ -6,6 +6,7 @@
 #import "UIKit+KGOAdditions.h"
 #import "Foundation+KGOAdditions.h"
 #import "FacebookUser.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
 
 static NSString * const FacebookGroupKey = @"FBGroup";
 
@@ -239,7 +240,15 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     if (self) {
         self.buttonImage = [UIImage imageWithPathName:@"modules/facebook/button-facebook.png"];
         self.labelText = @"Harvard-Radcliffe Reunion";
-        self.chatBubbleCaratOffset = 0.75;
+        
+        KGOAppDelegate *appDelegate = (KGOAppDelegate *)[[UIApplication sharedApplication] delegate];
+        KGONavigationStyle navStyle = [appDelegate navigationStyle];
+        if (navStyle == KGONavigationStyleTabletSidebar) {
+            self.chatBubbleCaratOffset = 0.75;
+        } else {
+            self.chatBubbleCaratOffset = 0.25;
+        }
+
     }
     return self;
 }

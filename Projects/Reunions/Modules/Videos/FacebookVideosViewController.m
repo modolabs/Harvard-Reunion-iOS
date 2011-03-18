@@ -64,6 +64,7 @@
     
     CGRect frame = _scrollView.frame;
     _tableView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
+    _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _tableView.tableHeaderView = _signedInUserView;
     _tableView.backgroundColor = [UIColor whiteColor];
     _tableView.dataSource = self;

@@ -11,7 +11,7 @@
 #define BUTTON_WIDTH_IPAD 80
 #define BUTTON_HEIGHT_IPAD 100
 
-#define BOTTOM_SHADOW_HEIGHT 7
+#define BOTTOM_SHADOW_HEIGHT 8
 #define LEFT_SHADOW_WIDTH 5
 
 NSString * const FacebookStatusDidUpdateNotification = @"FacebookUpdate";
@@ -78,7 +78,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
                                           frame.size.width - caratView.frame.size.width,
                                           frame.size.height);
 
-            CGFloat y = floor(self.chatBubbleCaratOffset * bubbleView.frame.size.height - caratView.frame.size.height / 2 + BOTTOM_SHADOW_HEIGHT);
+            CGFloat y = floor(self.chatBubbleCaratOffset * bubbleView.frame.size.height - caratView.frame.size.height / 2);
             caratView.frame = CGRectMake(0, y,
                                          caratView.frame.size.width,
                                          caratView.frame.size.height);
@@ -111,6 +111,8 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         _chatBubbleSubtitleLabel.textColor = [UIColor colorWithWhite:0.3 alpha:1];
         _chatBubbleSubtitleLabel.backgroundColor = [UIColor clearColor];
         [_chatBubble addSubview:_chatBubbleSubtitleLabel];
+        
+        _chatBubble.hidden = YES;
     }
     return _chatBubble;
 }
