@@ -8,6 +8,8 @@
 #import "FacebookUser.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 
+#define FACEBOOK_STATUS_POLL_FREQUENCY 60
+
 static NSString * const FacebookGroupKey = @"FBGroup";
 
 NSString * const FacebookGroupReceivedNotification = @"FBGroupReceived";
@@ -83,7 +85,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     
     if (!_statusPoller) {
         NSLog(@"scheduling timer...");
-        NSTimeInterval interval = 60000;
+        NSTimeInterval interval = FACEBOOK_STATUS_POLL_FREQUENCY;
         _statusPoller = [[NSTimer timerWithTimeInterval:interval
                                                  target:self
                                                selector:@selector(requestStatusUpdates:)

@@ -13,6 +13,8 @@
 #define TWITTER_BUTTON_WIDTH_IPAD 75
 #define TWITTER_BUTTON_HEIGHT_IPAD 100
 
+#define TWITTER_STATUS_POLL_FREQUENCY 60
+
 NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
 
 @implementation TwitterModule
@@ -92,7 +94,7 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
     
     if (!_statusPoller) {
         NSLog(@"scheduling timer...");
-        NSTimeInterval interval = 6000;
+        NSTimeInterval interval = TWITTER_STATUS_POLL_FREQUENCY;
         _statusPoller = [[NSTimer timerWithTimeInterval:interval
                                                  target:self
                                                selector:@selector(requestStatusUpdates:)
