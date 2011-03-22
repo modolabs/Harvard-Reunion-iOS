@@ -1,0 +1,13 @@
+This test case provides an example of an app that has only
+one screen that is always "bumpable". The use case is to 
+bump with someone, do some quick tasks and disconnect with
+that person. The screen should immediately return to being
+bumpable so it can bump someone else.
+
+This app specifically also handles backgrounding (take 
+a look at the app delegate class) such that when the app
+is taken into the background it will disconnect from the
+API services and reconnect and be ready to go when coming
+back from background. This has been tested over long 
+periods of background and is the recommended way to handle
+backgrounding.

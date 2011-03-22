@@ -113,6 +113,18 @@
 			<key>url</key>
 			<string>http://www.harvard.edu/?fullsite=yes</string>
 		</dict>
+		<dict>
+			<key>class</key>
+			<string>BumpModule</string>
+			<key>longName</key>
+			<string>Bump</string>
+			<key>secondary</key>
+			<true/>
+			<key>shortName</key>
+			<string>Bump</string>
+			<key>tag</key>
+			<string>bump</string>
+		</dict>
 	</array>
 	<key>NavigationControllerClass</key>
 	<string>UINavigationController</string>

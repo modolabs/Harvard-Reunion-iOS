@@ -10,6 +10,7 @@
 #import	"MapModule.h"
 #import "PeopleModule.h"
 #import "SettingsModule.h"
+#import "BumpModule.h"
 
 @implementation KGOModule (Factory)
 
@@ -61,6 +62,8 @@
     
     //else if ([className isEqualToString:@"EmergencyModule"])
     //    module = [[[EmergencyModule alloc] initWithDictionary:args] autorelease];
+    else if ([className isEqualToString:@"BumpModule"])
+        module = [[[BumpModule alloc] initWithDictionary:args] autorelease];
     
     return module;
 }

@@ -20,6 +20,13 @@
 		4BA25BEB132ED94600ABB625 /* NewsStory.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BA25BEA132ED94600ABB625 /* NewsStory.m */; };
 		A623F1F2120A035A00341C5E /* ModoThreeStateSwitchControl.m in Sources */ = {isa = PBXBuildFile; fileRef = A623F1F0120A035A00341C5E /* ModoThreeStateSwitchControl.m */; };
 		A6CE0D3F133952E700FD5F18 /* ModalLoginWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CE0D3E133952E700FD5F18 /* ModalLoginWebViewController.m */; };
+		A6CE0D511339552D00FD5F18 /* BumpModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CE0D4C1339552D00FD5F18 /* BumpModule.m */; };
+		A6CE0D521339552D00FD5F18 /* BumpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CE0D4E1339552D00FD5F18 /* BumpViewController.m */; };
+		A6CE0D531339552D00FD5F18 /* CustomBumpUI.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CE0D501339552D00FD5F18 /* CustomBumpUI.m */; };
+		A6CE0D711339555C00FD5F18 /* BumpAPIAssets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A6CE0D581339555C00FD5F18 /* BumpAPIAssets.bundle */; };
+		A6CE0D721339555C00FD5F18 /* libBumpAPI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6CE0D5B1339555C00FD5F18 /* libBumpAPI.a */; };
+		A6CE0D731339555C00FD5F18 /* BumpApiLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A6CE0D5D1339555C00FD5F18 /* BumpApiLocalizable.strings */; };
+		A6CE0D741339555C00FD5F18 /* Localization-ReadMe.txt in Resources */ = {isa = PBXBuildFile; fileRef = A6CE0D681339555C00FD5F18 /* Localization-ReadMe.txt */; };
 		BD9FA7EE1047A05E00BC3C0A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD9FA7ED1047A05E00BC3C0A /* MessageUI.framework */; };
 		DE0F6B3411109BC500F064D6 /* AboutMITVC.m in Sources */ = {isa = PBXBuildFile; fileRef = DE0F6B3311109BC500F064D6 /* AboutMITVC.m */; };
 		DE18F9EE10F19105009A69B9 /* News.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DE18F9ED10F19105009A69B9 /* News.xcdatamodeld */; };
@@ -217,6 +224,36 @@
 		A623F1F0120A035A00341C5E /* ModoThreeStateSwitchControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModoThreeStateSwitchControl.m; sourceTree = "<group>"; };
 		A6CE0D3D133952E700FD5F18 /* ModalLoginWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModalLoginWebViewController.h; sourceTree = "<group>"; };
 		A6CE0D3E133952E700FD5F18 /* ModalLoginWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalLoginWebViewController.m; sourceTree = "<group>"; };
+		A6CE0D4B1339552D00FD5F18 /* BumpModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BumpModule.h; path = ../../Modules/Bump/BumpModule.h; sourceTree = SOURCE_ROOT; };
+		A6CE0D4C1339552D00FD5F18 /* BumpModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BumpModule.m; path = ../../Modules/Bump/BumpModule.m; sourceTree = SOURCE_ROOT; };
+		A6CE0D4D1339552D00FD5F18 /* BumpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BumpViewController.h; path = ../../Modules/Bump/BumpViewController.h; sourceTree = SOURCE_ROOT; };
+		A6CE0D4E1339552D00FD5F18 /* BumpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BumpViewController.m; path = ../../Modules/Bump/BumpViewController.m; sourceTree = SOURCE_ROOT; };
+		A6CE0D4F1339552D00FD5F18 /* CustomBumpUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomBumpUI.h; path = ../../Modules/Bump/CustomBumpUI.h; sourceTree = SOURCE_ROOT; };
+		A6CE0D501339552D00FD5F18 /* CustomBumpUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CustomBumpUI.m; path = ../../Modules/Bump/CustomBumpUI.m; sourceTree = SOURCE_ROOT; };
+		A6CE0D571339555C00FD5F18 /* BumpAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BumpAPI.h; path = "Bump iOS API 2.0.2 Build/API_build/BumpAPI.h"; sourceTree = "<group>"; };
+		A6CE0D581339555C00FD5F18 /* BumpAPIAssets.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = BumpAPIAssets.bundle; path = "Bump iOS API 2.0.2 Build/API_build/BumpAPIAssets.bundle"; sourceTree = "<group>"; };
+		A6CE0D591339555C00FD5F18 /* BumpAPICustomUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BumpAPICustomUI.h; path = "Bump iOS API 2.0.2 Build/API_build/BumpAPICustomUI.h"; sourceTree = "<group>"; };
+		A6CE0D5A1339555C00FD5F18 /* Bumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bumper.h; path = "Bump iOS API 2.0.2 Build/API_build/Bumper.h"; sourceTree = "<group>"; };
+		A6CE0D5B1339555C00FD5F18 /* libBumpAPI.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBumpAPI.a; path = "Bump iOS API 2.0.2 Build/API_build/libBumpAPI.a"; sourceTree = "<group>"; };
+		A6CE0D5E1339555C00FD5F18 /* da */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D5F1339555C00FD5F18 /* de */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D601339555C00FD5F18 /* el */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D611339555C00FD5F18 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D621339555C00FD5F18 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D631339555C00FD5F18 /* fr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D641339555C00FD5F18 /* he */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D651339555C00FD5F18 /* it */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D661339555C00FD5F18 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D671339555C00FD5F18 /* ko */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D681339555C00FD5F18 /* Localization-ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Localization-ReadMe.txt"; sourceTree = "<group>"; };
+		A6CE0D691339555C00FD5F18 /* nl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D6A1339555C00FD5F18 /* no */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = no; path = no.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D6B1339555C00FD5F18 /* pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D6C1339555C00FD5F18 /* pt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D6D1339555C00FD5F18 /* ru */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D6E1339555C00FD5F18 /* sv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6CE0D6F1339555C00FD5F18 /* zh-Hans */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/BumpApiLocalizable.strings"; sourceTree = "<group>"; };
+		A6CE0D701339555C00FD5F18 /* zh-Hant */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/BumpApiLocalizable.strings"; sourceTree = "<group>"; };
 		BD9FA7ED1047A05E00BC3C0A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		DE0F6B3211109BC500F064D6 /* AboutMITVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutMITVC.h; sourceTree = "<group>"; };
 		DE0F6B3311109BC500F064D6 /* AboutMITVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutMITVC.m; sourceTree = "<group>"; };
@@ -477,6 +514,7 @@
 				EB99B28412F377560065EE93 /* libTwitter.a in Frameworks */,
 				EB99B28312F377520065EE93 /* libfacebook_ios_sdk.a in Frameworks */,
 				EB99B28212F377480065EE93 /* libProj.a in Frameworks */,
+				A6CE0D721339555C00FD5F18 /* libBumpAPI.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -560,6 +598,43 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
+		A6CE0D4A1339551100FD5F18 /* Bump */ = {
+			isa = PBXGroup;
+			children = (
+				A6CE0D4B1339552D00FD5F18 /* BumpModule.h */,
+				A6CE0D4C1339552D00FD5F18 /* BumpModule.m */,
+				A6CE0D4D1339552D00FD5F18 /* BumpViewController.h */,
+				A6CE0D4E1339552D00FD5F18 /* BumpViewController.m */,
+				A6CE0D4F1339552D00FD5F18 /* CustomBumpUI.h */,
+				A6CE0D501339552D00FD5F18 /* CustomBumpUI.m */,
+			);
+			name = Bump;
+			path = ../../../Modules/Settings;
+			sourceTree = "<group>";
+		};
+		A6CE0D561339553A00FD5F18 /* Bump */ = {
+			isa = PBXGroup;
+			children = (
+				A6CE0D571339555C00FD5F18 /* BumpAPI.h */,
+				A6CE0D581339555C00FD5F18 /* BumpAPIAssets.bundle */,
+				A6CE0D591339555C00FD5F18 /* BumpAPICustomUI.h */,
+				A6CE0D5A1339555C00FD5F18 /* Bumper.h */,
+				A6CE0D5B1339555C00FD5F18 /* libBumpAPI.a */,
+				A6CE0D5C1339555C00FD5F18 /* Localizations */,
+			);
+			name = Bump;
+			sourceTree = "<group>";
+		};
+		A6CE0D5C1339555C00FD5F18 /* Localizations */ = {
+			isa = PBXGroup;
+			children = (
+				A6CE0D5D1339555C00FD5F18 /* BumpApiLocalizable.strings */,
+				A6CE0D681339555C00FD5F18 /* Localization-ReadMe.txt */,
+			);
+			name = Localizations;
+			path = "Bump iOS API 2.0.2 Build/API_build/Localizations";
+			sourceTree = "<group>";
+		};
 		DE4AAFAC10ED4E63007476D9 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -589,6 +664,7 @@
 				EB48910613310A930036AEBF /* ExternalURL */,
 				DE81CF5E10C6BC390085573D /* About */,
 				DE9EFBCE10FE7D3200F5F07E /* Settings */,
+				A6CE0D4A1339551100FD5F18 /* Bump */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -654,6 +730,7 @@
 				EB138E8E12F24EB2004DBB7C /* Proj.xcodeproj */,
 				EBAA860812F728CE00B743C3 /* SFHFKeychainUtils.xcodeproj */,
 				EB99B85E12F3AEC10065EE93 /* usr */,
+				A6CE0D561339553A00FD5F18 /* Bump */,
 			);
 			name = Contrib;
 			path = ../../Contrib;
@@ -1068,6 +1145,23 @@
 				French,
 				German,
 				en,
+				da,
+				de,
+				el,
+				es,
+				fr,
+				he,
+				it,
+				ja,
+				ko,
+				nl,
+				no,
+				pl,
+				pt,
+				ru,
+				sv,
+				"zh-Hans",
+				"zh-Hant",
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -1169,6 +1263,9 @@
 				EB46CA8A1327F95E00AF7B5C /* kurogo in Resources */,
 				EB46CA8E1327F97100AF7B5C /* ThemeConfig.plist in Resources */,
 				EBB120A7133802D300A4BD1D /* secret in Resources */,
+				A6CE0D711339555C00FD5F18 /* BumpAPIAssets.bundle in Resources */,
+				A6CE0D731339555C00FD5F18 /* BumpApiLocalizable.strings in Resources */,
+				A6CE0D741339555C00FD5F18 /* Localization-ReadMe.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1300,10 +1397,41 @@
 				4B8432E71331287600DCBA86 /* NewsCategory.m in Sources */,
 				EBB120AA1338046400A4BD1D /* KGOWebViewController.m in Sources */,
 				A6CE0D3F133952E700FD5F18 /* ModalLoginWebViewController.m in Sources */,
+				A6CE0D511339552D00FD5F18 /* BumpModule.m in Sources */,
+				A6CE0D521339552D00FD5F18 /* BumpViewController.m in Sources */,
+				A6CE0D531339552D00FD5F18 /* CustomBumpUI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		A6CE0D5D1339555C00FD5F18 /* BumpApiLocalizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A6CE0D5E1339555C00FD5F18 /* da */,
+				A6CE0D5F1339555C00FD5F18 /* de */,
+				A6CE0D601339555C00FD5F18 /* el */,
+				A6CE0D611339555C00FD5F18 /* en */,
+				A6CE0D621339555C00FD5F18 /* es */,
+				A6CE0D631339555C00FD5F18 /* fr */,
+				A6CE0D641339555C00FD5F18 /* he */,
+				A6CE0D651339555C00FD5F18 /* it */,
+				A6CE0D661339555C00FD5F18 /* ja */,
+				A6CE0D671339555C00FD5F18 /* ko */,
+				A6CE0D691339555C00FD5F18 /* nl */,
+				A6CE0D6A1339555C00FD5F18 /* no */,
+				A6CE0D6B1339555C00FD5F18 /* pl */,
+				A6CE0D6C1339555C00FD5F18 /* pt */,
+				A6CE0D6D1339555C00FD5F18 /* ru */,
+				A6CE0D6E1339555C00FD5F18 /* sv */,
+				A6CE0D6F1339555C00FD5F18 /* zh-Hans */,
+				A6CE0D701339555C00FD5F18 /* zh-Hant */,
+			);
+			name = BumpApiLocalizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug - Development */ = {
@@ -1327,6 +1455,7 @@
 					"$(inherited)",
 					"${SDK_DIR}/usr/include/libxml2",
 					"\"$(SRCROOT)/../../Contrib/GoogleAnalytics\"",
+					"\"$(SRCROOT)/../../Contrib/Bump iOS API 2.0.2 Build/API_build\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = Universitas;
@@ -1355,6 +1484,7 @@
 					"$(inherited)",
 					"${SDK_DIR}/usr/include/libxml2",
 					"\"$(SRCROOT)/../../Contrib/GoogleAnalytics\"",
+					"\"$(SRCROOT)/../../Contrib/Bump iOS API 2.0.2 Build/API_build\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = Universitas;
@@ -1466,6 +1596,7 @@
 					"$(inherited)",
 					"${SDK_DIR}/usr/include/libxml2",
 					"\"$(SRCROOT)/../../Contrib/GoogleAnalytics\"",
+					"\"$(SRCROOT)/../../Contrib/Bump iOS API 2.0.2 Build/API_build\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = Universitas;
@@ -1518,6 +1649,7 @@
 					"$(inherited)",
 					"${SDK_DIR}/usr/include/libxml2",
 					"\"$(SRCROOT)/../../Contrib/GoogleAnalytics\"",
+					"\"$(SRCROOT)/../../Contrib/Bump iOS API 2.0.2 Build/API_build\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = Universitas;
@@ -1570,6 +1702,7 @@
 					"$(inherited)",
 					"${SDK_DIR}/usr/include/libxml2",
 					"\"$(SRCROOT)/../../Contrib/GoogleAnalytics\"",
+					"\"$(SRCROOT)/../../Contrib/Bump iOS API 2.0.2 Build/API_build\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = Universitas;
@@ -1628,6 +1761,7 @@
 					"$(inherited)",
 					"${SDK_DIR}/usr/include/libxml2",
 					"\"$(SRCROOT)/../../Contrib/GoogleAnalytics\"",
+					"\"$(SRCROOT)/../../Contrib/Bump iOS API 2.0.2 Build/API_build\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = Universitas;
@@ -1680,6 +1814,7 @@
 					"$(inherited)",
 					"${SDK_DIR}/usr/include/libxml2",
 					"\"$(SRCROOT)/../../Contrib/GoogleAnalytics\"",
+					"\"$(SRCROOT)/../../Contrib/Bump iOS API 2.0.2 Build/API_build\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = Universitas;
