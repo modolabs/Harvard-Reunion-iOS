@@ -19,6 +19,7 @@
 		4B8432E71331287600DCBA86 /* NewsCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B8432E61331287600DCBA86 /* NewsCategory.m */; };
 		4BA25BEB132ED94600ABB625 /* NewsStory.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BA25BEA132ED94600ABB625 /* NewsStory.m */; };
 		A623F1F2120A035A00341C5E /* ModoThreeStateSwitchControl.m in Sources */ = {isa = PBXBuildFile; fileRef = A623F1F0120A035A00341C5E /* ModoThreeStateSwitchControl.m */; };
+		A6CE0D3F133952E700FD5F18 /* ModalLoginWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CE0D3E133952E700FD5F18 /* ModalLoginWebViewController.m */; };
 		BD9FA7EE1047A05E00BC3C0A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD9FA7ED1047A05E00BC3C0A /* MessageUI.framework */; };
 		DE0F6B3411109BC500F064D6 /* AboutMITVC.m in Sources */ = {isa = PBXBuildFile; fileRef = DE0F6B3311109BC500F064D6 /* AboutMITVC.m */; };
 		DE18F9EE10F19105009A69B9 /* News.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DE18F9ED10F19105009A69B9 /* News.xcdatamodeld */; };
@@ -149,7 +150,6 @@
 		EBAE86451215FB4900F370BE /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EBAE86441215FB4900F370BE /* Default@2x.png */; };
 		EBB120A7133802D300A4BD1D /* secret in Resources */ = {isa = PBXBuildFile; fileRef = EBB120A6133802D300A4BD1D /* secret */; };
 		EBB120AA1338046400A4BD1D /* KGOWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EBB120A91338046400A4BD1D /* KGOWebViewController.m */; };
-		EBB1212513382A4F00A4BD1D /* ModalLoginWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EBB1212413382A4F00A4BD1D /* ModalLoginWebViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -215,6 +215,8 @@
 		4BA25BEA132ED94600ABB625 /* NewsStory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsStory.m; sourceTree = "<group>"; };
 		A623F1EF120A035A00341C5E /* ModoThreeStateSwitchControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModoThreeStateSwitchControl.h; sourceTree = "<group>"; };
 		A623F1F0120A035A00341C5E /* ModoThreeStateSwitchControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModoThreeStateSwitchControl.m; sourceTree = "<group>"; };
+		A6CE0D3D133952E700FD5F18 /* ModalLoginWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModalLoginWebViewController.h; sourceTree = "<group>"; };
+		A6CE0D3E133952E700FD5F18 /* ModalLoginWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalLoginWebViewController.m; sourceTree = "<group>"; };
 		BD9FA7ED1047A05E00BC3C0A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		DE0F6B3211109BC500F064D6 /* AboutMITVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutMITVC.h; sourceTree = "<group>"; };
 		DE0F6B3311109BC500F064D6 /* AboutMITVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutMITVC.m; sourceTree = "<group>"; };
@@ -445,8 +447,6 @@
 		EBB120A6133802D300A4BD1D /* secret */ = {isa = PBXFileReference; lastKnownFileType = folder; name = secret; path = Resources/secret; sourceTree = "<group>"; };
 		EBB120A81338046400A4BD1D /* KGOWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOWebViewController.h; sourceTree = "<group>"; };
 		EBB120A91338046400A4BD1D /* KGOWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOWebViewController.m; sourceTree = "<group>"; };
-		EBB1212313382A4F00A4BD1D /* ModalLoginWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModalLoginWebViewController.h; path = "../../../../harvard/Harvard-Reunion-iOS/Modules/Login/ModalLoginWebViewController.h"; sourceTree = "<group>"; };
-		EBB1212413382A4F00A4BD1D /* ModalLoginWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ModalLoginWebViewController.m; path = "../../../../harvard/Harvard-Reunion-iOS/Modules/Login/ModalLoginWebViewController.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -969,8 +969,8 @@
 		EB181FA5131EDF1B003728FF /* Login */ = {
 			isa = PBXGroup;
 			children = (
-				EBB1212313382A4F00A4BD1D /* ModalLoginWebViewController.h */,
-				EBB1212413382A4F00A4BD1D /* ModalLoginWebViewController.m */,
+				A6CE0D3D133952E700FD5F18 /* ModalLoginWebViewController.h */,
+				A6CE0D3E133952E700FD5F18 /* ModalLoginWebViewController.m */,
 				EB181FA6131EDF1B003728FF /* LoginModule.h */,
 				EB181FA7131EDF1B003728FF /* LoginModule.m */,
 			);
@@ -1299,7 +1299,7 @@
 				EB48910913310A930036AEBF /* ExternalURLModule.m in Sources */,
 				4B8432E71331287600DCBA86 /* NewsCategory.m in Sources */,
 				EBB120AA1338046400A4BD1D /* KGOWebViewController.m in Sources */,
-				EBB1212513382A4F00A4BD1D /* ModalLoginWebViewController.m in Sources */,
+				A6CE0D3F133952E700FD5F18 /* ModalLoginWebViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
