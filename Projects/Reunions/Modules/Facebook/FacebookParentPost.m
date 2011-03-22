@@ -1,7 +1,5 @@
 #import "FacebookParentPost.h"
 #import "FacebookComment.h"
-#import "FacebookLike.h"
-
 
 @implementation FacebookParentPost
 @dynamic postIdentifier;

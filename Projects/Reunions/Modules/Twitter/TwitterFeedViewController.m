@@ -42,7 +42,7 @@
 {
     [super viewDidLoad];
     
-    twitterModule = (TwitterModule *)[(KGOAppDelegate *)[[UIApplication sharedApplication] delegate] moduleForTag:@"twitter"];
+    twitterModule = (TwitterModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"twitter"];
     self.latestTweets = twitterModule.latestTweets;
     
     if (!self.latestTweets) {

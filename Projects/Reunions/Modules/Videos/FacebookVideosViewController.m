@@ -14,7 +14,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookGroupReceivedNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookFeedDidUpdateNotification object:nil];
     
-    FacebookModule *fbModule = (FacebookModule *)[(KGOAppDelegate *)[[UIApplication sharedApplication] delegate] moduleForTag:@"facebook"];
+    FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
     if (fbModule.groupID) {
         if (fbModule.latestFeedPosts) {
             for (NSDictionary *aPost in fbModule.latestFeedPosts) {
@@ -191,7 +191,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     FacebookVideo *aVideo = [_videos objectAtIndex:indexPath.row];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:_videos, @"videos", aVideo, @"video", nil];
-    [(KGOAppDelegate *)[[UIApplication sharedApplication] delegate] showPage:LocalPathPageNameDetail forModuleTag:VideoTag params:params];
+    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail forModuleTag:VideoTag params:params];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 

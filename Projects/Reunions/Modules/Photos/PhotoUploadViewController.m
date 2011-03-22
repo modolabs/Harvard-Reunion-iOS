@@ -19,7 +19,7 @@
 }
 
 - (void)cancelButtonPressed:(id)sender {
-    [(KGOAppDelegate *)[[UIApplication sharedApplication] delegate] dismissAppModalViewControllerAnimated:YES];
+    [KGO_SHARED_APP_DELEGATE() dismissAppModalViewControllerAnimated:YES];
 }
 
 /*

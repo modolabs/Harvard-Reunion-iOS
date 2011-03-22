@@ -14,7 +14,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookGroupReceivedNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookFeedDidUpdateNotification object:nil];
     
-    FacebookModule *fbModule = (FacebookModule *)[(KGOAppDelegate *)[[UIApplication sharedApplication] delegate] moduleForTag:@"facebook"];
+    FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
     if (fbModule.groupID) {
         if (fbModule.latestFeedPosts) {
             for (NSDictionary *aPost in fbModule.latestFeedPosts) {
@@ -192,7 +192,7 @@
         [photos addObject:thumbnail.photo];
     }];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:photo, @"photo", photos, @"photos", nil];
-    [(KGOAppDelegate *)[[UIApplication sharedApplication] delegate] showPage:LocalPathPageNameDetail
+    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail
                                                                 forModuleTag:PhotosTag
                                                                       params:params];
 }
@@ -204,26 +204,26 @@
     UIImagePickerController *picker = [[[UIImagePickerController alloc] init] autorelease];
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     picker.delegate = self;
-    [(KGOAppDelegate *)[[UIApplication sharedApplication] delegate] presentAppModalViewController:picker animated:YES];
+    [KGO_SHARED_APP_DELEGATE() presentAppModalViewController:picker animated:YES];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker
         didFinishPickingImage:(UIImage *)image
                   editingInfo:(NSDictionary *)editingInfo
 {
-    FacebookModule *fbModule = (FacebookModule *)[(KGOAppDelegate *)[[UIApplication sharedApplication] delegate] moduleForTag:@"facebook"];
+    FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                             image, @"photo",
                             fbModule.groupID, @"profile",
                             self, @"parentVC",
                             nil];
-    [(KGOAppDelegate *)[[UIApplication sharedApplication] delegate] showPage:LocalPathPageNamePhotoUpload
+    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNamePhotoUpload
                                                                 forModuleTag:PhotosTag
                                                                       params:params];
 }
 
 - (void)uploadDidComplete:(FacebookPost *)result {
-    [(KGOAppDelegate *)[[UIApplication sharedApplication] delegate] dismissAppModalViewControllerAnimated:YES];    
+    [KGO_SHARED_APP_DELEGATE() dismissAppModalViewControllerAnimated:YES];    
     
     FacebookPhoto *photo = (FacebookPhoto *)result;
     [_photosByID setObject:photo forKey:photo.identifier];

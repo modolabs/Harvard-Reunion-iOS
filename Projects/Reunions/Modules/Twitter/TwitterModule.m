@@ -41,7 +41,7 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
         // be placed on the home screen under each condition.  if/when there is
         // a home screen notification module/widget for Kurogo, replace the chat
         // bubble with that
-        KGOAppDelegate *appDelegate = (KGOAppDelegate *)[[UIApplication sharedApplication] delegate];
+        KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
         KGONavigationStyle navStyle = [appDelegate navigationStyle];
         if (navStyle == KGONavigationStyleTabletSidebar) {
             self.chatBubbleCaratOffset = 0.25;
@@ -92,7 +92,7 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
     
     if (!_statusPoller) {
         NSLog(@"scheduling timer...");
-        NSTimeInterval interval = 60;
+        NSTimeInterval interval = 6000;
         _statusPoller = [[NSTimer timerWithTimeInterval:interval
                                                  target:self
                                                selector:@selector(requestStatusUpdates:)

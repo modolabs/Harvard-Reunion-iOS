@@ -114,7 +114,6 @@
 		EB46CBBE132AE55400AF7B5C /* FacebookModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EB46CBBC132AE55400AF7B5C /* FacebookModel.xcdatamodeld */; };
 		EB46CBC7132AE95400AF7B5C /* FacebookPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46CBC6132AE95400AF7B5C /* FacebookPhoto.m */; };
 		EB46CBCA132AE95600AF7B5C /* FacebookComment.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46CBC9132AE95500AF7B5C /* FacebookComment.m */; };
-		EB46CBCD132AE95700AF7B5C /* FacebookLike.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46CBCC132AE95600AF7B5C /* FacebookLike.m */; };
 		EB4890A3133018B40036AEBF /* ScheduleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB4890A2133018B40036AEBF /* ScheduleViewController.m */; };
 		EB48910D13310D5F0036AEBF /* ExternalURLModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB48910C13310D5F0036AEBF /* ExternalURLModule.m */; };
 		EB48912B133115BB0036AEBF /* News.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EB489112133115BB0036AEBF /* News.xcdatamodeld */; };
@@ -170,6 +169,7 @@
 		EB8B365513079999005DBB8F /* KGOPlacemark.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8B365113079999005DBB8F /* KGOPlacemark.m */; };
 		EB8B36871307BB28005DBB8F /* MapZoomLevel.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8B36851307BB28005DBB8F /* MapZoomLevel.m */; };
 		EB8BF5951333DC07009ED854 /* TwitterFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8BF5941333DC07009ED854 /* TwitterFeedViewController.m */; };
+		EB8BF5E61337C624009ED854 /* KGOWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8BF5E51337C624009ED854 /* KGOWebViewController.m */; };
 		EB99B28212F377480065EE93 /* libProj.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB138E9312F24EB2004DBB7C /* libProj.a */; };
 		EB99B28312F377520065EE93 /* libfacebook_ios_sdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB138EED12F251EB004DBB7C /* libfacebook_ios_sdk.a */; };
 		EB99B28412F377560065EE93 /* libTwitter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB99B08E12F36F3D0065EE93 /* libTwitter.a */; };
@@ -179,6 +179,7 @@
 		EBAA866B12F72A4600B743C3 /* libSFHFKeychainUtils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EBAA860D12F728CE00B743C3 /* libSFHFKeychainUtils.a */; };
 		EBAA89BF12FB510E00B743C3 /* KGOTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EBAA89BD12FB510E00B743C3 /* KGOTableViewController.m */; };
 		EBAA8C9C12FC56B000B743C3 /* HighlightedResultLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = EBAA8C9A12FC56B000B743C3 /* HighlightedResultLabel.m */; };
+		EBB120AD1338104B00A4BD1D /* ModalLoginWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EBB120AC1338104B00A4BD1D /* ModalLoginWebViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -237,7 +238,7 @@
 		3AA2194F1039D74700DB7637 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		442C195410F3B21400CB44EC /* MITMapRoute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MITMapRoute.h; sourceTree = "<group>"; };
 		4463CC8710D6F4A50048CA83 /* MapModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapModule.h; sourceTree = "<group>"; };
-		4463CC8810D6F4A50048CA83 /* MapModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapModule.m; sourceTree = "<group>"; };
+		4463CC8810D6F4A50048CA83 /* MapModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MapModule.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		4463CC8D10D6F4A50048CA83 /* MapSearchResultAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapSearchResultAnnotation.h; sourceTree = "<group>"; };
 		4463CC8E10D6F4A50048CA83 /* MapSearchResultAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapSearchResultAnnotation.m; sourceTree = "<group>"; };
 		4463CCB110D6F5750048CA83 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -264,13 +265,13 @@
 		EB1386BB12F22DBC004DBB7C /* ConnectionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionWrapper.h; sourceTree = "<group>"; };
 		EB1386BC12F22DBC004DBB7C /* ConnectionWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionWrapper.m; sourceTree = "<group>"; };
 		EB1386BD12F22DBC004DBB7C /* JSONAPIRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONAPIRequest.h; sourceTree = "<group>"; };
-		EB1386BE12F22DBC004DBB7C /* JSONAPIRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONAPIRequest.m; sourceTree = "<group>"; };
+		EB1386BE12F22DBC004DBB7C /* JSONAPIRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = JSONAPIRequest.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB1386C112F22DBC004DBB7C /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		EB1386C212F22DBC004DBB7C /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		EB13871B12F22DBC004DBB7C /* KGOShareButtonController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOShareButtonController.h; sourceTree = "<group>"; };
-		EB13871C12F22DBC004DBB7C /* KGOShareButtonController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOShareButtonController.m; sourceTree = "<group>"; };
+		EB13871C12F22DBC004DBB7C /* KGOShareButtonController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = KGOShareButtonController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB13871F12F22DBC004DBB7C /* TwitterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterViewController.h; sourceTree = "<group>"; };
-		EB13872012F22DBC004DBB7C /* TwitterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterViewController.m; sourceTree = "<group>"; };
+		EB13872012F22DBC004DBB7C /* TwitterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TwitterViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB13872212F22DBC004DBB7C /* MITLoadingActivityView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MITLoadingActivityView.h; sourceTree = "<group>"; };
 		EB13872312F22DBC004DBB7C /* MITLoadingActivityView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MITLoadingActivityView.m; sourceTree = "<group>"; };
 		EB13872812F22DBC004DBB7C /* KGOScrollingTabstrip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOScrollingTabstrip.h; sourceTree = "<group>"; };
@@ -286,25 +287,25 @@
 		EB14292712FCBD1D00396753 /* KGODetailPager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGODetailPager.h; sourceTree = "<group>"; };
 		EB14292812FCBD1D00396753 /* KGODetailPager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGODetailPager.m; sourceTree = "<group>"; };
 		EB142B4A130058D500396753 /* MITMailComposeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MITMailComposeController.h; sourceTree = "<group>"; };
-		EB142B4B130058D500396753 /* MITMailComposeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MITMailComposeController.m; sourceTree = "<group>"; };
+		EB142B4B130058D500396753 /* MITMailComposeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MITMailComposeController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB142B4F1300593A00396753 /* UIKit+KGOAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIKit+KGOAdditions.h"; sourceTree = "<group>"; };
 		EB142B501300593A00396753 /* UIKit+KGOAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIKit+KGOAdditions.m"; sourceTree = "<group>"; };
 		EB142B531300597200396753 /* Foundation+KGOAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Foundation+KGOAdditions.h"; sourceTree = "<group>"; };
 		EB142B541300597200396753 /* Foundation+KGOAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Foundation+KGOAdditions.m"; sourceTree = "<group>"; };
 		EB142B741300868600396753 /* KGONotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGONotification.h; sourceTree = "<group>"; };
-		EB142B751300868600396753 /* KGONotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGONotification.m; sourceTree = "<group>"; };
+		EB142B751300868600396753 /* KGONotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = KGONotification.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB142C111300950300396753 /* ModoNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModoNavigationBar.h; sourceTree = "<group>"; };
 		EB142C121300950300396753 /* ModoNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModoNavigationBar.m; sourceTree = "<group>"; };
 		EB142C131300950300396753 /* ModoNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModoNavigationController.h; sourceTree = "<group>"; };
-		EB142C141300950300396753 /* ModoNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModoNavigationController.m; sourceTree = "<group>"; };
-		EB142C2113009FF100396753 /* KGOAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOAppDelegate.h; sourceTree = "<group>"; };
+		EB142C141300950300396753 /* ModoNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ModoNavigationController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		EB142C2113009FF100396753 /* KGOAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = KGOAppDelegate.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		EB142C2213009FF100396753 /* KGOAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOAppDelegate.m; sourceTree = "<group>"; };
 		EB142C981300A83E00396753 /* KGOAppDelegate+ModuleAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KGOAppDelegate+ModuleAdditions.h"; sourceTree = "<group>"; };
 		EB142C991300A83E00396753 /* KGOAppDelegate+ModuleAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KGOAppDelegate+ModuleAdditions.m"; sourceTree = "<group>"; };
 		EB142E6C1300D94E00396753 /* HomeModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeModule.h; sourceTree = "<group>"; };
-		EB142E6D1300D94E00396753 /* HomeModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeModule.m; sourceTree = "<group>"; };
+		EB142E6D1300D94E00396753 /* HomeModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HomeModule.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB1430661301A87900396753 /* KGOSearchDisplayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSearchDisplayController.h; sourceTree = "<group>"; };
-		EB1430671301A87900396753 /* KGOSearchDisplayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOSearchDisplayController.m; sourceTree = "<group>"; };
+		EB1430671301A87900396753 /* KGOSearchDisplayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = KGOSearchDisplayController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB1430681301A87900396753 /* KGOSearchModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSearchModel.h; sourceTree = "<group>"; };
 		EB14306B1301A87900396753 /* RecentSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecentSearch.h; sourceTree = "<group>"; };
 		EB14306C1301A87900396753 /* RecentSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecentSearch.m; sourceTree = "<group>"; };
@@ -312,11 +313,11 @@
 		EB1433AD1303509D00396753 /* KGOSearchBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSearchBar.h; sourceTree = "<group>"; };
 		EB1433AE1303509D00396753 /* KGOSearchBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOSearchBar.m; sourceTree = "<group>"; };
 		EB14351B13038CE500396753 /* KGODatePager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGODatePager.h; sourceTree = "<group>"; };
-		EB14351C13038CE500396753 /* KGODatePager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGODatePager.m; sourceTree = "<group>"; };
+		EB14351C13038CE500396753 /* KGODatePager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = KGODatePager.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB143DCF130636BA00396753 /* DatePickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePickerViewController.h; sourceTree = "<group>"; };
 		EB143DD0130636BA00396753 /* DatePickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatePickerViewController.m; sourceTree = "<group>"; };
 		EB143E5113063A5E00396753 /* KGOCategoryListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOCategoryListViewController.h; sourceTree = "<group>"; };
-		EB143E5213063A5E00396753 /* KGOCategoryListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOCategoryListViewController.m; sourceTree = "<group>"; };
+		EB143E5213063A5E00396753 /* KGOCategoryListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = KGOCategoryListViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB14417D1309F0E400396753 /* KGOTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOTheme.h; sourceTree = "<group>"; };
 		EB14417E1309F0E400396753 /* KGOTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOTheme.m; sourceTree = "<group>"; };
 		EB1441A71309F56700396753 /* MITBuildInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MITBuildInfo.h; sourceTree = "<group>"; };
@@ -324,18 +325,18 @@
 		EB1441AD1309F59700396753 /* KGOModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOModule.h; sourceTree = "<group>"; };
 		EB1441AE1309F59700396753 /* KGOModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOModule.m; sourceTree = "<group>"; };
 		EB1744E7132E8FC20045F961 /* PhotoUploadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoUploadViewController.h; sourceTree = "<group>"; };
-		EB1744E8132E8FC20045F961 /* PhotoUploadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoUploadViewController.m; sourceTree = "<group>"; };
+		EB1744E8132E8FC20045F961 /* PhotoUploadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = PhotoUploadViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB1744E9132E8FC30045F961 /* PhotoUploadViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PhotoUploadViewController.xib; sourceTree = "<group>"; };
 		EB1815DD130C524A003728FF /* KGOHomeScreenViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOHomeScreenViewController.h; sourceTree = "<group>"; };
-		EB1815DE130C524A003728FF /* KGOHomeScreenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOHomeScreenViewController.m; sourceTree = "<group>"; };
+		EB1815DE130C524A003728FF /* KGOHomeScreenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = KGOHomeScreenViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB18168A130C8EED003728FF /* KGOHomeScreenTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOHomeScreenTableViewController.h; sourceTree = "<group>"; };
-		EB18168B130C8EED003728FF /* KGOHomeScreenTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOHomeScreenTableViewController.m; sourceTree = "<group>"; };
+		EB18168B130C8EED003728FF /* KGOHomeScreenTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = KGOHomeScreenTableViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB1816D9130C9680003728FF /* SpringboardIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringboardIcon.h; sourceTree = "<group>"; };
 		EB1816DA130C9680003728FF /* SpringboardIcon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpringboardIcon.m; sourceTree = "<group>"; };
 		EB18170D130C99AA003728FF /* KGOPortletHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOPortletHomeViewController.h; sourceTree = "<group>"; };
 		EB18170E130C99AA003728FF /* KGOPortletHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOPortletHomeViewController.m; sourceTree = "<group>"; };
 		EB181711130C9C43003728FF /* KGOHomeScreenWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOHomeScreenWidget.h; sourceTree = "<group>"; };
-		EB181712130C9C43003728FF /* KGOHomeScreenWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOHomeScreenWidget.m; sourceTree = "<group>"; };
+		EB181712130C9C43003728FF /* KGOHomeScreenWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = KGOHomeScreenWidget.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB181716130CC074003728FF /* LoginModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginModule.h; sourceTree = "<group>"; };
 		EB181717130CC074003728FF /* LoginModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginModule.m; sourceTree = "<group>"; };
 		EB1819211315D0E9003728FF /* MapSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapSettingsViewController.h; sourceTree = "<group>"; };
@@ -363,7 +364,7 @@
 		EB358FAA130B3778000250AD /* IconGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconGrid.h; sourceTree = "<group>"; };
 		EB358FAB130B3778000250AD /* IconGrid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconGrid.m; sourceTree = "<group>"; };
 		EB358FAE130B395D000250AD /* MITThumbnailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MITThumbnailView.h; sourceTree = "<group>"; };
-		EB358FAF130B395D000250AD /* MITThumbnailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MITThumbnailView.m; sourceTree = "<group>"; };
+		EB358FAF130B395D000250AD /* MITThumbnailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MITThumbnailView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB3902F6132BFCF3008C90CA /* FacebookModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FacebookModel.xcdatamodel; sourceTree = "<group>"; };
 		EB3902FB132BFDF0008C90CA /* FacebookParentPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookParentPost.h; sourceTree = "<group>"; };
 		EB3902FC132BFDF0008C90CA /* FacebookParentPost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookParentPost.m; sourceTree = "<group>"; };
@@ -373,19 +374,19 @@
 		EB46C940132590F900AF7B5C /* PhotosModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosModule.h; sourceTree = "<group>"; };
 		EB46C941132590F900AF7B5C /* PhotosModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosModule.m; sourceTree = "<group>"; };
 		EB46C942132590F900AF7B5C /* FacebookPhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookPhotosViewController.h; sourceTree = "<group>"; };
-		EB46C943132590F900AF7B5C /* FacebookPhotosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookPhotosViewController.m; sourceTree = "<group>"; };
+		EB46C943132590F900AF7B5C /* FacebookPhotosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FacebookPhotosViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB46C946132590F900AF7B5C /* VideosModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideosModule.h; sourceTree = "<group>"; };
 		EB46C947132590F900AF7B5C /* VideosModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideosModule.m; sourceTree = "<group>"; };
 		EB46C948132590F900AF7B5C /* FacebookVideosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookVideosViewController.h; sourceTree = "<group>"; };
-		EB46C949132590F900AF7B5C /* FacebookVideosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookVideosViewController.m; sourceTree = "<group>"; };
+		EB46C949132590F900AF7B5C /* FacebookVideosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FacebookVideosViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB46C94E132591E200AF7B5C /* KGOModule+Factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "KGOModule+Factory.h"; path = "Application/KGOModule+Factory.h"; sourceTree = SOURCE_ROOT; };
 		EB46C94F132591E200AF7B5C /* KGOModule+Factory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "KGOModule+Factory.m"; path = "Application/KGOModule+Factory.m"; sourceTree = SOURCE_ROOT; };
 		EB46C951132596C500AF7B5C /* TwitterModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterModule.h; sourceTree = "<group>"; };
-		EB46C952132596C500AF7B5C /* TwitterModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterModule.m; sourceTree = "<group>"; };
+		EB46C952132596C500AF7B5C /* TwitterModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TwitterModule.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB46CA041325B57700AF7B5C /* MapDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapDetailViewController.h; sourceTree = "<group>"; };
 		EB46CA051325B57800AF7B5C /* MapDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapDetailViewController.m; sourceTree = "<group>"; };
 		EB46CA0A1326C4C500AF7B5C /* MapKit+KGOAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MapKit+KGOAdditions.h"; sourceTree = "<group>"; };
-		EB46CA0B1326C4C500AF7B5C /* MapKit+KGOAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MapKit+KGOAdditions.m"; sourceTree = "<group>"; };
+		EB46CA0B1326C4C500AF7B5C /* MapKit+KGOAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "MapKit+KGOAdditions.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB46CA0E1326FA8C00AF7B5C /* ScheduleModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduleModule.h; sourceTree = "<group>"; };
 		EB46CA0F1326FA8C00AF7B5C /* ScheduleModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduleModule.m; sourceTree = "<group>"; };
 		EB46CA131326FB8200AF7B5C /* Calendar.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Calendar.xcdatamodel; sourceTree = "<group>"; };
@@ -409,7 +410,7 @@
 		EB46CA251326FB8200AF7B5C /* KGOEventContactInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEventContactInfo.h; sourceTree = "<group>"; };
 		EB46CA261326FB8200AF7B5C /* KGOEventContactInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOEventContactInfo.m; sourceTree = "<group>"; };
 		EB46CA311327011100AF7B5C /* KGOSidebarFrameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSidebarFrameViewController.h; sourceTree = "<group>"; };
-		EB46CA321327011100AF7B5C /* KGOSidebarFrameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOSidebarFrameViewController.m; sourceTree = "<group>"; };
+		EB46CA321327011100AF7B5C /* KGOSidebarFrameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = KGOSidebarFrameViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB46CA341327E43600AF7B5C /* kurogo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = kurogo; path = ../../../Resources/default/kurogo; sourceTree = "<group>"; };
 		EB46CA361327E4D300AF7B5C /* ipad */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ipad; sourceTree = "<group>"; };
 		EB46CA381327E53600AF7B5C /* ThemeConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ThemeConfig.plist; sourceTree = "<group>"; };
@@ -423,8 +424,6 @@
 		EB46CBC6132AE95400AF7B5C /* FacebookPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookPhoto.m; sourceTree = "<group>"; };
 		EB46CBC8132AE95400AF7B5C /* FacebookComment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookComment.h; sourceTree = "<group>"; };
 		EB46CBC9132AE95500AF7B5C /* FacebookComment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookComment.m; sourceTree = "<group>"; };
-		EB46CBCB132AE95600AF7B5C /* FacebookLike.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookLike.h; sourceTree = "<group>"; };
-		EB46CBCC132AE95600AF7B5C /* FacebookLike.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookLike.m; sourceTree = "<group>"; };
 		EB46CBD1132AEA5C00AF7B5C /* FacebookModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookModel.h; sourceTree = "<group>"; };
 		EB4890A1133018B40036AEBF /* ScheduleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduleViewController.h; sourceTree = "<group>"; };
 		EB4890A2133018B40036AEBF /* ScheduleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduleViewController.m; sourceTree = "<group>"; };
@@ -438,7 +437,7 @@
 		EB489118133115BB0036AEBF /* NewsImageRep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsImageRep.h; sourceTree = "<group>"; };
 		EB489119133115BB0036AEBF /* NewsImageRep.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsImageRep.m; sourceTree = "<group>"; };
 		EB48911A133115BB0036AEBF /* NewsModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsModule.h; sourceTree = "<group>"; };
-		EB48911B133115BB0036AEBF /* NewsModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsModule.m; sourceTree = "<group>"; };
+		EB48911B133115BB0036AEBF /* NewsModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = NewsModule.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB48911C133115BB0036AEBF /* NewsStory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsStory.h; sourceTree = "<group>"; };
 		EB48911D133115BB0036AEBF /* NewsStory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsStory.m; sourceTree = "<group>"; };
 		EB48911E133115BB0036AEBF /* StoryDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoryDetailViewController.h; sourceTree = "<group>"; };
@@ -446,11 +445,11 @@
 		EB489120133115BB0036AEBF /* StoryGalleryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoryGalleryViewController.h; sourceTree = "<group>"; };
 		EB489121133115BB0036AEBF /* StoryGalleryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoryGalleryViewController.m; sourceTree = "<group>"; };
 		EB489122133115BB0036AEBF /* StoryImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoryImageView.h; sourceTree = "<group>"; };
-		EB489123133115BB0036AEBF /* StoryImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoryImageView.m; sourceTree = "<group>"; };
+		EB489123133115BB0036AEBF /* StoryImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = StoryImageView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB489124133115BB0036AEBF /* StoryListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoryListViewController.h; sourceTree = "<group>"; };
 		EB489125133115BB0036AEBF /* StoryListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoryListViewController.m; sourceTree = "<group>"; };
 		EB4891381331173C0036AEBF /* MicroblogModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MicroblogModule.h; sourceTree = "<group>"; };
-		EB4891391331173C0036AEBF /* MicroblogModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MicroblogModule.m; sourceTree = "<group>"; };
+		EB4891391331173C0036AEBF /* MicroblogModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MicroblogModule.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB48913B1331699D0036AEBF /* TwitterSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterSearch.h; sourceTree = "<group>"; };
 		EB48913C1331699E0036AEBF /* TwitterSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterSearch.m; sourceTree = "<group>"; };
 		EB48913E133265070036AEBF /* NewsDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsDataManager.h; sourceTree = "<group>"; };
@@ -462,7 +461,7 @@
 		EB5773FA12FE111500BAF5F5 /* CoreDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataManager.h; sourceTree = "<group>"; };
 		EB5773FB12FE111500BAF5F5 /* CoreDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataManager.m; sourceTree = "<group>"; };
 		EB5773FC12FE111500BAF5F5 /* KGOSocialMediaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSocialMediaController.h; sourceTree = "<group>"; };
-		EB5773FD12FE111500BAF5F5 /* KGOSocialMediaController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOSocialMediaController.m; sourceTree = "<group>"; };
+		EB5773FD12FE111500BAF5F5 /* KGOSocialMediaController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = KGOSocialMediaController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB57740212FE113400BAF5F5 /* KGOSpringboardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSpringboardViewController.h; sourceTree = "<group>"; };
 		EB57740312FE113400BAF5F5 /* KGOSpringboardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOSpringboardViewController.m; sourceTree = "<group>"; };
 		EB5F315B132491ED0066413F /* KGOTabbedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOTabbedViewController.h; sourceTree = "<group>"; };
@@ -498,35 +497,39 @@
 		EB7BA33C11F7677F00B3DDA6 /* PolygonOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolygonOverlay.h; sourceTree = "<group>"; };
 		EB7BA33D11F7677F00B3DDA6 /* PolygonOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PolygonOverlay.m; sourceTree = "<group>"; };
 		EB7F327210CD6C5B00188BCD /* PeopleDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeopleDetailsViewController.h; sourceTree = "<group>"; };
-		EB7F327310CD6C5B00188BCD /* PeopleDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeopleDetailsViewController.m; sourceTree = "<group>"; };
+		EB7F327310CD6C5B00188BCD /* PeopleDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = PeopleDetailsViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB7F327410CD6C5B00188BCD /* PeopleModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeopleModule.h; sourceTree = "<group>"; };
 		EB7F327510CD6C5B00188BCD /* PeopleModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeopleModule.m; sourceTree = "<group>"; };
 		EB7F32D210CD6FB300188BCD /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		EB7F32D610CD6FBB00188BCD /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		EB8B36341306FBD7005DBB8F /* KGORequestManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGORequestManager.h; sourceTree = "<group>"; };
-		EB8B36351306FBD7005DBB8F /* KGORequestManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGORequestManager.m; sourceTree = "<group>"; };
+		EB8B36351306FBD7005DBB8F /* KGORequestManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = KGORequestManager.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB8B364613078CDB005DBB8F /* MapHomeViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MapHomeViewController.xib; sourceTree = "<group>"; };
 		EB8B364913078E68005DBB8F /* MapHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapHomeViewController.h; sourceTree = "<group>"; };
-		EB8B364A13078E68005DBB8F /* MapHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapHomeViewController.m; sourceTree = "<group>"; };
+		EB8B364A13078E68005DBB8F /* MapHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MapHomeViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB8B364E13079999005DBB8F /* KGOMapCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOMapCategory.h; sourceTree = "<group>"; };
 		EB8B364F13079999005DBB8F /* KGOMapCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOMapCategory.m; sourceTree = "<group>"; };
 		EB8B365013079999005DBB8F /* KGOPlacemark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOPlacemark.h; sourceTree = "<group>"; };
 		EB8B365113079999005DBB8F /* KGOPlacemark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOPlacemark.m; sourceTree = "<group>"; };
 		EB8B36841307BB28005DBB8F /* MapZoomLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapZoomLevel.h; sourceTree = "<group>"; };
-		EB8B36851307BB28005DBB8F /* MapZoomLevel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapZoomLevel.m; sourceTree = "<group>"; };
+		EB8B36851307BB28005DBB8F /* MapZoomLevel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MapZoomLevel.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB8BF5931333DC07009ED854 /* TwitterFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterFeedViewController.h; sourceTree = "<group>"; };
-		EB8BF5941333DC07009ED854 /* TwitterFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterFeedViewController.m; sourceTree = "<group>"; };
+		EB8BF5941333DC07009ED854 /* TwitterFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TwitterFeedViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		EB8BF5E41337C624009ED854 /* KGOWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOWebViewController.h; sourceTree = "<group>"; };
+		EB8BF5E51337C624009ED854 /* KGOWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOWebViewController.m; sourceTree = "<group>"; };
 		EB99B08912F36F3D0065EE93 /* Twitter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Twitter.xcodeproj; path = Twitter/Twitter.xcodeproj; sourceTree = "<group>"; };
 		EB99B38C12F37FDC0065EE93 /* JSON.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JSON.xcodeproj; path = JSON/JSON.xcodeproj; sourceTree = "<group>"; };
 		EB99B67312F3A8E40065EE93 /* OAuthConsumer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthConsumer.xcodeproj; path = OAuth/OAuthConsumer.xcodeproj; sourceTree = "<group>"; };
 		EB99B85E12F3AEC10065EE93 /* usr */ = {isa = PBXFileReference; lastKnownFileType = folder; path = usr; sourceTree = "<group>"; };
-		EBA2865510E07E140003BA01 /* PeopleSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeopleSearchViewController.m; sourceTree = "<group>"; };
+		EBA2865510E07E140003BA01 /* PeopleSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = PeopleSearchViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EBAA860812F728CE00B743C3 /* SFHFKeychainUtils.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SFHFKeychainUtils.xcodeproj; path = SFHFKeychainUtils/SFHFKeychainUtils.xcodeproj; sourceTree = "<group>"; };
 		EBAA89BC12FB510E00B743C3 /* KGOTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOTableViewController.h; sourceTree = "<group>"; };
 		EBAA89BD12FB510E00B743C3 /* KGOTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOTableViewController.m; sourceTree = "<group>"; };
 		EBAA8C9912FC56B000B743C3 /* HighlightedResultLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HighlightedResultLabel.h; sourceTree = "<group>"; };
 		EBAA8C9A12FC56B000B743C3 /* HighlightedResultLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HighlightedResultLabel.m; sourceTree = "<group>"; };
 		EBAA9F6210FFAB8B003379A5 /* PeopleDataModel 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "PeopleDataModel 5.xcdatamodel"; sourceTree = "<group>"; };
+		EBB120AB1338104B00A4BD1D /* ModalLoginWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModalLoginWebViewController.h; sourceTree = "<group>"; };
+		EBB120AC1338104B00A4BD1D /* ModalLoginWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ModalLoginWebViewController.m; sourceTree = "<group>"; };
 		EBCA123210CEF3C400577C5D /* PeopleSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeopleSearchViewController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -770,6 +773,8 @@
 				EB13872012F22DBC004DBB7C /* TwitterViewController.m */,
 				EBAA89BC12FB510E00B743C3 /* KGOTableViewController.h */,
 				EBAA89BD12FB510E00B743C3 /* KGOTableViewController.m */,
+				EB8BF5E41337C624009ED854 /* KGOWebViewController.h */,
+				EB8BF5E51337C624009ED854 /* KGOWebViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -896,6 +901,8 @@
 			children = (
 				EB181716130CC074003728FF /* LoginModule.h */,
 				EB181717130CC074003728FF /* LoginModule.m */,
+				EBB120AB1338104B00A4BD1D /* ModalLoginWebViewController.h */,
+				EBB120AC1338104B00A4BD1D /* ModalLoginWebViewController.m */,
 			);
 			name = Login;
 			path = ../../Modules/Login;
@@ -1039,8 +1046,6 @@
 				EB3902FC132BFDF0008C90CA /* FacebookParentPost.m */,
 				EB46CBC5132AE95300AF7B5C /* FacebookPhoto.h */,
 				EB46CBC6132AE95400AF7B5C /* FacebookPhoto.m */,
-				EB46CBCB132AE95600AF7B5C /* FacebookLike.h */,
-				EB46CBCC132AE95600AF7B5C /* FacebookLike.m */,
 				EB46CBC8132AE95400AF7B5C /* FacebookComment.h */,
 				EB46CBC9132AE95500AF7B5C /* FacebookComment.m */,
 				EB46CBD1132AEA5C00AF7B5C /* FacebookModel.h */,
@@ -1496,7 +1501,6 @@
 				EB46CBBE132AE55400AF7B5C /* FacebookModel.xcdatamodeld in Sources */,
 				EB46CBC7132AE95400AF7B5C /* FacebookPhoto.m in Sources */,
 				EB46CBCA132AE95600AF7B5C /* FacebookComment.m in Sources */,
-				EB46CBCD132AE95700AF7B5C /* FacebookLike.m in Sources */,
 				EB3902FD132BFDF1008C90CA /* FacebookParentPost.m in Sources */,
 				EB39030C132C77D0008C90CA /* FacebookCommentViewController.m in Sources */,
 				EB214BC4132E67450093AA7D /* KGOSocialMediaController+FacebookAPI.m in Sources */,
@@ -1525,6 +1529,8 @@
 				EB48913D1331699F0036AEBF /* TwitterSearch.m in Sources */,
 				EB489140133265090036AEBF /* NewsDataManager.m in Sources */,
 				EB8BF5951333DC07009ED854 /* TwitterFeedViewController.m in Sources */,
+				EB8BF5E61337C624009ED854 /* KGOWebViewController.m in Sources */,
+				EBB120AD1338104B00A4BD1D /* ModalLoginWebViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

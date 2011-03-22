@@ -52,7 +52,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         NSInteger numberOfLinesForSubtitle = 1;
         CGRect frame = bubbleView.frame;
 
-        KGOAppDelegate *appDelegate = (KGOAppDelegate *)[[UIApplication sharedApplication] delegate];
+        KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
         KGONavigationStyle navStyle = [appDelegate navigationStyle];
         KGOHomeScreenViewController *homeVC = (KGOHomeScreenViewController *)[appDelegate homescreen];
         CGRect bounds = homeVC.springboardFrame;
@@ -135,7 +135,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         label.textColor = [UIColor whiteColor];
         [_buttonWidget addSubview:label];
         
-        KGOAppDelegate *appDelegate = (KGOAppDelegate *)[[UIApplication sharedApplication] delegate];
+        KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
         KGONavigationStyle navStyle = [appDelegate navigationStyle];
         
         if (navStyle == KGONavigationStyleTabletSidebar) {
@@ -165,7 +165,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 }
 
 - (NSArray *)widgetViews {
-    KGOAppDelegate *appDelegate = (KGOAppDelegate *)[[UIApplication sharedApplication] delegate];
+    KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
     UIViewController *homeVC = [appDelegate homescreen];
     if (UIInterfaceOrientationIsPortrait(homeVC.interfaceOrientation)) {
         return [NSArray arrayWithObjects:self.buttonWidget, self.chatBubble, nil];

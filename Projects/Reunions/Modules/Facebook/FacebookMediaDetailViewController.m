@@ -38,7 +38,7 @@
     FacebookCommentViewController *vc = [[[FacebookCommentViewController alloc] initWithNibName:@"FacebookCommentViewController" bundle:nil] autorelease];
     vc.delegate = self;
     vc.post = self.post;
-    [(KGOAppDelegate *)[[UIApplication sharedApplication] delegate] presentAppModalViewController:vc animated:YES];
+    [KGO_SHARED_APP_DELEGATE() presentAppModalViewController:vc animated:YES];
 }
 
 - (IBAction)likeButtonPressed:(UIBarButtonItem *)sender {
@@ -100,7 +100,7 @@
     FacebookComment *aComment = (FacebookComment *)result;
     aComment.parent = self.post;
     
-    [(KGOAppDelegate *)[[UIApplication sharedApplication] delegate] dismissAppModalViewControllerAnimated:YES];
+    [KGO_SHARED_APP_DELEGATE() dismissAppModalViewControllerAnimated:YES];
     [_tableView reloadData];
 }
 

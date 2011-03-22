@@ -83,7 +83,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     
     if (!_statusPoller) {
         NSLog(@"scheduling timer...");
-        NSTimeInterval interval = 60;
+        NSTimeInterval interval = 60000;
         _statusPoller = [[NSTimer timerWithTimeInterval:interval
                                                  target:self
                                                selector:@selector(requestStatusUpdates:)
@@ -224,8 +224,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
         self.buttonImage = [UIImage imageWithPathName:@"modules/facebook/button-facebook.png"];
         self.labelText = @"Harvard-Radcliffe Reunion";
         
-        KGOAppDelegate *appDelegate = (KGOAppDelegate *)[[UIApplication sharedApplication] delegate];
-        KGONavigationStyle navStyle = [appDelegate navigationStyle];
+        KGONavigationStyle navStyle = [KGO_SHARED_APP_DELEGATE() navigationStyle];
         if (navStyle == KGONavigationStyleTabletSidebar) {
             self.chatBubbleCaratOffset = 0.75;
         } else {
