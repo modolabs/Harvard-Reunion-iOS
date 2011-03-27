@@ -7,7 +7,8 @@
 @dynamic author;
 @dynamic read;
 @dynamic featured;
-@dynamic story_id;
+@dynamic hasBody;
+@dynamic identifier;
 @dynamic link;
 @dynamic postDate;
 @dynamic title;
@@ -47,7 +48,8 @@
     [self didChangeValueForKey:@"categories" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
 }
 
-
-
+- (NSString *)subtitle {
+    return self.summary;
+}
 
 @end

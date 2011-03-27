@@ -1,6 +1,6 @@
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "KGOSpringboardViewController.h"
-#import "ModoNavigationController.h"
+#import "HarvardNavigationController.h"
 #import "KGOSidebarFrameViewController.h"
 #import "KGOTheme.h"
 #import "KGOModule+Factory.h"
@@ -15,16 +15,47 @@
 - (void)loadModules {
     NSArray *moduleData = [[self appConfig] objectForKey:@"Modules"];
     
+    [self loadModulesFromArray:moduleData];
+
+    /*
+    NSMutableDictionary *modulesByTag = [NSMutableDictionary dictionaryWithCapacity:[moduleData count]];
     NSMutableArray *modules = [NSMutableArray arrayWithCapacity:[moduleData count]];
     for (NSDictionary *moduleDict in moduleData) {
         KGOModule *aModule = [KGOModule moduleWithDictionary:moduleDict]; // home will return nil
         if (aModule) {
             [modules addObject:aModule];
+            [modulesByTag setObject:aModule forKey:aModule.tag];
         }
     }
     
     _modules = [[NSArray alloc] initWithArray:modules];
+    _modulesByTag = [[NSDictionary alloc] initWithDictionary:modulesByTag];
+     */
+}
+
+- (void)loadModulesFromArray:(NSArray *)moduleArray {
+    NSMutableDictionary *modulesByTag = [[_modulesByTag mutableCopy] autorelease];
+    if (!modulesByTag) {
+        modulesByTag = [NSMutableDictionary dictionaryWithCapacity:[moduleArray count]];
+    }
+    NSMutableArray *modules = [[_modules mutableCopy] autorelease];
+    if (!modules) {
+        modules = [NSMutableArray array];
+    }
     
+    for (NSDictionary *moduleDict in moduleArray) {
+        KGOModule *aModule = [KGOModule moduleWithDictionary:moduleDict];
+        if (aModule) {
+            [modules addObject:aModule];
+            [modulesByTag setObject:aModule forKey:aModule.tag];
+        }
+    }
+
+    [_modules release];
+    _modules = [modules copy];
+
+    [_modulesByTag release];
+    _modulesByTag = [modulesByTag copy];
 }
 
 - (void)loadNavigationContainer {
@@ -39,7 +70,7 @@
             if (navBarImage) {
                 // for people who insist on using a background image for their nav bar, they 
                 // get this unfortunate navigation controller subclass
-                _appNavController = [[ModoNavigationController alloc] initWithRootViewController:homeVC];
+                _appNavController = [[HarvardNavigationController alloc] initWithRootViewController:homeVC];
             } else {
                 // normal people get the normal navigation controller
                 _appNavController = [[UINavigationController alloc] initWithRootViewController:homeVC];
@@ -67,12 +98,7 @@
 #pragma mark Navigation
 
 - (KGOModule *)moduleForTag:(NSString *)aTag {
-    for (KGOModule *aModule in self.modules) {
-        if ([aModule.tag isEqualToString:aTag]) {
-            return aModule;
-        }
-    }
-    return nil;
+    return [_modulesByTag objectForKey:aTag];
 }
 
 - (BOOL)showPage:(NSString *)pageName forModuleTag:(NSString *)moduleTag params:(NSDictionary *)params {

@@ -5,6 +5,7 @@
 #import "AudioToolbox/AudioToolbox.h"
 #import "AnalyticsWrapper.h"
 #import "KGOSocialMediaController.h"
+#import "KGORequestManager.h"
 
 @implementation KGOAppDelegate
 
@@ -35,10 +36,7 @@
     [[AnalyticsWrapper sharedWrapper] setup];
 
     [self registerForRemoteNotifications:launchOptions];
-    
-    for (KGOModule *aModule in self.modules) {
-        [aModule applicationDidFinishLaunching];
-    }
+    [[KGORequestManager sharedManager] registerWithKGOServer];
 
     return YES;
 }

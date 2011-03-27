@@ -11,6 +11,13 @@
 	</dict>
 	<key>AppFeedbackAddress</key>
 	<string>john.smith@example.com</string>
+	<key>Location</key>
+	<dict>
+		<key>DefaultCenter</key>
+		<string>42.3944, -71.1453</string>
+		<key>DefaultZoom</key>
+		<string>16</string>
+	</dict>
 	<key>Modules</key>
 	<array>
 		<dict>
@@ -20,54 +27,6 @@
 			<string>Home</string>
 			<key>tag</key>
 			<string>home</string>
-		</dict>
-		<dict>
-			<key>class</key>
-			<string>PeopleModule</string>
-			<key>longName</key>
-			<string>People</string>
-			<key>secondary</key>
-			<false/>
-			<key>shortName</key>
-			<string>People</string>
-			<key>tag</key>
-			<string>people</string>
-		</dict>
-		<dict>
-			<key>class</key>
-			<string>NewsModule</string>
-			<key>longName</key>
-			<string>News</string>
-			<key>secondary</key>
-			<false/>
-			<key>shortName</key>
-			<string>News</string>
-			<key>tag</key>
-			<string>news</string>
-		</dict>
-		<dict>
-			<key>class</key>
-			<string>CalendarModule</string>
-			<key>longName</key>
-			<string>Events Calendar</string>
-			<key>secondary</key>
-			<false/>
-			<key>shortName</key>
-			<string>Calendar</string>
-			<key>tag</key>
-			<string>calendar</string>
-		</dict>
-		<dict>
-			<key>class</key>
-			<string>MapModule</string>
-			<key>longName</key>
-			<string>Map</string>
-			<key>secondary</key>
-			<false/>
-			<key>shortName</key>
-			<string>Map</string>
-			<key>tag</key>
-			<string>map</string>
 		</dict>
 		<dict>
 			<key>class</key>
@@ -111,7 +70,25 @@
 			<key>tag</key>
 			<string>fullweb</string>
 			<key>url</key>
-			<string>http://www.harvard.edu/?fullsite=yes</string>
+			<string>http://www.modolabs.com</string>
+		</dict>
+		<dict>
+			<key>class</key>
+			<string>AdmissionsModule</string>
+			<key>iconImage</key>
+			<string>modules/home/customize.png</string>
+			<key>listViewImage</key>
+			<string>modules/home/module-settings.png</string>
+			<key>longName</key>
+			<string>Admissions</string>
+			<key>shortName</key>
+			<string>Admissions</string>
+			<key>secondary</key>
+			<string>NO</string>
+			<key>tabBarImage</key>
+			<string>modules/home/tab-settings.png</string>
+			<key>tag</key>
+			<string>admissions</string>
 		</dict>
 	</array>
 	<key>NavigationControllerClass</key>
@@ -125,7 +102,7 @@
 			<key>APIPath</key>
 			<string>rest</string>
 			<key>Host</key>
-			<string>localhost</string>
+			<string>localhost:8888</string>
 			<key>PathExtension</key>
 			<string></string>
 			<key>UseHTTPS</key>
@@ -158,7 +135,7 @@
 			<key>APIPath</key>
 			<string>rest</string>
 			<key>Host</key>
-			<string>example-text.com</string>
+			<string>example-test.com</string>
 			<key>PathExtension</key>
 			<string></string>
 			<key>UseHTTPS</key>
@@ -174,14 +151,16 @@
 			<key>Username</key>
 			<string></string>
 		</dict>
+		<key>Email</key>
+		<dict/>
 		<key>Facebook</key>
 		<dict>
 			<key>APIKey</key>
-			<string>aa41ebe2c7ee67478d6628dbc5965ae6</string>
+			<string></string>
 			<key>APISecret</key>
-			<string>09433e5ea4ac451151c476844fa9626c</string>
+			<string></string>
 			<key>AppID</key>
-			<string>140621452667226</string>
+			<string></string>
 		</dict>
 		<key>Twitter</key>
 		<dict>
@@ -190,6 +169,24 @@
 			<key>OAuthConsumerSecret</key>
 			<string></string>
 		</dict>
+	</dict>
+	<key>UserSettings</key>
+	<dict>
+		<key>DefaultFont</key>
+		<array>
+			<string>Georgia</string>
+			<string>Verdana</string>
+			<string>Helvetica</string>
+			<string>Courier</string>
+		</array>
+		<key>DefaultFontSize</key>
+		<array>
+			<string>Tiny</string>
+			<string>Small</string>
+			<string>Regular</string>
+			<string>Large</string>
+			<string>Huge</string>
+		</array>
 	</dict>
 </dict>
 </plist>

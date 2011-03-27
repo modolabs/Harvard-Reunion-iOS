@@ -1,15 +1,18 @@
 #import "KGOHomeScreenViewController.h"
-#import "KGOModule.h"
 #import "HomeModule.h"
+#import "SettingsModule.h"
+#import "ExternalURLModule.h"
 #import "UIKit+KGOAdditions.h"
 #import "SpringboardIcon.h"
 #import "KGOPersonWrapper.h"
 #import "KGOHomeScreenWidget.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
+#import "KGORequestManager.h"
 
 @interface KGOHomeScreenViewController (Private)
 
 - (void)loadModules;
+- (void)moduleListDidChange:(NSNotification *)aNotification;
 + (GridSpacing)spacingWithArgs:(NSArray *)args;
 + (GridPadding)paddingWithArgs:(NSArray *)args;
 + (CGSize)maxLabelDimensionsForModules:(NSArray *)modules font:(UIFont *)font;
@@ -27,6 +30,10 @@
 		NSString * file = [[NSBundle mainBundle] pathForResource:@"ThemeConfig" ofType:@"plist"];
         NSDictionary *themeDict = [NSDictionary dictionaryWithContentsOfFile:file];
         _preferences = [[themeDict objectForKey:@"HomeScreen"] retain];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(moduleListDidChange:)
+                                                     name:ModuleListDidChangeNotification
+                                                   object:nil];
     }
     return self;
 }
@@ -37,6 +44,10 @@
 		NSString * file = [[NSBundle mainBundle] pathForResource:@"ThemeConfig" ofType:@"plist"];
         NSDictionary *themeDict = [NSDictionary dictionaryWithContentsOfFile:file];
         _preferences = [[themeDict objectForKey:@"HomeScreen"] retain];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(moduleListDidChange:)
+                                                     name:ModuleListDidChangeNotification
+                                                   object:nil];
     }
     return self;
 }
@@ -73,7 +84,6 @@
     } else {
         NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
         self.navigationItem.title = [infoDict objectForKey:@"CFBundleName"];
-        //self.navigationItem.title = NSLocalizedString(@"AppName", nil);
     }
     
     if (!_searchController) {
@@ -201,6 +211,10 @@
 }
 
 - (void)refreshWidgets {
+    ;
+}
+
+- (void)refreshModules {
     ;
 }
 
@@ -366,6 +380,12 @@
 }
 
 #pragma mark Private
+
+- (void)moduleListDidChange:(NSNotification *)aNotification
+{
+    [self loadModules];
+    [self refreshModules];
+}
 
 - (void)loadModules {
     NSArray *modules = [KGO_SHARED_APP_DELEGATE() modules];

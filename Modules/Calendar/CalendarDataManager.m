@@ -1,170 +1,270 @@
 #import "CalendarDataManager.h"
-#import "Constants.h"
 #import "CoreDataManager.h"
+#import "Foundation+KGOAdditions.h"
+#import "CalendarModel.h"
+
+@interface CalendarDataManager (Private)
+
+- (BOOL)requestEventsForCalendar:(KGOCalendar *)calendar params:(NSDictionary *)params;
+
+@end
+
 
 @implementation CalendarDataManager
 
-+ (NSArray *)eventsWithStartDate:(NSDate *)startDate listType:(CalendarEventListType)listType category:(NSNumber *)catID
-{
-	// search from beginning of the day
-    // or for academic calendar, beginning of the month
-	NSUInteger unitFlags = (listType == CalendarEventListTypeAcademic)
-        ? (NSYearCalendarUnit | NSMonthCalendarUnit)
-        : (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit);
-    
-	NSDateComponents *components = [[NSCalendar currentCalendar] components:unitFlags fromDate:startDate];
-	startDate = [[NSCalendar currentCalendar] dateFromComponents:components];
-	
-	NSTimeInterval interval = [CalendarConstants intervalForEventType:listType
-															 fromDate:startDate
-															  forward:YES];
-	NSDate *endDate = [[NSDate alloc] initWithTimeInterval:interval sinceDate:startDate];
+@synthesize delegate;
 
-    NSPredicate *pred = nil;
-	NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"start" ascending:YES];
-    NSArray *events = nil;
-    if (listType == CalendarEventListTypeEvents && catID == nil) {
-        pred = [NSPredicate predicateWithFormat:@"(start >= %@) and (start < %@)", startDate, endDate];
-        events = [[CoreDataManager sharedManager] objectsForEntity:CalendarEventEntityName matchingPredicate:pred sortDescriptors:[NSArray arrayWithObject:sort]];
-    } else {
-        pred = [NSPredicate predicateWithFormat:@"(start >= %@) and (start < %@)", startDate, endDate];
-        KGOEventCategory *category = nil;
-        switch (listType) {
-            case CalendarEventListTypeEvents:
-                category = [CalendarDataManager categoryWithID:[catID intValue]];
-                break;
-            case CalendarEventListTypeExhibits:
-                category = [CalendarDataManager categoryWithID:kCalendarExhibitCategoryID];
-                break;
-            case CalendarEventListTypeAcademic:
-                category = [CalendarDataManager categoryWithID:kCalendarAcademicCategoryID];
-                break;
-            case CalendarEventListTypeHoliday:
-                category = [CalendarDataManager categoryWithID:kCalendarHolidayCategoryID];
-                break;
-            default:
-                break;
+- (KGOCalendarGroup *)currentGroup
+{
+    return _currentGroup;
+}
+
+- (void)selectGroupAtIndex:(NSInteger)index
+{
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"sortOrder = %d", index];
+    KGOCalendarGroup *group = [[[CoreDataManager sharedManager] objectsForEntity:KGOEntityNameCalendarGroup
+                                                               matchingPredicate:pred] lastObject];
+    if (group) {
+        [_currentGroup release];
+        _currentGroup = [group retain];
+    }
+}
+
+- (BOOL)requestGroups
+{
+    BOOL success = NO;
+    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"sortOrder" ascending:YES];
+    NSArray *oldGroups = [[CoreDataManager sharedManager] objectsForEntity:KGOEntityNameCalendarGroup
+                                                         matchingPredicate:nil
+                                                           sortDescriptors:[NSArray arrayWithObject:sort]];
+    
+    if (oldGroups) {
+        success = YES;
+        [self.delegate groupsDidChange:oldGroups];
+    }
+    
+    // TODO: use a timeout value to decide whether or not to check for update
+    if ([[KGORequestManager sharedManager] isReachable]) {
+        if(_groupsRequest) {
+            return success;
         }
         
-        // there are so few holidays that we won't filter out ones that have passed
-        NSSet *eventSet;
-        if (listType != CalendarEventListTypeHoliday) {
-            eventSet = [[category events] filteredSetUsingPredicate:pred];
-        } else {
-            eventSet = [category events];
-        }
-        events = [[eventSet allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
+        _groupsRequest = [[KGORequestManager sharedManager] requestWithDelegate:self module:@"calendar" path:@"groups" params:nil];
+        _groupsRequest.expectedResponseType = [NSDictionary class];
+        [_groupsRequest connect];
     }
-    [sort release];
-	[endDate release];
-    return events;
+    return success;
 }
 
-+ (NSNumber *)idForCategory:(NSString *)categoryName
+/*
+- (BOOL)requestCalendarsForGroup:(NSString *)groupID
 {
-	NSPredicate *pred = [NSPredicate predicateWithFormat:@"title contains %@", categoryName];
-	KGOEventCategory *category = [[[CoreDataManager sharedManager] objectsForEntity:CalendarCategoryEntityName
-                                                               matchingPredicate:pred] lastObject];
-	return category.identifier;
-}
-
-+ (NSArray *)topLevelCategories
-{
-	NSPredicate *pred = [NSPredicate predicateWithFormat:@"TRUEPREDICATE"];
-	NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES];
-	NSSet *categories = [[CoreDataManager sharedManager] objectsForEntity:CalendarCategoryEntityName
-                                                        matchingPredicate:pred
-                                                          sortDescriptors:[NSArray arrayWithObject:sort]];
-	[sort release];
-
-	NSMutableArray *result = [NSMutableArray arrayWithCapacity:10];
-	for (KGOEventCategory *category in categories) {
-		if (category.parentCategory == category) {
-			[result addObject:category];
-		}
-	}
-
-	if ([result count] > 0) {
-		return result;
-	}
-	
-	return nil;
-}
-
-+ (KGOEventCategory *)categoryWithID:(NSInteger)catID
-{	
-	NSPredicate *pred = [NSPredicate predicateWithFormat:@"identifier == %d", catID];
-	KGOEventCategory *category = [[[CoreDataManager sharedManager] objectsForEntity:@"KGOEventCategory"
-                                                               matchingPredicate:pred] lastObject];
-	if (!category) {
-        category = (KGOEventCategory *)[[CoreDataManager sharedManager] insertNewObjectForEntityForName:@"KGOEventCategory"];
-		category.identifier = [NSNumber numberWithInt:catID];
-        if (catID == kCalendarAcademicCategoryID) {
-            category.title = [CalendarConstants titleForEventType:CalendarEventListTypeAcademic];
-        } else if (catID == kCalendarHolidayCategoryID) {
-            category.title = [CalendarConstants titleForEventType:CalendarEventListTypeHoliday];
-        } else if (catID == kCalendarExhibitCategoryID) {
-            category.title = [CalendarConstants titleForEventType:CalendarEventListTypeExhibits];
-        }
-        [[CoreDataManager sharedManager] saveData];
-	} else {
-        DLog(@"category found with id: %d", catID);
-        //DLog(@"%@", [[category.events allObjects] description]);
+    BOOL success = NO;
+    KGOCalendarGroup *group = [KGOCalendarGroup groupWithID:groupID];
+    if (group.calendars.count) {
+        success = YES;
+        [self.delegate groupDataDidChange:group];
     }
-	return category;
+
+    // TODO: use a timeout value to decide whether or not to check for update
+    if ([[KGORequestManager sharedManager] isReachable]) {
+        KGORequest *request = [_categoriesRequests objectForKey:groupID];
+        
+        if (request) {
+            return success;
+        }
+        
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:groupID, @"category", nil];
+        request = [[KGORequestManager sharedManager] requestWithDelegate:self module:@"calendar" path:@"categories" params:params];
+        request.expectedResponseType = [NSArray class];
+        [_categoriesRequests setObject:request forKey:groupID];
+        [request connect];
+        success = YES;
+    }
+    return success;
 }
+*/
 
-+ (KGOEventCategory *)categoryWithDict:(NSDictionary *)dict
+- (BOOL)requestEventsForCalendar:(KGOCalendar *)calendar params:(NSDictionary *)params
 {
-    // whatever real ID is assigned to exhibits, override it with our own
-	NSInteger catID = [[dict objectForKey:@"name"] isEqualToString:@"exhibits"]
-        ? kCalendarExhibitCategoryID
-        : [[dict objectForKey:@"identifier"] intValue];
-	KGOEventCategory *category = [CalendarDataManager categoryWithID:catID];
-	//[category updateWithDict:dict];
-	return category;
-}
-
-+ (KGOEvent *)eventWithID:(NSInteger)eventID
-{
-	NSPredicate *pred = [NSPredicate predicateWithFormat:@"identifier == %d", eventID];
-	KGOEvent *event = [[[CoreDataManager sharedManager] objectsForEntity:@"KGOEvent"
-                                                               matchingPredicate:pred] lastObject];
-	if (!event) {
-		event = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:@"KGOEvent"];
-		event.identifier = [NSString stringWithFormat:@"%d", eventID];
-	}
-	return event;
-}
-
-+ (KGOEvent *)eventWithDict:(NSDictionary *)dict
-{
-    // TODO: clean up things that are not related to the "soap server"
-	// purge rogue categories that the soap server doesn't return
-	// from the "categories" api call but show up in events
-	if ([[[CoreDataManager sharedManager] managedObjectContext] hasChanges]) {
-		[[[CoreDataManager sharedManager] managedObjectContext] undo];
-		[[[CoreDataManager sharedManager] managedObjectContext] rollback];
-	}
-
-	NSInteger eventID = [[dict objectForKey:@"id"] intValue];
-	KGOEvent *event = [CalendarDataManager eventWithID:eventID];	
-	//[event updateWithDict:dict];
-	return event;
-}
-
-+ (void)pruneOldEvents
-{
-    NSDate *freshDate = [[NSDate alloc] initWithTimeInterval:-kCalendarEventTimeoutSeconds
-                                                   sinceDate:[NSDate date]];
+    BOOL success = NO;
     
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"(lastUpdated < %@)", freshDate];
-    NSArray *events = [[CoreDataManager sharedManager] objectsForEntity:CalendarEventEntityName matchingPredicate:pred];
-    if ([events count]) {
-        [[CoreDataManager sharedManager] deleteObjects:events];
-        [[CoreDataManager sharedManager] saveData];
+    if ([[KGORequestManager sharedManager] isReachable]) {
+        NSString *requestIdentifier = calendar.identifier;
+        KGORequest *request = [_eventsRequests objectForKey:requestIdentifier];
+        if (request) {
+            [request cancel];
+            [_eventsRequests removeObjectForKey:requestIdentifier];
+        }
+        
+        request = [[KGORequestManager sharedManager] requestWithDelegate:self module:@"calendar" path:@"events" params:params];
+        request.expectedResponseType = [NSDictionary class];
+        [_eventsRequests setObject:request forKey:requestIdentifier];
+        [request connect];
     }
-    [freshDate release];
+    
+    return success;
+}
+
+- (BOOL)requestEventsForCalendar:(KGOCalendar *)calendar time:(NSDate *)time
+{
+    NSString *timeString = [NSString stringWithFormat:@"%.0f", [time timeIntervalSince1970]];
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            calendar.identifier, @"calendar",
+                            calendar.type, @"type",
+                            timeString, @"time",
+                            nil];
+    return [self requestEventsForCalendar:calendar params:params];
+}
+
+
+- (BOOL)requestEventsForCalendar:(KGOCalendar *)calendar startDate:(NSDate *)startDate endDate:(NSDate *)endDate
+{
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   calendar.identifier, @"calendar",
+                                   calendar.type, @"type",
+                                   nil];
+    
+    if (startDate) {
+        NSString *startString = [NSString stringWithFormat:@"%.0f", [startDate timeIntervalSince1970]];
+        [params setObject:startString forKey:@"start"];
+    }
+    
+    if (endDate) {
+        NSString *endString = [NSString stringWithFormat:@"%.0f", [endDate timeIntervalSince1970]];
+        [params setObject:endString forKey:@"end"];
+    }
+    
+    return [self requestEventsForCalendar:calendar params:params];
+}
+
+#pragma mark KGORequestDelegate
+
+
+- (void)requestWillTerminate:(KGORequest *)request
+{
+    if (request == _groupsRequest) {
+        _groupsRequest = nil;
+        
+    } else { // events
+        NSString *category = [request.getParams objectForKey:@"category"];
+        [_eventsRequests removeObjectForKey:category];
+    }
+}
+
+/*
+// TODO: let delegate know of failure so UI can be adjusted accordingly
+- (void)request:(KGORequest *)request didFailWithError:(NSError *)error
+{
+    [[KGORequestManager sharedManager] showAlertForError:error];
+}
+*/
+- (void)request:(KGORequest *)request didReceiveResult:(id)result
+{
+    NSLog(@"%@", [result description]);
+    
+    if (request == _groupsRequest) {
+        //_groupsRequest = nil;
+        
+        NSInteger total = [result integerForKey:@"total"];
+        NSInteger returned = [result integerForKey:@"returned"];
+        if (total > returned) {
+            // TODO: implement paging
+        }
+        
+        //NSString *displayField = [result stringForKey:@"displayField" nilIfEmpty:YES];
+
+        NSMutableSet *oldGroupIDs = [NSMutableSet set];
+        NSArray *oldGroups = [[CoreDataManager sharedManager] objectsForEntity:KGOEntityNameCalendarGroup matchingPredicate:nil];
+        for (KGOCalendarGroup *aGroup in oldGroups) {
+            [oldGroupIDs addObject:aGroup.identifier];
+        }
+
+        NSArray *groups = [result arrayForKey:@"results"];
+        if (returned > groups.count)
+            returned = groups.count;
+
+        // TODO: deciding whether groupsDidChange based on just the group ID's
+        // will cause the delegate to ignore changes to group titles
+        // which isn't fatal but may reflect a delayed state in the UI
+        NSMutableArray *newGroups = [NSMutableArray array];
+        BOOL groupsDidChange = NO;
+        for (NSInteger i = 0; i < returned; i++) {
+            NSDictionary *aDict = [groups objectAtIndex:i];
+            KGOCalendarGroup *group = [KGOCalendarGroup groupWithDictionary:aDict];
+            group.sortOrder = [NSNumber numberWithInt:i];
+            [newGroups addObject:group];
+            if ([oldGroupIDs containsObject:group.identifier]) {
+                [oldGroupIDs removeObject:group.identifier];
+            } else {
+                groupsDidChange = YES;
+            }
+        }
+        
+        for (NSString *oldGroupID in oldGroupIDs) {
+            KGOCalendarGroup *group = [KGOCalendarGroup groupWithID:oldGroupID];
+            [[CoreDataManager sharedManager] deleteObject:group];
+            groupsDidChange = YES;
+        }
+
+        if (newGroups.count) {
+            [_currentGroup release];
+            _currentGroup = [[newGroups objectAtIndex:0] retain];
+        }
+
+        if (groupsDidChange) {
+            [[CoreDataManager sharedManager] saveData];
+            [self.delegate groupsDidChange:newGroups];
+        }
+        
+    } else if ([request.path isEqualToString:@"events"]) { // events
+        
+        NSString *calendarID = [request.getParams objectForKey:@"calendar"];
+        KGOCalendar *calendar = [KGOCalendar calendarWithID:calendarID];
+
+        // search results boilerplate
+        NSInteger total = [result integerForKey:@"total"];
+        NSInteger returned = [result integerForKey:@"returned"];
+        if (total > returned) {
+            // TODO: implement paging
+        }
+        
+        //NSString *displayField = [result stringForKey:@"displayField" nilIfEmpty:YES];
+        
+        NSArray *eventDicts = [result arrayForKey:@"results"];
+        if (returned > eventDicts.count)
+            returned = eventDicts.count;
+        
+        NSMutableArray *array = [NSMutableArray array];
+        for (NSInteger i = 0; i < returned; i++) {
+            NSDictionary *aDict = [eventDicts objectAtIndex:i];
+            KGOEventWrapper *event = [[KGOEventWrapper alloc] initWithDictionary:aDict];
+            [event addCalendar:calendar];
+            [array addObject:event];
+        }
+        [self.delegate eventsDidChange:array calendar:calendar];
+    }
+}
+
+- (void)dealloc
+{
+    if (_groupsRequest) {
+        [_groupsRequest cancel];
+    }
+    
+    [_categoriesRequests enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [(KGORequest *)obj cancel];
+    }];
+    [_categoriesRequests release];
+     
+    [_eventsRequests enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [(KGORequest *)obj cancel];
+    }];
+    [_eventsRequests release];
+    
+    [_currentGroup release];
+    
+    [super dealloc];
 }
 
 @end

@@ -1,15 +1,18 @@
 #import <UIKit/UIKit.h>
 
+extern NSString * const KGOUserPreferencesKey;
+extern NSString * const KGOUserPreferencesDidChangeNotification;
+
 extern NSString * const KGOAccessoryTypeNone;
 extern NSString * const KGOAccessoryTypeBlank;
 extern NSString * const KGOAccessoryTypeCheckmark;
 extern NSString * const KGOAccessoryTypeChevron;
 
 typedef enum {
-	KGOTableCellStyleDefault = UITableViewCellStyleDefault,
-	KGOTableCellStyleSubtitle = UITableViewCellStyleSubtitle,
-	KGOTableCellStyleValue1 = UITableViewCellStyleValue1,
-	KGOTableCellStyleValue2 = UITableViewCellStyleValue2,
+	KGOTableCellStyleDefault,
+	KGOTableCellStyleValue1,
+	KGOTableCellStyleValue2,
+	KGOTableCellStyleSubtitle,
 	KGOTableCellStyleBodyText,
 	KGOTableCellStyleURL
 } KGOTableCellStyle;
@@ -33,10 +36,16 @@ typedef enum {
 
 #pragma mark generic
 
+- (UIFont *)defaultFont;
+- (UIFont *)defaultBoldFont;
+- (UIFont *)defaultSmallFont;
+- (UIFont *)defaultSmallBoldFont;
+
 - (UIFont *)fontForContentTitle;
 - (UIColor *)textColorForContentTitle;
 - (UIFont *)fontForBodyText;
 - (UIColor *)textColorForBodyText;
+- (CGFloat)defaultFontSize;
 
 - (UIColor *)backgroundColorForApplication;
 - (UIColor *)linkColor;

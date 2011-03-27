@@ -1,14 +1,14 @@
-#import "KGOContact.h"
-#import "CoreDataManager.h"
+#import "KGOContactInfo.h"
 
 @class KGOPerson;
 
-@interface PersonContact : KGOContact
+@interface PersonContact : KGOContactInfo
 {
 }
 
 @property (nonatomic, retain) KGOPerson * person;
 
++ (NSArray *)directoryContacts;
 + (PersonContact *)personContactWithDictionary:(NSDictionary *)aDict type:(NSString *)aType;
 - (NSDictionary *)dictionary;
 
