@@ -163,57 +163,57 @@
 	</array>
 	<key>OrganizationName</key>
 	<string>Harvard</string>
-	<key>Security</key>
-	<dict/>
 	<key>Servers</key>
 	<dict>
 		<key>Development</key>
 		<dict>
+			<key>APIPath</key>
+			<string>rest</string>
 			<key>Host</key>
 			<string>localhost</string>
 			<key>PathExtension</key>
 			<string></string>
-			<key>APIPath</key>
-			<string>rest</string>
-			<key>UseHTTPS</key>
-			<false/>
-		</dict>
-		<key>Testing</key>
-		<dict>
-			<key>Host</key>
-			<string>localhost</string>
-			<key>PathExtension</key>
-			<string></string>
-			<key>APIPath</key>
-			<string>rest</string>
-			<key>UseHTTPS</key>
-			<false/>
-		</dict>
-		<key>Staging</key>
-		<dict>
-			<key>Host</key>
-			<string>staging.harvard-example.edu</string>
-			<key>PathExtension</key>
-			<string></string>
-			<key>APIPath</key>
-			<string>rest</string>
 			<key>UseHTTPS</key>
 			<false/>
 		</dict>
 		<key>Production</key>
 		<dict>
+			<key>APIPath</key>
+			<string>rest</string>
 			<key>Host</key>
 			<string>www.harvard-example.edu</string>
 			<key>PathExtension</key>
 			<string></string>
+			<key>UseHTTPS</key>
+			<false/>
+		</dict>
+		<key>Staging</key>
+		<dict>
 			<key>APIPath</key>
 			<string>rest</string>
+			<key>Host</key>
+			<string>staging.harvard-example.edu</string>
+			<key>PathExtension</key>
+			<string></string>
+			<key>UseHTTPS</key>
+			<false/>
+		</dict>
+		<key>Testing</key>
+		<dict>
+			<key>APIPath</key>
+			<string>rest</string>
+			<key>Host</key>
+			<string>localhost</string>
+			<key>PathExtension</key>
+			<string></string>
 			<key>UseHTTPS</key>
 			<false/>
 		</dict>
 	</dict>
 	<key>SocialMedia</key>
 	<dict>
+		<key>Email</key>
+		<dict/>
 		<key>bit.ly</key>
 		<dict>
 			<key>APIKey</key>

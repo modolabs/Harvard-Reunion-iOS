@@ -3,6 +3,7 @@
 #import "TwitterModule.h"
 #import "Foundation+KGOAdditions.h"
 #import "UIKit+KGOAdditions.h"
+#import "TwitterViewController.h"
 
 @implementation TwitterFeedViewController
 
@@ -29,7 +30,12 @@
 }
 
 - (void)loginButtonPressed:(UIButton *)sender {
-    ;
+
+    // TODO: this isn't really what we want -- we want the
+    // social media controller to handle this for us
+    TwitterViewController *twitterVC = [[[TwitterViewController alloc] init] autorelease];
+    [KGO_SHARED_APP_DELEGATE() presentAppModalViewController:twitterVC animated:YES];
+    
 }
 
 - (void)sendButtonPressed:(UIButton *)sender {
@@ -54,6 +60,7 @@
                                                  name:TwitterStatusDidUpdateNotification
                                                object:nil];
     
+    // TODO: don't hard code UI settings
     _loginView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 70)];
     _loginView.backgroundColor = [UIColor colorWithHexString:@"99CCFF"];
     UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(20, 20, 180, 30)] autorelease];
@@ -61,6 +68,7 @@
     label.backgroundColor = [UIColor clearColor];
     UIButton *loginButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [loginButton setTitle:NSLocalizedString(@"Log in", nil) forState:UIControlStateNormal];
+    [loginButton addTarget:self action:@selector(loginButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     loginButton.frame = CGRectMake(220, 20, 80, 30);
     [_loginView addSubview:label];
     [_loginView addSubview:loginButton];
