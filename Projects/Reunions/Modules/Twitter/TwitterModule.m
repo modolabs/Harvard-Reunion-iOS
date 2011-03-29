@@ -122,7 +122,7 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
 }
 
 - (void)requestStatusUpdates:(NSTimer *)aTimer {
-    [_twitterSearch searchTwitterHashtag:@"sxsw"];
+    [_twitterSearch searchTwitterHashtag:@"testhvd01"];
 }
 
 - (void)twitterSearch:(TwitterSearch *)twitterSearch didReceiveSearchResults:(NSArray *)results {
