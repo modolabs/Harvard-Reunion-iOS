@@ -81,6 +81,8 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
 #pragma mark polling
 
 - (void)startPollingStatusUpdates {
+    [[KGOSocialMediaController sharedController] startupTwitter];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(hideChatBubble:)
                                                  name:FacebookStatusDidUpdateNotification
@@ -115,6 +117,8 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
         [_twitterSearch release];
         _twitterSearch = nil;
     }
+
+    [[KGOSocialMediaController sharedController] shutdownTwitter];
 }
 
 - (void)requestStatusUpdates:(NSTimer *)aTimer {

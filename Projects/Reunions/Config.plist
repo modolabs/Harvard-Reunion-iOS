@@ -30,42 +30,6 @@
 		</dict>
 		<dict>
 			<key>class</key>
-			<string>LoginModule</string>
-			<key>longName</key>
-			<string>Login</string>
-			<key>secondary</key>
-			<true/>
-			<key>shortName</key>
-			<string>Login</string>
-			<key>tag</key>
-			<string>login</string>
-		</dict>
-		<dict>
-			<key>class</key>
-			<string>ScheduleModule</string>
-			<key>longName</key>
-			<string>Schedule</string>
-			<key>secondary</key>
-			<false/>
-			<key>shortName</key>
-			<string>Schedule</string>
-			<key>tag</key>
-			<string>schedule</string>
-		</dict>
-		<dict>
-			<key>class</key>
-			<string>MapModule</string>
-			<key>longName</key>
-			<string>Map</string>
-			<key>secondary</key>
-			<false/>
-			<key>shortName</key>
-			<string>Map</string>
-			<key>tag</key>
-			<string>map</string>
-		</dict>
-		<dict>
-			<key>class</key>
 			<string>PhotosModule</string>
 			<key>longName</key>
 			<string>Photos</string>
@@ -87,30 +51,6 @@
 			<string>Videos</string>
 			<key>tag</key>
 			<string>video</string>
-		</dict>
-		<dict>
-			<key>class</key>
-			<string>AboutModule</string>
-			<key>longName</key>
-			<string>About</string>
-			<key>secondary</key>
-			<false/>
-			<key>shortName</key>
-			<string>About</string>
-			<key>tag</key>
-			<string>content</string>
-		</dict>
-		<dict>
-			<key>class</key>
-			<string>NewsModule</string>
-			<key>longName</key>
-			<string>News</string>
-			<key>secondary</key>
-			<false/>
-			<key>shortName</key>
-			<string>News</string>
-			<key>tag</key>
-			<string>news</string>
 		</dict>
 		<dict>
 			<key>class</key>
@@ -159,6 +99,18 @@
 			<string>Facebook</string>
 			<key>tag</key>
 			<string>facebook</string>
+		</dict>
+		<dict>
+			<key>class</key>
+			<string>SettingsModule</string>
+			<key>longName</key>
+			<string>Settings</string>
+			<key>secondary</key>
+			<false/>
+			<key>shortName</key>
+			<string>Settings</string>
+			<key>tag</key>
+			<string>settings</string>
 		</dict>
 	</array>
 	<key>OrganizationName</key>
@@ -212,8 +164,6 @@
 	</dict>
 	<key>SocialMedia</key>
 	<dict>
-		<key>Email</key>
-		<dict/>
 		<key>bit.ly</key>
 		<dict>
 			<key>APIKey</key>
@@ -221,6 +171,8 @@
 			<key>Username</key>
 			<string></string>
 		</dict>
+		<key>Email</key>
+		<dict/>
 		<key>Facebook</key>
 		<dict>
 			<key>APIKey</key>

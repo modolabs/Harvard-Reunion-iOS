@@ -1,41 +1,42 @@
 #import "ScheduleModule.h"
-#import "ScheduleViewController.h"
+#import "ScheduleHomeViewController.h"
+#import "CalendarDetailViewController.h"
 
 @implementation ScheduleModule
-
-- (void)dealloc {
-    [super dealloc];
-}
-
-#pragma mark Search
-
-- (BOOL)supportsFederatedSearch {
-    return YES;
-}
-
-- (void)performSearchWithText:(NSString *)searchText params:(NSDictionary *)params delegate:(id<KGOSearchDelegate>)delegate {
-
-}
-
-#pragma mark Data
-
-- (NSArray *)objectModelNames {
-    return nil;
-}
-
-#pragma mark Navigation
-
-- (NSArray *)registeredPageNames {
-    return nil;
-}
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
     UIViewController *vc = nil;
     if ([pageName isEqualToString:LocalPathPageNameHome]) {
-        vc = [[[ScheduleViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
+        ScheduleHomeViewController *calendarVC = [[[ScheduleHomeViewController alloc] initWithNibName:@"CalendarHomeViewController"
+                                                                                               bundle:nil] autorelease];
+        calendarVC.moduleTag = self.tag;
+        vc = calendarVC;
+        
+    } else if ([pageName isEqualToString:LocalPathPageNameSearch]) {
+        ScheduleHomeViewController *calendarVC = [[[ScheduleHomeViewController alloc] initWithNibName:@"CalendarHomeViewController"
+                                                                                               bundle:nil] autorelease];
+        calendarVC.moduleTag = self.tag;
+        
+        NSString *searchText = [params objectForKey:@"q"];
+        if (searchText) {
+            [calendarVC setSearchTerms:searchText];
+        }
+        
+        vc = calendarVC;
+        
+    } else if ([pageName isEqualToString:LocalPathPageNameDetail]) {
+        CalendarDetailViewController *detailVC = [[[CalendarDetailViewController alloc] init] autorelease];
+        detailVC.indexPath = [params objectForKey:@"currentIndexPath"];
+        detailVC.eventsBySection = [params objectForKey:@"eventsBySection"];
+        detailVC.sections = [params objectForKey:@"sections"];
+        vc = detailVC;
+        
+    } else if ([pageName isEqualToString:LocalPathPageNameCategoryList]) {
+        
+    } else if ([pageName isEqualToString:LocalPathPageNameItemList]) {
+        
     }
     return vc;
 }
 
 @end
-

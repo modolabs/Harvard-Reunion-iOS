@@ -1,8 +1,7 @@
-#import "KGOModule.h"
+#import "CalendarModule.h"
 
-@interface ScheduleModule : KGOModule {
-
+@interface ScheduleModule : CalendarModule {
+    
 }
 
 @end
-

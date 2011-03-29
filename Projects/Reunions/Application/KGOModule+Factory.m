@@ -1,6 +1,7 @@
 #import "KGOModule+Factory.h"
 #import "KGOModule.h"
 #import "AboutModule.h"
+#import "CalendarModule.h"
 #import "FacebookModule.h"
 #import "ExternalURLModule.h"
 #import "HomeModule.h"
@@ -19,18 +20,40 @@
 + (KGOModule *)moduleWithDictionary:(NSDictionary *)args {
     KGOModule *module = nil;
     NSString *className = [args objectForKey:@"class"];
+    if (!className) {
+        NSDictionary *moduleMap = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   @"AboutModule", @"about",
+                                   @"ScheduleModule", @"schedule",
+                                   @"HomeModule", @"home",
+                                   @"LoginModule", @"login",
+                                   @"MapModule", @"map",
+                                   @"NewsModule", @"news",
+                                   @"PeopleModule", @"people",
+                                   @"SettingsModule", @"customize",
+                                   //@"ContentModule", @"content",
+                                   nil];
+        
+        NSString *serverID = [args objectForKey:@"id"];
+        className = [moduleMap objectForKey:serverID];
+    }
     
-    if ([className isEqualToString:@"AboutModule"])
-        module = [[[AboutModule alloc] initWithDictionary:args] autorelease];
+    //if ([className isEqualToString:@"AboutModule"])
+    //    module = [[[AboutModule alloc] initWithDictionary:args] autorelease];
     
-    else if ([className isEqualToString:@"FacebookModule"])
-        module = [[[FacebookModule alloc] initWithDictionary:args] autorelease];
+    //else if ([className isEqualToString:@"ContentModule"])
+    //    module = [[[ContentModule alloc] initWithDictionary:args] autorelease];
+    
+    if ([className isEqualToString:@"ScheduleModule"])
+        module = [[[ScheduleModule alloc] initWithDictionary:args] autorelease];
+    
+    else if ([className isEqualToString:@"HomeModule"])
+        module = [[[HomeModule alloc] initWithDictionary:args] autorelease];
     
     else if ([className isEqualToString:@"ExternalURLModule"])
         module = [[[ExternalURLModule alloc] initWithDictionary:args] autorelease];
     
-    else if ([className isEqualToString:@"HomeModule"])
-        module = [[[HomeModule alloc] initWithDictionary:args] autorelease];
+    else if ([className isEqualToString:@"FacebookModule"])
+        module = [[[FacebookModule alloc] initWithDictionary:args] autorelease];
     
     else if ([className isEqualToString:@"LoginModule"])
         module = [[[LoginModule alloc] initWithDictionary:args] autorelease];
@@ -46,9 +69,6 @@
     
     else if ([className isEqualToString:@"PhotosModule"])
         module = [[[PhotosModule alloc] initWithDictionary:args] autorelease];
-    
-    else if ([className isEqualToString:@"ScheduleModule"])
-        module = [[[ScheduleModule alloc] initWithDictionary:args] autorelease];
     
     else if ([className isEqualToString:@"SettingsModule"])
         module = [[[SettingsModule alloc] initWithDictionary:args] autorelease];
