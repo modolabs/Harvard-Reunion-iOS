@@ -157,7 +157,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     NSArray *data = [result arrayForKey:@"data"];
     for (id aGroup in data) {
         // TODO: get group names from server
-        if ([[aGroup objectForKey:@"name"] isEqualToString:@"Modo Labs UX"]) {
+        if ([[aGroup objectForKey:@"name"] isEqualToString:@"Modo Reunion Test"]) {
 
             [_gid release];
             _gid = [[aGroup objectForKey:@"id"] retain];
