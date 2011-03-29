@@ -126,7 +126,7 @@
 			<key>PathExtension</key>
 			<string>build3</string>
 			<key>UseHTTPS</key>
-			<false/>
+			<true/>
 		</dict>
 		<key>Production</key>
 		<dict>
