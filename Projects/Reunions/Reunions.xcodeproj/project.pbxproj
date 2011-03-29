@@ -175,8 +175,6 @@
 		EB99B28412F377560065EE93 /* libTwitter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB99B08E12F36F3D0065EE93 /* libTwitter.a */; };
 		EB99B67212F3A8D80065EE93 /* libjson.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB99B39312F37FDC0065EE93 /* libjson.a */; };
 		EB99B67912F3A8EE0065EE93 /* libOAuth.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB99B67812F3A8E40065EE93 /* libOAuth.a */; };
-		EB9DDFF413413A2700598644 /* LogoutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB9DDFF213413A2400598644 /* LogoutViewController.m */; };
-		EB9DDFF513413A2700598644 /* LogoutViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB9DDFF313413A2500598644 /* LogoutViewController.xib */; };
 		EB9DDFF913416C7000598644 /* ScheduleModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB9DDFF813416C7000598644 /* ScheduleModule.m */; };
 		EB9DDFFD13416C9100598644 /* ScheduleHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB9DDFFB13416C9100598644 /* ScheduleHomeViewController.m */; };
 		EB9DE00113416D0C00598644 /* ScheduleDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB9DE00013416D0A00598644 /* ScheduleDetailViewController.m */; };
@@ -523,9 +521,6 @@
 		EB99B38C12F37FDC0065EE93 /* JSON.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JSON.xcodeproj; path = JSON/JSON.xcodeproj; sourceTree = "<group>"; };
 		EB99B67312F3A8E40065EE93 /* OAuthConsumer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthConsumer.xcodeproj; path = OAuth/OAuthConsumer.xcodeproj; sourceTree = "<group>"; };
 		EB99B85E12F3AEC10065EE93 /* usr */ = {isa = PBXFileReference; lastKnownFileType = folder; path = usr; sourceTree = "<group>"; };
-		EB9DDFF113413A2400598644 /* LogoutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogoutViewController.h; sourceTree = "<group>"; };
-		EB9DDFF213413A2400598644 /* LogoutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogoutViewController.m; sourceTree = "<group>"; };
-		EB9DDFF313413A2500598644 /* LogoutViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LogoutViewController.xib; sourceTree = "<group>"; };
 		EB9DDFF713416C7000598644 /* ScheduleModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduleModule.h; sourceTree = "<group>"; };
 		EB9DDFF813416C7000598644 /* ScheduleModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduleModule.m; sourceTree = "<group>"; };
 		EB9DDFFA13416C9100598644 /* ScheduleHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduleHomeViewController.h; sourceTree = "<group>"; };
@@ -1002,9 +997,6 @@
 				EB181717130CC074003728FF /* LoginModule.m */,
 				EBB120AB1338104B00A4BD1D /* ModalLoginWebViewController.h */,
 				EBB120AC1338104B00A4BD1D /* ModalLoginWebViewController.m */,
-				EB9DDFF113413A2400598644 /* LogoutViewController.h */,
-				EB9DDFF213413A2400598644 /* LogoutViewController.m */,
-				EB9DDFF313413A2500598644 /* LogoutViewController.xib */,
 			);
 			name = Login;
 			path = ../../Modules/Login;
@@ -1399,7 +1391,6 @@
 				EB0339541340E47D00ACF2BB /* CalendarHomeViewController.xib in Resources */,
 				EB0339601340E47D00ACF2BB /* MapHomeViewController-iPad.xib in Resources */,
 				EB0339621340E47D00ACF2BB /* MapHomeViewController.xib in Resources */,
-				EB9DDFF513413A2700598644 /* LogoutViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1550,7 +1541,6 @@
 				EB03396F1340E47D00ACF2BB /* StoryGalleryViewController.m in Sources */,
 				EB0339701340E47D00ACF2BB /* StoryImageView.m in Sources */,
 				EB0339711340E47D00ACF2BB /* StoryListViewController.m in Sources */,
-				EB9DDFF413413A2700598644 /* LogoutViewController.m in Sources */,
 				EB9DDFF913416C7000598644 /* ScheduleModule.m in Sources */,
 				EB9DDFFD13416C9100598644 /* ScheduleHomeViewController.m in Sources */,
 				EB9DE00113416D0C00598644 /* ScheduleDetailViewController.m in Sources */,
