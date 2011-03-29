@@ -67,7 +67,7 @@
         }
         
         NSString *phone = [dictionary stringForKey:@"phone" nilIfEmpty:YES];
-        if (url) {
+        if (phone) {
             KGOAttendeeWrapper *attendee = [[[KGOAttendeeWrapper alloc] initWithDictionary:nil] autorelease];
             attendee.identifier = phone;
             KGOEventContactInfo *contactInfo = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:@"KGOEventContactInfo"];
@@ -78,7 +78,7 @@
         }
         
         NSString *email = [dictionary stringForKey:@"email" nilIfEmpty:YES];
-        if (url) {
+        if (email) {
             KGOAttendeeWrapper *attendee = [[[KGOAttendeeWrapper alloc] initWithDictionary:nil] autorelease];
             attendee.identifier = email;
             KGOEventContactInfo *contactInfo = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:@"KGOEventContactInfo"];
@@ -89,7 +89,6 @@
         }
         
         self.organizers = organizers;
-        NSLog(@"organizers: %@", organizers);
     }
     return self;
 }

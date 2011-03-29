@@ -122,9 +122,9 @@
 			<key>APIPath</key>
 			<string>rest</string>
 			<key>Host</key>
-			<string>localhost</string>
+			<string>haa-dev.modolabs.com</string>
 			<key>PathExtension</key>
-			<string></string>
+			<string>build3</string>
 			<key>UseHTTPS</key>
 			<false/>
 		</dict>
