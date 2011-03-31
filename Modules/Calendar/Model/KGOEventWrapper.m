@@ -192,7 +192,12 @@ bookmarked = _bookmarked;
     [[CoreDataManager sharedManager] saveData];
 }
 
-- (void)bookmark
+- (BOOL)isBookmarked
+{
+    return [self.KGOEvent.bookmarked boolValue];
+}
+
+- (void)addBookmark
 {
     if (!self.KGOEvent) {
         [self convertToKGOEvent];
@@ -200,7 +205,7 @@ bookmarked = _bookmarked;
     self.KGOEvent.bookmarked = [NSNumber numberWithBool:YES];
 }
 
-- (void)unbookmark
+- (void)removeBookmark
 {
     if (!self.KGOEvent) {
         self.KGOEvent.bookmarked = [NSNumber numberWithBool:NO];
@@ -230,7 +235,7 @@ bookmarked = _bookmarked;
     if (!self.attendees) {
         NSMutableSet *set = [NSMutableSet set];
         for (KGOEventAttendee *anAttendee in _kgoEvent.attendees) {
-            [set addObject:[[KGOAttendeeWrapper alloc] initWithKGOAttendee:anAttendee]];
+            [set addObject:[[[KGOAttendeeWrapper alloc] initWithKGOAttendee:anAttendee] autorelease]];
         }
         self.attendees = set;
     }    

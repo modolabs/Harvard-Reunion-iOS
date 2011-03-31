@@ -8,13 +8,15 @@
 - (void)clearEvents;
 - (void)clearCalendars;
 - (void)setupTabstripButtons;
+- (void)requestEventsForCurrentCalendar:(NSDate *)date;
+- (void)loadTableViewWithStyle:(UITableViewStyle)style;
 
 @end
 
 
 @implementation CalendarHomeViewController
 
-@synthesize searchTerms, dataManager, moduleTag, currentCalendar = _currentCalendar;
+@synthesize searchTerms, dataManager, moduleTag, showsGroups, currentCalendar = _currentCalendar;
 
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -64,11 +66,8 @@
 {
     [super viewDidLoad];
     
-    self.title = @"Events";
-    
     _currentGroupIndex = NSNotFound;
     
-    _tabstrip.delegate = self;
     _datePager.delegate = self;
     
     if (!self.dataManager) {
@@ -76,9 +75,17 @@
         self.dataManager.delegate = self;
         self.dataManager.moduleTag = self.moduleTag;
     }
-    [self.dataManager requestGroups];
+
+    if (self.showsGroups) {
+        _tabstrip.delegate = self;
+        [self.dataManager requestGroups]; // response to this will populate the tabstrip
+    } else {
+        _datePager.frame = _tabstrip.frame; // TODO: this might not be correct
+        [_tabstrip removeFromSuperview];
+    }
     
     [_datePager setDate:[NSDate date]];
+    [self loadTableViewWithStyle:UITableViewStylePlain];
 }
 
 - (void)viewDidUnload
@@ -123,24 +130,30 @@
             style = UITableViewStyleGrouped;
             // TODO: sort
             _currentCategories = [[group.calendars allObjects] retain];
+            _datePager.hidden = YES;
         } else {
             style = UITableViewStylePlain;
+            _datePager.hidden = NO;
         }
         
-        CGRect frame = self.view.frame;
-        if ([_datePager isDescendantOfView:self.view]) {
-            frame.origin.y += _datePager.frame.size.height;
-            frame.size.height -= _datePager.frame.size.height;
-        }
-        if ([_tabstrip isDescendantOfView:self.view]) {
-            frame.origin.y += _tabstrip.frame.size.height;
-            frame.size.height -= _tabstrip.frame.size.height;
-        }
-
-        self.tableView = [self addTableViewWithFrame:frame style:style];
+        [self loadTableViewWithStyle:style];
         
         self.currentCalendar = (group.calendars.count > 1) ? nil : [group.calendars anyObject];
     }
+}
+
+- (void)loadTableViewWithStyle:(UITableViewStyle)style
+{
+    CGRect frame = self.view.frame;
+    if (!_datePager.hidden && [_datePager isDescendantOfView:self.view]) {
+        frame.origin.y += _datePager.frame.size.height;
+        frame.size.height -= _datePager.frame.size.height;
+    }
+    if (!_tabstrip.hidden && [_tabstrip isDescendantOfView:self.view]) {
+        frame.origin.y += _tabstrip.frame.size.height;
+        frame.size.height -= _tabstrip.frame.size.height;
+    }
+    self.tableView = [self addTableViewWithFrame:frame style:style];
 }
 
 // TODO: flesh out placeholder functions
@@ -173,7 +186,7 @@ static bool isOverOneHour(NSTimeInterval interval) {
         NSArray *sortedEvents = [events sortedArrayUsingDescriptors:sortDescriptors];
         KGOEventWrapper *firstEvent = [sortedEvents objectAtIndex:0];
         KGOEventWrapper *lastEvent = [sortedEvents lastObject];
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
         NSTimeInterval interval = [lastEvent.startDate timeIntervalSinceDate:firstEvent.startDate];
         if (isOverOneMonth(interval)) {
             [formatter setDateFormat:@"MMMM"];
@@ -222,8 +235,15 @@ static bool isOverOneHour(NSTimeInterval interval) {
     [_currentCalendar release];
     _currentCalendar = [currentCalendar retain];
     
+    [self requestEventsForCurrentCalendar:[NSDate date]];
+}
+
+- (void)requestEventsForCurrentCalendar:(NSDate *)date
+{
     if (_currentCalendar) {
-        [self.dataManager requestEventsForCalendar:_currentCalendar time:[NSDate date]];
+        self.tableView.hidden = YES;
+        [_loadingView startAnimating];
+        [self.dataManager requestEventsForCalendar:_currentCalendar time:date];
     }
 }
 
@@ -260,12 +280,7 @@ static bool isOverOneHour(NSTimeInterval interval) {
 
 - (void)pager:(KGODatePager *)pager didSelectDate:(NSDate *)date
 {
-    [_loadingView startAnimating];
-    self.tableView.hidden = YES;
-    
-    if (_currentCalendar) {
-        [self.dataManager requestEventsForCalendar:_currentCalendar time:date];
-    }
+    [self requestEventsForCurrentCalendar:date];
 }
 
 #pragma mark Table view methods

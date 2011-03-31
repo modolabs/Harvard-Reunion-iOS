@@ -11,35 +11,41 @@
 
 - (UIView *)tabbedControl:(KGOTabbedControl *)control containerViewAtIndex:(NSInteger)index {
     UIView *view = nil;
-    switch (index) {
-        case 0: {
-            break;
-        }
-        case 1: {
-            break;
-        }
-        default:
-            break;
+    NSString *title = [control titleForTabAtIndex:index];
+    if ([title isEqualToString:@"Photo"]) {
+
+    
+    } else if ([title isEqualToString:@"Details"]) {
+        UIWebView *webView = [[[UIWebView alloc] initWithFrame:CGRectMake(10, 10, self.tabViewContainer.frame.size.width - 20, self.tabViewContainer.frame.size.height - 20)] autorelease];
+        [webView loadHTMLString:self.placemark.info baseURL:nil];
+        webView.delegate = self;
+        view = webView;
     }
     return view;
 }
 
 - (NSArray *)itemsForTabbedControl:(KGOTabbedControl *)control {
-    return [NSArray arrayWithObjects:@"Photo", @"Details", nil];
+    NSMutableArray *tabs = [NSMutableArray array];
+    [tabs addObject:NSLocalizedString(@"Photo", nil)];
+    if (self.placemark.info) {
+        [tabs addObject:NSLocalizedString(@"Details", nil)];
+    }
+    return tabs;
 }
 
 #pragma mark KGODetailPager
 
 - (void)loadAnnotationContent {
     NSLog(@"%@", [self.placemark description]);
-    
-    _titleLabel.text = self.placemark.title;
+
+    self.tabViewHeader.detailItem = self.placemark;
+    //[self.tabViewHeader inflateSubviews];
     [self reloadTabContent];
 }
 
 - (void)pager:(KGODetailPager*)pager showContentForPage:(id<KGOSearchResult>)content {
     if ([content isKindOfClass:[KGOPlacemark class]]) {
-        self.placemark = content;
+        self.placemark = (KGOPlacemark *)content;
         [self loadAnnotationContent];
     }
 }
@@ -68,12 +74,9 @@
     if (self.pager) {
         self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:self.pager] autorelease];
     }
-    
-    UIFont *titleFont = [[KGOTheme sharedTheme] fontForContentTitle];
-    CGFloat width = self.view.frame.size.width - 80;
-    _titleLabel = [UILabel multilineLabelWithText:self.placemark.title font:titleFont width:width];
-    
-    [self.tabViewHeader addSubview:_titleLabel];
+
+    self.tabViewHeader.showsBookmarkButton = YES;
+    [self loadAnnotationContent];
 }
 
 

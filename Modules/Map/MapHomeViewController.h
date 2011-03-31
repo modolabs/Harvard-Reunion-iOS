@@ -5,7 +5,8 @@
 @class KGOSearchBar;
 @class MKMapView;
 
-@interface MapHomeViewController : UIViewController <MKMapViewDelegate, KGOSearchDisplayDelegate> {
+@interface MapHomeViewController : UIViewController <MKMapViewDelegate,
+KGOSearchDisplayDelegate, KGODetailPagerController> {
 	
 	IBOutlet KGOSearchBar *_searchBar;
 	IBOutlet KGOToolbar *_bottomBar;
@@ -44,5 +45,7 @@
 - (void)mapListSelectionChanged:(id)sender;
 
 - (void)mapTypeDidChange:(NSNotification *)aNotification;
+
++ (MKCoordinateRegion)regionForAnnotations:(NSArray *)annotations restrictedToClass:(Class)restriction;
 
 @end

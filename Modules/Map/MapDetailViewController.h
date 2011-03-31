@@ -4,10 +4,7 @@
 
 @class KGOPlacemark;
 
-@interface MapDetailViewController : KGOTabbedViewController <KGODetailPagerDelegate> {
-    
-    UILabel *_titleLabel;
-    UIView *_contentView;
+@interface MapDetailViewController : KGOTabbedViewController <KGODetailPagerDelegate, UIWebViewDelegate> {
     
 }
 

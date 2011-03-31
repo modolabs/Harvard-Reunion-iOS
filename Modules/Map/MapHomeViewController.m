@@ -3,6 +3,7 @@
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "MapModule.h"
 #import "MapSettingsViewController.h"
+#import "KGOBookmarksViewController.h"
 #import "KGOTheme.h"
 #import "Foundation+KGOAdditions.h"
 #import "KGOMapCategory.h"
@@ -10,6 +11,7 @@
 #import "MapKit+KGOAdditions.h"
 #import "UIKit+KGOAdditions.h"
 #import "KGOToolbar.h"
+#import "KGOPlacemark.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation MapHomeViewController
@@ -144,17 +146,24 @@
     } copy] autorelease];
     
     categoryVC.categoriesRequest.handler = createMapCategories;
-	[KGO_SHARED_APP_DELEGATE() presentAppModalViewController:categoryVC animated:YES];
+	[KGO_SHARED_APP_DELEGATE() presentAppModalNavigationController:categoryVC animated:YES];
 }
 
 - (IBAction)bookmarksButtonPressed {
+    
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"bookmarked = YES"];
+    NSArray *array = [[CoreDataManager sharedManager] objectsForEntity:KGOPlacemarkEntityName matchingPredicate:pred];
+    KGOBookmarksViewController *vc = [[[KGOBookmarksViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
+    vc.bookmarkedItems = array;
+    vc.searchDisplayDelegate = self;
+    [KGO_SHARED_APP_DELEGATE() presentAppModalNavigationController:vc animated:YES];
 }
 
 - (IBAction)settingsButtonPressed {
 	MapSettingsViewController *vc = [[[MapSettingsViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
     vc.title = @"Settings";
     vc.view.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
-	[KGO_SHARED_APP_DELEGATE() presentAppModalViewController:vc animated:YES];
+	[KGO_SHARED_APP_DELEGATE() presentAppModalNavigationController:vc animated:YES];
 }
 
 #pragma mark Map/List
@@ -222,6 +231,45 @@
 	[_mapListToggle setEnabled:NO forSegmentAtIndex:1];
 }
 
+#pragma mark MKMapViewDelegate
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation
+{
+    MKAnnotationView *view = nil;
+    if (![annotation isKindOfClass:[MKUserLocation class]]) {
+        static NSString *AnnotationIdentifier = @"adfgweg";
+        view = [mapView dequeueReusableAnnotationViewWithIdentifier:AnnotationIdentifier];
+        if (!view) {
+            view = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationIdentifier] autorelease];
+            view.canShowCallout = YES;
+            view.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        }
+    }
+    return view;
+}
+
+- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control
+{
+    id<MKAnnotation> annotation = view.annotation;
+    if ([annotation conformsToProtocol:@protocol(KGOSearchResult)]) {
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:annotation, @"place", self, @"pagerController", nil];
+        KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
+        [appDelegate showPage:LocalPathPageNameDetail forModuleTag:MapTag params:params];
+    }
+}
+
+#pragma mark KGODetailPagerController
+
+- (id<KGOSearchResult>)pager:(KGODetailPager *)pager contentForPageAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self.annotations objectAtIndex:indexPath.row];
+}
+
+- (NSInteger)pager:(KGODetailPager *)pager numberOfPagesInSection:(NSInteger)section
+{
+    return self.annotations.count;
+}
+
 #pragma mark SearchDisplayDelegate
 
 - (BOOL)searchControllerShouldShowSuggestions:(KGOSearchDisplayController *)controller {
@@ -237,9 +285,17 @@
 }
 
 - (void)searchController:(KGOSearchDisplayController *)controller didSelectResult:(id<KGOSearchResult>)aResult {
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:aResult, @"place", controller, @"searchController", nil];
-    KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
-    [appDelegate showPage:LocalPathPageNameDetail forModuleTag:MapTag params:params];
+    // TODO: this is depending on the incorrect use of KGOSearchDisplayDelegate
+    // in KGOBookmarksViewController and needs to be fixed when that is fixed.
+    if (controller) {
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:aResult, @"place", controller, @"pagerController", nil];
+        KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
+        [appDelegate showPage:LocalPathPageNameDetail forModuleTag:MapTag params:params];
+
+    } else if ([aResult conformsToProtocol:@protocol(MKAnnotation)]) {
+        id<MKAnnotation> annotation = (id<MKAnnotation>)aResult;
+        [_mapView addAnnotation:annotation];
+    }
 }
 
 - (BOOL)searchControllerShouldLinkToMap:(KGOSearchDisplayController *)controller {
@@ -260,6 +316,8 @@
 			[_mapView addAnnotation:annotation];
 		}
 	}
+    
+    _mapView.region = [MapHomeViewController regionForAnnotations:_mapView.annotations restrictedToClass:[KGOPlacemark class]];
 	
 	_searchResultsTableView = tableView;
 }
@@ -278,6 +336,40 @@
 	}
 
 	_searchResultsTableView = nil;
+}
+
+// this is about 1km at the equator
+#define MINIMUM_COORDINATE_DELTA 0.01
+
++ (MKCoordinateRegion)regionForAnnotations:(NSArray *)annotations restrictedToClass:(Class)restriction
+{
+    double minLat = 90;
+    double maxLat = -90;
+    double minLon = 180;
+    double maxLon = -180;
+
+    for (id<MKAnnotation> annotation in annotations) {
+        if (!restriction || [annotation isKindOfClass:restriction]) {
+            CLLocationCoordinate2D coord = annotation.coordinate;
+            if (coord.latitude > maxLat)  maxLat = coord.latitude;
+            if (coord.longitude > maxLon) maxLon = coord.longitude;
+            if (coord.latitude < minLat)  minLat = coord.latitude;
+            if (coord.longitude < minLon) minLon = coord.longitude;
+        }
+    }
+    
+    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(0, 0);
+    MKCoordinateSpan span = MKCoordinateSpanMake(0, 0);
+    
+    if (maxLat >= minLat && maxLon >= minLon) {
+        center.latitude = (minLat + maxLat) / 2;
+        center.longitude = (minLon + maxLon) / 2;
+        
+        span.latitudeDelta = fmax((maxLat - minLat) * 1.4, MINIMUM_COORDINATE_DELTA);
+        span.longitudeDelta = fmax((maxLon - minLon) * 1.4, MINIMUM_COORDINATE_DELTA);
+    }
+    
+    return MKCoordinateRegionMake(center, span);
 }
 
 @end

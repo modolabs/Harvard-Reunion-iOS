@@ -57,12 +57,11 @@ typedef enum {
 @end
 
 
-
-// TODO: add arguments for different modal styles for ipad
 @interface KGOAppDelegate (AppModalViewController)
 
 - (void)setupAppModalHolder;
 - (void)presentAppModalViewController:(UIViewController *)viewController animated:(BOOL)animated;
+- (void)presentAppModalNavigationController:(UIViewController *)viewController animated:(BOOL)animated;
 - (void)dismissAppModalViewControllerAnimated:(BOOL)animated;
 
 @end

@@ -1,9 +1,11 @@
 #import <UIKit/UIKit.h>
 #import "KGOShareButtonController.h"
+#import "KGODetailPageHeaderView.h"
 
 @class KGOEventWrapper;
 
-@interface EventDetailTableView : UITableView <UITableViewDelegate, UITableViewDataSource, KGOShareButtonDelegate> {
+@interface EventDetailTableView : UITableView <UITableViewDelegate,
+UITableViewDataSource, KGOShareButtonDelegate, KGODetailPageHeaderDelegate> {
     
     NSArray *_sections;
     KGOEventWrapper *_event;
@@ -12,14 +14,11 @@
     UIButton *_bookmarkButton;
     
     KGOShareButtonController *_shareController;
+    
+    KGODetailPageHeaderView *_headerView;
+    UILabel *_descriptionLabel;
 }
 
 @property (nonatomic, retain) KGOEventWrapper *event;
-
-- (void)showBookmarkButton;
-- (void)showShareButton;
-
-- (void)hideBookmarkButton;
-- (void)hideShareButton;
 
 @end
