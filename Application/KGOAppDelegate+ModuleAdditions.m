@@ -34,7 +34,9 @@
     if (!homeData) {
         homeData = [NSDictionary dictionaryWithObjectsAndKeys:
                     @"HomeModule", @"class",
-                    @"home", @"tag", nil];
+                    @"home", @"tag",
+                    @"hidden", [NSNumber numberWithBool:YES],
+                    nil];
     }
     KGOModule *homeModule = [KGOModule moduleWithDictionary:homeData];
 
@@ -151,6 +153,10 @@
     if (module) {
         UIViewController *vc = [module modulePage:pageName params:params];
         if (vc) {
+            // storing mainly for calling viewWillAppear on modal transitions,
+            // so assuming it's never deallocated when we try to access it
+            _visibleViewController = vc;
+            
             if (_visibleModule != module) {
                 [_visibleModule willBecomeHidden];
                 [module willBecomeVisible];
