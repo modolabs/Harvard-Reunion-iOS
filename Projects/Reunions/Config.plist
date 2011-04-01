@@ -21,6 +21,8 @@
 	<key>Modules</key>
 	<array>
 		<dict>
+			<key>hidden</key>
+			<true/>
 			<key>class</key>
 			<string>HomeModule</string>
 			<key>shortName</key>
@@ -112,6 +114,14 @@
 			<key>tag</key>
 			<string>settings</string>
 		</dict>
+		<dict>
+			<key>class</key>
+			<string>FoursquareModule</string>
+			<key>tag</key>
+			<string>foursquare</string>
+			<key>hidden</key>
+			<true/>
+		</dict>
 	</array>
 	<key>OrganizationName</key>
 	<string>Harvard</string>
@@ -164,6 +174,13 @@
 	</dict>
 	<key>SocialMedia</key>
 	<dict>
+		<key>Foursquare</key>
+		<dict>
+			<key>ClientID</key>
+			<string></string>
+			<key>ClientSecret</key>
+			<string></string>
+		</dict>
 		<key>bit.ly</key>
 		<dict>
 			<key>APIKey</key>

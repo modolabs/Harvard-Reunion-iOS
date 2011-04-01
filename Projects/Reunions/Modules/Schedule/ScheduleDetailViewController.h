@@ -1,7 +1,6 @@
-#import <UIKit/UIKit.h>
+#import "CalendarDetailViewController.h"
 
-
-@interface ScheduleDetailViewController : UIViewController {
+@interface ScheduleDetailViewController : CalendarDetailViewController {
     
 }
 

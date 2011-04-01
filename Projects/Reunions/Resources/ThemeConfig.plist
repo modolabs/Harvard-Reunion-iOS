@@ -76,7 +76,7 @@
 		<key>TableFooter</key>
 		<dict>
 			<key>color</key>
-			<string>#505050</string>
+			<string>#FFFFFF</string>
 			<key>size</key>
 			<integer>-3</integer>
 		</dict>

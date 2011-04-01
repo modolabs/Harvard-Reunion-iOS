@@ -2,8 +2,9 @@
 #import "KGOModule.h"
 #import "AboutModule.h"
 #import "CalendarModule.h"
-#import "FacebookModule.h"
 #import "ExternalURLModule.h"
+#import "FacebookModule.h"
+#import "FoursquareModule.h"
 #import "HomeModule.h"
 #import "LoginModule.h"
 #import	"MapModule.h"
@@ -24,6 +25,7 @@
         NSDictionary *moduleMap = [NSDictionary dictionaryWithObjectsAndKeys:
                                    @"AboutModule", @"about",
                                    @"ScheduleModule", @"schedule",
+                                   @"FoursquareModule", @"foursquare",
                                    @"HomeModule", @"home",
                                    @"LoginModule", @"login",
                                    @"MapModule", @"map",
@@ -54,6 +56,9 @@
     
     else if ([className isEqualToString:@"FacebookModule"])
         module = [[[FacebookModule alloc] initWithDictionary:args] autorelease];
+    
+    else if ([className isEqualToString:@"FoursquareModule"])
+        module = [[[FoursquareModule alloc] initWithDictionary:args] autorelease];
     
     else if ([className isEqualToString:@"LoginModule"])
         module = [[[LoginModule alloc] initWithDictionary:args] autorelease];

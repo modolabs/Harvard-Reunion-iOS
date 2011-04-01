@@ -2,11 +2,15 @@
 #import "KGOSocialMediaController+FacebookAPI.h"
 #import "FacebookUser.h"
 
+#import "KGOFoursquareEngine.h"
+
 @implementation FacebookMediaViewController
 
 #pragma mark -
 
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender {
+    
+    
 
 }
 
