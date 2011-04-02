@@ -125,7 +125,7 @@
     }
 }
 
-- (NSString *)building
+- (NSString *)placemarkID
 {
     return [self.userInfo objectForKey:@"building"];
 }

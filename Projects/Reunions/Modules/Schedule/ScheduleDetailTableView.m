@@ -3,6 +3,8 @@
 #import "KGOFoursquareEngine.h"
 #import "UIKit+KGOAdditions.h"
 #import "ScheduleEventWrapper.h"
+#import "ThemeConstants.h"
+#import "Foundation+KGOAdditions.h"
 
 @implementation ScheduleDetailTableView
 
@@ -99,6 +101,29 @@
     [containerView addSubview:_facebookButton];
     
     return containerView;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    if ([cellData isKindOfClass:[NSDictionary class]]) {    
+        NSString *accessory = [cellData objectForKey:@"accessory"];
+        NSURL *url = nil;
+        if ([accessory isEqualToString:TableViewCellAccessoryMap]) {
+            NSString *placemarkID = [_event placemarkID];
+            NSString *placemarkString = placemarkID ? [NSString stringWithFormat:@"&identifier=%@", placemarkID] : @"";
+            NSString *queryString = [NSString stringWithFormat:@"title=%@&lat=%.4f&lon=%.4f&type=building%@",
+                                     _event.title,
+                                     _event.coordinate.latitude, _event.coordinate.longitude, placemarkString];
+            
+            url = [NSURL internalURLWithModuleTag:MapTag path:LocalPathPageNameSearch query:queryString];
+            if (url && [[UIApplication sharedApplication] canOpenURL:url]) {
+                [[UIApplication sharedApplication] openURL:url];
+                return;
+            }
+        }
+    }
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 
 - (void)dealloc
