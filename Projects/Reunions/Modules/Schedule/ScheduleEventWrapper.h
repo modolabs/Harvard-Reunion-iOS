@@ -4,4 +4,9 @@
     
 }
 
+- (NSString *)building;
+- (BOOL)isRegistered;
+- (NSString *)registrationFee;
+- (NSString *)registrationURL;
+
 @end

@@ -5,29 +5,36 @@
 
 /*
 
-{
-    "id":"http:\/\/uid.trumba.com\/event\/93821164",
-    "category":"other",
+{"id":"http:\/\/uid.trumba.com\/event\/93747775",
+    "category":"reunion",
     "location":{
-        "title":"Moors Hall, North House",
-        "building":"520F",
-        "latlon":[42.38212788097,-71.12479996359],
-        "address":{"street":"56 Linnaean St","city":"Cambridge","state":"MA"},
-        "multiple":false
-    },
-    "registration":null,
-    "attendees":[],
-    "fbPlaceId":0,
-    "title":"Alumnae & Friends of Radcliffe College Lunch",
-    "description":"The goals of Alumnae & Friends of Radcliffe College are to promote intergenerational connections among graduates of Radcliffe College and other members of the Harvard community who share a bond to the former Radcliffe College and to serve and extend the interests of Harvard University, including the Radcliffe Institute for Advanced Study.",
+        "title":"Eliot House Courtyard",
+        "building":null,
+        "latlon":["42.37019","-71.121471"],
+        "address":{"street":null,"city":null,"state":null},
+        "multiple":false,
+        "fbPlaceId":null,
+        "fqPlaceId":null},
+    "registration":{
+        "url":"http:\/\/alumni.harvard.edu\/",
+        "fee":"$80",
+        "registered":true},
+    "attendees":[{
+        "prefix":"Ms.",
+        "first_name":"Alexis",
+        "last_name":"Ellwood",
+        "suffix":"",
+        "class_year":"2001",
+        "display_name":"Alexis Ellwood "}],
+    "title":"Welcome Cocktail Reception",
+    "description":null,
     "url":null,
-    "phone":"555-555-5555",
-    "email":"dev@modolabs.com",
-    "start":"1306422000",
-    "end":"1306429200",
-    "allday":false
-}
-
+    "phone":null,
+    "email":null,
+    "start":"1306540800",
+    "end":"1306558800",
+    "allday":false,
+    "registered":true}
 */
 
 - (BOOL)requestGroups
