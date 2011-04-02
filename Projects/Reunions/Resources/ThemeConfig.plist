@@ -7,7 +7,7 @@
 		<key>AppBackground</key>
 		<string>common/body-background.jpg</string>
 		<key>NavBarTintColor</key>
-		<string>#2D2A2A</string>
+		<string>#262222</string>
 		<key>PlainSectionHeaderBackground</key>
 		<string>#333333</string>
 		<key>PrimaryCellBackground</key>
