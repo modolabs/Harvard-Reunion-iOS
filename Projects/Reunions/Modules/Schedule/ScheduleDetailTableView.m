@@ -112,7 +112,7 @@
         if ([accessory isEqualToString:TableViewCellAccessoryMap]) {
             NSString *placemarkID = [_event placemarkID];
             NSString *placemarkString = placemarkID ? [NSString stringWithFormat:@"&identifier=%@", placemarkID] : @"";
-            NSString *queryString = [NSString stringWithFormat:@"title=%@&lat=%.4f&lon=%.4f&type=building%@",
+            NSString *queryString = [NSString stringWithFormat:@"q=%@&lat=%.4f&lon=%.4f&type=building%@",
                                      _event.title,
                                      _event.coordinate.latitude, _event.coordinate.longitude, placemarkString];
             

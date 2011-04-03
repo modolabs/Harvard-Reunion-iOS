@@ -83,7 +83,7 @@
 	</dict>
 	<key>HomeScreen</key>
 	<dict>
-		<key>BackgroundImage</key>
+		<key>BackgroundColor</key>
 		<string>common/body-background.jpg</string>
 		<key>ModuleLabelFont</key>
 		<dict>

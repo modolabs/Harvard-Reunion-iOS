@@ -34,8 +34,7 @@
     // TODO: this isn't really what we want -- we want the
     // social media controller to handle this for us
     TwitterViewController *twitterVC = [[[TwitterViewController alloc] init] autorelease];
-    [KGO_SHARED_APP_DELEGATE() presentAppModalViewController:twitterVC animated:YES];
-    
+    [KGO_SHARED_APP_DELEGATE() presentAppModalNavigationController:twitterVC animated:YES];
 }
 
 - (void)sendButtonPressed:(UIButton *)sender {
