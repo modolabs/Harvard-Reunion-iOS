@@ -118,7 +118,7 @@
     if (attendees) {
         NSMutableSet *attendeeSet = [NSMutableSet setWithCapacity:attendees.count];
         for (NSDictionary *attendeeDict in attendees) {
-            KGOAttendeeWrapper *attendee = [[KGOAttendeeWrapper alloc] initWithDictionary:attendeeDict];
+            KGOAttendeeWrapper *attendee = [[[KGOAttendeeWrapper alloc] initWithDictionary:attendeeDict] autorelease];
             [attendeeSet addObject:attendee];
         }
         self.attendees = [NSSet setWithSet:attendeeSet];

@@ -173,9 +173,9 @@
     UILabel *subtitleLabel = (UILabel *)[cell.contentView viewWithTag:subtitleTag];
     if (!subtitleLabel) {
         UIFont *titleFont = [UIFont systemFontOfSize:13];
-        titleLabel = [UILabel multilineLabelWithText:aVideo.owner.name
-                                                font:titleFont
-                                               width:tableView.frame.size.width - 80];
+        subtitleLabel = [UILabel multilineLabelWithText:aVideo.owner.name
+                                                   font:titleFont
+                                                  width:tableView.frame.size.width - 80];
         CGRect frame = subtitleLabel.frame;
         frame.origin.x = 80;
         frame.origin.y = 40;
