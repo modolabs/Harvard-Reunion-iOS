@@ -14,6 +14,8 @@
 #define BOTTOM_SHADOW_HEIGHT 8
 #define LEFT_SHADOW_WIDTH 5
 
+#define BUBBLE_HEIGHT_SIDEBAR 150
+
 NSString * const FacebookStatusDidUpdateNotification = @"FacebookUpdate";
 NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 
@@ -59,8 +61,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         
         if (navStyle == KGONavigationStyleTabletSidebar) {
             numberOfLinesForSubtitle = 2;
-            CGFloat bubbleHeight = 150;
-            frame = CGRectMake(5, bounds.size.height - bubbleHeight - BUTTON_HEIGHT_IPAD, 150, bubbleHeight);
+            frame = CGRectMake(5, bounds.size.height - BUBBLE_HEIGHT_SIDEBAR - BUTTON_HEIGHT_IPAD, 150, BUBBLE_HEIGHT_SIDEBAR);
             bubbleView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height - caratView.frame.size.height);
             CGFloat x = floor(self.chatBubbleCaratOffset * bubbleView.frame.size.width - caratView.frame.size.width / 2 + LEFT_SHADOW_WIDTH);
             caratView.frame = CGRectMake(x, bubbleView.frame.size.height - BOTTOM_SHADOW_HEIGHT,
@@ -114,6 +115,20 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         
         _chatBubble.hidden = YES;
     }
+    
+    
+    KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
+    KGONavigationStyle navStyle = [appDelegate navigationStyle];
+    KGOHomeScreenViewController *homeVC = (KGOHomeScreenViewController *)[appDelegate homescreen];
+    CGRect frame = _chatBubble.frame;
+    CGRect bounds = homeVC.springboardFrame;
+    if (navStyle == KGONavigationStyleTabletSidebar) {
+        frame.origin.y = bounds.size.height - BUBBLE_HEIGHT_SIDEBAR - BUTTON_HEIGHT_IPAD;
+    } else {
+        frame.origin.y = bounds.size.height - frame.size.height;
+    }
+    _chatBubble.frame = frame;
+    
     return _chatBubble;
 }
 

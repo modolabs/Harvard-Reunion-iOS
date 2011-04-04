@@ -1634,7 +1634,9 @@
 			baseConfigurationReference = EB913B7F1347CC7F00D2EEF6 /* kurogo.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				PRODUCT_NAME = "Harvard Reunion";
+				PROVISIONING_PROFILE = "";
 			};
 			name = "Release - Production";
 		};

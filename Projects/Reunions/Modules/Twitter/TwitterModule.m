@@ -37,7 +37,7 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
     self = [super initWithDictionary:moduleDict];
     if (self) {
         self.buttonImage = [UIImage imageWithPathName:@"modules/twitter/button-twitter.png"];
-        self.labelText = @"#hr14";
+        self.labelText = @"#testhvd01";
         
         // TODO: we are cheating here as we know where twitter and facebook will
         // be placed on the home screen under each condition.  if/when there is
