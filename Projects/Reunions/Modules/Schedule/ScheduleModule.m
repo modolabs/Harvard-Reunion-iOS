@@ -1,8 +1,19 @@
 #import "ScheduleModule.h"
 #import "ScheduleHomeViewController.h"
 #import "ScheduleDetailViewController.h"
+#import "ScheduleDataManager.h"
 
 @implementation ScheduleModule
+
+- (void)launch
+{
+    [super launch];
+    
+    if (!self.dataManager) {
+        self.dataManager = [[[ScheduleDataManager alloc] init] autorelease];
+        self.dataManager.moduleTag = self.tag;
+    }
+}
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
     UIViewController *vc = nil;

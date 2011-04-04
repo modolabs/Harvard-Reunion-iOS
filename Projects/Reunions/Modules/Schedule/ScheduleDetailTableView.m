@@ -5,6 +5,8 @@
 #import "ScheduleEventWrapper.h"
 #import "ThemeConstants.h"
 #import "Foundation+KGOAdditions.h"
+#import "ReunionDetailPageHeaderView.h"
+#import "CalendarDataManager.h"
 
 @implementation ScheduleDetailTableView
 
@@ -39,6 +41,8 @@
                                      image, @"image",
                                      title, @"title",
                                      subtitle, @"subtitle",
+                                     [eventWrapper registrationURL], @"url",
+                                     TableViewCellAccessoryExternal, @"accessory",
                                      nil]];
         }
     }
@@ -52,7 +56,8 @@
     
     return attendeeInfo;
 }
-
+// uncomment when we have facebook/foursquare
+/*
 - (void)headerViewFrameDidChange:(KGODetailPageHeaderView *)headerView
 {
     CGRect frame = _facebookButton.frame;
@@ -71,12 +76,32 @@
         self.tableHeaderView = self.tableHeaderView;
     }
 }
-
+*/
 // TODO: use proper images for both 4square and fb
 - (UIView *)viewForTableHeader
 {
-    UIView *headerView = [super viewForTableHeader];
+    if (!_headerView) {
+        _headerView = [[ReunionDetailPageHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 1)];
+        _headerView.delegate = self;
+        _headerView.showsBookmarkButton = YES;
+    }
+    _headerView.detailItem = self.event;
     
+    // time
+    NSString *dateString = [self.dataManager mediumDateStringFromDate:_event.startDate];
+    NSString *timeString = nil;
+    if (_event.endDate) {
+        timeString = [NSString stringWithFormat:@"%@\n%@-%@",
+                      dateString,
+                      [self.dataManager shortTimeStringFromDate:_event.startDate],
+                      [self.dataManager shortTimeStringFromDate:_event.endDate]];
+    } else {
+        timeString = [NSString stringWithFormat:@"%@\n%@",
+                      dateString,
+                      [self.dataManager shortTimeStringFromDate:_event.startDate]];
+    }
+    _headerView.subtitleLabel.text = timeString;
+    /*(=    
     if (!_facebookButton) {
         _facebookButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
         UIImage *image = [UIImage imageWithPathName:@"modules/facebook/button-facebook.png"];
@@ -91,14 +116,14 @@
         [_foursquareButton setImage:image forState:UIControlStateNormal];
         [_foursquareButton addTarget:self action:@selector(foursquareButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     }
-    
-    CGRect frame = headerView.frame;
-    frame.size.height += _foursquareButton.frame.size.height;
+    */
+    CGRect frame = _headerView.frame;
+    //frame.size.height += _foursquareButton.frame.size.height;
     UIView *containerView = [[[UIView alloc] initWithFrame:frame] autorelease];
     
-    [containerView addSubview:headerView];
-    [containerView addSubview:_foursquareButton];
-    [containerView addSubview:_facebookButton];
+    [containerView addSubview:_headerView];
+    //[containerView addSubview:_foursquareButton];
+    //[containerView addSubview:_facebookButton];
     
     return containerView;
 }

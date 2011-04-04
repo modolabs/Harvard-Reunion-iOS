@@ -24,6 +24,12 @@
     [super dealloc];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    // since we don't get notified when user (un)bookmarks an event
+    [self reloadDataForTableView:self.tableView];
+}
+
 - (CellManipulator)tableView:(UITableView *)tableView manipulatorForCellAtIndexPath:(NSIndexPath *)indexPath {
     if (_currentCategories) {
         KGOCalendar *category = [_currentCategories objectAtIndex:indexPath.row];
@@ -179,7 +185,7 @@ static bool isOverOneHour(NSTimeInterval interval) {
     }
     
     if (_myEvents.count) {
-        [_tabstrip addButtonWithTitle:@"My Events"];
+        [_tabstrip addButtonWithTitle:@"My Schedule"];
     }
     
     for (NSInteger i = 0; i < _groupTitles.count; i++) {

@@ -150,20 +150,4 @@
     return [self.userInfo objectForKey:@"regURL"];
 }
 
-- (id)initWithDictionary:(NSDictionary *)dictionary
-{
-    NSString *identifier = [dictionary stringForKey:@"id" nilIfEmpty:YES];
-    if (!identifier) {
-        [self release];
-        return nil;
-    }
-    
-    self = [super init];
-    if (self) {
-        self.identifier = identifier;
-        [self updateWithDictionary:dictionary];        
-    }
-    return self;
-}
-
 @end
