@@ -6,6 +6,11 @@
 
 @implementation ScheduleEventWrapper
 
+- (NSString *)subtitle
+{
+    return self.briefLocation;
+}
+
 - (void)updateWithDictionary:(NSDictionary *)dictionary
 {
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
