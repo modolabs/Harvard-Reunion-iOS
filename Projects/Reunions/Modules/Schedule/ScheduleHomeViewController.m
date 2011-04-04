@@ -53,7 +53,7 @@
         NSString *subtitle = [self.dataManager shortDateTimeStringFromDate:event.startDate];
         UIImage *image = nil;
         if ([event isRegistered] || [event isBookmarked]) {
-            image = [[UIImage imageWithPathName:@"common/bookmark-ribbon-on"] stretchableImageWithLeftCapWidth:0 topCapHeight:0];
+            image = [[UIImage imageWithPathName:@"modules/schedule/list-bookmark"] stretchableImageWithLeftCapWidth:0 topCapHeight:0];
         }
         
         return [[^(UITableViewCell *cell) {
