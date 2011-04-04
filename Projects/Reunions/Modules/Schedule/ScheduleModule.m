@@ -7,12 +7,11 @@
 
 - (void)launch
 {
-    [super launch];
-    
     if (!self.dataManager) {
         self.dataManager = [[[ScheduleDataManager alloc] init] autorelease];
         self.dataManager.moduleTag = self.tag;
     }
+    [super launch];
 }
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
