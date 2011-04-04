@@ -27,7 +27,11 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     // since we don't get notified when user (un)bookmarks an event
-    [self reloadDataForTableView:self.tableView];
+    NSMutableArray *allEvents = [NSMutableArray array];
+    for (NSArray *events in [_currentEventsBySection allValues]) {
+        [allEvents addObjectsFromArray:events];
+    }
+    [self eventsDidChange:allEvents calendar:_currentCalendar];
 }
 
 - (CellManipulator)tableView:(UITableView *)tableView manipulatorForCellAtIndexPath:(NSIndexPath *)indexPath {
@@ -86,6 +90,8 @@ static bool isOverOneHour(NSTimeInterval interval) {
     [self clearEvents];
     
     BOOL didHaveMyEvents = _myEvents != nil;
+
+    BOOL isViewingMyEvents = _myEvents.count && _currentGroupIndex == 0;
     
     if (events.count) {
         // TODO: make sure this set of events is what we last requested
@@ -112,7 +118,7 @@ static bool isOverOneHour(NSTimeInterval interval) {
             
         }
         
-        for (ScheduleEventWrapper *event in events) {
+        for (ScheduleEventWrapper *event in sortedEvents) {
             NSString *title = [formatter stringFromDate:event.startDate];
             NSMutableArray *eventsForCurrentSection = [eventsBySection objectForKey:title];
             if (!eventsForCurrentSection) {
@@ -120,17 +126,26 @@ static bool isOverOneHour(NSTimeInterval interval) {
                 [eventsBySection setObject:eventsForCurrentSection forKey:title];
                 [sectionTitles addObject:title];
             }
-            [eventsForCurrentSection addObject:event];
-            
+
             if ([event isRegistered] || [event isBookmarked]) {
                 if (!_myEvents) {
                     _myEvents = [[NSMutableDictionary alloc] init];
                 }
                 [_myEvents setObject:event forKey:event.identifier];
+                
+            } else {
+                [_myEvents removeObjectForKey:event.identifier];
+            }
+
+            if (!isViewingMyEvents || [event isRegistered] || [event isBookmarked]) {
+                [eventsForCurrentSection addObject:event];
             }
         }
         
+        [_currentSections release];
         _currentSections = [sectionTitles copy];
+ 
+        [_currentEventsBySection release];
         _currentEventsBySection = [eventsBySection copy];
     }
     
@@ -152,8 +167,6 @@ static bool isOverOneHour(NSTimeInterval interval) {
 - (void)tabstrip:(KGOScrollingTabstrip *)tabstrip clickedButtonAtIndex:(NSUInteger)index
 {
     if (index != _currentGroupIndex) {
-        [self removeTableView:self.tableView];
-        [_loadingView startAnimating];
         
         _currentGroupIndex = index;
         if (_myEvents.count) {
@@ -163,7 +176,9 @@ static bool isOverOneHour(NSTimeInterval interval) {
         if (index == -1) {
             [self eventsDidChange:[_myEvents allValues] calendar:_currentCalendar];
             
-        } else {        
+        } else {
+            [self removeTableView:self.tableView];
+            [_loadingView startAnimating];
             [self.dataManager selectGroupAtIndex:index];
             KGOCalendarGroup *group = [self.dataManager currentGroup];
             [self groupDataDidChange:group];

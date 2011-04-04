@@ -45,6 +45,7 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
 
 - (BOOL)requestFacebookGraphPath:(NSString *)graphPath receiver:(id)receiver callback:(SEL)callback {
     DLog(@"requesting graph path: %@", graphPath);
+    
     FBRequest *request = [_facebook requestWithGraphPath:graphPath andDelegate:self];
     if ([self queueFacebookRequest:request withReceiver:receiver callback:callback]) {
         return YES;

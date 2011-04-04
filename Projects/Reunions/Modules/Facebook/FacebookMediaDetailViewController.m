@@ -38,7 +38,7 @@
     FacebookCommentViewController *vc = [[[FacebookCommentViewController alloc] initWithNibName:@"FacebookCommentViewController" bundle:nil] autorelease];
     vc.delegate = self;
     vc.post = self.post;
-    [KGO_SHARED_APP_DELEGATE() presentAppModalViewController:vc animated:YES];
+    [KGO_SHARED_APP_DELEGATE() presentAppModalNavigationController:vc animated:YES];
 }
 
 - (IBAction)likeButtonPressed:(UIBarButtonItem *)sender {
@@ -99,6 +99,10 @@
 - (void)uploadDidComplete:(FacebookPost *)result {
     FacebookComment *aComment = (FacebookComment *)result;
     aComment.parent = self.post;
+    
+    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:YES];
+    [_comments release];
+    _comments = [[self.post.comments sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] retain];
     
     [KGO_SHARED_APP_DELEGATE() dismissAppModalViewControllerAnimated:YES];
     [_tableView reloadData];
@@ -243,8 +247,7 @@
     [cell.contentView addSubview:authorLabel];
     
     UILabel *dateLabel = (UILabel *)[cell.contentView viewWithTag:dateTag];
-    // TODO: use nsdateformatter, not this
-    NSString *dateString = [NSString stringWithFormat:@"%@", aComment.date];
+    NSString *dateString = [aComment.date agoString];
     if (!dateLabel) {
         UIFont *dateFont = [UIFont systemFontOfSize:13];
         dateLabel = [UILabel multilineLabelWithText:dateString font:dateFont width:tableView.frame.size.width - 20];

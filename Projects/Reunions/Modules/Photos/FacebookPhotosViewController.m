@@ -47,8 +47,8 @@
         }
         
         // fql for photos
-        NSString *query = [NSString stringWithFormat:@"SELECT pid FROM photo_tag WHERE subject=%@", fbModule.groupID];
-        [[KGOSocialMediaController sharedController] requestFacebookFQL:query receiver:self callback:@selector(didReceivePhotoList:)];
+        //NSString *query = [NSString stringWithFormat:@"SELECT pid FROM photo_tag WHERE subject=%@", fbModule.groupID];
+        //[[KGOSocialMediaController sharedController] requestFacebookFQL:query receiver:self callback:@selector(didReceivePhotoList:)];
 
     } else {
         [[NSNotificationCenter defaultCenter] addObserver:self
