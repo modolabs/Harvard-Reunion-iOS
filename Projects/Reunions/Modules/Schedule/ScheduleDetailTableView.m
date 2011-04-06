@@ -7,6 +7,7 @@
 #import "Foundation+KGOAdditions.h"
 #import "ReunionDetailPageHeaderView.h"
 #import "CalendarDataManager.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
 
 @implementation ScheduleDetailTableView
 
@@ -56,6 +57,27 @@
     
     return attendeeInfo;
 }
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    if ([cellData isKindOfClass:[NSDictionary class]]) {    
+        NSString *accessory = [cellData objectForKey:@"accessory"];
+        if ([accessory isEqualToString:KGOAccessoryTypeChevron]) {
+            NSMutableArray *attendees = [NSMutableArray arrayWithCapacity:_event.attendees.count];
+            [_event.attendees enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+                KGOAttendeeWrapper *attendee = (KGOAttendeeWrapper *)obj;
+                [attendees addObject:[NSDictionary dictionaryWithObjectsAndKeys:attendee.name, @"display_name", nil]];
+            }];
+            NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    _event.title, @"title",
+                                    attendees, @"attendees",
+                                    nil];
+            [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameItemList forModuleTag:@"schedule" params:params];
+        }
+    }
+}
+
 // uncomment when we have facebook/foursquare
 /*
 - (void)headerViewFrameDidChange:(KGODetailPageHeaderView *)headerView

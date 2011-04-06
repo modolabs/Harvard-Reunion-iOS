@@ -95,10 +95,9 @@
     [self loadThumbnailsFromCache];
     [self getGroupPhotos];
     
-    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Upload"
-                                                                               style:UIBarButtonItemStyleBordered
-                                                                              target:self
-                                                                              action:@selector(showUploadPhotoController:)] autorelease];
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
+                                                                                            target:self
+                                                                                            action:@selector(showUploadPhotoController:)] autorelease];
 }
 
 
@@ -193,8 +192,8 @@
     }];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:photo, @"photo", photos, @"photos", nil];
     [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail
-                                                                forModuleTag:PhotosTag
-                                                                      params:params];
+                           forModuleTag:PhotosTag
+                                 params:params];
 }
 
 #pragma mark Photo uploads
@@ -202,24 +201,29 @@
 - (void)showUploadPhotoController:(id)sender
 {
     UIImagePickerController *picker = [[[UIImagePickerController alloc] init] autorelease];
-    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     picker.delegate = self;
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    } else {
+        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    }
     [KGO_SHARED_APP_DELEGATE() presentAppModalViewController:picker animated:YES];
 }
 
-- (void)imagePickerController:(UIImagePickerController *)picker
-        didFinishPickingImage:(UIImage *)image
-                  editingInfo:(NSDictionary *)editingInfo
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
+    
     FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                             image, @"photo",
                             fbModule.groupID, @"profile",
                             self, @"parentVC",
                             nil];
+    
     [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNamePhotoUpload
-                                                                forModuleTag:PhotosTag
-                                                                      params:params];
+                           forModuleTag:PhotosTag
+                                 params:params];
 }
 
 - (void)uploadDidComplete:(FacebookPost *)result {

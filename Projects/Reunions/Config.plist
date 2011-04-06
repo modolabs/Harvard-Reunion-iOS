@@ -68,18 +68,6 @@
 		</dict>
 		<dict>
 			<key>class</key>
-			<string>PeopleModule</string>
-			<key>longName</key>
-			<string>Attendees</string>
-			<key>secondary</key>
-			<false/>
-			<key>shortName</key>
-			<string>Attendees</string>
-			<key>tag</key>
-			<string>attendees</string>
-		</dict>
-		<dict>
-			<key>class</key>
 			<string>TwitterModule</string>
 			<key>longName</key>
 			<string>Twitter</string>

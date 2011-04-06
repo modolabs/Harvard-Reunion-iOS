@@ -126,6 +126,11 @@
 		EB469ED2134BC932005796E4 /* AboutModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB469ECD134BC932005796E4 /* AboutModule.m */; };
 		EB469ED3134BC932005796E4 /* AboutTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB469ECF134BC932005796E4 /* AboutTableViewController.m */; };
 		EB469ED4134BC932005796E4 /* MITBuildInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = EB469ED1134BC932005796E4 /* MITBuildInfo.m */; };
+		EB46A151134CB25C005796E4 /* AttendeesModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A150134CB25C005796E4 /* AttendeesModule.m */; };
+		EB46A154134CB28E005796E4 /* AttendeesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A153134CB28E005796E4 /* AttendeesTableViewController.m */; };
+		EB46A158134CC0C4005796E4 /* ReunionHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A157134CC0C4005796E4 /* ReunionHomeViewController.m */; };
+		EB46A15B134CCC9D005796E4 /* ReunionHomeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A15A134CCC9C005796E4 /* ReunionHomeModule.m */; };
+		EB46A15F134CCCA8005796E4 /* ReunionLoginModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A15E134CCCA8005796E4 /* ReunionLoginModule.m */; };
 		EB46C94A132590F900AF7B5C /* PhotosModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C941132590F900AF7B5C /* PhotosModule.m */; };
 		EB46C94B132590F900AF7B5C /* FacebookPhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C943132590F900AF7B5C /* FacebookPhotosViewController.m */; };
 		EB46C94C132590F900AF7B5C /* VideosModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C947132590F900AF7B5C /* VideosModule.m */; };
@@ -456,6 +461,16 @@
 		EB469ECF134BC932005796E4 /* AboutTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutTableViewController.m; sourceTree = "<group>"; };
 		EB469ED0134BC932005796E4 /* MITBuildInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MITBuildInfo.h; sourceTree = "<group>"; };
 		EB469ED1134BC932005796E4 /* MITBuildInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MITBuildInfo.m; sourceTree = "<group>"; };
+		EB46A14F134CB25C005796E4 /* AttendeesModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttendeesModule.h; sourceTree = "<group>"; };
+		EB46A150134CB25C005796E4 /* AttendeesModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttendeesModule.m; sourceTree = "<group>"; };
+		EB46A152134CB28E005796E4 /* AttendeesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttendeesTableViewController.h; sourceTree = "<group>"; };
+		EB46A153134CB28E005796E4 /* AttendeesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttendeesTableViewController.m; sourceTree = "<group>"; };
+		EB46A156134CC0C4005796E4 /* ReunionHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReunionHomeViewController.h; sourceTree = "<group>"; };
+		EB46A157134CC0C4005796E4 /* ReunionHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionHomeViewController.m; sourceTree = "<group>"; };
+		EB46A159134CCC9C005796E4 /* ReunionHomeModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReunionHomeModule.h; sourceTree = "<group>"; };
+		EB46A15A134CCC9C005796E4 /* ReunionHomeModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionHomeModule.m; sourceTree = "<group>"; };
+		EB46A15D134CCCA8005796E4 /* ReunionLoginModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReunionLoginModule.h; sourceTree = "<group>"; };
+		EB46A15E134CCCA8005796E4 /* ReunionLoginModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionLoginModule.m; sourceTree = "<group>"; };
 		EB46C940132590F900AF7B5C /* PhotosModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosModule.h; sourceTree = "<group>"; };
 		EB46C941132590F900AF7B5C /* PhotosModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosModule.m; sourceTree = "<group>"; };
 		EB46C942132590F900AF7B5C /* FacebookPhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookPhotosViewController.h; sourceTree = "<group>"; };
@@ -653,6 +668,9 @@
 		DE715445102FE468005E6111 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				EB46A15C134CCCA6005796E4 /* ReunionLogin */,
+				EB46A155134CBFBA005796E4 /* ReunionHome */,
+				EB46A14E134CB1F6005796E4 /* Attendees */,
 				EB469E7E134B6F5D005796E4 /* ReunionMap */,
 				EBE2CCC11344C8920037546A /* Foursquare */,
 				EB9DDFF613416C5000598644 /* Schedule */,
@@ -1055,6 +1073,37 @@
 				EB469E83134B9FEF005796E4 /* ReunionMapDetailViewController.m */,
 			);
 			path = ReunionMap;
+			sourceTree = "<group>";
+		};
+		EB46A14E134CB1F6005796E4 /* Attendees */ = {
+			isa = PBXGroup;
+			children = (
+				EB46A14F134CB25C005796E4 /* AttendeesModule.h */,
+				EB46A150134CB25C005796E4 /* AttendeesModule.m */,
+				EB46A152134CB28E005796E4 /* AttendeesTableViewController.h */,
+				EB46A153134CB28E005796E4 /* AttendeesTableViewController.m */,
+			);
+			path = Attendees;
+			sourceTree = "<group>";
+		};
+		EB46A155134CBFBA005796E4 /* ReunionHome */ = {
+			isa = PBXGroup;
+			children = (
+				EB46A159134CCC9C005796E4 /* ReunionHomeModule.h */,
+				EB46A15A134CCC9C005796E4 /* ReunionHomeModule.m */,
+				EB46A156134CC0C4005796E4 /* ReunionHomeViewController.h */,
+				EB46A157134CC0C4005796E4 /* ReunionHomeViewController.m */,
+			);
+			path = ReunionHome;
+			sourceTree = "<group>";
+		};
+		EB46A15C134CCCA6005796E4 /* ReunionLogin */ = {
+			isa = PBXGroup;
+			children = (
+				EB46A15D134CCCA8005796E4 /* ReunionLoginModule.h */,
+				EB46A15E134CCCA8005796E4 /* ReunionLoginModule.m */,
+			);
+			path = ReunionLogin;
 			sourceTree = "<group>";
 		};
 		EB46C93E132590F900AF7B5C /* Connect */ = {
@@ -1613,6 +1662,11 @@
 				EB469ED2134BC932005796E4 /* AboutModule.m in Sources */,
 				EB469ED3134BC932005796E4 /* AboutTableViewController.m in Sources */,
 				EB469ED4134BC932005796E4 /* MITBuildInfo.m in Sources */,
+				EB46A151134CB25C005796E4 /* AttendeesModule.m in Sources */,
+				EB46A154134CB28E005796E4 /* AttendeesTableViewController.m in Sources */,
+				EB46A158134CC0C4005796E4 /* ReunionHomeViewController.m in Sources */,
+				EB46A15B134CCC9D005796E4 /* ReunionHomeModule.m in Sources */,
+				EB46A15F134CCCA8005796E4 /* ReunionLoginModule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2,6 +2,7 @@
 #import "ScheduleHomeViewController.h"
 #import "ScheduleDetailViewController.h"
 #import "ScheduleDataManager.h"
+#import "AttendeesTableViewController.h"
 
 @implementation ScheduleModule
 
@@ -25,6 +26,11 @@
         calendarVC.moduleTag = self.tag;
         calendarVC.showsGroups = YES;
         calendarVC.title = NSLocalizedString(@"Events", nil);
+        
+        if (!self.dataManager) {
+            self.dataManager = [[[ScheduleDataManager alloc] init] autorelease];
+            self.dataManager.moduleTag = self.tag;
+        }
         calendarVC.dataManager = self.dataManager;
         // TODO: we might not need to set the following as long as viewWillAppear is properly invoked
         self.dataManager.delegate = calendarVC;
@@ -51,6 +57,10 @@
         
     } else if ([pageName isEqualToString:LocalPathPageNameItemList]) {
         
+        AttendeesTableViewController *attendeesVC = [[[AttendeesTableViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+        attendeesVC.eventTitle = [params objectForKey:@"title"];
+        attendeesVC.attendees = [params objectForKey:@"attendees"];
+        vc = attendeesVC;
     }
     return vc;
 }
