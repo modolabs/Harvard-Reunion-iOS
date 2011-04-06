@@ -21,10 +21,10 @@
 	<key>Modules</key>
 	<array>
 		<dict>
-			<key>hidden</key>
-			<true/>
 			<key>class</key>
 			<string>HomeModule</string>
+			<key>hidden</key>
+			<true/>
 			<key>shortName</key>
 			<string>Home</string>
 			<key>tag</key>
@@ -104,23 +104,11 @@
 		</dict>
 		<dict>
 			<key>class</key>
-			<string>SettingsModule</string>
-			<key>longName</key>
-			<string>Settings</string>
-			<key>secondary</key>
-			<false/>
-			<key>shortName</key>
-			<string>Settings</string>
-			<key>tag</key>
-			<string>settings</string>
-		</dict>
-		<dict>
-			<key>class</key>
 			<string>FoursquareModule</string>
-			<key>tag</key>
-			<string>foursquare</string>
 			<key>hidden</key>
 			<true/>
+			<key>tag</key>
+			<string>foursquare</string>
 		</dict>
 	</array>
 	<key>OrganizationName</key>
@@ -174,13 +162,6 @@
 	</dict>
 	<key>SocialMedia</key>
 	<dict>
-		<key>Foursquare</key>
-		<dict>
-			<key>ClientID</key>
-			<string></string>
-			<key>ClientSecret</key>
-			<string></string>
-		</dict>
 		<key>bit.ly</key>
 		<dict>
 			<key>APIKey</key>
@@ -197,6 +178,13 @@
 			<key>APISecret</key>
 			<string></string>
 			<key>AppID</key>
+			<string></string>
+		</dict>
+		<key>Foursquare</key>
+		<dict>
+			<key>ClientID</key>
+			<string></string>
+			<key>ClientSecret</key>
 			<string></string>
 		</dict>
 		<key>Twitter</key>

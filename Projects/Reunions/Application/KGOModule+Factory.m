@@ -7,7 +7,7 @@
 #import "FoursquareModule.h"
 #import "HomeModule.h"
 #import "LoginModule.h"
-#import	"MapModule.h"
+#import	"ReunionMapModule.h"
 #import "NewsModule.h"
 #import "PeopleModule.h"
 #import "PhotosModule.h"
@@ -28,22 +28,20 @@
                                    @"FoursquareModule", @"foursquare",
                                    @"HomeModule", @"home",
                                    @"LoginModule", @"login",
-                                   @"MapModule", @"map",
+                                   @"ReunionMapModule", @"map",
                                    @"NewsModule", @"news",
                                    @"PeopleModule", @"people",
                                    @"SettingsModule", @"customize",
-                                   //@"ContentModule", @"content",
                                    nil];
         
         NSString *serverID = [args objectForKey:@"id"];
         className = [moduleMap objectForKey:serverID];
+        
+        NSLog(@"%@", args);
     }
     
-    //if ([className isEqualToString:@"AboutModule"])
-    //    module = [[[AboutModule alloc] initWithDictionary:args] autorelease];
-    
-    //else if ([className isEqualToString:@"ContentModule"])
-    //    module = [[[ContentModule alloc] initWithDictionary:args] autorelease];
+    if ([className isEqualToString:@"AboutModule"])
+        module = [[[AboutModule alloc] initWithDictionary:args] autorelease];
     
     if ([className isEqualToString:@"ScheduleModule"])
         module = [[[ScheduleModule alloc] initWithDictionary:args] autorelease];
@@ -63,8 +61,8 @@
     else if ([className isEqualToString:@"LoginModule"])
         module = [[[LoginModule alloc] initWithDictionary:args] autorelease];
     
-    else if ([className isEqualToString:@"MapModule"])
-        module = [[[MapModule alloc] initWithDictionary:args] autorelease];
+    else if ([className isEqualToString:@"ReunionMapModule"])
+        module = [[[ReunionMapModule alloc] initWithDictionary:args] autorelease];
     
     else if ([className isEqualToString:@"NewsModule"])
         module = [[[NewsModule alloc] initWithDictionary:args] autorelease];

@@ -1,0 +1,22 @@
+#import <UIKit/UIKit.h>
+#import "KGODetailPager.h"
+#import "ConnectionWrapper.h"
+#import "MITThumbnailView.h"
+#import "ReunionDetailPageHeaderView.h"
+
+@class KGOPlacemark, KGOHTMLTemplate;
+
+// not subclassing MapDetailViewController b/c we don't want a tabbed view
+@interface ReunionMapDetailViewController : UITableViewController <KGODetailPagerDelegate,
+UIWebViewDelegate, ConnectionWrapperDelegate, KGODetailPageHeaderDelegate> {
+    
+    ReunionDetailPageHeaderView *_headerView;
+    CGFloat _webViewHeight;
+    KGOHTMLTemplate *_htmlTemplate;
+    
+}
+
+@property(nonatomic, retain) KGOPlacemark *placemark;
+@property(nonatomic, retain) KGODetailPager *pager;
+
+@end

@@ -16,13 +16,10 @@
 		3AA219501039D74700DB7637 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA2194F1039D74700DB7637 /* CoreData.framework */; };
 		4463CCB210D6F5750048CA83 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4463CCB110D6F5750048CA83 /* CoreLocation.framework */; };
 		BD9FA7EE1047A05E00BC3C0A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD9FA7ED1047A05E00BC3C0A /* MessageUI.framework */; };
-		DE0F6B3411109BC500F064D6 /* AboutMITVC.m in Sources */ = {isa = PBXBuildFile; fileRef = DE0F6B3311109BC500F064D6 /* AboutMITVC.m */; };
 		DE6D9401110AD1ED00DAF213 /* SettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DE6D9319110A8EFA00DAF213 /* SettingsTableViewController.m */; };
 		DE7720D910C57DBC00620A7D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE7720D810C57DBC00620A7D /* CoreGraphics.framework */; };
 		DE7720E010C57E1C00620A7D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE7720DF10C57E1C00620A7D /* QuartzCore.framework */; };
 		DE9EFBD210FE7D8900F5F07E /* SettingsModule.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9EFBD110FE7D8900F5F07E /* SettingsModule.m */; };
-		DEA3B48D10C9BB7300BDA774 /* AboutModule.m in Sources */ = {isa = PBXBuildFile; fileRef = DEA3B48C10C9BB7300BDA774 /* AboutModule.m */; };
-		DEC02F9D110578240054BE32 /* AboutTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEC02F9C110578240054BE32 /* AboutTableViewController.m */; };
 		EB0339511340E47D00ACF2BB /* CalendarDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EB03390D1340E47C00ACF2BB /* CalendarDataManager.m */; };
 		EB0339521340E47D00ACF2BB /* CalendarDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB03390F1340E47C00ACF2BB /* CalendarDetailViewController.m */; };
 		EB0339531340E47D00ACF2BB /* CalendarHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0339111340E47C00ACF2BB /* CalendarHomeViewController.m */; };
@@ -101,7 +98,6 @@
 		EB142C2413009FF100396753 /* KGOAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EB142C2213009FF100396753 /* KGOAppDelegate.m */; };
 		EB142C9B1300A83E00396753 /* KGOAppDelegate+ModuleAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = EB142C991300A83E00396753 /* KGOAppDelegate+ModuleAdditions.m */; };
 		EB142E6F1300D94E00396753 /* HomeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB142E6D1300D94E00396753 /* HomeModule.m */; };
-		EB1441AA1309F57400396753 /* MITBuildInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1441A91309F57400396753 /* MITBuildInfo.m */; };
 		EB1441B01309F59700396753 /* KGOModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1441AE1309F59700396753 /* KGOModule.m */; };
 		EB1744EA132E8FC40045F961 /* PhotoUploadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1744E8132E8FC20045F961 /* PhotoUploadViewController.m */; };
 		EB1744EB132E8FC40045F961 /* PhotoUploadViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB1744E9132E8FC30045F961 /* PhotoUploadViewController.xib */; };
@@ -124,6 +120,12 @@
 		EB39030C132C77D0008C90CA /* FacebookCommentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB39030A132C779E008C90CA /* FacebookCommentViewController.m */; };
 		EB39030D132C77D0008C90CA /* FacebookCommentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB39030B132C77B2008C90CA /* FacebookCommentViewController.xib */; };
 		EB469A8A134952D3005796E4 /* ReunionDetailPageHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = EB469A89134952D3005796E4 /* ReunionDetailPageHeaderView.m */; };
+		EB469BE7134A3B54005796E4 /* KGOSearchResultListTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = EB469BE6134A3B54005796E4 /* KGOSearchResultListTableView.m */; };
+		EB469E81134B6FA5005796E4 /* ReunionMapModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB469E80134B6FA5005796E4 /* ReunionMapModule.m */; };
+		EB469E84134B9FEF005796E4 /* ReunionMapDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB469E83134B9FEF005796E4 /* ReunionMapDetailViewController.m */; };
+		EB469ED2134BC932005796E4 /* AboutModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB469ECD134BC932005796E4 /* AboutModule.m */; };
+		EB469ED3134BC932005796E4 /* AboutTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB469ECF134BC932005796E4 /* AboutTableViewController.m */; };
+		EB469ED4134BC932005796E4 /* MITBuildInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = EB469ED1134BC932005796E4 /* MITBuildInfo.m */; };
 		EB46C94A132590F900AF7B5C /* PhotosModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C941132590F900AF7B5C /* PhotosModule.m */; };
 		EB46C94B132590F900AF7B5C /* FacebookPhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C943132590F900AF7B5C /* FacebookPhotosViewController.m */; };
 		EB46C94C132590F900AF7B5C /* VideosModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C947132590F900AF7B5C /* VideosModule.m */; };
@@ -176,7 +178,6 @@
 		EB913B871347CC7F00D2EEF6 /* release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EB913B811347CC7F00D2EEF6 /* release.xcconfig */; };
 		EB913B881347CC7F00D2EEF6 /* stage_server.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EB913B821347CC7F00D2EEF6 /* stage_server.xcconfig */; };
 		EB913B891347CC7F00D2EEF6 /* test_server.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EB913B831347CC7F00D2EEF6 /* test_server.xcconfig */; };
-		EB913B8C1347CD7D00D2EEF6 /* AboutCreditsWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB913B8B1347CD7D00D2EEF6 /* AboutCreditsWebViewController.m */; };
 		EB99B28312F377520065EE93 /* libfacebook_ios_sdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB138EED12F251EB004DBB7C /* libfacebook_ios_sdk.a */; };
 		EB99B28412F377560065EE93 /* libTwitter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB99B08E12F36F3D0065EE93 /* libTwitter.a */; };
 		EB99B67212F3A8D80065EE93 /* libjson.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB99B39312F37FDC0065EE93 /* libjson.a */; };
@@ -247,18 +248,12 @@
 		3AA2194F1039D74700DB7637 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		4463CCB110D6F5750048CA83 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BD9FA7ED1047A05E00BC3C0A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
-		DE0F6B3211109BC500F064D6 /* AboutMITVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutMITVC.h; sourceTree = "<group>"; };
-		DE0F6B3311109BC500F064D6 /* AboutMITVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutMITVC.m; sourceTree = "<group>"; };
 		DE6D9318110A8EFA00DAF213 /* SettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewController.h; sourceTree = "<group>"; };
 		DE6D9319110A8EFA00DAF213 /* SettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTableViewController.m; sourceTree = "<group>"; };
 		DE7720D810C57DBC00620A7D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		DE7720DF10C57E1C00620A7D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		DE9EFBD010FE7D8900F5F07E /* SettingsModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsModule.h; sourceTree = "<group>"; };
 		DE9EFBD110FE7D8900F5F07E /* SettingsModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsModule.m; sourceTree = "<group>"; };
-		DEA3B48B10C9BB7300BDA774 /* AboutModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutModule.h; sourceTree = "<group>"; };
-		DEA3B48C10C9BB7300BDA774 /* AboutModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutModule.m; sourceTree = "<group>"; };
-		DEC02F9B110578240054BE32 /* AboutTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutTableViewController.h; sourceTree = "<group>"; };
-		DEC02F9C110578240054BE32 /* AboutTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutTableViewController.m; sourceTree = "<group>"; };
 		EB03390C1340E47C00ACF2BB /* CalendarDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalendarDataManager.h; sourceTree = "<group>"; };
 		EB03390D1340E47C00ACF2BB /* CalendarDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalendarDataManager.m; sourceTree = "<group>"; };
 		EB03390E1340E47C00ACF2BB /* CalendarDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalendarDetailViewController.h; sourceTree = "<group>"; };
@@ -408,8 +403,6 @@
 		EB142C991300A83E00396753 /* KGOAppDelegate+ModuleAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KGOAppDelegate+ModuleAdditions.m"; sourceTree = "<group>"; };
 		EB142E6C1300D94E00396753 /* HomeModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeModule.h; sourceTree = "<group>"; };
 		EB142E6D1300D94E00396753 /* HomeModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HomeModule.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		EB1441A71309F56700396753 /* MITBuildInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MITBuildInfo.h; sourceTree = "<group>"; };
-		EB1441A91309F57400396753 /* MITBuildInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MITBuildInfo.m; path = Modules/About/MITBuildInfo.m; sourceTree = SOURCE_ROOT; };
 		EB1441AD1309F59700396753 /* KGOModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOModule.h; sourceTree = "<group>"; };
 		EB1441AE1309F59700396753 /* KGOModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOModule.m; sourceTree = "<group>"; };
 		EB1744E7132E8FC20045F961 /* PhotoUploadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoUploadViewController.h; sourceTree = "<group>"; };
@@ -451,6 +444,18 @@
 		EB39030B132C77B2008C90CA /* FacebookCommentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FacebookCommentViewController.xib; sourceTree = "<group>"; };
 		EB469A88134952D3005796E4 /* ReunionDetailPageHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReunionDetailPageHeaderView.h; sourceTree = "<group>"; };
 		EB469A89134952D3005796E4 /* ReunionDetailPageHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionDetailPageHeaderView.m; sourceTree = "<group>"; };
+		EB469BE5134A3B54005796E4 /* KGOSearchResultListTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSearchResultListTableView.h; sourceTree = "<group>"; };
+		EB469BE6134A3B54005796E4 /* KGOSearchResultListTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOSearchResultListTableView.m; sourceTree = "<group>"; };
+		EB469E7F134B6FA5005796E4 /* ReunionMapModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReunionMapModule.h; sourceTree = "<group>"; };
+		EB469E80134B6FA5005796E4 /* ReunionMapModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionMapModule.m; sourceTree = "<group>"; };
+		EB469E82134B9FEF005796E4 /* ReunionMapDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReunionMapDetailViewController.h; sourceTree = "<group>"; };
+		EB469E83134B9FEF005796E4 /* ReunionMapDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionMapDetailViewController.m; sourceTree = "<group>"; };
+		EB469ECC134BC932005796E4 /* AboutModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutModule.h; sourceTree = "<group>"; };
+		EB469ECD134BC932005796E4 /* AboutModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutModule.m; sourceTree = "<group>"; };
+		EB469ECE134BC932005796E4 /* AboutTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutTableViewController.h; sourceTree = "<group>"; };
+		EB469ECF134BC932005796E4 /* AboutTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutTableViewController.m; sourceTree = "<group>"; };
+		EB469ED0134BC932005796E4 /* MITBuildInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MITBuildInfo.h; sourceTree = "<group>"; };
+		EB469ED1134BC932005796E4 /* MITBuildInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MITBuildInfo.m; sourceTree = "<group>"; };
 		EB46C940132590F900AF7B5C /* PhotosModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosModule.h; sourceTree = "<group>"; };
 		EB46C941132590F900AF7B5C /* PhotosModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosModule.m; sourceTree = "<group>"; };
 		EB46C942132590F900AF7B5C /* FacebookPhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookPhotosViewController.h; sourceTree = "<group>"; };
@@ -527,8 +532,6 @@
 		EB913B811347CC7F00D2EEF6 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		EB913B821347CC7F00D2EEF6 /* stage_server.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = stage_server.xcconfig; sourceTree = "<group>"; };
 		EB913B831347CC7F00D2EEF6 /* test_server.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = test_server.xcconfig; sourceTree = "<group>"; };
-		EB913B8A1347CD7D00D2EEF6 /* AboutCreditsWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutCreditsWebViewController.h; sourceTree = "<group>"; };
-		EB913B8B1347CD7D00D2EEF6 /* AboutCreditsWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutCreditsWebViewController.m; sourceTree = "<group>"; };
 		EB99B08912F36F3D0065EE93 /* Twitter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Twitter.xcodeproj; path = Twitter/Twitter.xcodeproj; sourceTree = "<group>"; };
 		EB99B38C12F37FDC0065EE93 /* JSON.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JSON.xcodeproj; path = JSON/JSON.xcodeproj; sourceTree = "<group>"; };
 		EB99B67312F3A8E40065EE93 /* OAuthConsumer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthConsumer.xcodeproj; path = OAuth/OAuthConsumer.xcodeproj; sourceTree = "<group>"; };
@@ -650,6 +653,7 @@
 		DE715445102FE468005E6111 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				EB469E7E134B6F5D005796E4 /* ReunionMap */,
 				EBE2CCC11344C8920037546A /* Foursquare */,
 				EB9DDFF613416C5000598644 /* Schedule */,
 				EB03390B1340E47B00ACF2BB /* Calendar */,
@@ -673,19 +677,14 @@
 		DE81CF5E10C6BC390085573D /* About */ = {
 			isa = PBXGroup;
 			children = (
-				EB913B8A1347CD7D00D2EEF6 /* AboutCreditsWebViewController.h */,
-				EB913B8B1347CD7D00D2EEF6 /* AboutCreditsWebViewController.m */,
-				DEA3B48B10C9BB7300BDA774 /* AboutModule.h */,
-				DEA3B48C10C9BB7300BDA774 /* AboutModule.m */,
-				DEC02F9B110578240054BE32 /* AboutTableViewController.h */,
-				DEC02F9C110578240054BE32 /* AboutTableViewController.m */,
-				DE0F6B3211109BC500F064D6 /* AboutMITVC.h */,
-				DE0F6B3311109BC500F064D6 /* AboutMITVC.m */,
-				EB1441A71309F56700396753 /* MITBuildInfo.h */,
-				EB1441A91309F57400396753 /* MITBuildInfo.m */,
+				EB469ECC134BC932005796E4 /* AboutModule.h */,
+				EB469ECD134BC932005796E4 /* AboutModule.m */,
+				EB469ECE134BC932005796E4 /* AboutTableViewController.h */,
+				EB469ECF134BC932005796E4 /* AboutTableViewController.m */,
+				EB469ED0134BC932005796E4 /* MITBuildInfo.h */,
+				EB469ED1134BC932005796E4 /* MITBuildInfo.m */,
 			);
-			name = About;
-			path = ../../../Modules/About;
+			path = About;
 			sourceTree = "<group>";
 		};
 		DE9EFBCE10FE7D3200F5F07E /* Settings */ = {
@@ -725,8 +724,6 @@
 			children = (
 				EB0339181340E47C00ACF2BB /* Calendar.xcdatamodeld */,
 				EB03391A1340E47C00ACF2BB /* CalendarModel.h */,
-				EB03391B1340E47C00ACF2BB /* KGOAttendeeWrapper.h */,
-				EB03391C1340E47C00ACF2BB /* KGOAttendeeWrapper.m */,
 				EB03391D1340E47C00ACF2BB /* KGOCalendar.h */,
 				EB03391E1340E47C00ACF2BB /* KGOCalendar.m */,
 				EB03391F1340E47C00ACF2BB /* KGOCalendarGroup.h */,
@@ -737,6 +734,8 @@
 				EB0339241340E47C00ACF2BB /* KGOEventAttendee.m */,
 				EB0339251340E47C00ACF2BB /* KGOEventContactInfo.h */,
 				EB0339261340E47C00ACF2BB /* KGOEventContactInfo.m */,
+				EB03391B1340E47C00ACF2BB /* KGOAttendeeWrapper.h */,
+				EB03391C1340E47C00ACF2BB /* KGOAttendeeWrapper.m */,
 				EB0339271340E47C00ACF2BB /* KGOEventWrapper.h */,
 				EB0339281340E47C00ACF2BB /* KGOEventWrapper.m */,
 			);
@@ -957,6 +956,8 @@
 				EB0CF907133FC86E003B8E45 /* KGOToolbar.m */,
 				EB0CF908133FC86E003B8E45 /* MITThumbnailView.h */,
 				EB0CF909133FC86E003B8E45 /* MITThumbnailView.m */,
+				EB469BE5134A3B54005796E4 /* KGOSearchResultListTableView.h */,
+				EB469BE6134A3B54005796E4 /* KGOSearchResultListTableView.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1043,6 +1044,17 @@
 				EB677E09132FD4AF00981523 /* FacebookMediaDetailViewController.xib */,
 			);
 			path = Facebook;
+			sourceTree = "<group>";
+		};
+		EB469E7E134B6F5D005796E4 /* ReunionMap */ = {
+			isa = PBXGroup;
+			children = (
+				EB469E7F134B6FA5005796E4 /* ReunionMapModule.h */,
+				EB469E80134B6FA5005796E4 /* ReunionMapModule.m */,
+				EB469E82134B9FEF005796E4 /* ReunionMapDetailViewController.h */,
+				EB469E83134B9FEF005796E4 /* ReunionMapDetailViewController.m */,
+			);
+			path = ReunionMap;
 			sourceTree = "<group>";
 		};
 		EB46C93E132590F900AF7B5C /* Connect */ = {
@@ -1463,22 +1475,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DEA3B48D10C9BB7300BDA774 /* AboutModule.m in Sources */,
 				EB7F327F10CD6C5B00188BCD /* PeopleDataModel.xcdatamodeld in Sources */,
 				EB7F328310CD6C5B00188BCD /* PeopleDetailsViewController.m in Sources */,
 				EB7F328410CD6C5B00188BCD /* PeopleModule.m in Sources */,
 				EBA2865610E07E140003BA01 /* PeopleSearchViewController.m in Sources */,
 				DE9EFBD210FE7D8900F5F07E /* SettingsModule.m in Sources */,
-				DEC02F9D110578240054BE32 /* AboutTableViewController.m in Sources */,
 				DE6D9401110AD1ED00DAF213 /* SettingsTableViewController.m in Sources */,
-				DE0F6B3411109BC500F064D6 /* AboutMITVC.m in Sources */,
 				EB1387AF12F22DD2004DBB7C /* main.m in Sources */,
 				EB57740512FE113400BAF5F5 /* KGOSpringboardViewController.m in Sources */,
 				EB142B771300868600396753 /* KGONotification.m in Sources */,
 				EB142C2413009FF100396753 /* KGOAppDelegate.m in Sources */,
 				EB142C9B1300A83E00396753 /* KGOAppDelegate+ModuleAdditions.m in Sources */,
 				EB142E6F1300D94E00396753 /* HomeModule.m in Sources */,
-				EB1441AA1309F57400396753 /* MITBuildInfo.m in Sources */,
 				EB1441B01309F59700396753 /* KGOModule.m in Sources */,
 				EB358AD01309F9CE000250AD /* FacebookModule.m in Sources */,
 				EB1815E0130C524A003728FF /* KGOHomeScreenViewController.m in Sources */,
@@ -1598,8 +1606,13 @@
 				EBE2CCC41344C8BE0037546A /* FoursquareModule.m in Sources */,
 				EBE2CCC71344D50A0037546A /* KGOSocialMediaController+Foursquare.m in Sources */,
 				EBE2CCD2134539C90037546A /* KGOFoursquareEngine.m in Sources */,
-				EB913B8C1347CD7D00D2EEF6 /* AboutCreditsWebViewController.m in Sources */,
 				EB469A8A134952D3005796E4 /* ReunionDetailPageHeaderView.m in Sources */,
+				EB469BE7134A3B54005796E4 /* KGOSearchResultListTableView.m in Sources */,
+				EB469E81134B6FA5005796E4 /* ReunionMapModule.m in Sources */,
+				EB469E84134B9FEF005796E4 /* ReunionMapDetailViewController.m in Sources */,
+				EB469ED2134BC932005796E4 /* AboutModule.m in Sources */,
+				EB469ED3134BC932005796E4 /* AboutTableViewController.m in Sources */,
+				EB469ED4134BC932005796E4 /* MITBuildInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

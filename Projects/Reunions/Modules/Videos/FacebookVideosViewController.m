@@ -191,7 +191,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     FacebookVideo *aVideo = [_videos objectAtIndex:indexPath.row];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:_videos, @"videos", aVideo, @"video", nil];
-    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail forModuleTag:VideoTag params:params];
+    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail forModuleTag:@"video" params:params];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
