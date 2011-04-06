@@ -8,10 +8,11 @@
 
 // not subclassing MapDetailViewController b/c we don't want a tabbed view
 @interface ReunionMapDetailViewController : UITableViewController <KGODetailPagerDelegate,
-UIWebViewDelegate, ConnectionWrapperDelegate, KGODetailPageHeaderDelegate> {
+UIWebViewDelegate, KGODetailPageHeaderDelegate, MITThumbnailDelegate> {
     
     ReunionDetailPageHeaderView *_headerView;
     CGFloat _webViewHeight;
+    CGFloat _thumbViewHeight;
     KGOHTMLTemplate *_htmlTemplate;
     
 }
