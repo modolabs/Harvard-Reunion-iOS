@@ -6,12 +6,12 @@
 #import "ExternalURLModule.h"
 #import "FacebookModule.h"
 #import "FoursquareModule.h"
-#import "HomeModule.h"
-#import "LoginModule.h"
 #import	"ReunionMapModule.h"
 #import "NewsModule.h"
 #import "PeopleModule.h"
 #import "PhotosModule.h"
+#import "ReunionHomeModule.h"
+#import "ReunionLoginModule.h"
 #import "ScheduleModule.h"
 #import "SettingsModule.h"
 #import "TwitterModule.h"
@@ -30,7 +30,7 @@
                                    @"FoursquareModule", @"foursquare",
                                    @"HomeModule", @"home",
                                    @"LoginModule", @"login",
-                                   @"ReunionMapModule", @"map",
+                                   @"MapModule", @"map",
                                    @"NewsModule", @"news",
                                    @"PeopleModule", @"people",
                                    @"SettingsModule", @"customize",
@@ -52,7 +52,7 @@
         module = [[[ScheduleModule alloc] initWithDictionary:args] autorelease];
     
     else if ([className isEqualToString:@"HomeModule"])
-        module = [[[HomeModule alloc] initWithDictionary:args] autorelease];
+        module = [[[ReunionHomeModule alloc] initWithDictionary:args] autorelease];
     
     else if ([className isEqualToString:@"ExternalURLModule"])
         module = [[[ExternalURLModule alloc] initWithDictionary:args] autorelease];
@@ -64,9 +64,9 @@
         module = [[[FoursquareModule alloc] initWithDictionary:args] autorelease];
     
     else if ([className isEqualToString:@"LoginModule"])
-        module = [[[LoginModule alloc] initWithDictionary:args] autorelease];
+        module = [[[ReunionLoginModule alloc] initWithDictionary:args] autorelease];
     
-    else if ([className isEqualToString:@"ReunionMapModule"])
+    else if ([className isEqualToString:@"MapModule"])
         module = [[[ReunionMapModule alloc] initWithDictionary:args] autorelease];
     
     else if ([className isEqualToString:@"NewsModule"])

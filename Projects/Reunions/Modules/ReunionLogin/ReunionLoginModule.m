@@ -5,59 +5,140 @@
 #import "UIKit+KGOAdditions.h"
 #import "ReunionHomeModule.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
+#import "Foundation+KGOAdditions.h"
 
 @implementation ReunionLoginModule
 
+- (UIView *)currentUserWidget
+{
+    NSDictionary *userDict = [[[KGORequestManager sharedManager] sessionInfo] dictionaryForKey:@"user"];
+    
+    self.username = [userDict stringForKey:@"name" nilIfEmpty:YES];
+    
+    KGOHomeScreenViewController *homeVC = (KGOHomeScreenViewController *)[KGO_SHARED_APP_DELEGATE() homescreen];
+    CGRect frame = [homeVC springboardFrame];
+    frame = CGRectMake(10, 10, frame.size.width - 20, 90);
+    KGOHomeScreenWidget *widget = [[[KGOHomeScreenWidget alloc] initWithFrame:frame] autorelease];
+    
+    NSString *title = self.username;
+    NSString *subtitle = self.userDescription;
+    if (!title) {
+        title = self.userDescription;
+        subtitle = nil;
+    }
+    
+    UILabel *titleLabel = nil;
+    
+    CGFloat y = 10;
+    
+    if (subtitle) {
+        UIFont *font = [[KGOTheme sharedTheme] fontForBodyText];
+        CGSize size = [self.userDescription sizeWithFont:font];
+        UILabel *subtitleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, y, size.width, size.height)] autorelease];
+        subtitleLabel.font = font;
+        subtitleLabel.backgroundColor = [UIColor clearColor];
+        subtitleLabel.textColor = [UIColor whiteColor];
+        subtitleLabel.text = subtitle;
+        
+        y += subtitleLabel.frame.size.height + 10;
+        
+        [widget addSubview:subtitleLabel];
+    }
+    
+    if (title) {
+        UIFont *font = [[KGOTheme sharedTheme] fontForContentTitle];
+        CGSize size = [title sizeWithFont:font];
+        
+        titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, y, size.width, size.height)] autorelease];
+        titleLabel.font = font;
+        titleLabel.text = title;
+        titleLabel.backgroundColor = [UIColor clearColor];
+        titleLabel.textColor = [UIColor whiteColor];
+        
+        [widget addSubview:titleLabel];
+    }
+    
+    widget.behavesAsIcon = NO;
+    
+    return widget;
+}
+
 - (UIView *)ribbonWidget
 {
-    ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
+    KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
     
-    KGONavigationStyle navStyle = [KGO_SHARED_APP_DELEGATE() navigationStyle];
+    ReunionHomeModule *homeModule = (ReunionHomeModule *)[appDelegate moduleForTag:@"home"];
+    
+    KGONavigationStyle navStyle = [appDelegate navigationStyle];
     if (navStyle == KGONavigationStylePortlet) {
         UIImage *image = [UIImage imageWithPathName:@"modules/home/ribbon"];
         UIImageView *imageView = [[[UIImageView alloc] initWithImage:image] autorelease];
-        
+    
+        // reunion number
         NSString *text = [homeModule reunionNumber];
         UIFont *font = [UIFont fontWithName:@"Georgia" size:38];
         CGSize size = [text sizeWithFont:font];
 
-        CGFloat x = 10;
-        UILabel *yearLabel = [[[UILabel alloc] initWithFrame:CGRectMake(x, 20, size.width, size.height)] autorelease];
+        UILabel *yearLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)] autorelease];
         yearLabel.text = text;
         yearLabel.font = font;
+        yearLabel.textColor = [UIColor whiteColor];
         yearLabel.backgroundColor = [UIColor clearColor];
-        x += size.width;
-        CGFloat y = 20 + size.height + 10;
-        
+        CGFloat y = size.height;
+
+        // reunion number superscript
         text = @"th";
         font = [UIFont fontWithName:@"Georgia" size:18];
         size = [text sizeWithFont:font];
-        UILabel *yearSupLabel = [[[UILabel alloc] initWithFrame:CGRectMake(x, 20, size.width, size.height)] autorelease];
+        UILabel *yearSupLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 5, size.width, size.height)] autorelease];
         yearSupLabel.text = text;
         yearSupLabel.font = font;
+        yearSupLabel.textColor = [UIColor whiteColor];
         yearSupLabel.backgroundColor = [UIColor clearColor];
+
+        // position above two elements
+        CGFloat x = floor((imageView.frame.size.width - yearLabel.frame.size.width - yearSupLabel.frame.size.width) / 2);
+        CGRect yearFrame = yearLabel.frame;
+        yearFrame.origin.x = x;
+        yearLabel.frame = yearFrame;
+        yearFrame = yearSupLabel.frame;
+        yearFrame.origin.x = x + yearLabel.frame.size.width;
+        yearSupLabel.frame = yearFrame;
         
+        // "reunion"
         font = [UIFont fontWithName:@"Georgia" size:16];
         UILabel *reunionLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, y, image.size.width, font.lineHeight)] autorelease];
         reunionLabel.text = @"Reunion";
         reunionLabel.font = font;
         reunionLabel.backgroundColor = [UIColor clearColor];
         reunionLabel.textAlignment = UITextAlignmentCenter;
-        y += reunionLabel.frame.size.height + 5;
-        
+        reunionLabel.textColor = [UIColor whiteColor];
+        y += reunionLabel.frame.size.height;
+
+        // reunion date
         font = [UIFont fontWithName:@"Georgia" size:13];
         UILabel *dateLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, y, image.size.width, font.lineHeight)] autorelease];
         dateLabel.text = [homeModule reunionDateString];
         dateLabel.font = font;
         dateLabel.backgroundColor = [UIColor clearColor];
+        dateLabel.textColor = [UIColor whiteColor];
         dateLabel.textAlignment = UITextAlignmentCenter;
         
-        [imageView addSubview:yearLabel];
-        [imageView addSubview:yearSupLabel];
-        [imageView addSubview:reunionLabel];
-        [imageView addSubview:dateLabel];
+        CGRect frame = imageView.frame;
+        CGRect springboardFrame = [(KGOHomeScreenViewController *)[appDelegate homescreen] springboardFrame];
+        frame.origin.x = springboardFrame.size.width - frame.size.width - 10;
+        KGOHomeScreenWidget *widget = [[[KGOHomeScreenWidget alloc] initWithFrame:frame] autorelease];
         
-        return imageView;
+        [widget addSubview:imageView];
+        [widget addSubview:yearLabel];
+        [widget addSubview:yearSupLabel];
+        [widget addSubview:reunionLabel];
+        [widget addSubview:dateLabel];
+        
+        widget.behavesAsIcon = NO;
+        widget.overlaps = YES;
+        
+        return widget;
     }
     
     return nil;

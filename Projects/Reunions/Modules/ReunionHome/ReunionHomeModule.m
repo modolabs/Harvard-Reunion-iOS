@@ -68,7 +68,7 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
     [[NSUserDefaults standardUserDefaults] synchronize];
 
     // this will trigger the home screen to stop loading
-    [[NSNotificationCenter defaultCenter] postNotificationName:ModuleListDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:KGODidLoginNotification object:nil];
 }
 
 #pragma mark -

@@ -5,13 +5,13 @@
 
 @synthesize homeModule;
 
-- (void)hideLoadingViewIfLoginOK
+- (void)loginDidComplete:(NSNotification *)aNotification
 {
     if (![self.homeModule homeScreenConfig]) {
         return;
     }
     
-    [super hideLoadingViewIfLoginOK];
+    [super loginDidComplete:aNotification];
 }
 
 @end
