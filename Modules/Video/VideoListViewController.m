@@ -8,6 +8,8 @@
 #import "Video.h"
 #import "VideoDetailViewController.h"
 #import "CoreDataManager.h"
+#import "VideoModule.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
 
 static const NSInteger kVideoListCellThumbnailTag = 0x78;
 
@@ -19,6 +21,11 @@ static const NSInteger kVideoListCellThumbnailTag = 0x78;
 - (void)updateThumbnailView:(MITThumbnailView *)thumbnailView 
                    forVideo:(Video *)video;
 - (void)requestVideosForActiveSection;
+- (void)removeAllThumbnailViews;
+
+#pragma mark Search UI
+- (void)showSearchBar;
+- (void)hideSearchBar;
 
 @end
 
@@ -63,6 +70,59 @@ static const NSInteger kVideoListCellThumbnailTag = 0x78;
     }
 }    
 
+- (void)removeAllThumbnailViews {
+    NSInteger sections = [self.tableView numberOfSections];
+    for (NSInteger section = 0; section < sections; ++section) {
+        NSInteger rows = [self.tableView numberOfRowsInSection:section];
+        for (NSInteger row = 0; row < rows; ++row) {
+            UITableViewCell *cell = 
+            [self.tableView cellForRowAtIndexPath:
+             [NSIndexPath indexPathForRow:row inSection:section]];
+            UIView *thumbnailView = 
+            [cell.contentView viewWithTag:kVideoListCellThumbnailTag];
+            [thumbnailView removeFromSuperview];
+        }
+    }
+}
+
+#pragma mark Search UI
+
+- (void)showSearchBar {
+	if (!self.theSearchBar) {
+		self.theSearchBar = 
+        [[[KGOSearchBar alloc] initWithFrame:
+          CGRectMake(0.0, 0.0, self.view.frame.size.width, 44.0)]
+         autorelease];
+        
+		self.theSearchBar.alpha = 0.0;
+        
+        if (!self.searchController) {
+            self.searchController = 
+            [[[KGOSearchDisplayController alloc] 
+             initWithSearchBar:self.theSearchBar delegate:self contentsController:self]
+             autorelease];
+        }
+		[self.view addSubview:self.theSearchBar];
+	}
+	[self.view bringSubviewToFront:self.theSearchBar];
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationDuration:0.4];
+	self.theSearchBar.alpha = 1.0;
+	[UIView commitAnimations];
+    [self.searchController setActive:YES animated:YES];
+}
+
+- (void)hideSearchBar {
+	if (self.theSearchBar) {
+		[UIView beginAnimations:nil context:NULL];
+		[UIView setAnimationDuration:0.4];
+        [UIView setAnimationDelegate:self];
+        //[UIView setAnimationDidStopSelector:@selector(releaseSearchBar)];
+		self.theSearchBar.alpha = 0.0;
+		[UIView commitAnimations];
+	}
+}
+
 @end
 
 
@@ -74,6 +134,8 @@ static const NSInteger kVideoListCellThumbnailTag = 0x78;
 @synthesize videos;
 @synthesize videoSections;
 @synthesize activeSectionIndex;
+@synthesize theSearchBar;
+@synthesize searchController;
 
 #pragma mark NSObject
 
@@ -82,13 +144,19 @@ static const NSInteger kVideoListCellThumbnailTag = 0x78;
 	if (self)
 	{
         self.dataManager = [[[VideoDataManager alloc] init] autorelease];
-        self.dataManager.moduleTag = moduleTag = VideoModuleTag;
+        self.moduleTag = VideoModuleTag;
         self.activeSectionIndex = 0;
 	}
 	return self;
 }
 
 - (void)dealloc {
+    // Need to do this so that they don't live on and try to call this object, 
+    // which is set as their delegate.
+    [self removeAllThumbnailViews];
+    
+    [searchController release];
+    [theSearchBar release];
     [videoSections release];
     [videos release];
     [navScrollView release];
@@ -109,6 +177,7 @@ static const NSInteger kVideoListCellThumbnailTag = 0x78;
                                [UIScreen mainScreen].applicationFrame.size.width, 
                                44)]
      autorelease];
+    self.navScrollView.showsSearchButton = YES;
     self.navScrollView.delegate = self;
 }
 
@@ -229,6 +298,48 @@ static const NSInteger kVideoListCellThumbnailTag = 0x78;
 - (void)tabstrip:(KGOScrollingTabstrip *)tabstrip clickedButtonAtIndex:(NSUInteger)index {
     self.activeSectionIndex = index;
     [self requestVideosForActiveSection];
+    if (self.videoSections.count > self.activeSectionIndex) {
+        VideoModule *module = 
+        (VideoModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:VideoModuleTag];
+        module.searchSection = 
+        [[self.videoSections objectAtIndex:self.activeSectionIndex] 
+         objectForKey:@"value"];
+    }    
+}
+
+- (void)tabstripSearchButtonPressed:(KGOScrollingTabstrip *)tabstrip {
+    [self showSearchBar];
+}
+
+
+#pragma mark KGOSearchDisplayDelegate
+- (BOOL)searchControllerShouldShowSuggestions:(KGOSearchDisplayController *)controller {
+    return NO;
+}
+
+- (NSArray *)searchControllerValidModules:(KGOSearchDisplayController *)controller {
+    return [NSArray arrayWithObject:VideoModuleTag];
+}
+
+- (NSString *)searchControllerModuleTag:(KGOSearchDisplayController *)controller {
+    return VideoModuleTag;
+}
+
+- (void)resultsHolder:(id<KGOSearchResultsHolder>)resultsHolder 
+      didSelectResult:(id<KGOSearchResult>)aResult {
+    
+    if ([aResult isKindOfClass:[Video class]]) {
+        VideoDetailViewController *detailViewController = 
+        [[VideoDetailViewController alloc] initWithVideo:(Video *)aResult];
+        [self.navigationController pushViewController:detailViewController 
+                                             animated:YES];
+        [detailViewController release];    
+    }
+}
+
+- (void)searchController:(KGOSearchDisplayController *)controller willHideSearchResultsTableView:(UITableView *)tableView {
+    [self hideSearchBar];
+    [self.navScrollView selectButtonAtIndex:self.activeSectionIndex];
 }
 
 @end
