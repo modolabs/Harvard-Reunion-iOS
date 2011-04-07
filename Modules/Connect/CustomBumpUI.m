@@ -66,7 +66,7 @@ CustomBumpUITags;
  */
 - (void)bumpConnectedToBumpNetwork
 {
-    [self showAlert:@"bumpFailedToConnectToBumpNetwork"];
+    [self showAlert:@"bumpConnectedToBumpNetwork"];
 }
 
 /**
@@ -133,7 +133,7 @@ CustomBumpUITags;
  */
 - (void)bumpSessionStarted
 {
-    [self showAlert:@"bumpFailedToConnectToBumpNetwork"];
+    [self showAlert:@"bumpSessionStarted"];
 }
 
 #pragma mark UIAlertViewDelegate

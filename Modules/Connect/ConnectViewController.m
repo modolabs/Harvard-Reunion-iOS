@@ -38,7 +38,6 @@ ConnectViewControllerTags;
     [[BumpAPI sharedInstance] configUIDelegate:self.customBumpUI];
     
     // Start Bump.
-    // This API key cannot be used in a production app.
     [bumpObject configAPIKey:@"57571df95089489d906d0d396ace290d"];
     [bumpObject configDelegate:self];
     [bumpObject configParentView:self.view];
@@ -94,7 +93,7 @@ ConnectViewControllerTags;
     incomingLabel.tag = kBumpIncomingLabel;
     [self.view addSubview:incomingLabel];
     [incomingLabel release];
-    
+        
     [self setUpBump];
 }
 
@@ -158,7 +157,7 @@ ConnectViewControllerTags;
 	NSString *alertText;
 	switch (reason) {
 		case END_OTHER_USER_QUIT:
-			alertText = @"Other user has quit the game.";
+			alertText = @"Other user has quit the session.";
 			break;
 		case END_LOST_NET:
 			alertText = @"Connection to Bump server was lost.";

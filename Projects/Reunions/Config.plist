@@ -56,7 +56,7 @@
 		</dict>
 		<dict>
 			<key>class</key>
-			<string>PeopleModule</string>
+			<string>ConnectModule</string>
 			<key>longName</key>
 			<string>Connect</string>
 			<key>secondary</key>
