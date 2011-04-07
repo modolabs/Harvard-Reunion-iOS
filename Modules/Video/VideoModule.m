@@ -13,6 +13,10 @@ NSString * const KGODataModelNameVideo = @"Video";
 
 @implementation VideoModule
 
+@synthesize dataManager;
+//@synthesize currentSearchResults;
+@synthesize searchSection;
+
 - (NSArray *)registeredPageNames {
     return [NSArray arrayWithObjects:LocalPathPageNameHome, LocalPathPageNameSearch, LocalPathPageNameDetail, nil];
 }
@@ -36,6 +40,43 @@ NSString * const KGODataModelNameVideo = @"Video";
 
 - (NSArray *)objectModelNames {
     return [NSArray arrayWithObject:KGODataModelNameVideo];
+}
+
+
+#pragma mark Search
+
+- (BOOL)supportsFederatedSearch {
+    return YES; // TODO: Make search optionally not hit network if we can tell it's federated search.
+}
+
+- (void)performSearchWithText:(NSString *)searchText 
+                       params:(NSDictionary *)params 
+                     delegate:(id<KGOSearchResultsHolder>)delegate {
+    
+    self.searchDelegate = delegate;
+//    self.currentSearchResults = nil;
+    
+    if (!self.dataManager) {
+        self.dataManager = [[[VideoDataManager alloc] init] autorelease];
+    }
+    
+    // TODO: Get section
+    [self.dataManager 
+     requestSearchOfSection:self.searchSection 
+     query:searchText
+     thenRunBlock:
+     ^(id result) { 
+         if ([result isKindOfClass:[NSArray class]])
+         {
+             [self.searchDelegate searcher:self didReceiveResults:result];
+         }
+     }];
+}
+
+- (void)dealloc {
+//    [currentSearchResults release];
+    [dataManager release];
+    [super dealloc];
 }
 
 @end
