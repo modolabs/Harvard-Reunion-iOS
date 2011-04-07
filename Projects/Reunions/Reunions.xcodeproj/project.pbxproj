@@ -168,6 +168,7 @@
 		EB46A158134CC0C4005796E4 /* ReunionHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A157134CC0C4005796E4 /* ReunionHomeViewController.m */; };
 		EB46A15B134CCC9D005796E4 /* ReunionHomeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A15A134CCC9C005796E4 /* ReunionHomeModule.m */; };
 		EB46A15F134CCCA8005796E4 /* ReunionLoginModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A15E134CCCA8005796E4 /* ReunionLoginModule.m */; };
+		EB46A2C2134D44D4005796E4 /* ScheduleTabletTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A2C1134D44D4005796E4 /* ScheduleTabletTableViewCell.m */; };
 		EB46C94A132590F900AF7B5C /* PhotosModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C941132590F900AF7B5C /* PhotosModule.m */; };
 		EB46C94B132590F900AF7B5C /* FacebookPhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C943132590F900AF7B5C /* FacebookPhotosViewController.m */; };
 		EB46C94C132590F900AF7B5C /* VideosModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C947132590F900AF7B5C /* VideosModule.m */; };
@@ -574,6 +575,8 @@
 		EB46A15A134CCC9C005796E4 /* ReunionHomeModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionHomeModule.m; sourceTree = "<group>"; };
 		EB46A15D134CCCA8005796E4 /* ReunionLoginModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReunionLoginModule.h; sourceTree = "<group>"; };
 		EB46A15E134CCCA8005796E4 /* ReunionLoginModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionLoginModule.m; sourceTree = "<group>"; };
+		EB46A2C0134D44D3005796E4 /* ScheduleTabletTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduleTabletTableViewCell.h; sourceTree = "<group>"; };
+		EB46A2C1134D44D4005796E4 /* ScheduleTabletTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduleTabletTableViewCell.m; sourceTree = "<group>"; };
 		EB46C940132590F900AF7B5C /* PhotosModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosModule.h; sourceTree = "<group>"; };
 		EB46C941132590F900AF7B5C /* PhotosModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosModule.m; sourceTree = "<group>"; };
 		EB46C942132590F900AF7B5C /* FacebookPhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookPhotosViewController.h; sourceTree = "<group>"; };
@@ -1641,6 +1644,8 @@
 				EB9DE00913416F5000598644 /* ScheduleEventWrapper.m */,
 				EB469A88134952D3005796E4 /* ReunionDetailPageHeaderView.h */,
 				EB469A89134952D3005796E4 /* ReunionDetailPageHeaderView.m */,
+				EB46A2C0134D44D3005796E4 /* ScheduleTabletTableViewCell.h */,
+				EB46A2C1134D44D4005796E4 /* ScheduleTabletTableViewCell.m */,
 			);
 			path = Schedule;
 			sourceTree = "<group>";
@@ -2028,6 +2033,7 @@
 				A6F20B14134E67E3009F597D /* BumpAPIUI.m in Sources */,
 				A6F20B15134E67E3009F597D /* BumpAPIWaitPage.m in Sources */,
 				A6F20B16134E67E3009F597D /* BumpHandsView.m in Sources */,
+				EB46A2C2134D44D4005796E4 /* ScheduleTabletTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

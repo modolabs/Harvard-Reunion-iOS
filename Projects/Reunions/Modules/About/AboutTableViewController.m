@@ -106,7 +106,7 @@ static NSString * const AboutSectionsPrefKey = @"AboutSections";
         } copy] autorelease];
         
     } else {
-        return NULL;
+        return nil;
     }
 }
 
