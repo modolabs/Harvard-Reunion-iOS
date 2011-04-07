@@ -77,7 +77,10 @@
         // reunion number
         NSString *text = [homeModule reunionNumber];
         UIFont *font = [UIFont fontWithName:@"Georgia" size:38];
-        CGSize size = [text sizeWithFont:font];
+        CGSize size = CGSizeZero;
+        if (text) {
+            [text sizeWithFont:font];
+        }
 
         UILabel *yearLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)] autorelease];
         yearLabel.text = text;
