@@ -9,7 +9,6 @@
 #import "ConnectViewController.h"
 #import "BumpAPI.h"
 
-
 typedef enum
 {
     kBumpTextFieldTag = 0x324,
@@ -25,6 +24,9 @@ ConnectViewControllerTags;
 @interface ConnectViewController (Private)
 
 - (void)setUpBump;
+
+#pragma mark Address book
+- (void)showPicker;
 
 @end
 
@@ -44,6 +46,16 @@ ConnectViewControllerTags;
     [bumpObject configActionMessage:
      @"Bump with another app user to get started."];
     [bumpObject requestSession];
+}
+
+#pragma mark Address book
+- (void)showPicker {
+    ABPeoplePickerNavigationController *picker =
+    [[ABPeoplePickerNavigationController alloc] init];
+    picker.peoplePickerDelegate = self;
+    
+    [self presentModalViewController:picker animated:YES];
+    [picker release];
 }
 
 @end
@@ -151,6 +163,7 @@ ConnectViewControllerTags;
 
 - (void)bumpSessionStartedWith:(Bumper*)otherBumper{
     NSLog(@"Bump session started.");
+    [self showPicker];
 }
 
 - (void)bumpSessionEnded:(BumpSessionEndReason)reason {
@@ -218,6 +231,42 @@ ConnectViewControllerTags;
     (UITextField *)[self.view viewWithTag:kBumpTextFieldTag];
     [[BumpAPI sharedInstance] sendData:
      [textField.text dataUsingEncoding:NSUTF8StringEncoding]];
+}
+
+#pragma mark ABPeoplePickerNavigationControllerDelegate
+- (void)peoplePickerNavigationControllerDidCancel:
+(ABPeoplePickerNavigationController *)peoplePicker {
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+- (BOOL)peoplePickerNavigationController:
+(ABPeoplePickerNavigationController *)peoplePicker
+      shouldContinueAfterSelectingPerson:(ABRecordRef)person {
+    
+    NSString* name = (NSString *)ABRecordCopyValue(person,
+                                                   kABPersonFirstNameProperty);
+    NSString *firstName = name;
+    [name release];
+    
+    name = (NSString *)ABRecordCopyValue(person, kABPersonLastNameProperty);
+    NSString *lastName = name;
+    [name release];
+        
+    [self dismissModalViewControllerAnimated:YES];
+    
+    [[BumpAPI sharedInstance] sendData:
+     [[NSString stringWithFormat:@"%@ %@", firstName, lastName] 
+      dataUsingEncoding:NSUTF8StringEncoding]];    
+    
+    return NO;
+}
+
+- (BOOL)peoplePickerNavigationController:
+(ABPeoplePickerNavigationController *)peoplePicker
+      shouldContinueAfterSelectingPerson:(ABRecordRef)person
+                                property:(ABPropertyID)property
+                              identifier:(ABMultiValueIdentifier)identifier{
+    return NO;
 }
 
 @end

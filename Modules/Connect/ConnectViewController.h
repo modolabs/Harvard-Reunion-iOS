@@ -5,9 +5,11 @@
 #import <UIKit/UIKit.h>
 #import "BumpAPI.h"
 #import "CustomBumpUI.h"
+#import <AddressBook/AddressBook.h>
+#import <AddressBookUI/AddressBookUI.h>
 
 @interface ConnectViewController : UIViewController <BumpAPIDelegate, 
-UITextFieldDelegate> {
+UITextFieldDelegate, ABPeoplePickerNavigationControllerDelegate> {
     CustomBumpUI *customConnectUI;
 }
 
