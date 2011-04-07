@@ -7,6 +7,8 @@
 
 NSString * const FacebookPhotoEntityName = @"FacebookPhoto";
 
+NSInteger widthSort(id imageDict1, id imageDict2, void *context);
+
 @implementation FacebookPhoto
 @dynamic src;
 @dynamic data;
@@ -29,7 +31,7 @@ NSString * const FacebookPhotoEntityName = @"FacebookPhoto";
     return photo;
 }
 
-+ (FacebookPhoto *)photoWithDictionary:(NSDictionary *)dictionary {
++ (FacebookPhoto *)photoWithDictionary:(NSDictionary *)dictionary size:(FacebookPhotoSize)size {
     
     FacebookPhoto *photo = nil;
     id identifier = [dictionary objectForKey:@"object_id"]; // via feed or FQL
@@ -41,13 +43,13 @@ NSString * const FacebookPhotoEntityName = @"FacebookPhoto";
     
     if (identifier) {
         photo = [FacebookPhoto photoWithID:identifier];
-        [photo updateWithDictionary:dictionary];
+        [photo updateWithDictionary:dictionary size:size];
     }
     
     return photo;
 }
 
-- (void)updateWithDictionary:(NSDictionary *)dictionary {
+- (void)updateWithDictionary:(NSDictionary *)dictionary size:(FacebookPhotoSize)size {
     
     NSString *theSrc = [dictionary stringForKey:@"picture" nilIfEmpty:YES]; // from feed
     if (!theSrc) {
@@ -118,9 +120,16 @@ NSString * const FacebookPhotoEntityName = @"FacebookPhoto";
     if (!self.thumbData) {
         self.thumbSrc = [dictionary stringForKey:@"src_small" nilIfEmpty:YES]; // fql
         if (!self.thumbSrc) {
-            // TODO: don't assume images are always sorted in descending size
-            NSDictionary *smallImage = [[dictionary arrayForKey:@"images"] lastObject];
-            self.thumbSrc = [smallImage stringForKey:@"source" nilIfEmpty:YES];
+            // This currently assume the smallest image is tiny
+            // and third smallest is medium
+            NSArray *orderImages = [[dictionary arrayForKey:@"images"] sortedArrayUsingFunction:widthSort context:NULL];
+            if (size == TINY) {
+                NSDictionary *smallImage = [orderImages objectAtIndex:0];
+                self.thumbSrc = [smallImage stringForKey:@"source" nilIfEmpty:YES];
+            } else if(size == MEDIUM) {
+                NSDictionary *mediumImage = [orderImages objectAtIndex:2];
+                self.thumbSrc = [mediumImage stringForKey:@"source" nilIfEmpty:YES];
+            }            
         }
     }
     
@@ -135,3 +144,9 @@ NSString * const FacebookPhotoEntityName = @"FacebookPhoto";
 }
 
 @end
+
+NSInteger widthSort(id imageDict1, id imageDict2, void *context) {
+    NSNumber *width1 = [imageDict1 numberForKey:@"width"];
+    NSNumber *width2 = [imageDict2 numberForKey:@"width"];
+    return [width1 compare:width2];
+}

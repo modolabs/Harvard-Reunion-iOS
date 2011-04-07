@@ -7,6 +7,13 @@
 #import "PhotoUploadViewController.h"
 #import "PhotosModule.h"
 #import "FacebookModule.h"
+#import "KGOTheme.h"
+
+@interface FacebookPhotosViewController (Private)
+
+- (FacebookPhotoSize)thumbSize;
+
+@end
 
 @implementation FacebookPhotosViewController
 
@@ -22,7 +29,7 @@
                 if ([type isEqualToString:@"photo"]) {
                     NSString *pid = [aPost stringForKey:@"object_id" nilIfEmpty:YES];
                     if (pid && ![_photosByID objectForKey:pid]) {
-                        FacebookPhoto *aPhoto = [FacebookPhoto photoWithDictionary:aPost];
+                        FacebookPhoto *aPhoto = [FacebookPhoto photoWithDictionary:aPost size:[self thumbSize]];
                         if (aPhoto) {
                             aPhoto.postIdentifier = [aPost stringForKey:@"id" nilIfEmpty:YES];
                             NSLog(@"%@", [aPhoto description]);
@@ -78,10 +85,18 @@
     CGRect frame = _scrollView.frame;
     frame.origin.y += _signedInUserView.frame.size.height;
     frame.size.height -= _signedInUserView.frame.size.height;
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        resizeFactor = 1.;
+    } else {
+        resizeFactor = 1.9;
+    }
+    CGFloat spacing = 10. * resizeFactor;
+    
     _iconGrid = [[IconGrid alloc] initWithFrame:frame];
     _iconGrid.delegate = self;
-    _iconGrid.spacing = GridSpacingMake(10, 10);
-    _iconGrid.padding = GridPaddingMake(10, 10, 10, 10);
+    _iconGrid.spacing = GridSpacingMake(spacing, spacing);
+    _iconGrid.padding = GridPaddingMake(spacing, spacing, spacing, spacing);
     _iconGrid.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _iconGrid.backgroundColor = [UIColor clearColor];
     
@@ -162,7 +177,9 @@
     }
     
     if (photo.thumbSrc || photo.thumbData || photo.data) { // omitting photo.src so we don't download full image until detail view
-        FacebookThumbnail *thumbnail = [[[FacebookThumbnail alloc] initWithFrame:CGRectMake(0, 0, 90, 130)] autorelease];
+        CGRect frame = CGRectMake(0, 0, 90 * resizeFactor, 90 * resizeFactor + 40);
+        
+        FacebookThumbnail *thumbnail = [[[FacebookThumbnail alloc] initWithFrame:frame] autorelease];
         thumbnail.photo = photo;
         thumbnail.rotationAngle = (_icons.count % 2 == 0) ? M_PI/12 : -M_PI/12;
         [thumbnail addTarget:self action:@selector(thumbnailTapped:) forControlEvents:UIControlEventTouchUpInside];
@@ -284,15 +301,23 @@
     FacebookPhoto *photo = [_photosByID objectForKey:identifier];
     
     if (photo) {
-        [photo updateWithDictionary:photoInfo];
+        [photo updateWithDictionary:photoInfo size:[self thumbSize]];
         [self displayPhoto:photo];
         
     } else {
-        photo = [FacebookPhoto photoWithDictionary:photoInfo];
+        photo = [FacebookPhoto photoWithDictionary:photoInfo size:[self thumbSize]];
         if (photo) {
             [_photosByID setObject:photo forKey:photo.identifier];
             [self displayPhoto:photo];
         }
+    }
+}
+
+- (FacebookPhotoSize)thumbSize {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        return TINY;
+    } else {
+        return MEDIUM;
     }
 }
 
@@ -305,14 +330,16 @@
     if (self) {
         self.backgroundColor = [UIColor clearColor];
         
-        _label = [[UILabel alloc] initWithFrame:CGRectMake(0, 90, 90, 40)];
+        CGRect labelFrame = CGRectMake(0, frame.size.height-40, frame.size.width, 40);
+        _label = [[UILabel alloc] initWithFrame:labelFrame];
         _label.backgroundColor = [UIColor clearColor];
         _label.textColor = [UIColor whiteColor];
         _label.numberOfLines = 3;
-        _label.font = [UIFont systemFontOfSize:10];
+        _label.font = [[KGOTheme sharedTheme] defaultSmallFont];
         _label.userInteractionEnabled = NO;
         
-        _thumbnail = [[MITThumbnailView alloc] initWithFrame:CGRectMake(0, 0, 90, 90)];
+        CGRectMake(0, 0, frame.size.width, frame.size.height-40);
+        _thumbnail = [[MITThumbnailView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height-40)];
         _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
         _thumbnail.userInteractionEnabled = NO;
 

@@ -14,6 +14,7 @@ UINavigationControllerDelegate, UIImagePickerControllerDelegate, FacebookUploadD
     NSMutableSet *_displayedPhotos;
     NSMutableDictionary *_photosByID;
     NSMutableDictionary *_photosByThumbSrc;
+    CGFloat resizeFactor;
 }
 
 - (void)didReceivePhoto:(id)result;
