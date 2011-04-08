@@ -107,7 +107,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (self.eventTitle) {
-        UIFont *font = [[KGOTheme sharedTheme] fontForGroupedSectionHeader];
+        UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySectionHeaderGrouped];
         CGFloat hPadding = 20.0f;
         CGFloat viewHeight = font.pointSize + GROUPED_SECTION_HEADER_VPADDING;
         
@@ -115,7 +115,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
         UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(hPadding, floor((viewHeight - size.height) / 2), tableView.bounds.size.width - hPadding * 2, size.height)] autorelease];
         
         label.text = self.eventTitle;
-        label.textColor = [[KGOTheme sharedTheme] textColorForGroupedSectionHeader];
+        label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySectionHeaderGrouped];
         label.font = font;
         label.backgroundColor = [UIColor clearColor];
         
@@ -131,7 +131,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (self.eventTitle) {
-        return [[[KGOTheme sharedTheme] fontForGroupedSectionHeader] lineHeight] + GROUPED_SECTION_HEADER_VPADDING;
+        return [[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySectionHeaderGrouped] lineHeight] + GROUPED_SECTION_HEADER_VPADDING;
     }
     return 0;
 }

@@ -3,7 +3,6 @@
 #import "KGOFoursquareEngine.h"
 #import "UIKit+KGOAdditions.h"
 #import "ScheduleEventWrapper.h"
-#import "ThemeConstants.h"
 #import "Foundation+KGOAdditions.h"
 #import "ReunionDetailPageHeaderView.h"
 #import "CalendarDataManager.h"
@@ -43,7 +42,7 @@
                                      title, @"title",
                                      subtitle, @"subtitle",
                                      [eventWrapper registrationURL], @"url",
-                                     TableViewCellAccessoryExternal, @"accessory",
+                                     KGOAccessoryTypeExternal, @"accessory",
                                      nil]];
         }
     }

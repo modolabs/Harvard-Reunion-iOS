@@ -121,8 +121,8 @@
     NSString *dateString = [aTweet stringForKey:@"created_at" nilIfEmpty:YES];
     NSDate *date = [[twitterModule twitterDateFormatter] dateFromString:dateString];
 
-    UIFont *titleFont = [[KGOTheme sharedTheme] fontForTableCellTitleWithStyle:KGOTableCellStyleSubtitle];
-    UIFont *detailFont = [[KGOTheme sharedTheme] fontForTableCellSubtitleWithStyle:KGOTableCellStyleSubtitle];
+    UIFont *titleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
+    UIFont *detailFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
     CGFloat width = tableView.frame.size.width - 20;
     
     UILabel *titleLabel = [UILabel multilineLabelWithText:title
@@ -138,7 +138,7 @@
     UILabel *subtitleLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
     subtitleLabel.text = [NSString stringWithFormat:@"%@ %@", user, [date agoString]];
     subtitleLabel.font = detailFont;
-    subtitleLabel.textColor = [[KGOTheme sharedTheme] textColorForTableCellSubtitleWithStyle:KGOTableCellStyleSubtitle];
+    subtitleLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyNavListSubtitle];
     
     return [NSArray arrayWithObjects:titleLabel, subtitleLabel, nil];
 }

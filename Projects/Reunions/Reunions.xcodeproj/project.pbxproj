@@ -22,29 +22,6 @@
 		A6F20AF7134E67E3009F597D /* libBumpAPI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6F20A9D134E67E3009F597D /* libBumpAPI.a */; };
 		A6F20AF8134E67E3009F597D /* BumpApiLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A6F20A9F134E67E3009F597D /* BumpApiLocalizable.strings */; };
 		A6F20AF9134E67E3009F597D /* Localization-ReadMe.txt in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AAA134E67E3009F597D /* Localization-ReadMe.txt */; };
-		A6F20AFA134E67E3009F597D /* config in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AB6134E67E3009F597D /* config */; };
-		A6F20AFB134E67E3009F597D /* description in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AB7134E67E3009F597D /* description */; };
-		A6F20AFC134E67E3009F597D /* HEAD in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AB8134E67E3009F597D /* HEAD */; };
-		A6F20AFD134E67E3009F597D /* applypatch-msg.sample in Resources */ = {isa = PBXBuildFile; fileRef = A6F20ABA134E67E3009F597D /* applypatch-msg.sample */; };
-		A6F20AFE134E67E3009F597D /* commit-msg.sample in Resources */ = {isa = PBXBuildFile; fileRef = A6F20ABB134E67E3009F597D /* commit-msg.sample */; };
-		A6F20AFF134E67E3009F597D /* post-commit.sample in Resources */ = {isa = PBXBuildFile; fileRef = A6F20ABC134E67E3009F597D /* post-commit.sample */; };
-		A6F20B00134E67E3009F597D /* post-receive.sample in Resources */ = {isa = PBXBuildFile; fileRef = A6F20ABD134E67E3009F597D /* post-receive.sample */; };
-		A6F20B01134E67E3009F597D /* post-update.sample in Resources */ = {isa = PBXBuildFile; fileRef = A6F20ABE134E67E3009F597D /* post-update.sample */; };
-		A6F20B02134E67E3009F597D /* pre-applypatch.sample in Resources */ = {isa = PBXBuildFile; fileRef = A6F20ABF134E67E3009F597D /* pre-applypatch.sample */; };
-		A6F20B03134E67E3009F597D /* pre-commit.sample in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AC0134E67E3009F597D /* pre-commit.sample */; };
-		A6F20B04134E67E3009F597D /* pre-rebase.sample in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AC1134E67E3009F597D /* pre-rebase.sample */; };
-		A6F20B05134E67E3009F597D /* prepare-commit-msg.sample in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AC2134E67E3009F597D /* prepare-commit-msg.sample */; };
-		A6F20B06134E67E3009F597D /* update.sample in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AC3134E67E3009F597D /* update.sample */; };
-		A6F20B07134E67E3009F597D /* index in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AC4134E67E3009F597D /* index */; };
-		A6F20B08134E67E3009F597D /* exclude in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AC6134E67E3009F597D /* exclude */; };
-		A6F20B09134E67E3009F597D /* HEAD in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AC8134E67E3009F597D /* HEAD */; };
-		A6F20B0A134E67E3009F597D /* master in Resources */ = {isa = PBXBuildFile; fileRef = A6F20ACB134E67E3009F597D /* master */; };
-		A6F20B0B134E67E3009F597D /* pack-96fad7b17d96c7cfdf1cd320625a9bd3df07fab7.idx in Resources */ = {isa = PBXBuildFile; fileRef = A6F20ACF134E67E3009F597D /* pack-96fad7b17d96c7cfdf1cd320625a9bd3df07fab7.idx */; };
-		A6F20B0C134E67E3009F597D /* pack-96fad7b17d96c7cfdf1cd320625a9bd3df07fab7.pack in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AD0134E67E3009F597D /* pack-96fad7b17d96c7cfdf1cd320625a9bd3df07fab7.pack */; };
-		A6F20B0D134E67E3009F597D /* packed-refs in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AD1134E67E3009F597D /* packed-refs */; };
-		A6F20B0E134E67E3009F597D /* master in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AD4134E67E3009F597D /* master */; };
-		A6F20B0F134E67E3009F597D /* HEAD in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AD7134E67E3009F597D /* HEAD */; };
-		A6F20B10134E67E3009F597D /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AD9134E67E3009F597D /* .gitignore */; };
 		A6F20B11134E67E3009F597D /* BumpAPIConfirmPage.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20ADB134E67E3009F597D /* BumpAPIConfirmPage.m */; };
 		A6F20B12134E67E3009F597D /* BumpAPIPopup.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20ADD134E67E3009F597D /* BumpAPIPopup.m */; };
 		A6F20B13134E67E3009F597D /* BumpAPIPromptPage.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20ADF134E67E3009F597D /* BumpAPIPromptPage.m */; };
@@ -169,6 +146,8 @@
 		EB46A15B134CCC9D005796E4 /* ReunionHomeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A15A134CCC9C005796E4 /* ReunionHomeModule.m */; };
 		EB46A15F134CCCA8005796E4 /* ReunionLoginModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A15E134CCCA8005796E4 /* ReunionLoginModule.m */; };
 		EB46A2C2134D44D4005796E4 /* ScheduleTabletTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A2C1134D44D4005796E4 /* ScheduleTabletTableViewCell.m */; };
+		EB46A3E1134FA87E005796E4 /* ThemeConfig-iPad.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB46A3E0134FA87E005796E4 /* ThemeConfig-iPad.plist */; };
+		EB46A3E4134FAA60005796E4 /* KGOSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A3E3134FAA60005796E4 /* KGOSplitViewController.m */; };
 		EB46C94A132590F900AF7B5C /* PhotosModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C941132590F900AF7B5C /* PhotosModule.m */; };
 		EB46C94B132590F900AF7B5C /* FacebookPhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C943132590F900AF7B5C /* FacebookPhotosViewController.m */; };
 		EB46C94C132590F900AF7B5C /* VideosModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C947132590F900AF7B5C /* VideosModule.m */; };
@@ -179,7 +158,6 @@
 		EB46CA351327E43600AF7B5C /* kurogo in Resources */ = {isa = PBXBuildFile; fileRef = EB46CA341327E43600AF7B5C /* kurogo */; };
 		EB46CA371327E4D400AF7B5C /* ipad in Resources */ = {isa = PBXBuildFile; fileRef = EB46CA361327E4D300AF7B5C /* ipad */; };
 		EB46CA3B1327E53600AF7B5C /* ThemeConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB46CA381327E53600AF7B5C /* ThemeConfig.plist */; };
-		EB46CA3C1327E53600AF7B5C /* ThemeConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46CA3A1327E53600AF7B5C /* ThemeConstants.m */; };
 		EB46CA3E1327E7B700AF7B5C /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB46CA3D1327E7B700AF7B5C /* MainWindow-iPad.xib */; };
 		EB46CBBE132AE55400AF7B5C /* FacebookModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EB46CBBC132AE55400AF7B5C /* FacebookModel.xcdatamodeld */; };
 		EB46CBC7132AE95400AF7B5C /* FacebookPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46CBC6132AE95400AF7B5C /* FacebookPhoto.m */; };
@@ -320,29 +298,6 @@
 		A6F20AB0134E67E3009F597D /* sv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
 		A6F20AB1134E67E3009F597D /* zh-Hans */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/BumpApiLocalizable.strings"; sourceTree = "<group>"; };
 		A6F20AB2134E67E3009F597D /* zh-Hant */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/BumpApiLocalizable.strings"; sourceTree = "<group>"; };
-		A6F20AB6134E67E3009F597D /* config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config; sourceTree = "<group>"; };
-		A6F20AB7134E67E3009F597D /* description */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = description; sourceTree = "<group>"; };
-		A6F20AB8134E67E3009F597D /* HEAD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HEAD; sourceTree = "<group>"; };
-		A6F20ABA134E67E3009F597D /* applypatch-msg.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "applypatch-msg.sample"; sourceTree = "<group>"; };
-		A6F20ABB134E67E3009F597D /* commit-msg.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "commit-msg.sample"; sourceTree = "<group>"; };
-		A6F20ABC134E67E3009F597D /* post-commit.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "post-commit.sample"; sourceTree = "<group>"; };
-		A6F20ABD134E67E3009F597D /* post-receive.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "post-receive.sample"; sourceTree = "<group>"; };
-		A6F20ABE134E67E3009F597D /* post-update.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "post-update.sample"; sourceTree = "<group>"; };
-		A6F20ABF134E67E3009F597D /* pre-applypatch.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "pre-applypatch.sample"; sourceTree = "<group>"; };
-		A6F20AC0134E67E3009F597D /* pre-commit.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "pre-commit.sample"; sourceTree = "<group>"; };
-		A6F20AC1134E67E3009F597D /* pre-rebase.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "pre-rebase.sample"; sourceTree = "<group>"; };
-		A6F20AC2134E67E3009F597D /* prepare-commit-msg.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "prepare-commit-msg.sample"; sourceTree = "<group>"; };
-		A6F20AC3134E67E3009F597D /* update.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = update.sample; sourceTree = "<group>"; };
-		A6F20AC4134E67E3009F597D /* index */ = {isa = PBXFileReference; lastKnownFileType = file; path = index; sourceTree = "<group>"; };
-		A6F20AC6134E67E3009F597D /* exclude */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = exclude; sourceTree = "<group>"; };
-		A6F20AC8134E67E3009F597D /* HEAD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HEAD; sourceTree = "<group>"; };
-		A6F20ACB134E67E3009F597D /* master */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = master; sourceTree = "<group>"; };
-		A6F20ACF134E67E3009F597D /* pack-96fad7b17d96c7cfdf1cd320625a9bd3df07fab7.idx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "pack-96fad7b17d96c7cfdf1cd320625a9bd3df07fab7.idx"; sourceTree = "<group>"; };
-		A6F20AD0134E67E3009F597D /* pack-96fad7b17d96c7cfdf1cd320625a9bd3df07fab7.pack */ = {isa = PBXFileReference; lastKnownFileType = file; path = "pack-96fad7b17d96c7cfdf1cd320625a9bd3df07fab7.pack"; sourceTree = "<group>"; };
-		A6F20AD1134E67E3009F597D /* packed-refs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "packed-refs"; sourceTree = "<group>"; };
-		A6F20AD4134E67E3009F597D /* master */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = master; sourceTree = "<group>"; };
-		A6F20AD7134E67E3009F597D /* HEAD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HEAD; sourceTree = "<group>"; };
-		A6F20AD9134E67E3009F597D /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		A6F20ADA134E67E3009F597D /* BumpAPIConfirmPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpAPIConfirmPage.h; sourceTree = "<group>"; };
 		A6F20ADB134E67E3009F597D /* BumpAPIConfirmPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BumpAPIConfirmPage.m; sourceTree = "<group>"; };
 		A6F20ADC134E67E3009F597D /* BumpAPIPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpAPIPopup.h; sourceTree = "<group>"; };
@@ -577,6 +532,9 @@
 		EB46A15E134CCCA8005796E4 /* ReunionLoginModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionLoginModule.m; sourceTree = "<group>"; };
 		EB46A2C0134D44D3005796E4 /* ScheduleTabletTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduleTabletTableViewCell.h; sourceTree = "<group>"; };
 		EB46A2C1134D44D4005796E4 /* ScheduleTabletTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduleTabletTableViewCell.m; sourceTree = "<group>"; };
+		EB46A3E0134FA87E005796E4 /* ThemeConfig-iPad.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ThemeConfig-iPad.plist"; sourceTree = "<group>"; };
+		EB46A3E2134FAA60005796E4 /* KGOSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSplitViewController.h; sourceTree = "<group>"; };
+		EB46A3E3134FAA60005796E4 /* KGOSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOSplitViewController.m; sourceTree = "<group>"; };
 		EB46C940132590F900AF7B5C /* PhotosModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosModule.h; sourceTree = "<group>"; };
 		EB46C941132590F900AF7B5C /* PhotosModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosModule.m; sourceTree = "<group>"; };
 		EB46C942132590F900AF7B5C /* FacebookPhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookPhotosViewController.h; sourceTree = "<group>"; };
@@ -594,8 +552,6 @@
 		EB46CA341327E43600AF7B5C /* kurogo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = kurogo; path = ../../../Resources/default/kurogo; sourceTree = "<group>"; };
 		EB46CA361327E4D300AF7B5C /* ipad */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ipad; sourceTree = "<group>"; };
 		EB46CA381327E53600AF7B5C /* ThemeConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ThemeConfig.plist; sourceTree = "<group>"; };
-		EB46CA391327E53600AF7B5C /* ThemeConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeConstants.h; sourceTree = "<group>"; };
-		EB46CA3A1327E53600AF7B5C /* ThemeConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThemeConstants.m; sourceTree = "<group>"; };
 		EB46CA3D1327E7B700AF7B5C /* MainWindow-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "../../../Resources/MainWindow-iPad.xib"; sourceTree = "<group>"; };
 		EB46CBC5132AE95300AF7B5C /* FacebookPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookPhoto.h; sourceTree = "<group>"; };
 		EB46CBC6132AE95400AF7B5C /* FacebookPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookPhoto.m; sourceTree = "<group>"; };
@@ -807,8 +763,6 @@
 		A6F20AB3134E67E3009F597D /* bump-api2-ios-custom-ui */ = {
 			isa = PBXGroup;
 			children = (
-				A6F20AB4134E67E3009F597D /* .git */,
-				A6F20AD9134E67E3009F597D /* .gitignore */,
 				A6F20ADA134E67E3009F597D /* BumpAPIConfirmPage.h */,
 				A6F20ADB134E67E3009F597D /* BumpAPIConfirmPage.m */,
 				A6F20ADC134E67E3009F597D /* BumpAPIPopup.h */,
@@ -825,147 +779,6 @@
 			);
 			name = "bump-api2-ios-custom-ui";
 			path = "bump/bump-api2-ios-custom-ui";
-			sourceTree = "<group>";
-		};
-		A6F20AB4134E67E3009F597D /* .git */ = {
-			isa = PBXGroup;
-			children = (
-				A6F20AB5134E67E3009F597D /* branches */,
-				A6F20AB6134E67E3009F597D /* config */,
-				A6F20AB7134E67E3009F597D /* description */,
-				A6F20AB8134E67E3009F597D /* HEAD */,
-				A6F20AB9134E67E3009F597D /* hooks */,
-				A6F20AC4134E67E3009F597D /* index */,
-				A6F20AC5134E67E3009F597D /* info */,
-				A6F20AC7134E67E3009F597D /* logs */,
-				A6F20ACC134E67E3009F597D /* objects */,
-				A6F20AD1134E67E3009F597D /* packed-refs */,
-				A6F20AD2134E67E3009F597D /* refs */,
-			);
-			path = .git;
-			sourceTree = "<group>";
-		};
-		A6F20AB5134E67E3009F597D /* branches */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = branches;
-			sourceTree = "<group>";
-		};
-		A6F20AB9134E67E3009F597D /* hooks */ = {
-			isa = PBXGroup;
-			children = (
-				A6F20ABA134E67E3009F597D /* applypatch-msg.sample */,
-				A6F20ABB134E67E3009F597D /* commit-msg.sample */,
-				A6F20ABC134E67E3009F597D /* post-commit.sample */,
-				A6F20ABD134E67E3009F597D /* post-receive.sample */,
-				A6F20ABE134E67E3009F597D /* post-update.sample */,
-				A6F20ABF134E67E3009F597D /* pre-applypatch.sample */,
-				A6F20AC0134E67E3009F597D /* pre-commit.sample */,
-				A6F20AC1134E67E3009F597D /* pre-rebase.sample */,
-				A6F20AC2134E67E3009F597D /* prepare-commit-msg.sample */,
-				A6F20AC3134E67E3009F597D /* update.sample */,
-			);
-			path = hooks;
-			sourceTree = "<group>";
-		};
-		A6F20AC5134E67E3009F597D /* info */ = {
-			isa = PBXGroup;
-			children = (
-				A6F20AC6134E67E3009F597D /* exclude */,
-			);
-			path = info;
-			sourceTree = "<group>";
-		};
-		A6F20AC7134E67E3009F597D /* logs */ = {
-			isa = PBXGroup;
-			children = (
-				A6F20AC8134E67E3009F597D /* HEAD */,
-				A6F20AC9134E67E3009F597D /* refs */,
-			);
-			path = logs;
-			sourceTree = "<group>";
-		};
-		A6F20AC9134E67E3009F597D /* refs */ = {
-			isa = PBXGroup;
-			children = (
-				A6F20ACA134E67E3009F597D /* heads */,
-			);
-			path = refs;
-			sourceTree = "<group>";
-		};
-		A6F20ACA134E67E3009F597D /* heads */ = {
-			isa = PBXGroup;
-			children = (
-				A6F20ACB134E67E3009F597D /* master */,
-			);
-			path = heads;
-			sourceTree = "<group>";
-		};
-		A6F20ACC134E67E3009F597D /* objects */ = {
-			isa = PBXGroup;
-			children = (
-				A6F20ACD134E67E3009F597D /* info */,
-				A6F20ACE134E67E3009F597D /* pack */,
-			);
-			path = objects;
-			sourceTree = "<group>";
-		};
-		A6F20ACD134E67E3009F597D /* info */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = info;
-			sourceTree = "<group>";
-		};
-		A6F20ACE134E67E3009F597D /* pack */ = {
-			isa = PBXGroup;
-			children = (
-				A6F20ACF134E67E3009F597D /* pack-96fad7b17d96c7cfdf1cd320625a9bd3df07fab7.idx */,
-				A6F20AD0134E67E3009F597D /* pack-96fad7b17d96c7cfdf1cd320625a9bd3df07fab7.pack */,
-			);
-			path = pack;
-			sourceTree = "<group>";
-		};
-		A6F20AD2134E67E3009F597D /* refs */ = {
-			isa = PBXGroup;
-			children = (
-				A6F20AD3134E67E3009F597D /* heads */,
-				A6F20AD5134E67E3009F597D /* remotes */,
-				A6F20AD8134E67E3009F597D /* tags */,
-			);
-			path = refs;
-			sourceTree = "<group>";
-		};
-		A6F20AD3134E67E3009F597D /* heads */ = {
-			isa = PBXGroup;
-			children = (
-				A6F20AD4134E67E3009F597D /* master */,
-			);
-			path = heads;
-			sourceTree = "<group>";
-		};
-		A6F20AD5134E67E3009F597D /* remotes */ = {
-			isa = PBXGroup;
-			children = (
-				A6F20AD6134E67E3009F597D /* origin */,
-			);
-			path = remotes;
-			sourceTree = "<group>";
-		};
-		A6F20AD6134E67E3009F597D /* origin */ = {
-			isa = PBXGroup;
-			children = (
-				A6F20AD7134E67E3009F597D /* HEAD */,
-			);
-			path = origin;
-			sourceTree = "<group>";
-		};
-		A6F20AD8134E67E3009F597D /* tags */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = tags;
 			sourceTree = "<group>";
 		};
 		DE715445102FE468005E6111 /* Modules */ = {
@@ -1520,6 +1333,8 @@
 				EB181712130C9C43003728FF /* KGOHomeScreenWidget.m */,
 				EB46CA311327011100AF7B5C /* KGOSidebarFrameViewController.h */,
 				EB46CA321327011100AF7B5C /* KGOSidebarFrameViewController.m */,
+				EB46A3E2134FAA60005796E4 /* KGOSplitViewController.h */,
+				EB46A3E3134FAA60005796E4 /* KGOSplitViewController.m */,
 			);
 			name = Home;
 			path = ../../Modules/Home;
@@ -1538,8 +1353,7 @@
 				EB138AFC12F22F31004DBB7C /* KGOInfo.plist */,
 				EB5773C112FDF91200BAF5F5 /* Config.plist */,
 				EB46CA381327E53600AF7B5C /* ThemeConfig.plist */,
-				EB46CA391327E53600AF7B5C /* ThemeConstants.h */,
-				EB46CA3A1327E53600AF7B5C /* ThemeConstants.m */,
+				EB46A3E0134FA87E005796E4 /* ThemeConfig-iPad.plist */,
 				EB5F33A0132497D00066413F /* Default.png */,
 				EB5F33A1132497D00066413F /* Default@2x.png */,
 				EB5F33A2132497D00066413F /* Icon.png */,
@@ -1831,30 +1645,8 @@
 				A6F20AF6134E67E3009F597D /* BumpAPIAssets.bundle in Resources */,
 				A6F20AF8134E67E3009F597D /* BumpApiLocalizable.strings in Resources */,
 				A6F20AF9134E67E3009F597D /* Localization-ReadMe.txt in Resources */,
-				A6F20AFA134E67E3009F597D /* config in Resources */,
-				A6F20AFB134E67E3009F597D /* description in Resources */,
-				A6F20AFC134E67E3009F597D /* HEAD in Resources */,
-				A6F20AFD134E67E3009F597D /* applypatch-msg.sample in Resources */,
-				A6F20AFE134E67E3009F597D /* commit-msg.sample in Resources */,
-				A6F20AFF134E67E3009F597D /* post-commit.sample in Resources */,
-				A6F20B00134E67E3009F597D /* post-receive.sample in Resources */,
-				A6F20B01134E67E3009F597D /* post-update.sample in Resources */,
-				A6F20B02134E67E3009F597D /* pre-applypatch.sample in Resources */,
-				A6F20B03134E67E3009F597D /* pre-commit.sample in Resources */,
-				A6F20B04134E67E3009F597D /* pre-rebase.sample in Resources */,
-				A6F20B05134E67E3009F597D /* prepare-commit-msg.sample in Resources */,
-				A6F20B06134E67E3009F597D /* update.sample in Resources */,
-				A6F20B07134E67E3009F597D /* index in Resources */,
-				A6F20B08134E67E3009F597D /* exclude in Resources */,
-				A6F20B09134E67E3009F597D /* HEAD in Resources */,
-				A6F20B0A134E67E3009F597D /* master in Resources */,
-				A6F20B0B134E67E3009F597D /* pack-96fad7b17d96c7cfdf1cd320625a9bd3df07fab7.idx in Resources */,
-				A6F20B0C134E67E3009F597D /* pack-96fad7b17d96c7cfdf1cd320625a9bd3df07fab7.pack in Resources */,
-				A6F20B0D134E67E3009F597D /* packed-refs in Resources */,
-				A6F20B0E134E67E3009F597D /* master in Resources */,
-				A6F20B0F134E67E3009F597D /* HEAD in Resources */,
-				A6F20B10134E67E3009F597D /* .gitignore in Resources */,
 				A6F20B17134E67E3009F597D /* README.markdown in Resources */,
+				EB46A3E1134FA87E005796E4 /* ThemeConfig-iPad.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1913,7 +1705,6 @@
 				EB46C950132591E200AF7B5C /* KGOModule+Factory.m in Sources */,
 				EB46C953132596C500AF7B5C /* TwitterModule.m in Sources */,
 				EB46CA331327011200AF7B5C /* KGOSidebarFrameViewController.m in Sources */,
-				EB46CA3C1327E53600AF7B5C /* ThemeConstants.m in Sources */,
 				EB46CBBE132AE55400AF7B5C /* FacebookModel.xcdatamodeld in Sources */,
 				EB46CBC7132AE95400AF7B5C /* FacebookPhoto.m in Sources */,
 				EB46CBCA132AE95600AF7B5C /* FacebookComment.m in Sources */,
@@ -2034,6 +1825,7 @@
 				A6F20B15134E67E3009F597D /* BumpAPIWaitPage.m in Sources */,
 				A6F20B16134E67E3009F597D /* BumpHandsView.m in Sources */,
 				EB46A2C2134D44D4005796E4 /* ScheduleTabletTableViewCell.m in Sources */,
+				EB46A3E4134FAA60005796E4 /* KGOSplitViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -32,7 +32,7 @@
     CGFloat y = 10;
     
     if (subtitle) {
-        UIFont *font = [[KGOTheme sharedTheme] fontForBodyText];
+        UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText];
         CGSize size = [self.userDescription sizeWithFont:font];
         UILabel *subtitleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, y, size.width, size.height)] autorelease];
         subtitleLabel.font = font;
@@ -46,7 +46,7 @@
     }
     
     if (title) {
-        UIFont *font = [[KGOTheme sharedTheme] fontForContentTitle];
+        UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
         CGSize size = [title sizeWithFont:font];
         
         titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, y, size.width, size.height)] autorelease];
