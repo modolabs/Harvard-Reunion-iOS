@@ -184,7 +184,7 @@
         
         FacebookThumbnail *thumbnail = [[[FacebookThumbnail alloc] initWithFrame:frame] autorelease];
         thumbnail.photo = photo;
-        thumbnail.rotationAngle = (_icons.count % 2 == 0) ? M_PI/12 : -M_PI/12;
+        thumbnail.rotationAngle = (_icons.count % 2 == 0) ? M_PI/30 : -M_PI/30;
         [thumbnail addTarget:self action:@selector(thumbnailTapped:) forControlEvents:UIControlEventTouchUpInside];
         [_icons addObject:thumbnail];
         _iconGrid.icons = _icons;
@@ -213,7 +213,7 @@
 
 - (void)highlightThumbnail:(FacebookThumbnail *)thumbnail animated:(BOOL)animated {
     _scrollView.scrollEnabled = NO;
-    NSTimeInterval duration = animated ? 1.5 : -1.0;
+    NSTimeInterval duration = animated ? 0.75 : -1.0;
     [UIView animateWithDuration:duration animations:^{
         for (FacebookThumbnail *icon in _icons) {
             if (icon != thumbnail) {
