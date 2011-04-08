@@ -8,12 +8,11 @@
 
 #import "ConnectViewController.h"
 #import "BumpAPI.h"
+#import "AddressBookUtils.h"
 
 typedef enum
 {
-    kBumpTextFieldTag = 0x324,
-    kBumpSendButtonTag,
-    kBumpIncomingLabel
+    kBumpIncomingLabel = 0x324
 }
 ConnectViewControllerTags;
 
@@ -27,6 +26,8 @@ ConnectViewControllerTags;
 
 #pragma mark Address book
 - (void)showPicker;
+- (void)addAddressBookRecordForDict:(NSDictionary *)serializedRecord;
+- (void)promptAboutAddingIncomingRecord;
 
 @end
 
@@ -50,12 +51,56 @@ ConnectViewControllerTags;
 
 #pragma mark Address book
 - (void)showPicker {
+    addressBookPickerShowing = YES;
     ABPeoplePickerNavigationController *picker =
     [[ABPeoplePickerNavigationController alloc] init];
     picker.peoplePickerDelegate = self;
     
     [self presentModalViewController:picker animated:YES];
-    [picker release];
+    [picker release];    
+}
+
+- (void)addAddressBookRecordForDict:(NSDictionary *)serializedRecord {
+    ABAddressBookRef addressBook = ABAddressBookCreate();
+    
+    ABRecordRef newRecord = ABPersonCreate();    
+    [AddressBookUtils setUpABRecord:newRecord withDict:serializedRecord];
+    
+    CFErrorRef error = NULL;
+    if (!ABAddressBookAddRecord(addressBook, newRecord, &error)) {
+        NSLog(@"Error adding record to address book.");
+    }
+    
+    error = NULL;
+    if (!ABAddressBookSave(addressBook, &error)) {
+        NSLog(@"Error saving to address book.");
+    }
+    
+    CFRelease(newRecord);
+    CFRelease(addressBook);
+}
+
+- (void)promptAboutAddingIncomingRecord
+{
+    // Ask about adding person sent to us to address book.
+    if (self.incomingABRecordDict) {
+        NSString *alertQuestion = 
+        [NSString stringWithFormat:@"Do you want to add %@ %@ to your Contacts?",
+         [self.incomingABRecordDict objectForKey:@"kABPersonFirstNameProperty"],
+         [self.incomingABRecordDict objectForKey:@"kABPersonLastNameProperty"]];
+        
+        UIAlertView *alert = 
+        [[UIAlertView alloc]
+         initWithTitle:@"Add to Contacts" message:alertQuestion delegate:self 
+         cancelButtonTitle:nil otherButtonTitles:@"Yes", @"No", nil];
+        [alert show];
+        [alert release];
+        shouldPromptAboutAddingRecordAtNextChance = NO;
+    }
+    else {
+        // Can't do it yet.
+        shouldPromptAboutAddingRecordAtNextChance = YES;
+    }
 }
 
 @end
@@ -64,6 +109,7 @@ ConnectViewControllerTags;
 @implementation ConnectViewController
 
 @synthesize customBumpUI;
+@synthesize incomingABRecordDict;
 
 // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)init
@@ -79,27 +125,7 @@ ConnectViewControllerTags;
 - (void)loadView {
     [super loadView];
     //self.view.backgroundColor = [UIColor greenColor];
-    
-    UITextField *bumpField = 
-    [[UITextField alloc] initWithFrame:CGRectMake(20, 20, 280, 40)];
-    bumpField.tag = kBumpTextFieldTag;
-    bumpField.placeholder = @"Text you want to send via Bump.";
-    bumpField.borderStyle = UITextBorderStyleBezel;
-    bumpField.backgroundColor = [UIColor whiteColor];
-    bumpField.delegate = self;
-    [self.view addSubview:bumpField];
-    [bumpField release];
-    
-    UIButton *sendButton = 
-    [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    sendButton.tag = kBumpSendButtonTag;
-    [sendButton setTitle:@"Send via Bump" forState:UIControlStateNormal];
-    sendButton.frame = CGRectMake(20, 80, 280, 40);
-    [sendButton addTarget:self action:@selector(buttonTapped:) 
-         forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.view addSubview:sendButton];
-    
+        
     UILabel *incomingLabel = [[UILabel alloc] initWithFrame:
                               CGRectMake(20, 140, 280, 80)];
     incomingLabel.tag = kBumpIncomingLabel;
@@ -140,8 +166,11 @@ ConnectViewControllerTags;
 
 - (void)dealloc {
     // Stop bump.
+    [[BumpAPI sharedInstance] configUIDelegate:nil];
     [[BumpAPI sharedInstance] endSession];
+    
     [customBumpUI release];
+    [incomingABRecordDict release];
     
     [super dealloc];
 }
@@ -149,16 +178,23 @@ ConnectViewControllerTags;
 #pragma mark BumpAPIDelegate methods
 
 - (void)bumpDataReceived:(NSData *)chunk {
-	// The chunk sent from the other user is string data.
-	NSString *chunkString = 
-    [[NSString alloc] initWithData:chunk encoding:NSUTF8StringEncoding];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	// The chunk sent from the other user is a dictionary representing an ABRecord. 
+    self.incomingABRecordDict = [NSKeyedUnarchiver unarchiveObjectWithData:chunk];
     
     // Update label with incoming text.
-    UILabel *incomingLabel = 
-    (UILabel *)[self.view viewWithTag:kBumpIncomingLabel];
-    incomingLabel.text = chunkString;
+    UILabel *incomingLabel = (UILabel *)[self.view viewWithTag:kBumpIncomingLabel];
+    incomingLabel.text = 
+    [self.incomingABRecordDict objectForKey:@"kABPersonOrganizationProperty"];
     
-    [chunkString release];
+    if (addressBookPickerShowing) {
+        shouldPromptAboutAddingRecordAtNextChance = YES;
+    }
+    else {
+        [self promptAboutAddingIncomingRecord];
+    }    
+    
+    [pool release];
 }
 
 - (void)bumpSessionStartedWith:(Bumper*)otherBumper{
@@ -225,13 +261,6 @@ ConnectViewControllerTags;
 }
 
 #pragma mark UI Actions
-- (IBAction)buttonTapped:(id)sender
-{
-    UITextField *textField = 
-    (UITextField *)[self.view viewWithTag:kBumpTextFieldTag];
-    [[BumpAPI sharedInstance] sendData:
-     [textField.text dataUsingEncoding:NSUTF8StringEncoding]];
-}
 
 #pragma mark ABPeoplePickerNavigationControllerDelegate
 - (void)peoplePickerNavigationControllerDidCancel:
@@ -242,21 +271,23 @@ ConnectViewControllerTags;
 - (BOOL)peoplePickerNavigationController:
 (ABPeoplePickerNavigationController *)peoplePicker
       shouldContinueAfterSelectingPerson:(ABRecordRef)person {
-    
-    NSString* name = (NSString *)ABRecordCopyValue(person,
-                                                   kABPersonFirstNameProperty);
-    NSString *firstName = name;
-    [name release];
-    
-    name = (NSString *)ABRecordCopyValue(person, kABPersonLastNameProperty);
-    NSString *lastName = name;
-    [name release];
         
     [self dismissModalViewControllerAnimated:YES];
+    addressBookPickerShowing = NO;
     
-    [[BumpAPI sharedInstance] sendData:
-     [[NSString stringWithFormat:@"%@ %@", firstName, lastName] 
-      dataUsingEncoding:NSUTF8StringEncoding]];    
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    // Send selected person.    
+    NSDictionary *personDict = [AddressBookUtils dictionaryForRecord:person];
+    NSData *chunk = [NSKeyedArchiver archivedDataWithRootObject:personDict];
+    
+    [[BumpAPI sharedInstance] sendData:chunk];
+    
+    if (shouldPromptAboutAddingRecordAtNextChance) {
+        [self promptAboutAddingIncomingRecord];
+    }
+
+    [pool release];
     
     return NO;
 }
@@ -267,6 +298,14 @@ ConnectViewControllerTags;
                                 property:(ABPropertyID)property
                               identifier:(ABMultiValueIdentifier)identifier{
     return NO;
+}
+
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0) {
+        [self addAddressBookRecordForDict:self.incomingABRecordDict];
+    }
+    self.incomingABRecordDict = nil;
 }
 
 @end
