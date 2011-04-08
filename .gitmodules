@@ -12,4 +12,4 @@
 	url = https://github.com/stig/json-framework.git
 [submodule "Contrib/bump/bump-api2-ios-custom-ui"]
 	path = Contrib/bump/bump-api2-ios-custom-ui
-	url = git://github.com/bumptech/bump-api2-ios-custom-ui.git
+	url = https://github.com/bumptech/bump-api2-ios-custom-ui.git
