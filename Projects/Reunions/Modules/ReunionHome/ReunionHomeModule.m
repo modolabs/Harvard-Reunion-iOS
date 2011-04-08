@@ -66,6 +66,9 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
 {
     NSLog(@"received home config: %@", result);
     
+    [_homeScreenConfig release];
+    _homeScreenConfig = [result retain];
+    
     // TODO: only save to defaults if we have persistent logins
     //[[NSUserDefaults standardUserDefaults] setObject:result forKey:HomeScreenConfigPrefKey];
     //[[NSUserDefaults standardUserDefaults] synchronize];

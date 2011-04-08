@@ -155,17 +155,26 @@
         if (oldIndexPath) {
             [needsRefresh addObject:oldIndexPath];
         }
-        if (_selectedIndexPath.row > 0) {
+        
+        if (_selectedIndexPath.row == 0) {
+            if (oldIndexPath) {
+                [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
+                                 withRowAnimation:UITableViewRowAnimationMiddle];
+            }
+
+        } else {
             NSIndexPath *aboveIndexPath = [NSIndexPath indexPathForRow:_selectedIndexPath.row-1 inSection:_selectedIndexPath.section];
-            if (aboveIndexPath.row != oldIndexPath.row || aboveIndexPath.section != oldIndexPath.section) {            
-                [needsRefresh addObject:aboveIndexPath];
+            if (oldIndexPath) {
+                if (aboveIndexPath.row != oldIndexPath.row || aboveIndexPath.section != oldIndexPath.section) {
+                    [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
+                                     withRowAnimation:UITableViewRowAnimationNone];
+                }
+                [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
+                                 withRowAnimation:UITableViewRowAnimationMiddle];
             }
         }
-        if (needsRefresh.count) {
-            [tableView reloadRowsAtIndexPaths:needsRefresh withRowAnimation:UITableViewRowAnimationNone];
-        }
         
-        [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:_selectedIndexPath] withRowAnimation:UITableViewRowAnimationLeft];
+        [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:_selectedIndexPath] withRowAnimation:UITableViewRowAnimationNone];
         
     } else {
         [super tableView:tableView didSelectRowAtIndexPath:indexPath];

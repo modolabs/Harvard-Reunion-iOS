@@ -63,17 +63,6 @@
             _fakeBehindCardBorder.backgroundColor = [UIColor colorWithHexString:@"DBD9D8"];
         }
 
-        /*
-        if (!self.isFirstInSection) {
-            
-        } else {
-            if (_fakeBehindCardBorder) {
-                [_fakeBehindCardBorder removeFromSuperview];
-                [_fakeBehindCardBorder release];
-                _fakeBehindCardBorder = nil;
-            }
-        }
-        */
         _fakeTopOfNextCell.hidden = YES;
         
     } else {

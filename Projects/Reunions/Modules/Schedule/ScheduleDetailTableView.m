@@ -73,8 +73,10 @@
                                     attendees, @"attendees",
                                     nil];
             [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameItemList forModuleTag:@"schedule" params:params];
+            return;
         }
     }
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 
 // uncomment when we have facebook/foursquare
