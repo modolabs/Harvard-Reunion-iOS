@@ -13,6 +13,9 @@
 
 - (FacebookPhotoSize)thumbSize;
 
+- (void)showPageForPhoto:(FacebookPhoto *)photo;
+- (void)highlightThumbnail:(FacebookThumbnail *)thumbnail animated:(BOOL)animated;
+
 @end
 
 @implementation FacebookPhotosViewController
@@ -201,6 +204,27 @@
 
 - (void)thumbnailTapped:(FacebookThumbnail *)sender {
     FacebookPhoto *photo = sender.photo;
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        [self showPageForPhoto:photo];
+    } else {
+        [self highlightThumbnail:sender animated:YES];
+    }
+}
+
+- (void)highlightThumbnail:(FacebookThumbnail *)thumbnail animated:(BOOL)animated {
+    _scrollView.scrollEnabled = NO;
+    NSTimeInterval duration = animated ? 1.5 : -1.0;
+    [UIView animateWithDuration:duration animations:^{
+        for (FacebookThumbnail *icon in _icons) {
+            if (icon != thumbnail) {
+                [icon hide];
+            }
+        }
+        [thumbnail highlightIntoFrame:CGRectMake(0, _scrollView.contentOffset.y, self.view.frame.size.width, 200.0)];
+    }];
+}
+
+- (void)showPageForPhoto:(FacebookPhoto *)photo {
     NSMutableArray *photos = [NSMutableArray array];
     [_icons enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         FacebookThumbnail *thumbnail = (FacebookThumbnail *)obj;
@@ -210,7 +234,7 @@
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:photo, @"photo", photos, @"photos", nil];
     [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail
                            forModuleTag:PhotosTag
-                                 params:params];
+                                 params:params];    
 }
 
 #pragma mark Photo uploads
@@ -375,6 +399,24 @@
 - (void)setRotationAngle:(CGFloat)rotationAngle {
     _rotationAngle = rotationAngle;
     _thumbnail.transform = CGAffineTransformMakeRotation(rotationAngle);
+}
+
+- (void)highlightIntoFrame:(CGRect)frame {
+    // frame given relative the super view
+    CGRect thumbnailFrame = CGRectMake(
+        frame.origin.x - self.frame.origin.x, 
+        frame.origin.y - self.frame.origin.y,
+        frame.size.width,
+        frame.size.height);
+    
+    _thumbnail.transform = CGAffineTransformMakeRotation(0);
+    _thumbnail.frame = thumbnailFrame;
+    _label.alpha = 0.0;
+}
+
+- (void)hide {
+    _thumbnail.alpha = 0.0;
+    _label.alpha = 0.0;
 }
 
 - (void)dealloc {

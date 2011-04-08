@@ -34,4 +34,7 @@ UINavigationControllerDelegate, UIImagePickerControllerDelegate, FacebookUploadD
 @property (nonatomic) CGFloat rotationAngle;
 @property (nonatomic, retain) FacebookPhoto *photo;
 
+- (void)highlightIntoFrame:(CGRect)frame;
+- (void)hide;
+
 @end
