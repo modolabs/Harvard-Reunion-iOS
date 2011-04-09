@@ -10,7 +10,7 @@
 
 @interface ConnectViewController : UIViewController <BumpAPIDelegate, 
 UITextFieldDelegate, ABPeoplePickerNavigationControllerDelegate,
-UIAlertViewDelegate> {
+UIAlertViewDelegate, BumpAPICustomUI> {
     CustomBumpUI *customConnectUI;
     BOOL shouldPromptAboutAddingRecordAtNextChance;
     BOOL addressBookPickerShowing;
@@ -19,5 +19,7 @@ UIAlertViewDelegate> {
 @property (nonatomic, retain) CustomBumpUI *customBumpUI;
 @property (nonatomic, retain) NSDictionary *incomingABRecordDict;
 //@property (nonatomic, retain) UIActivityIndicatorView *spinner;
+@property (nonatomic, retain) UILabel *statusLabel;
+@property (nonatomic, retain) UILabel *messageLabel;
 
 @end
