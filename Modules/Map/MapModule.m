@@ -21,12 +21,15 @@ NSString * const MapTypePreferenceChanged = @"MapTypeChanged";
 
 - (void)launch {
 #ifdef DEBUG
-    NSLog(@"deleting map categories");
-    for (NSManagedObject *aCategory in [[CoreDataManager sharedManager] objectsForEntity:MapCategoryEntityName matchingPredicate:nil]) {
-        [[CoreDataManager sharedManager] deleteObject:aCategory];
+    if (![self isActive]) {
+        NSLog(@"deleting map categories");
+        for (NSManagedObject *aCategory in [[CoreDataManager sharedManager] objectsForEntity:MapCategoryEntityName matchingPredicate:nil]) {
+            [[CoreDataManager sharedManager] deleteObject:aCategory];
+        }
         [[CoreDataManager sharedManager] saveData];
     }
 #endif
+    [super launch];
 }
 
 
@@ -75,7 +78,11 @@ NSString * const MapTypePreferenceChanged = @"MapTypeChanged";
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
             mapVC = [[[MapHomeViewController alloc] initWithNibName:@"MapHomeViewController" bundle:nil] autorelease];
         } else {
-            mapVC = [[[MapHomeViewController alloc] initWithNibName:@"MapHomeViewController-iPad" bundle:nil] autorelease];
+            if ([[NSBundle mainBundle] pathForResource:@"MapHomeViewController-iPad" ofType:@"nib"] != nil) {
+                mapVC = [[[MapHomeViewController alloc] initWithNibName:@"MapHomeViewController-iPad" bundle:nil] autorelease];
+            } else {
+                mapVC = [[[MapHomeViewController alloc] initWithNibName:@"MapHomeViewController" bundle:nil] autorelease];
+            }
         }
         
         NSString *searchText = [params objectForKey:@"q"];

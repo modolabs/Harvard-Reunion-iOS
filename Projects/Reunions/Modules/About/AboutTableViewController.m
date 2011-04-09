@@ -3,7 +3,6 @@
 #import "UIKit+KGOAdditions.h"
 #import "MITMailComposeController.h"
 #import "KGOTheme.h"
-#import "ThemeConstants.h"
 #import "Foundation+KGOAdditions.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 
@@ -31,7 +30,7 @@ static NSString * const AboutSectionsPrefKey = @"AboutSections";
     }
     
     UILabel *footerLabel = [UILabel multilineLabelWithText:@"© 2011 The President and Fellows of Harvard College"
-                                                      font:[[KGOTheme sharedTheme] fontForTableFooter]
+                                                      font:[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySmallPrint]
                                                      width:self.view.frame.size.width - 20];
     footerLabel.textAlignment = UITextAlignmentCenter;
     UIView *footerView = [[[UIView alloc] initWithFrame:footerLabel.frame] autorelease];
@@ -58,7 +57,7 @@ static NSString * const AboutSectionsPrefKey = @"AboutSections";
     if (indexPath.section < _paragraphs.count) {
         NSString *text = [_paragraphs objectAtIndex:indexPath.section];
         UILabel *label = [UILabel multilineLabelWithText:text
-                                                    font:[[KGOTheme sharedTheme] fontForBodyText]
+                                                    font:[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText]
                                                    width:tableView.frame.size.width - 40];
         label.frame = CGRectMake(10, 10, label.frame.size.width, label.frame.size.height);
         return [NSArray arrayWithObject:label];
@@ -92,11 +91,11 @@ static NSString * const AboutSectionsPrefKey = @"AboutSections";
         
         NSString *accessory = nil;
         if ([class isEqualToString:@"email"]) {
-            accessory = TableViewCellAccessoryEmail;
+            accessory = KGOAccessoryTypeEmail;
         } else if ([class isEqualToString:@"phone"]) {
-            accessory = TableViewCellAccessoryPhone;
+            accessory = KGOAccessoryTypePhone;
         } else if ([class isEqualToString:@"external"]) {
-            accessory = TableViewCellAccessoryExternal;
+            accessory = KGOAccessoryTypeExternal;
         }
         
         return [[^(UITableViewCell *cell) {

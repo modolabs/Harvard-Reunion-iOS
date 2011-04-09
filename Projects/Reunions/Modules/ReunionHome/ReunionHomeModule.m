@@ -64,8 +64,11 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
 
 - (void)request:(KGORequest *)request didReceiveResult:(id)result
 {
-    [[NSUserDefaults standardUserDefaults] setObject:result forKey:HomeScreenConfigPrefKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    NSLog(@"received home config: %@", result);
+    
+    // TODO: only save to defaults if we have persistent logins
+    //[[NSUserDefaults standardUserDefaults] setObject:result forKey:HomeScreenConfigPrefKey];
+    //[[NSUserDefaults standardUserDefaults] synchronize];
 
     // this will trigger the home screen to stop loading
     [[NSNotificationCenter defaultCenter] postNotificationName:KGODidLoginNotification object:nil];

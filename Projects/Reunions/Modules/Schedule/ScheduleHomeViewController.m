@@ -85,7 +85,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (_isTablet) {
-        return [[[KGOTheme sharedTheme] fontForPlainSectionHeader] lineHeight] + 5;
+        return [[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySectionHeader] lineHeight] + 5;
     }
     return [super tableView:tableView heightForHeaderInSection:section];
 }
@@ -94,7 +94,7 @@
 {
     if (_isTablet) {
         NSString *title = [_currentSections objectAtIndex:section];
-        UIFont *font = [[KGOTheme sharedTheme] fontForPlainSectionHeader];
+        UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySectionHeader];
         CGSize size = [title sizeWithFont:font];
         
         CGFloat hPadding = 10.0f;
@@ -105,7 +105,7 @@
                                                                     tableView.bounds.size.width - 8 - hPadding * 2,
                                                                     size.height)] autorelease];
         
-        label.textColor = [[KGOTheme sharedTheme] textColorForPlainSectionHeader];
+        label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySectionHeader];
         label.backgroundColor = [UIColor clearColor];
         label.text = title;
         label.font = font;

@@ -15,12 +15,32 @@
 		<key>SearchBarTintColor</key>
 		<string>#666666</string>
 		<key>SecondaryCellBackground</key>
-		<string>#FFFFFFAA</string>
+		<string>#AAFFFFFF</string>
 		<key>TableSeparator</key>
 		<string>#C0C0BF</string>
 	</dict>
 	<key>Fonts</key>
 	<dict>
+		<key>DefaultFont</key>
+		<string>Helvetica</string>
+		<key>DefaultFontSize</key>
+		<integer>15</integer>
+		<key>BodyText</key>
+		<dict>
+			<key>color</key>
+			<string>#171717</string>
+			<key>font</key>
+			<string>Helvetica</string>
+			<key>size</key>
+			<integer>0</integer>
+		</dict>
+		<key>SmallPrint</key>
+		<dict>
+			<key>color</key>
+			<string>#505050</string>
+			<key>size</key>
+			<integer>-3</integer>
+		</dict>
 		<key>ContentTitle</key>
 		<dict>
 			<key>color</key>
@@ -30,38 +50,49 @@
 			<key>size</key>
 			<integer>7</integer>
 		</dict>
-		<key>DefaultBoldFont</key>
-		<string>Helvetica-Bold</string>
-		<key>DefaultFont</key>
-		<string>Helvetica</string>
-		<key>DefaultFontSize</key>
-		<integer>15</integer>
-		<key>GroupedSectionHeader</key>
+		<key>ContentSubtitle</key>
 		<dict>
-			<key>bold</key>
-			<true/>
 			<key>color</key>
 			<string>#505050</string>
 			<key>size</key>
-			<integer>2</integer>
+			<integer>-3</integer>
 		</dict>
-		<key>PlainSectionHeader</key>
+		<key>PageTitle</key>
 		<dict>
-			<key>bold</key>
-			<true/>
 			<key>color</key>
-			<string>#E0E0E0</string>
+			<string>#505050</string>
 			<key>size</key>
-			<integer>0</integer>
+			<integer>-3</integer>
 		</dict>
-		<key>TableCellSubtitle</key>
+		<key>PageSubtitle</key>
+		<dict>
+			<key>color</key>
+			<string>#808080</string>
+			<key>size</key>
+			<integer>-1</integer>
+		</dict>
+		<key>Caption</key>
+		<dict>
+			<key>color</key>
+			<string>#505050</string>
+			<key>size</key>
+			<integer>-3</integer>
+		</dict>
+		<key>Byline</key>
+		<dict>
+			<key>color</key>
+			<string>#808080</string>
+			<key>size</key>
+			<integer>-3</integer>
+		</dict>
+		<key>NavListTitle</key>
 		<dict>
 			<key>color</key>
 			<string>#505050</string>
 			<key>size</key>
 			<integer>-2</integer>
 		</dict>
-		<key>TableCellTitle</key>
+		<key>NavListSubtitle</key>
 		<dict>
 			<key>bold</key>
 			<true/>
@@ -70,26 +101,73 @@
 			<key>size</key>
 			<integer>2</integer>
 		</dict>
-		<key>TableFooter</key>
+		<key>NavListLabel</key>
+		<dict>
+			<key>color</key>
+			<string>#505050</string>
+			<key>bold</key>
+			<true/>
+			<key>size</key>
+			<integer>-3</integer>
+		</dict>
+		<key>NavListValue</key>
 		<dict>
 			<key>color</key>
 			<string>#505050</string>
 			<key>size</key>
-			<integer>-3</integer>
+			<integer>0</integer>
+		</dict>
+		<key>SectionHeader</key>
+		<dict>
+			<key>bold</key>
+			<true/>
+			<key>color</key>
+			<string>#E0E0E0</string>
+			<key>size</key>
+			<integer>0</integer>
+		</dict>
+		<key>SectionHeaderGrouped</key>
+		<dict>
+			<key>bold</key>
+			<true/>
+			<key>color</key>
+			<string>#505050</string>
+			<key>size</key>
+			<integer>2</integer>
+		</dict>
+		<key>Tab</key>
+		<dict>
+			<key>color</key>
+			<string>#FFFFFF</string>
+			<key>size</key>
+			<integer>-2</integer>
+			<key>bold</key>
+			<true/>
+		</dict>
+		<key>TabSelected</key>
+		<dict>
+			<key>color</key>
+			<string>#505050</string>
+			<key>size</key>
+			<integer>-2</integer>
+			<key>bold</key>
+			<true/>
 		</dict>
 	</dict>
 	<key>HomeScreen</key>
 	<dict>
 		<key>BackgroundColor</key>
 		<string>modules/home/home-background.png</string>
+		<key>NavigationStyle</key>
+		<string>Springboard</string>
+		<key>ShowsSearchBar</key>
+		<true/>
 		<key>ModuleLabelFont</key>
 		<dict>
 			<key>color</key>
 			<string>#333333</string>
-			<key>font</key>
-			<string>Helvetica</string>
 			<key>size</key>
-			<integer>13</integer>
+			<integer>-2</integer>
 		</dict>
 		<key>ModuleLabelTitleMargin</key>
 		<integer>2</integer>
@@ -97,16 +175,14 @@
 		<string>20 12 0 12</string>
 		<key>ModuleListSpacing</key>
 		<string>9 32</string>
-		<key>NavigationStyle</key>
-		<string>Springboard</string>
+		<key>ModuleIconSize</key>
+		<string>66 66</string>
 		<key>SecondaryModuleLabelFont</key>
 		<dict>
 			<key>color</key>
 			<string>#333333</string>
-			<key>font</key>
-			<string>Helvetica</string>
 			<key>size</key>
-			<integer>13</integer>
+			<integer>-2</integer>
 		</dict>
 		<key>SecondaryModuleLabelTitleMargin</key>
 		<integer>8</integer>
@@ -114,8 +190,8 @@
 		<string>84 14 0 14</string>
 		<key>SecondaryModuleListSpacing</key>
 		<string>28 30</string>
-		<key>ShowsSearchBar</key>
-		<true/>
+		<key>SecondaryModuleIconSize</key>
+		<string>52 52</string>
 	</dict>
 	<key>Images</key>
 	<dict>
@@ -125,48 +201,6 @@
 		<string>common/searchbar-background.png</string>
 		<key>SearchBarDropShadow</key>
 		<string>common/bar-drop-shadow.png</string>
-	</dict>
-	<key>Servers</key>
-	<dict>
-		<key>Development</key>
-		<string>http://localhost:8888</string>
-		<key>Production</key>
-		<string>http://m.harvard.edu</string>
-		<key>Staging</key>
-		<string>http://mobile-staging.harvard.edu</string>
-		<key>Testing</key>
-		<string>http://mobile-dev.harvard.edu</string>
-	</dict>
-	<key>TableViewCellActions</key>
-	<dict>
-		<key>Email</key>
-		<dict>
-			<key>highlightedImage</key>
-			<string>action-email-highlighted</string>
-			<key>image</key>
-			<string>action-email</string>
-		</dict>
-		<key>External</key>
-		<dict>
-			<key>highlightedImage</key>
-			<string>action-external-highlighted</string>
-			<key>image</key>
-			<string>action-external</string>
-		</dict>
-		<key>Map</key>
-		<dict>
-			<key>highlightedImage</key>
-			<string>action-map-highlighted</string>
-			<key>image</key>
-			<string>action-map</string>
-		</dict>
-		<key>Phone</key>
-		<dict>
-			<key>highlightedImage</key>
-			<string>action-phone-highlighted</string>
-			<key>image</key>
-			<string>action-phone</string>
-		</dict>
 	</dict>
 </dict>
 </plist>
