@@ -207,6 +207,8 @@ CustomBumpUITags;
 - (void)dealloc {
     // Stop bump.
     [[BumpAPI sharedInstance] configUIDelegate:nil];
+    [[BumpAPI sharedInstance] configDelegate:nil];
+    [[BumpAPI sharedInstance] configParentView:nil];    
     [[BumpAPI sharedInstance] endSession];
     
     [messageLabel release];
