@@ -34,6 +34,7 @@ NSString * const LocalPathPageNamePhotoUpload = @"uploadPhoto";
             if (photos) {
                 [(FacebookPhotoDetailViewController *)vc setPosts:photos];
             }
+            [(FacebookPhotoDetailViewController *)vc setModuleTag:PhotosTag];
         }
     } else if ([pageName isEqualToString:LocalPathPageNamePhotoUpload]) {
         UIImage *image = [params objectForKey:@"photo"];

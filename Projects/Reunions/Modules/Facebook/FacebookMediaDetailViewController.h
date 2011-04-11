@@ -25,12 +25,15 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
 @property(nonatomic, retain) NSArray *posts;
 @property(nonatomic, retain) FacebookParentPost *post;
 @property(nonatomic, retain) UITableView *tableView;
+@property(nonatomic, retain) NSString *moduleTag;
+
 
 - (void)setMediaImage:(UIImage *)image;
 
-- (IBAction)commentButtonPressed:(UIBarButtonItem *)sender;
-- (IBAction)likeButtonPressed:(UIBarButtonItem *)sender;
-- (IBAction)bookmarkButtonPressed:(UIBarButtonItem *)sender;
+- (IBAction)commentButtonPressed:(id)sender;
+- (IBAction)likeButtonPressed:(id)sender;
+- (IBAction)bookmarkButtonPressed:(id)sender;
+- (IBAction)closeButtonPressed:(id)sender;
 
 - (void)displayPost;
 

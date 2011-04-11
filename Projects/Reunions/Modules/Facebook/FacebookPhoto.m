@@ -51,9 +51,9 @@ NSInteger widthSort(id imageDict1, id imageDict2, void *context);
 
 - (void)updateWithDictionary:(NSDictionary *)dictionary size:(FacebookPhotoSize)size {
     
-    NSString *theSrc = [dictionary stringForKey:@"picture" nilIfEmpty:YES]; // from feed
-    if (!theSrc) {
-        theSrc = [dictionary stringForKey:@"source" nilIfEmpty:YES]; // from Graph API
+    NSString *theSrc = [dictionary stringForKey:@"source" nilIfEmpty:YES]; // from Graph API
+    if(!theSrc) {
+        theSrc = [dictionary stringForKey:@"picture" nilIfEmpty:YES]; // from feed
     }
     if (!theSrc) {
         theSrc = [dictionary objectForKey:@"src"]; // from FQL

@@ -3,6 +3,7 @@
 #import "Foundation+KGOAdditions.h"
 #import "KGOSocialMediaController+FacebookAPI.h"
 #import "KGOAppDelegate.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
 #import "FacebookModel.h"
 
 #define LIKE_TAG 1
@@ -11,6 +12,7 @@
 @implementation FacebookMediaDetailViewController
 
 @synthesize post, posts, tableView = _tableView;
+@synthesize moduleTag;
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -25,6 +27,7 @@
 - (void)dealloc
 {
     [_comments release];
+    self.moduleTag = nil;
     [super dealloc];
 }
 
@@ -59,7 +62,7 @@
     if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
         _likeButton.enabled = YES;
         _likeButton.tag = UNLIKE_TAG;
-        [_likeButton setImage:[UIImage imageWithPathName:@"modules/unlike"] forState:UIControlStateNormal];
+        [_likeButton setImage:[UIImage imageWithPathName:@"modules/facebook/unlike.png"] forState:UIControlStateNormal];
     }
 }
 
@@ -68,7 +71,7 @@
     if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
         _likeButton.enabled = YES;
         _likeButton.tag = LIKE_TAG;
-        [_likeButton setImage:[UIImage imageWithPathName:@"modules/like"] forState:UIControlStateNormal];
+        [_likeButton setImage:[UIImage imageWithPathName:@"modules/facebook/like.png"] forState:UIControlStateNormal];
     }
 }
 
@@ -76,6 +79,10 @@
 
 }
 
+- (IBAction)closeButtonPressed:(id)sender {
+    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome forModuleTag:moduleTag params:nil];
+}
+     
 - (void)getCommentsForPost {
     NSString *objectID = self.post.postIdentifier.length ? self.post.postIdentifier : self.post.identifier;
     NSString *path = [NSString stringWithFormat:@"%@/comments", objectID];
