@@ -48,7 +48,9 @@ NSString * const FacebookVideoEntityName = @"FacebookVideo";
             //NSInteger count = [likes integerForKey:@"count"];
             for (NSDictionary *aLike in [likes arrayForKey:@"data"]) {
                 FacebookUser *user = [FacebookUser userWithDictionary:aLike];
-                [video addLikesObject:user]; // not sure why this constitutes a warning
+                NSMutableSet *set = [[video.likes mutableCopy] autorelease];
+                [set addObject:user];
+                video.likes = set;
             }
         }
         

@@ -99,8 +99,6 @@
 		EB0338451340DB0500ACF2BB /* KGOAttendeeWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0338371340DB0500ACF2BB /* KGOAttendeeWrapper.m */; };
 		EB0338461340DB0500ACF2BB /* KGOCalendar.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0338391340DB0500ACF2BB /* KGOCalendar.m */; };
 		EB0338471340DB0500ACF2BB /* KGOCalendarGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = EB03383B1340DB0500ACF2BB /* KGOCalendarGroup.m */; };
-		EB0338481340DB0500ACF2BB /* KGOEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = EB03383D1340DB0500ACF2BB /* KGOEvent.m */; };
-		EB0338491340DB0500ACF2BB /* KGOEventAttendee.m in Sources */ = {isa = PBXBuildFile; fileRef = EB03383F1340DB0500ACF2BB /* KGOEventAttendee.m */; };
 		EB03384A1340DB0500ACF2BB /* KGOEventContactInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0338411340DB0500ACF2BB /* KGOEventContactInfo.m */; };
 		EB03384B1340DB0500ACF2BB /* KGOEventWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0338431340DB0500ACF2BB /* KGOEventWrapper.m */; };
 		EB03386F1340DBE100ACF2BB /* News.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EB0338671340DBE100ACF2BB /* News.xcdatamodeld */; };
@@ -144,10 +142,17 @@
 		EB1B88C91324A6AC00108A8F /* common in Resources */ = {isa = PBXBuildFile; fileRef = EB1B88C71324A6AC00108A8F /* common */; };
 		EB1B88CA1324A6AC00108A8F /* modules in Resources */ = {isa = PBXBuildFile; fileRef = EB1B88C81324A6AC00108A8F /* modules */; };
 		EB469CB6134A7DA4005796E4 /* KGOSearchResultListTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = EB469CB5134A7DA4005796E4 /* KGOSearchResultListTableView.m */; };
+		EB46A346134EB942005796E4 /* ThemeConfig-iPad.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB46A345134EB942005796E4 /* ThemeConfig-iPad.plist */; };
+		EB46A348134EB97C005796E4 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB46A347134EB97C005796E4 /* MainWindow-iPad.xib */; };
+		EB46A399134F655D005796E4 /* KGOSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A398134F6540005796E4 /* KGOSplitViewController.m */; };
+		EB46A4B213501A4E005796E4 /* Default-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = EB46A4B113501A4D005796E4 /* Default-Portrait.png */; };
+		EB46A4B413501A80005796E4 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = EB46A4B313501A7F005796E4 /* Icon-72.png */; };
+		EB46A5411352874D005796E4 /* KGOEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A5401352874C005796E4 /* KGOEvent.m */; };
+		EB46A5441352874D005796E4 /* KGOEventParticipant.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A5431352874D005796E4 /* KGOEventParticipant.m */; };
+		EB46A5471352874E005796E4 /* KGOEventParticipantRelation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A5461352874E005796E4 /* KGOEventParticipantRelation.m */; };
 		EB46C96813259B8F00AF7B5C /* KGOModule+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C96713259B8F00AF7B5C /* KGOModule+Factory.m */; };
 		EB46CA8A1327F95E00AF7B5C /* kurogo in Resources */ = {isa = PBXBuildFile; fileRef = EB46CA891327F95E00AF7B5C /* kurogo */; };
 		EB46CA8E1327F97100AF7B5C /* ThemeConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB46CA8B1327F97100AF7B5C /* ThemeConfig.plist */; };
-		EB46CA8F1327F97100AF7B5C /* ThemeConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46CA8D1327F97100AF7B5C /* ThemeConstants.m */; };
 		EB46CA951327FECB00AF7B5C /* KGOSidebarFrameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46CA941327FECB00AF7B5C /* KGOSidebarFrameViewController.m */; };
 		EB46CA981327FED600AF7B5C /* MapDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46CA971327FED600AF7B5C /* MapDetailViewController.m */; };
 		EB48910913310A930036AEBF /* ExternalURLModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB48910813310A930036AEBF /* ExternalURLModule.m */; };
@@ -418,10 +423,6 @@
 		EB0338391340DB0500ACF2BB /* KGOCalendar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOCalendar.m; sourceTree = "<group>"; };
 		EB03383A1340DB0500ACF2BB /* KGOCalendarGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOCalendarGroup.h; sourceTree = "<group>"; };
 		EB03383B1340DB0500ACF2BB /* KGOCalendarGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOCalendarGroup.m; sourceTree = "<group>"; };
-		EB03383C1340DB0500ACF2BB /* KGOEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEvent.h; sourceTree = "<group>"; };
-		EB03383D1340DB0500ACF2BB /* KGOEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOEvent.m; sourceTree = "<group>"; };
-		EB03383E1340DB0500ACF2BB /* KGOEventAttendee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEventAttendee.h; sourceTree = "<group>"; };
-		EB03383F1340DB0500ACF2BB /* KGOEventAttendee.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOEventAttendee.m; sourceTree = "<group>"; };
 		EB0338401340DB0500ACF2BB /* KGOEventContactInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEventContactInfo.h; sourceTree = "<group>"; };
 		EB0338411340DB0500ACF2BB /* KGOEventContactInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOEventContactInfo.m; sourceTree = "<group>"; };
 		EB0338421340DB0500ACF2BB /* KGOEventWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEventWrapper.h; sourceTree = "<group>"; };
@@ -503,12 +504,22 @@
 		EB1B88C81324A6AC00108A8F /* modules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = modules; path = Resources/modules; sourceTree = "<group>"; };
 		EB469CB4134A7DA4005796E4 /* KGOSearchResultListTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSearchResultListTableView.h; sourceTree = "<group>"; };
 		EB469CB5134A7DA4005796E4 /* KGOSearchResultListTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOSearchResultListTableView.m; sourceTree = "<group>"; };
+		EB46A345134EB942005796E4 /* ThemeConfig-iPad.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "ThemeConfig-iPad.plist"; path = "../../Resources/default/ThemeConfig-iPad.plist"; sourceTree = "<group>"; };
+		EB46A347134EB97C005796E4 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "../../Resources/MainWindow-iPad.xib"; sourceTree = "<group>"; };
+		EB46A397134F653B005796E4 /* KGOSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSplitViewController.h; sourceTree = "<group>"; };
+		EB46A398134F6540005796E4 /* KGOSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOSplitViewController.m; sourceTree = "<group>"; };
+		EB46A4B113501A4D005796E4 /* Default-Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait.png"; path = "Resources/Default-Portrait.png"; sourceTree = "<group>"; };
+		EB46A4B313501A7F005796E4 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "Resources/Icon-72.png"; sourceTree = "<group>"; };
+		EB46A53F1352874B005796E4 /* KGOEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEvent.h; sourceTree = "<group>"; };
+		EB46A5401352874C005796E4 /* KGOEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOEvent.m; sourceTree = "<group>"; };
+		EB46A5421352874D005796E4 /* KGOEventParticipant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEventParticipant.h; sourceTree = "<group>"; };
+		EB46A5431352874D005796E4 /* KGOEventParticipant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOEventParticipant.m; sourceTree = "<group>"; };
+		EB46A5451352874E005796E4 /* KGOEventParticipantRelation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEventParticipantRelation.h; sourceTree = "<group>"; };
+		EB46A5461352874E005796E4 /* KGOEventParticipantRelation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOEventParticipantRelation.m; sourceTree = "<group>"; };
 		EB46C96613259B8F00AF7B5C /* KGOModule+Factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "KGOModule+Factory.h"; path = "Application/KGOModule+Factory.h"; sourceTree = SOURCE_ROOT; };
 		EB46C96713259B8F00AF7B5C /* KGOModule+Factory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "KGOModule+Factory.m"; path = "Application/KGOModule+Factory.m"; sourceTree = SOURCE_ROOT; };
 		EB46CA891327F95E00AF7B5C /* kurogo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = kurogo; path = ../../Resources/default/kurogo; sourceTree = "<group>"; };
 		EB46CA8B1327F97100AF7B5C /* ThemeConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = ThemeConfig.plist; path = ../../Resources/default/ThemeConfig.plist; sourceTree = "<group>"; };
-		EB46CA8C1327F97100AF7B5C /* ThemeConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThemeConstants.h; path = ../../Resources/default/ThemeConstants.h; sourceTree = "<group>"; };
-		EB46CA8D1327F97100AF7B5C /* ThemeConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ThemeConstants.m; path = ../../Resources/default/ThemeConstants.m; sourceTree = "<group>"; };
 		EB46CA931327FECB00AF7B5C /* KGOSidebarFrameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSidebarFrameViewController.h; sourceTree = "<group>"; };
 		EB46CA941327FECB00AF7B5C /* KGOSidebarFrameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOSidebarFrameViewController.m; sourceTree = "<group>"; };
 		EB46CA961327FED600AF7B5C /* MapDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapDetailViewController.h; sourceTree = "<group>"; };
@@ -615,12 +626,14 @@
 				EB1B88C81324A6AC00108A8F /* modules */,
 				EBB120A6133802D300A4BD1D /* secret */,
 				EB9AF298130B56AD003B9769 /* MainWindow.xib */,
+				EB46A347134EB97C005796E4 /* MainWindow-iPad.xib */,
 				EB1441321309EF5800396753 /* KGOInfo.plist */,
 				EB138AFC12F22F31004DBB7C /* Config.plist */,
 				EB46CA8B1327F97100AF7B5C /* ThemeConfig.plist */,
-				EB46CA8C1327F97100AF7B5C /* ThemeConstants.h */,
-				EB46CA8D1327F97100AF7B5C /* ThemeConstants.m */,
+				EB46A345134EB942005796E4 /* ThemeConfig-iPad.plist */,
+				EB46A4B113501A4D005796E4 /* Default-Portrait.png */,
 				EBAE86441215FB4900F370BE /* Default@2x.png */,
+				EB46A4B313501A7F005796E4 /* Icon-72.png */,
 				EBAE863E1215FB0D00F370BE /* Icon.png */,
 				EBAE863F1215FB0D00F370BE /* Icon@2x.png */,
 				DED3CCE810418F5F003D3B74 /* Default.png */,
@@ -965,6 +978,12 @@
 			isa = PBXGroup;
 			children = (
 				EB0338331340DB0500ACF2BB /* Calendar.xcdatamodeld */,
+				EB46A5451352874E005796E4 /* KGOEventParticipantRelation.h */,
+				EB46A5461352874E005796E4 /* KGOEventParticipantRelation.m */,
+				EB46A5421352874D005796E4 /* KGOEventParticipant.h */,
+				EB46A5431352874D005796E4 /* KGOEventParticipant.m */,
+				EB46A53F1352874B005796E4 /* KGOEvent.h */,
+				EB46A5401352874C005796E4 /* KGOEvent.m */,
 				EB0338351340DB0500ACF2BB /* CalendarModel.h */,
 				EB0338361340DB0500ACF2BB /* KGOAttendeeWrapper.h */,
 				EB0338371340DB0500ACF2BB /* KGOAttendeeWrapper.m */,
@@ -972,10 +991,6 @@
 				EB0338391340DB0500ACF2BB /* KGOCalendar.m */,
 				EB03383A1340DB0500ACF2BB /* KGOCalendarGroup.h */,
 				EB03383B1340DB0500ACF2BB /* KGOCalendarGroup.m */,
-				EB03383C1340DB0500ACF2BB /* KGOEvent.h */,
-				EB03383D1340DB0500ACF2BB /* KGOEvent.m */,
-				EB03383E1340DB0500ACF2BB /* KGOEventAttendee.h */,
-				EB03383F1340DB0500ACF2BB /* KGOEventAttendee.m */,
 				EB0338401340DB0500ACF2BB /* KGOEventContactInfo.h */,
 				EB0338411340DB0500ACF2BB /* KGOEventContactInfo.m */,
 				EB0338421340DB0500ACF2BB /* KGOEventWrapper.h */,
@@ -1102,22 +1117,24 @@
 		EB1441571309EFB100396753 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				EB46CA931327FECB00AF7B5C /* KGOSidebarFrameViewController.h */,
-				EB46CA941327FECB00AF7B5C /* KGOSidebarFrameViewController.m */,
+				EB1441581309EFB100396753 /* HomeModule.h */,
+				EB1441591309EFB100396753 /* HomeModule.m */,
+				EB181FB4131EDF30003728FF /* SpringboardIcon.h */,
+				EB181FB5131EDF30003728FF /* SpringboardIcon.m */,
+				EB181FB0131EDF30003728FF /* KGOHomeScreenWidget.h */,
+				EB181FB1131EDF30003728FF /* KGOHomeScreenWidget.m */,
 				EB181FAE131EDF30003728FF /* KGOHomeScreenViewController.h */,
 				EB181FAF131EDF30003728FF /* KGOHomeScreenViewController.m */,
 				EB181FAC131EDF30003728FF /* KGOHomeScreenTableViewController.h */,
 				EB181FAD131EDF30003728FF /* KGOHomeScreenTableViewController.m */,
-				EB181FB0131EDF30003728FF /* KGOHomeScreenWidget.h */,
-				EB181FB1131EDF30003728FF /* KGOHomeScreenWidget.m */,
-				EB181FB2131EDF30003728FF /* KGOPortletHomeViewController.h */,
-				EB181FB3131EDF30003728FF /* KGOPortletHomeViewController.m */,
-				EB181FB4131EDF30003728FF /* SpringboardIcon.h */,
-				EB181FB5131EDF30003728FF /* SpringboardIcon.m */,
-				EB1441581309EFB100396753 /* HomeModule.h */,
-				EB1441591309EFB100396753 /* HomeModule.m */,
 				EB14415A1309EFB100396753 /* KGOSpringboardViewController.h */,
 				EB14415B1309EFB100396753 /* KGOSpringboardViewController.m */,
+				EB181FB2131EDF30003728FF /* KGOPortletHomeViewController.h */,
+				EB181FB3131EDF30003728FF /* KGOPortletHomeViewController.m */,
+				EB46CA931327FECB00AF7B5C /* KGOSidebarFrameViewController.h */,
+				EB46CA941327FECB00AF7B5C /* KGOSidebarFrameViewController.m */,
+				EB46A397134F653B005796E4 /* KGOSplitViewController.h */,
+				EB46A398134F6540005796E4 /* KGOSplitViewController.m */,
 			);
 			name = Home;
 			path = ../../Modules/Home;
@@ -1367,6 +1384,10 @@
 				EBC1C7151347C5750045CE9C /* kurogo_debug.xcconfig in Resources */,
 				EBC1C7161347C5750045CE9C /* stage_server.xcconfig in Resources */,
 				EBC1C7171347C5750045CE9C /* test_server.xcconfig in Resources */,
+				EB46A346134EB942005796E4 /* ThemeConfig-iPad.plist in Resources */,
+				EB46A348134EB97C005796E4 /* MainWindow-iPad.xib in Resources */,
+				EB46A4B213501A4E005796E4 /* Default-Portrait.png in Resources */,
+				EB46A4B413501A80005796E4 /* Icon-72.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1433,7 +1454,6 @@
 				EB181FBF131EDF30003728FF /* SpringboardIcon.m in Sources */,
 				EB181FC5131EDF43003728FF /* MapSettingsViewController.m in Sources */,
 				EB46C96813259B8F00AF7B5C /* KGOModule+Factory.m in Sources */,
-				EB46CA8F1327F97100AF7B5C /* ThemeConstants.m in Sources */,
 				EB46CA951327FECB00AF7B5C /* KGOSidebarFrameViewController.m in Sources */,
 				EB46CA981327FED600AF7B5C /* MapDetailViewController.m in Sources */,
 				4B050C55132E48F50016591D /* NewsDataManager.m in Sources */,
@@ -1485,8 +1505,6 @@
 				EB0338451340DB0500ACF2BB /* KGOAttendeeWrapper.m in Sources */,
 				EB0338461340DB0500ACF2BB /* KGOCalendar.m in Sources */,
 				EB0338471340DB0500ACF2BB /* KGOCalendarGroup.m in Sources */,
-				EB0338481340DB0500ACF2BB /* KGOEvent.m in Sources */,
-				EB0338491340DB0500ACF2BB /* KGOEventAttendee.m in Sources */,
 				EB03384A1340DB0500ACF2BB /* KGOEventContactInfo.m in Sources */,
 				EB03384B1340DB0500ACF2BB /* KGOEventWrapper.m in Sources */,
 				EB03386F1340DBE100ACF2BB /* News.xcdatamodeld in Sources */,
@@ -1516,6 +1534,10 @@
 				A6C19893134B95B3009A163B /* Video.xcdatamodel in Sources */,
 				A6F2F81B134BAC75009F597D /* VideoDetailViewController.m in Sources */,
 				A6F2FA21134BE23F009F597D /* VideoWebViewController.m in Sources */,
+				EB46A399134F655D005796E4 /* KGOSplitViewController.m in Sources */,
+				EB46A5411352874D005796E4 /* KGOEvent.m in Sources */,
+				EB46A5441352874D005796E4 /* KGOEventParticipant.m in Sources */,
+				EB46A5471352874E005796E4 /* KGOEventParticipantRelation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1569,6 +1591,7 @@
 			baseConfigurationReference = EBC1C7111347C5750045CE9C /* kurogo_debug.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = Universitas;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug - Development";
 		};
@@ -1577,6 +1600,7 @@
 			baseConfigurationReference = EBC1C7041347B8D20045CE9C /* kurogo.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = Universitas;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release - Production";
 		};
@@ -1585,6 +1609,7 @@
 			baseConfigurationReference = EBC1C7111347C5750045CE9C /* kurogo_debug.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = Universitas;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug - Staging";
 		};
@@ -1600,6 +1625,7 @@
 			baseConfigurationReference = EBC1C7111347C5750045CE9C /* kurogo_debug.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = Universitas;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug - Production";
 		};
@@ -1614,6 +1640,7 @@
 			baseConfigurationReference = EBC1C7041347B8D20045CE9C /* kurogo.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = Universitas;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release - Staging";
 		};
@@ -1629,6 +1656,7 @@
 			baseConfigurationReference = EBC1C7111347C5750045CE9C /* kurogo_debug.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = Universitas;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug - Testing";
 		};
@@ -1644,6 +1672,7 @@
 			baseConfigurationReference = EBC1C7041347B8D20045CE9C /* kurogo.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = Universitas;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release - Testing";
 		};

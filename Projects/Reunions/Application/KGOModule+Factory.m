@@ -16,6 +16,7 @@
 #import "SettingsModule.h"
 #import "TwitterModule.h"
 #import "VideosModule.h"
+#import "ConnectModule.h"
 
 @implementation KGOModule (Factory)
 
@@ -85,7 +86,10 @@
         module = [[[TwitterModule alloc] initWithDictionary:args] autorelease];
     
     else if ([className isEqualToString:@"VideosModule"])
-        module = [[[VideosModule alloc] initWithDictionary:args] autorelease];
+        module = [[[VideosModule alloc] initWithDictionary:args] autorelease];    
+    
+    else if ([className isEqualToString:@"ConnectModule"])
+        module = [[[ConnectModule alloc] initWithDictionary:args] autorelease];    
     
     return module;
 }

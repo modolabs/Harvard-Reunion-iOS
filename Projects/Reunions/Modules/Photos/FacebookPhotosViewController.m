@@ -361,7 +361,7 @@
         _label.backgroundColor = [UIColor clearColor];
         _label.textColor = [UIColor whiteColor];
         _label.numberOfLines = 3;
-        _label.font = [[KGOTheme sharedTheme] defaultSmallFont];
+        _label.font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySmallPrint];
         _label.userInteractionEnabled = NO;
         
         CGRectMake(0, 0, frame.size.width, frame.size.height-40);

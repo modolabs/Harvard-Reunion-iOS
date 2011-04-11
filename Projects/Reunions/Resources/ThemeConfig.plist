@@ -37,11 +37,9 @@
 			<key>size</key>
 			<integer>7</integer>
 		</dict>
-		<key>DefaultBoldFont</key>
-		<string>Helvetica-Bold</string>
 		<key>DefaultFont</key>
 		<string>Helvetica</string>
-		<key>GroupedSectionHeader</key>
+		<key>SectionHeaderGrouped</key>
 		<dict>
 			<key>color</key>
 			<string>#EBE7E3</string>
@@ -50,7 +48,7 @@
 			<key>size</key>
 			<integer>2</integer>
 		</dict>
-		<key>PlainSectionHeader</key>
+		<key>SectionHeader</key>
 		<dict>
 			<key>color</key>
 			<string>#EBE7E3</string>
@@ -59,21 +57,21 @@
 			<key>size</key>
 			<integer>0</integer>
 		</dict>
-		<key>TableCellSubtitle</key>
+		<key>NavListSubtitle</key>
 		<dict>
 			<key>color</key>
 			<string>#505050</string>
 			<key>size</key>
 			<integer>-2</integer>
 		</dict>
-		<key>TableCellTitle</key>
+		<key>NavListTitle</key>
 		<dict>
 			<key>color</key>
 			<string>#1A1611</string>
 			<key>size</key>
 			<integer>2</integer>
 		</dict>
-		<key>TableFooter</key>
+		<key>SmallPrint</key>
 		<dict>
 			<key>color</key>
 			<string>#FFFFFF</string>
@@ -92,7 +90,7 @@
 			<key>font</key>
 			<string>Helvetica</string>
 			<key>size</key>
-			<integer>12</integer>
+			<integer>-3</integer>
 		</dict>
 		<key>ModuleLabelFontLarge</key>
 		<dict>
@@ -101,7 +99,7 @@
 			<key>font</key>
 			<string>Helvetica</string>
 			<key>size</key>
-			<integer>18</integer>
+			<integer>3</integer>
 		</dict>
 		<key>ModuleLabelTitleMargin</key>
 		<integer>8</integer>
@@ -118,7 +116,7 @@
 			<key>font</key>
 			<string>Helvetica</string>
 			<key>size</key>
-			<integer>12</integer>
+			<integer>-3</integer>
 		</dict>
 		<key>SecondaryModuleLabelTitleMargin</key>
 		<integer>8</integer>
@@ -128,8 +126,6 @@
 		<string>30 20</string>
 		<key>ShowsSearchBar</key>
 		<false/>
-		<key>TabletNavigationStyle</key>
-		<string>Sidebar</string>
 	</dict>
 	<key>Images</key>
 	<dict>

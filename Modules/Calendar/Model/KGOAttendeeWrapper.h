@@ -1,12 +1,14 @@
 #import <Foundation/Foundation.h>
 #import <EventKit/EKParticipant.h>
 
-@class KGOEventAttendee, KGOEventWrapper;
+// TODO: decide how to use KGOEventParticipantRelation
+@class KGOEventParticipant, KGOEventParticipantRelation, KGOEventWrapper;
 
 @interface KGOAttendeeWrapper : NSObject {
     
     EKParticipant *_ekAttendee;
-    KGOEventAttendee *_kgoAttendee;
+    KGOEventParticipant *_kgoAttendee;
+    KGOEventParticipantRelation *_relation;
 
     NSString *_name;
     EKParticipantType _attendeeType;
@@ -17,6 +19,7 @@
 }
 
 @property (nonatomic, retain) KGOEventWrapper *event;
+@property (nonatomic, retain) KGOEventWrapper *organizedEvent;
 @property (nonatomic, retain) NSString *identifier;
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSSet *contactInfo;
@@ -24,9 +27,10 @@
 @property (nonatomic) EKParticipantStatus attendeeStatus;
 
 - (id)initWithDictionary:(NSDictionary *)dictionary;
-- (id)initWithKGOAttendee:(KGOEventAttendee *)attendee;
+- (id)initWithKGOAttendee:(KGOEventParticipant *)attendee;
+- (void)convertToKGOAttendee;
 
 @property (nonatomic, retain) EKParticipant *EKAttendee;
-@property (nonatomic, retain) KGOEventAttendee *KGOAttendee;
+@property (nonatomic, retain) KGOEventParticipant *KGOAttendee;
 
 @end

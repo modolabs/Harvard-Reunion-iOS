@@ -18,6 +18,21 @@
 		4B1153CB135243D40097DAD9 /* MediaContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B1153CA135243D40097DAD9 /* MediaContainerView.m */; };
 		4B5B40B31350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B5B40B21350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib */; };
 		4BD36E0A134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BD36E09134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib */; };
+		A63DE7A7134F9F98001C52BF /* AddressBookUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A63DE7A6134F9F98001C52BF /* AddressBookUtils.m */; };
+		A6F2099D134E61CC009F597D /* ConnectModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20998134E61CC009F597D /* ConnectModule.m */; };
+		A6F2099E134E61CC009F597D /* ConnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F2099A134E61CC009F597D /* ConnectViewController.m */; };
+		A6F2099F134E61CC009F597D /* CustomBumpUI.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F2099C134E61CC009F597D /* CustomBumpUI.m */; };
+		A6F20AF6134E67E3009F597D /* BumpAPIAssets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A6F20A9A134E67E3009F597D /* BumpAPIAssets.bundle */; };
+		A6F20AF7134E67E3009F597D /* libBumpAPI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6F20A9D134E67E3009F597D /* libBumpAPI.a */; };
+		A6F20AF8134E67E3009F597D /* BumpApiLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A6F20A9F134E67E3009F597D /* BumpApiLocalizable.strings */; };
+		A6F20AF9134E67E3009F597D /* Localization-ReadMe.txt in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AAA134E67E3009F597D /* Localization-ReadMe.txt */; };
+		A6F20B11134E67E3009F597D /* BumpAPIConfirmPage.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20ADB134E67E3009F597D /* BumpAPIConfirmPage.m */; };
+		A6F20B12134E67E3009F597D /* BumpAPIPopup.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20ADD134E67E3009F597D /* BumpAPIPopup.m */; };
+		A6F20B13134E67E3009F597D /* BumpAPIPromptPage.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20ADF134E67E3009F597D /* BumpAPIPromptPage.m */; };
+		A6F20B14134E67E3009F597D /* BumpAPIUI.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20AE1134E67E3009F597D /* BumpAPIUI.m */; };
+		A6F20B15134E67E3009F597D /* BumpAPIWaitPage.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20AE3134E67E3009F597D /* BumpAPIWaitPage.m */; };
+		A6F20B16134E67E3009F597D /* BumpHandsView.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20AE5134E67E3009F597D /* BumpHandsView.m */; };
+		A6F20B17134E67E3009F597D /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = A6F20AE6134E67E3009F597D /* README.markdown */; };
 		BD9FA7EE1047A05E00BC3C0A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD9FA7ED1047A05E00BC3C0A /* MessageUI.framework */; };
 		DE6D9401110AD1ED00DAF213 /* SettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DE6D9319110A8EFA00DAF213 /* SettingsTableViewController.m */; };
 		DE7720D910C57DBC00620A7D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE7720D810C57DBC00620A7D /* CoreGraphics.framework */; };
@@ -34,7 +49,6 @@
 		EB0339591340E47D00ACF2BB /* KGOCalendar.m in Sources */ = {isa = PBXBuildFile; fileRef = EB03391E1340E47C00ACF2BB /* KGOCalendar.m */; };
 		EB03395A1340E47D00ACF2BB /* KGOCalendarGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0339201340E47C00ACF2BB /* KGOCalendarGroup.m */; };
 		EB03395B1340E47D00ACF2BB /* KGOEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0339221340E47C00ACF2BB /* KGOEvent.m */; };
-		EB03395C1340E47D00ACF2BB /* KGOEventAttendee.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0339241340E47C00ACF2BB /* KGOEventAttendee.m */; };
 		EB03395D1340E47D00ACF2BB /* KGOEventContactInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0339261340E47C00ACF2BB /* KGOEventContactInfo.m */; };
 		EB03395E1340E47D00ACF2BB /* KGOEventWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0339281340E47C00ACF2BB /* KGOEventWrapper.m */; };
 		EB03395F1340E47D00ACF2BB /* MapDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB03392B1340E47D00ACF2BB /* MapDetailViewController.m */; };
@@ -134,6 +148,11 @@
 		EB46A158134CC0C4005796E4 /* ReunionHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A157134CC0C4005796E4 /* ReunionHomeViewController.m */; };
 		EB46A15B134CCC9D005796E4 /* ReunionHomeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A15A134CCC9C005796E4 /* ReunionHomeModule.m */; };
 		EB46A15F134CCCA8005796E4 /* ReunionLoginModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A15E134CCCA8005796E4 /* ReunionLoginModule.m */; };
+		EB46A2C2134D44D4005796E4 /* ScheduleTabletTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A2C1134D44D4005796E4 /* ScheduleTabletTableViewCell.m */; };
+		EB46A3E1134FA87E005796E4 /* ThemeConfig-iPad.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB46A3E0134FA87E005796E4 /* ThemeConfig-iPad.plist */; };
+		EB46A3E4134FAA60005796E4 /* KGOSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A3E3134FAA60005796E4 /* KGOSplitViewController.m */; };
+		EB46A60A13529894005796E4 /* KGOEventParticipant.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A60713529890005796E4 /* KGOEventParticipant.m */; };
+		EB46A60B13529894005796E4 /* KGOEventParticipantRelation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46A60913529892005796E4 /* KGOEventParticipantRelation.m */; };
 		EB46C94A132590F900AF7B5C /* PhotosModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C941132590F900AF7B5C /* PhotosModule.m */; };
 		EB46C94B132590F900AF7B5C /* FacebookPhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C943132590F900AF7B5C /* FacebookPhotosViewController.m */; };
 		EB46C94C132590F900AF7B5C /* VideosModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46C947132590F900AF7B5C /* VideosModule.m */; };
@@ -144,7 +163,6 @@
 		EB46CA351327E43600AF7B5C /* kurogo in Resources */ = {isa = PBXBuildFile; fileRef = EB46CA341327E43600AF7B5C /* kurogo */; };
 		EB46CA371327E4D400AF7B5C /* ipad in Resources */ = {isa = PBXBuildFile; fileRef = EB46CA361327E4D300AF7B5C /* ipad */; };
 		EB46CA3B1327E53600AF7B5C /* ThemeConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB46CA381327E53600AF7B5C /* ThemeConfig.plist */; };
-		EB46CA3C1327E53600AF7B5C /* ThemeConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46CA3A1327E53600AF7B5C /* ThemeConstants.m */; };
 		EB46CA3E1327E7B700AF7B5C /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB46CA3D1327E7B700AF7B5C /* MainWindow-iPad.xib */; };
 		EB46CBBE132AE55400AF7B5C /* FacebookModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EB46CBBC132AE55400AF7B5C /* FacebookModel.xcdatamodeld */; };
 		EB46CBC7132AE95400AF7B5C /* FacebookPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = EB46CBC6132AE95400AF7B5C /* FacebookPhoto.m */; };
@@ -259,6 +277,51 @@
 		4B1153CA135243D40097DAD9 /* MediaContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaContainerView.m; sourceTree = "<group>"; };
 		4B5B40B21350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "FacebookMediaDetailViewController-iPad.xib"; sourceTree = "<group>"; };
 		4BD36E09134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "FacebookMediaViewController-iPad.xib"; sourceTree = "<group>"; };
+		A63DE7A5134F9F98001C52BF /* AddressBookUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddressBookUtils.h; sourceTree = "<group>"; };
+		A63DE7A6134F9F98001C52BF /* AddressBookUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddressBookUtils.m; sourceTree = "<group>"; };
+		A6F20997134E61CC009F597D /* ConnectModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectModule.h; sourceTree = "<group>"; };
+		A6F20998134E61CC009F597D /* ConnectModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectModule.m; sourceTree = "<group>"; };
+		A6F20999134E61CC009F597D /* ConnectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectViewController.h; sourceTree = "<group>"; };
+		A6F2099A134E61CC009F597D /* ConnectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectViewController.m; sourceTree = "<group>"; };
+		A6F2099B134E61CC009F597D /* CustomBumpUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomBumpUI.h; sourceTree = "<group>"; };
+		A6F2099C134E61CC009F597D /* CustomBumpUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomBumpUI.m; sourceTree = "<group>"; };
+		A6F20A99134E67E3009F597D /* BumpAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpAPI.h; sourceTree = "<group>"; };
+		A6F20A9A134E67E3009F597D /* BumpAPIAssets.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = BumpAPIAssets.bundle; sourceTree = "<group>"; };
+		A6F20A9B134E67E3009F597D /* BumpAPICustomUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpAPICustomUI.h; sourceTree = "<group>"; };
+		A6F20A9C134E67E3009F597D /* Bumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bumper.h; sourceTree = "<group>"; };
+		A6F20A9D134E67E3009F597D /* libBumpAPI.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libBumpAPI.a; sourceTree = "<group>"; };
+		A6F20AA0134E67E3009F597D /* da */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AA1134E67E3009F597D /* de */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AA2134E67E3009F597D /* el */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AA3134E67E3009F597D /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AA4134E67E3009F597D /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AA5134E67E3009F597D /* fr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AA6134E67E3009F597D /* he */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AA7134E67E3009F597D /* it */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AA8134E67E3009F597D /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AA9134E67E3009F597D /* ko */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AAA134E67E3009F597D /* Localization-ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Localization-ReadMe.txt"; sourceTree = "<group>"; };
+		A6F20AAB134E67E3009F597D /* nl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AAC134E67E3009F597D /* no */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = no; path = no.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AAD134E67E3009F597D /* pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AAE134E67E3009F597D /* pt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AAF134E67E3009F597D /* ru */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AB0134E67E3009F597D /* sv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/BumpApiLocalizable.strings; sourceTree = "<group>"; };
+		A6F20AB1134E67E3009F597D /* zh-Hans */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/BumpApiLocalizable.strings"; sourceTree = "<group>"; };
+		A6F20AB2134E67E3009F597D /* zh-Hant */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/BumpApiLocalizable.strings"; sourceTree = "<group>"; };
+		A6F20ADA134E67E3009F597D /* BumpAPIConfirmPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpAPIConfirmPage.h; sourceTree = "<group>"; };
+		A6F20ADB134E67E3009F597D /* BumpAPIConfirmPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BumpAPIConfirmPage.m; sourceTree = "<group>"; };
+		A6F20ADC134E67E3009F597D /* BumpAPIPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpAPIPopup.h; sourceTree = "<group>"; };
+		A6F20ADD134E67E3009F597D /* BumpAPIPopup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BumpAPIPopup.m; sourceTree = "<group>"; };
+		A6F20ADE134E67E3009F597D /* BumpAPIPromptPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpAPIPromptPage.h; sourceTree = "<group>"; };
+		A6F20ADF134E67E3009F597D /* BumpAPIPromptPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BumpAPIPromptPage.m; sourceTree = "<group>"; };
+		A6F20AE0134E67E3009F597D /* BumpAPIUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpAPIUI.h; sourceTree = "<group>"; };
+		A6F20AE1134E67E3009F597D /* BumpAPIUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BumpAPIUI.m; sourceTree = "<group>"; };
+		A6F20AE2134E67E3009F597D /* BumpAPIWaitPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpAPIWaitPage.h; sourceTree = "<group>"; };
+		A6F20AE3134E67E3009F597D /* BumpAPIWaitPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BumpAPIWaitPage.m; sourceTree = "<group>"; };
+		A6F20AE4134E67E3009F597D /* BumpHandsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpHandsView.h; sourceTree = "<group>"; };
+		A6F20AE5134E67E3009F597D /* BumpHandsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BumpHandsView.m; sourceTree = "<group>"; };
+		A6F20AE6134E67E3009F597D /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
 		BD9FA7ED1047A05E00BC3C0A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		DE6D9318110A8EFA00DAF213 /* SettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewController.h; sourceTree = "<group>"; };
 		DE6D9319110A8EFA00DAF213 /* SettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTableViewController.m; sourceTree = "<group>"; };
@@ -287,8 +350,6 @@
 		EB0339201340E47C00ACF2BB /* KGOCalendarGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOCalendarGroup.m; sourceTree = "<group>"; };
 		EB0339211340E47C00ACF2BB /* KGOEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEvent.h; sourceTree = "<group>"; };
 		EB0339221340E47C00ACF2BB /* KGOEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOEvent.m; sourceTree = "<group>"; };
-		EB0339231340E47C00ACF2BB /* KGOEventAttendee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEventAttendee.h; sourceTree = "<group>"; };
-		EB0339241340E47C00ACF2BB /* KGOEventAttendee.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOEventAttendee.m; sourceTree = "<group>"; };
 		EB0339251340E47C00ACF2BB /* KGOEventContactInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEventContactInfo.h; sourceTree = "<group>"; };
 		EB0339261340E47C00ACF2BB /* KGOEventContactInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOEventContactInfo.m; sourceTree = "<group>"; };
 		EB0339271340E47C00ACF2BB /* KGOEventWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEventWrapper.h; sourceTree = "<group>"; };
@@ -478,6 +539,15 @@
 		EB46A15A134CCC9C005796E4 /* ReunionHomeModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionHomeModule.m; sourceTree = "<group>"; };
 		EB46A15D134CCCA8005796E4 /* ReunionLoginModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReunionLoginModule.h; sourceTree = "<group>"; };
 		EB46A15E134CCCA8005796E4 /* ReunionLoginModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionLoginModule.m; sourceTree = "<group>"; };
+		EB46A2C0134D44D3005796E4 /* ScheduleTabletTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduleTabletTableViewCell.h; sourceTree = "<group>"; };
+		EB46A2C1134D44D4005796E4 /* ScheduleTabletTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduleTabletTableViewCell.m; sourceTree = "<group>"; };
+		EB46A3E0134FA87E005796E4 /* ThemeConfig-iPad.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ThemeConfig-iPad.plist"; sourceTree = "<group>"; };
+		EB46A3E2134FAA60005796E4 /* KGOSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSplitViewController.h; sourceTree = "<group>"; };
+		EB46A3E3134FAA60005796E4 /* KGOSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOSplitViewController.m; sourceTree = "<group>"; };
+		EB46A60613529890005796E4 /* KGOEventParticipant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEventParticipant.h; sourceTree = "<group>"; };
+		EB46A60713529890005796E4 /* KGOEventParticipant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOEventParticipant.m; sourceTree = "<group>"; };
+		EB46A60813529891005796E4 /* KGOEventParticipantRelation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOEventParticipantRelation.h; sourceTree = "<group>"; };
+		EB46A60913529892005796E4 /* KGOEventParticipantRelation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOEventParticipantRelation.m; sourceTree = "<group>"; };
 		EB46C940132590F900AF7B5C /* PhotosModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosModule.h; sourceTree = "<group>"; };
 		EB46C941132590F900AF7B5C /* PhotosModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosModule.m; sourceTree = "<group>"; };
 		EB46C942132590F900AF7B5C /* FacebookPhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookPhotosViewController.h; sourceTree = "<group>"; };
@@ -495,8 +565,6 @@
 		EB46CA341327E43600AF7B5C /* kurogo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = kurogo; path = ../../../Resources/default/kurogo; sourceTree = "<group>"; };
 		EB46CA361327E4D300AF7B5C /* ipad */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ipad; sourceTree = "<group>"; };
 		EB46CA381327E53600AF7B5C /* ThemeConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ThemeConfig.plist; sourceTree = "<group>"; };
-		EB46CA391327E53600AF7B5C /* ThemeConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeConstants.h; sourceTree = "<group>"; };
-		EB46CA3A1327E53600AF7B5C /* ThemeConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThemeConstants.m; sourceTree = "<group>"; };
 		EB46CA3D1327E7B700AF7B5C /* MainWindow-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "../../../Resources/MainWindow-iPad.xib"; sourceTree = "<group>"; };
 		EB46CBC5132AE95300AF7B5C /* FacebookPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookPhoto.h; sourceTree = "<group>"; };
 		EB46CBC6132AE95400AF7B5C /* FacebookPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookPhoto.m; sourceTree = "<group>"; };
@@ -618,6 +686,7 @@
 				EB99B67212F3A8D80065EE93 /* libjson.a in Frameworks */,
 				EB99B28412F377560065EE93 /* libTwitter.a in Frameworks */,
 				EB99B28312F377520065EE93 /* libfacebook_ios_sdk.a in Frameworks */,
+				A6F20AF7134E67E3009F597D /* libBumpAPI.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -670,6 +739,59 @@
 				EB6D02A811E3784100B65CE3 /* MapKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A6F20A91134E67D2009F597D /* bump */ = {
+			isa = PBXGroup;
+			children = (
+				A6F20A98134E67E3009F597D /* API_build */,
+				A6F20AB3134E67E3009F597D /* bump-api2-ios-custom-ui */,
+			);
+			name = bump;
+			sourceTree = "<group>";
+		};
+		A6F20A98134E67E3009F597D /* API_build */ = {
+			isa = PBXGroup;
+			children = (
+				A6F20A99134E67E3009F597D /* BumpAPI.h */,
+				A6F20A9A134E67E3009F597D /* BumpAPIAssets.bundle */,
+				A6F20A9B134E67E3009F597D /* BumpAPICustomUI.h */,
+				A6F20A9C134E67E3009F597D /* Bumper.h */,
+				A6F20A9D134E67E3009F597D /* libBumpAPI.a */,
+				A6F20A9E134E67E3009F597D /* Localizations */,
+			);
+			name = API_build;
+			path = bump/API_build;
+			sourceTree = "<group>";
+		};
+		A6F20A9E134E67E3009F597D /* Localizations */ = {
+			isa = PBXGroup;
+			children = (
+				A6F20A9F134E67E3009F597D /* BumpApiLocalizable.strings */,
+				A6F20AAA134E67E3009F597D /* Localization-ReadMe.txt */,
+			);
+			path = Localizations;
+			sourceTree = "<group>";
+		};
+		A6F20AB3134E67E3009F597D /* bump-api2-ios-custom-ui */ = {
+			isa = PBXGroup;
+			children = (
+				A6F20ADA134E67E3009F597D /* BumpAPIConfirmPage.h */,
+				A6F20ADB134E67E3009F597D /* BumpAPIConfirmPage.m */,
+				A6F20ADC134E67E3009F597D /* BumpAPIPopup.h */,
+				A6F20ADD134E67E3009F597D /* BumpAPIPopup.m */,
+				A6F20ADE134E67E3009F597D /* BumpAPIPromptPage.h */,
+				A6F20ADF134E67E3009F597D /* BumpAPIPromptPage.m */,
+				A6F20AE0134E67E3009F597D /* BumpAPIUI.h */,
+				A6F20AE1134E67E3009F597D /* BumpAPIUI.m */,
+				A6F20AE2134E67E3009F597D /* BumpAPIWaitPage.h */,
+				A6F20AE3134E67E3009F597D /* BumpAPIWaitPage.m */,
+				A6F20AE4134E67E3009F597D /* BumpHandsView.h */,
+				A6F20AE5134E67E3009F597D /* BumpHandsView.m */,
+				A6F20AE6134E67E3009F597D /* README.markdown */,
+			);
+			name = "bump-api2-ios-custom-ui";
+			path = "bump/bump-api2-ios-custom-ui";
 			sourceTree = "<group>";
 		};
 		DE715445102FE468005E6111 /* Modules */ = {
@@ -749,14 +871,16 @@
 			children = (
 				EB0339181340E47C00ACF2BB /* Calendar.xcdatamodeld */,
 				EB03391A1340E47C00ACF2BB /* CalendarModel.h */,
+				EB46A60613529890005796E4 /* KGOEventParticipant.h */,
+				EB46A60713529890005796E4 /* KGOEventParticipant.m */,
+				EB46A60813529891005796E4 /* KGOEventParticipantRelation.h */,
+				EB46A60913529892005796E4 /* KGOEventParticipantRelation.m */,
 				EB03391D1340E47C00ACF2BB /* KGOCalendar.h */,
 				EB03391E1340E47C00ACF2BB /* KGOCalendar.m */,
 				EB03391F1340E47C00ACF2BB /* KGOCalendarGroup.h */,
 				EB0339201340E47C00ACF2BB /* KGOCalendarGroup.m */,
 				EB0339211340E47C00ACF2BB /* KGOEvent.h */,
 				EB0339221340E47C00ACF2BB /* KGOEvent.m */,
-				EB0339231340E47C00ACF2BB /* KGOEventAttendee.h */,
-				EB0339241340E47C00ACF2BB /* KGOEventAttendee.m */,
 				EB0339251340E47C00ACF2BB /* KGOEventContactInfo.h */,
 				EB0339261340E47C00ACF2BB /* KGOEventContactInfo.m */,
 				EB03391B1340E47C00ACF2BB /* KGOAttendeeWrapper.h */,
@@ -873,6 +997,8 @@
 				EB0CF8BF133FC86E003B8E45 /* MapKit+KGOAdditions.m */,
 				EB0CF8C0133FC86E003B8E45 /* UIKit+KGOAdditions.h */,
 				EB0CF8C1133FC86E003B8E45 /* UIKit+KGOAdditions.m */,
+				A63DE7A5134F9F98001C52BF /* AddressBookUtils.h */,
+				A63DE7A6134F9F98001C52BF /* AddressBookUtils.m */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -1016,6 +1142,7 @@
 				EB138EE812F251EB004DBB7C /* Facebook.xcodeproj */,
 				EBAA860812F728CE00B743C3 /* SFHFKeychainUtils.xcodeproj */,
 				EB99B85E12F3AEC10065EE93 /* usr */,
+				A6F20A91134E67D2009F597D /* bump */,
 			);
 			name = Contrib;
 			path = ../../Contrib;
@@ -1120,8 +1247,15 @@
 		EB46C93E132590F900AF7B5C /* Connect */ = {
 			isa = PBXGroup;
 			children = (
+				A6F20997134E61CC009F597D /* ConnectModule.h */,
+				A6F20998134E61CC009F597D /* ConnectModule.m */,
+				A6F20999134E61CC009F597D /* ConnectViewController.h */,
+				A6F2099A134E61CC009F597D /* ConnectViewController.m */,
+				A6F2099B134E61CC009F597D /* CustomBumpUI.h */,
+				A6F2099C134E61CC009F597D /* CustomBumpUI.m */,
 			);
-			path = Connect;
+			name = Connect;
+			path = ../../../Modules/Connect;
 			sourceTree = "<group>";
 		};
 		EB46C93F132590F900AF7B5C /* Photos */ = {
@@ -1220,6 +1354,8 @@
 				EB181712130C9C43003728FF /* KGOHomeScreenWidget.m */,
 				EB46CA311327011100AF7B5C /* KGOSidebarFrameViewController.h */,
 				EB46CA321327011100AF7B5C /* KGOSidebarFrameViewController.m */,
+				EB46A3E2134FAA60005796E4 /* KGOSplitViewController.h */,
+				EB46A3E3134FAA60005796E4 /* KGOSplitViewController.m */,
 			);
 			name = Home;
 			path = ../../Modules/Home;
@@ -1238,8 +1374,7 @@
 				EB138AFC12F22F31004DBB7C /* KGOInfo.plist */,
 				EB5773C112FDF91200BAF5F5 /* Config.plist */,
 				EB46CA381327E53600AF7B5C /* ThemeConfig.plist */,
-				EB46CA391327E53600AF7B5C /* ThemeConstants.h */,
-				EB46CA3A1327E53600AF7B5C /* ThemeConstants.m */,
+				EB46A3E0134FA87E005796E4 /* ThemeConfig-iPad.plist */,
 				EB5F33A0132497D00066413F /* Default.png */,
 				EB5F33A1132497D00066413F /* Default@2x.png */,
 				EB5F33A2132497D00066413F /* Icon.png */,
@@ -1344,6 +1479,8 @@
 				EB9DE00913416F5000598644 /* ScheduleEventWrapper.m */,
 				EB469A88134952D3005796E4 /* ReunionDetailPageHeaderView.h */,
 				EB469A89134952D3005796E4 /* ReunionDetailPageHeaderView.m */,
+				EB46A2C0134D44D3005796E4 /* ScheduleTabletTableViewCell.h */,
+				EB46A2C1134D44D4005796E4 /* ScheduleTabletTableViewCell.m */,
 			);
 			path = Schedule;
 			sourceTree = "<group>";
@@ -1405,6 +1542,23 @@
 				French,
 				German,
 				en,
+				da,
+				de,
+				el,
+				es,
+				fr,
+				he,
+				it,
+				ja,
+				ko,
+				nl,
+				no,
+				pl,
+				pt,
+				ru,
+				sv,
+				"zh-Hans",
+				"zh-Hant",
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -1511,6 +1665,11 @@
 				EB913B891347CC7F00D2EEF6 /* test_server.xcconfig in Resources */,
 				4BD36E0A134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib in Resources */,
 				4B5B40B31350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib in Resources */,
+				A6F20AF6134E67E3009F597D /* BumpAPIAssets.bundle in Resources */,
+				A6F20AF8134E67E3009F597D /* BumpApiLocalizable.strings in Resources */,
+				A6F20AF9134E67E3009F597D /* Localization-ReadMe.txt in Resources */,
+				A6F20B17134E67E3009F597D /* README.markdown in Resources */,
+				EB46A3E1134FA87E005796E4 /* ThemeConfig-iPad.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1569,7 +1728,6 @@
 				EB46C950132591E200AF7B5C /* KGOModule+Factory.m in Sources */,
 				EB46C953132596C500AF7B5C /* TwitterModule.m in Sources */,
 				EB46CA331327011200AF7B5C /* KGOSidebarFrameViewController.m in Sources */,
-				EB46CA3C1327E53600AF7B5C /* ThemeConstants.m in Sources */,
 				EB46CBBE132AE55400AF7B5C /* FacebookModel.xcdatamodeld in Sources */,
 				EB46CBC7132AE95400AF7B5C /* FacebookPhoto.m in Sources */,
 				EB46CBCA132AE95600AF7B5C /* FacebookComment.m in Sources */,
@@ -1636,7 +1794,6 @@
 				EB0339591340E47D00ACF2BB /* KGOCalendar.m in Sources */,
 				EB03395A1340E47D00ACF2BB /* KGOCalendarGroup.m in Sources */,
 				EB03395B1340E47D00ACF2BB /* KGOEvent.m in Sources */,
-				EB03395C1340E47D00ACF2BB /* KGOEventAttendee.m in Sources */,
 				EB03395D1340E47D00ACF2BB /* KGOEventContactInfo.m in Sources */,
 				EB03395E1340E47D00ACF2BB /* KGOEventWrapper.m in Sources */,
 				EB03395F1340E47D00ACF2BB /* MapDetailViewController.m in Sources */,
@@ -1681,16 +1838,62 @@
 				EB46A15B134CCC9D005796E4 /* ReunionHomeModule.m in Sources */,
 				EB46A15F134CCCA8005796E4 /* ReunionLoginModule.m in Sources */,
 				4B1153CB135243D40097DAD9 /* MediaContainerView.m in Sources */,
+				A6F2099D134E61CC009F597D /* ConnectModule.m in Sources */,
+				A6F2099E134E61CC009F597D /* ConnectViewController.m in Sources */,
+				A6F2099F134E61CC009F597D /* CustomBumpUI.m in Sources */,
+				A6F20B11134E67E3009F597D /* BumpAPIConfirmPage.m in Sources */,
+				A6F20B12134E67E3009F597D /* BumpAPIPopup.m in Sources */,
+				A6F20B13134E67E3009F597D /* BumpAPIPromptPage.m in Sources */,
+				A6F20B14134E67E3009F597D /* BumpAPIUI.m in Sources */,
+				A6F20B15134E67E3009F597D /* BumpAPIWaitPage.m in Sources */,
+				A6F20B16134E67E3009F597D /* BumpHandsView.m in Sources */,
+				EB46A2C2134D44D4005796E4 /* ScheduleTabletTableViewCell.m in Sources */,
+				A63DE7A7134F9F98001C52BF /* AddressBookUtils.m in Sources */,
+				EB46A3E4134FAA60005796E4 /* KGOSplitViewController.m in Sources */,
+				EB46A60A13529894005796E4 /* KGOEventParticipant.m in Sources */,
+				EB46A60B13529894005796E4 /* KGOEventParticipantRelation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		A6F20A9F134E67E3009F597D /* BumpApiLocalizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A6F20AA0134E67E3009F597D /* da */,
+				A6F20AA1134E67E3009F597D /* de */,
+				A6F20AA2134E67E3009F597D /* el */,
+				A6F20AA3134E67E3009F597D /* en */,
+				A6F20AA4134E67E3009F597D /* es */,
+				A6F20AA5134E67E3009F597D /* fr */,
+				A6F20AA6134E67E3009F597D /* he */,
+				A6F20AA7134E67E3009F597D /* it */,
+				A6F20AA8134E67E3009F597D /* ja */,
+				A6F20AA9134E67E3009F597D /* ko */,
+				A6F20AAB134E67E3009F597D /* nl */,
+				A6F20AAC134E67E3009F597D /* no */,
+				A6F20AAD134E67E3009F597D /* pl */,
+				A6F20AAE134E67E3009F597D /* pt */,
+				A6F20AAF134E67E3009F597D /* ru */,
+				A6F20AB0134E67E3009F597D /* sv */,
+				A6F20AB1134E67E3009F597D /* zh-Hans */,
+				A6F20AB2134E67E3009F597D /* zh-Hant */,
+			);
+			name = BumpApiLocalizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug - Development */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B7E1347CC7F00D2EEF6 /* dev_server.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
+				);
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug - Development";
@@ -1698,6 +1901,10 @@
 		1D6058950D05DD3E006BFB54 /* Release - Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
+				);
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release - Production";
@@ -1733,6 +1940,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B821347CC7F00D2EEF6 /* stage_server.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
+				);
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug - Staging";
@@ -1748,6 +1959,10 @@
 		DE8B4DBF110FAB1100B7D991 /* Debug - Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
+				);
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug - Production";
@@ -1764,6 +1979,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B821347CC7F00D2EEF6 /* stage_server.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
+				);
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release - Staging";
@@ -1780,6 +1999,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B831347CC7F00D2EEF6 /* test_server.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
+				);
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug - Testing";
@@ -1796,6 +2019,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B831347CC7F00D2EEF6 /* test_server.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
+				);
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release - Testing";

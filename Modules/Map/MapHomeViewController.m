@@ -12,11 +12,12 @@
 #import "UIKit+KGOAdditions.h"
 #import "KGOToolbar.h"
 #import "KGOPlacemark.h"
+#import "KGOSidebarFrameViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation MapHomeViewController
 
-@synthesize searchTerms, searchOnLoad, searchParams;
+@synthesize searchTerms, searchOnLoad, searchParams, mapModule;
 
 - (void)mapTypeDidChange:(NSNotification *)aNotification {
     _mapView.mapType = [[aNotification object] integerValue];
@@ -84,8 +85,7 @@
         _mapBorder.layer.cornerRadius = 4;
     }
     
-    KGOModule *mapModule = [KGO_SHARED_APP_DELEGATE() moduleForTag:MapTag];
-    self.title = mapModule.shortName;
+    self.title = self.mapModule.shortName;
 
     _mapView.mapType = [[NSUserDefaults standardUserDefaults] integerForKey:MapTypePreference];
     [_mapView centerAndZoomToDefaultRegion];
@@ -180,47 +180,42 @@
 - (IBAction)browseButtonPressed {
 	KGOCategoryListViewController *categoryVC = [[[KGOCategoryListViewController alloc] init] autorelease];
     categoryVC.categoryEntityName = MapCategoryEntityName;
-    categoryVC.categoriesRequest = [[KGORequestManager sharedManager] requestWithDelegate:categoryVC module:MapTag path:@"categories" params:nil];
-    categoryVC.categoriesRequest.expectedResponseType = [NSArray class];
-    
-    __block JSONObjectHandler createMapCategories;
-    __block NSUInteger sortOrder = 0;
-    createMapCategories = [[^(id jsonObj) {
-        NSInteger categoriesCreated = 0;
-        NSArray *jsonArray = (NSArray *)jsonObj;
-        for (id categoryObj in jsonArray) {
-            if ([categoryObj isKindOfClass:[NSDictionary class]]) {
-                NSDictionary *categoryDict = (NSDictionary *)categoryObj;
-                NSArray *categoryPath = nil;
-                id identifier = [categoryDict objectForKey:@"id"];
-                if ([identifier isKindOfClass:[NSArray class]]) {
-                    categoryPath = identifier;
-                } else if ([identifier isKindOfClass:[NSNumber class]] || [identifier isKindOfClass:[NSString class]]) {
-                    categoryPath = [NSArray arrayWithObject:identifier];
-                }
-                if (categoryPath) {
-                    KGOMapCategory *category = [KGOMapCategory categoryWithPath:categoryPath];
-                    NSString *title = [categoryDict stringForKey:@"title" nilIfEmpty:YES];
-                    if (title && ![category.title isEqualToString:title]) {
-                        category.title = title;
-                        category.sortOrder = [NSNumber numberWithInt:sortOrder];
-                        sortOrder++; // this can be anything so long as it's ascending within the parent category
-                    }
-                    categoriesCreated++;
-                }
 
-                NSArray *subcategories = [categoryDict arrayForKey:@"subcategories"];
-                if (subcategories.count) {
-                    categoriesCreated += createMapCategories(subcategories);
-                }
+    categoryVC.categoriesRequest = [[KGORequestManager sharedManager] requestWithDelegate:categoryVC
+                                                                                   module:self.mapModule.tag
+                                                                                     path:@"groups"
+                                                                                   params:nil];
+    
+    __block CoreDataManager *coreDataManager = [CoreDataManager sharedManager];
+    JSONObjectHandler createMapCategories = [[^(id jsonObj) {
+        NSDictionary *results = [jsonObj dictionaryForKey:@"results"];
+        __block NSInteger count = 0;
+        [results enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            NSArray *categoryPath = [NSArray arrayWithObject:key];
+            KGOMapCategory *category = [KGOMapCategory categoryWithPath:categoryPath];
+            NSString *title = [obj stringForKey:@"title" nilIfEmpty:YES];
+            if (title && ![category.title isEqualToString:title]) {
+                category.title = title;
             }
-        }
+            if (![category.hasSubcategories boolValue]) {
+                category.hasSubcategories = [NSNumber numberWithBool:YES];
+            }
+            count++;
+        }];
         
-        return categoriesCreated;
+        [coreDataManager saveData];
+        
+        return count;
+        
     } copy] autorelease];
     
     categoryVC.categoriesRequest.handler = createMapCategories;
-	[KGO_SHARED_APP_DELEGATE() presentAppModalNavigationController:categoryVC animated:YES];
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:categoryVC] autorelease];
+    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                           target:self
+                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+    categoryVC.navigationItem.rightBarButtonItem = item;
+    [self presentModalViewController:navC animated:YES];
 }
 
 - (IBAction)bookmarksButtonPressed {
@@ -230,14 +225,26 @@
     KGOBookmarksViewController *vc = [[[KGOBookmarksViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
     vc.bookmarkedItems = array;
     vc.searchResultsDelegate = self;
-    [KGO_SHARED_APP_DELEGATE() presentAppModalNavigationController:vc animated:YES];
+    // TODO: don't wrap in a nav controller for navstyles with no navigation controllers
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                           target:self
+                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+    vc.navigationItem.rightBarButtonItem = item;
+    [self presentModalViewController:navC animated:YES];
 }
 
 - (IBAction)settingsButtonPressed {
 	MapSettingsViewController *vc = [[[MapSettingsViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
     vc.title = @"Settings";
     vc.view.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
-	[KGO_SHARED_APP_DELEGATE() presentAppModalNavigationController:vc animated:YES];
+    // TODO: don't wrap in a nav controller for navstyles with no navigation controllers
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                           target:self
+                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+    vc.navigationItem.rightBarButtonItem = item;
+    [self presentModalViewController:navC animated:YES];
 }
 
 #pragma mark Map/List
@@ -318,6 +325,18 @@
             view.canShowCallout = YES;
             view.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         }
+    } else if ([annotation conformsToProtocol:@protocol(KGOSearchResult)]) {
+        id<KGOSearchResult> aResult = (id<KGOSearchResult>)annotation;
+        if ([aResult respondsToSelector:@selector(annotationImage)]) {
+            UIImage *image = [aResult annotationImage];
+            if (image) {
+                view = [[[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"fajwioth"] autorelease];
+                view.image = image;
+                view.canShowCallout = YES;
+                // TODO: not all annotations will want to do this
+                view.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+            }
+        }
     }
     return view;
 }
@@ -326,9 +345,17 @@
 {
     id<MKAnnotation> annotation = view.annotation;
     if ([annotation conformsToProtocol:@protocol(KGOSearchResult)]) {
-        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:annotation, @"place", self, @"pagerController", nil];
         KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
-        [appDelegate showPage:LocalPathPageNameDetail forModuleTag:MapTag params:params];
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:annotation, @"place", self, @"pagerController", nil];
+        KGONavigationStyle navStyle = [appDelegate navigationStyle];
+        // TODO: clean up sidebar home screen so we don't have to deal with this
+        if (navStyle == KGONavigationStyleTabletSidebar) {
+            UIViewController *vc = [self.mapModule modulePage:LocalPathPageNameDetail params:params];
+            [(KGOSidebarFrameViewController *)[appDelegate homescreen] showDetailViewController:vc];
+            
+        } else {
+            [appDelegate showPage:LocalPathPageNameDetail forModuleTag:self.mapModule.tag params:params];
+        }
     }
 }
 
@@ -347,7 +374,7 @@
 #pragma mark SearchDisplayDelegate
 
 - (BOOL)searchControllerShouldShowSuggestions:(KGOSearchDisplayController *)controller {
-	return YES;
+    return [KGO_SHARED_APP_DELEGATE() navigationStyle] != KGONavigationStyleTabletSidebar;
 }
 
 - (NSArray *)searchControllerValidModules:(KGOSearchDisplayController *)controller {
@@ -376,6 +403,10 @@
 }
 
 - (void)searchController:(KGOSearchDisplayController *)controller didShowSearchResultsTableView:(UITableView *)tableView {
+    
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+        tableView.hidden = YES;
+    }
 
 	// show our map view above the list view
 	if (controller.showingOnlySearchResults) {

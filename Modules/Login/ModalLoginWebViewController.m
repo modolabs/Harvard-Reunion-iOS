@@ -29,8 +29,8 @@
 {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter] addObserver:KGO_SHARED_APP_DELEGATE()
-                                             selector:@selector(dismissAppModalViewControllerAnimated:)
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(dismissModalViewControllerAnimated:)
                                                  name:KGODidLoginNotification
                                                object:nil];
 }
@@ -40,7 +40,7 @@
     NSLog(@"attempting to load %@", request.URL);
 
     if ([[KGORequestManager sharedManager] isUserLoggedIn]) {
-        [KGO_SHARED_APP_DELEGATE() dismissAppModalViewControllerAnimated:YES];
+        [self dismissModalViewControllerAnimated:YES];
         return NO;
     }
     

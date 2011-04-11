@@ -1,7 +1,6 @@
 #import "ReunionMapDetailViewController.h"
 #import "KGOPlacemark.h"
 #import "KGOTheme.h"
-#import "ThemeConstants.h"
 #import "KGOHTMLTemplate.h"
 
 @implementation ReunionMapDetailViewController
@@ -143,7 +142,7 @@
     switch (indexPath.section) {
         case 0:
             cell.textLabel.text = @"View Location in Google Maps";
-            cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:TableViewCellAccessoryExternal];
+            cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:KGOAccessoryTypeExternal];
             break;
         case 1:
         {

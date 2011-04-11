@@ -1,7 +1,6 @@
 #import "EventDetailTableView.h"
 #import "CalendarModel.h"
 #import "KGOContactInfo.h"
-#import "ThemeConstants.h"
 #import "UIKit+KGOAdditions.h"
 #import "Foundation+KGOAdditions.h"
 #import "KGORequestManager.h"
@@ -122,7 +121,7 @@
         }
 
         if (_event.coordinate.latitude || _event.coordinate.longitude) {
-            [locationDict setObject:TableViewCellAccessoryMap forKey: @"accessory"];
+            [locationDict setObject:KGOAccessoryTypeMap forKey: @"accessory"];
         }
         
         basicInfo = [NSArray arrayWithObject:locationDict];
@@ -134,7 +133,7 @@
 - (NSArray *)sectionForAttendeeInfo
 {
     NSArray *attendeeInfo = nil;
-    if (_event.attendees) {
+    if (_event.attendees.count) {
         NSString *attendeeString = [NSString stringWithFormat:@"%d %@",
                                     _event.attendees.count,
                                     NSLocalizedString(@"others attending", nil)];
@@ -158,16 +157,16 @@
                 
                 if ([aContact.type isEqualToString:@"phone"]) {
                     type = NSLocalizedString(@"Organizer phone", nil);
-                    accessory = TableViewCellAccessoryPhone;
+                    accessory = KGOAccessoryTypePhone;
                     url = [NSString stringWithFormat:@"tel:%@", aContact.value];
                     
                 } else if ([aContact.type isEqualToString:@"email"]) {
                     type = NSLocalizedString(@"Organizer email", nil);
-                    accessory = TableViewCellAccessoryEmail;
+                    accessory = KGOAccessoryTypeEmail;
                     
                 } else if ([aContact.type isEqualToString:@"url"]) {
                     type = NSLocalizedString(@"Event website", nil);
-                    accessory = TableViewCellAccessoryExternal;
+                    accessory = KGOAccessoryTypeExternal;
                     url = aContact.value;
                     
                 } else {
@@ -201,9 +200,9 @@
     
     if (_event.summary) {
         UILabel *label = [UILabel multilineLabelWithText:_event.summary
-                                                    font:[[KGOTheme sharedTheme] fontForTableCellTitleWithStyle:KGOTableCellStyleBodyText]
+                                                    font:[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText]
                                                    width:self.frame.size.width - 20];
-        label.textColor = [[KGOTheme sharedTheme] textColorForTableCellTitleWithStyle:KGOTableCellStyleBodyText];
+        label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyNavListSubtitle];
         label.tag = DESCRIPTION_LABEL_TAG;
         CGRect frame = label.frame;
         frame.origin = CGPointMake(10, 10);
@@ -302,10 +301,10 @@
             [[UIApplication sharedApplication] openURL:url];
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
-        } else if ([accessory isEqualToString:TableViewCellAccessoryEmail]) {
+        } else if ([accessory isEqualToString:KGOAccessoryTypeEmail]) {
             [MITMailComposeController presentMailControllerWithEmail:[cellData objectForKey:@"subtitle"] subject:nil body:nil];
             
-        } else if ([accessory isEqualToString:TableViewCellAccessoryMap]) {
+        } else if ([accessory isEqualToString:KGOAccessoryTypeMap]) {
             NSArray *annotations = [NSArray arrayWithObject:_event];
             NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:annotations, @"annotations", nil];
             [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome forModuleTag:MapTag params:params];
@@ -319,8 +318,8 @@
 {
     if (_headerView.frame.size.height != self.tableHeaderView.frame.size.height) {
         self.tableHeaderView.frame = _headerView.frame;
-        self.tableHeaderView = self.tableHeaderView;
     }
+    self.tableHeaderView = self.tableHeaderView;
 }
 
 - (UIView *)viewForTableHeader

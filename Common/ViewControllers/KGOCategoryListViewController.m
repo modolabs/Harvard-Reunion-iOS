@@ -40,6 +40,14 @@
     self.view.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
 }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        return YES;
+    }
+    return toInterfaceOrientation == UIInterfaceOrientationPortrait;
+}
+
 - (NSArray *)categories {
 	return _categories;
 }
@@ -84,8 +92,9 @@
         
         NSArray *categories = nil;
         if (self.parentCategory == nil) {
-            NSPredicate *pred = [NSPredicate predicateWithFormat:@"parentCategory = NULL"];
+            NSPredicate *pred = [NSPredicate predicateWithFormat:@"parentCategory = nil"];
             categories = [[CoreDataManager sharedManager] objectsForEntity:self.categoryEntityName matchingPredicate:pred];
+
         } else {
             categories = [self.parentCategory children];
         }
@@ -94,6 +103,8 @@
 
     } else if (request == self.leafItemsRequest) {
         self.leafItems = self.parentCategory.items;
+        NSLog(@"%@", self.parentCategory);
+        NSLog(@"%@", self.leafItems);
     }
 
     [self reloadDataForTableView:self.tableView];

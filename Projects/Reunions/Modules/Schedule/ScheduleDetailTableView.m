@@ -3,7 +3,6 @@
 #import "KGOFoursquareEngine.h"
 #import "UIKit+KGOAdditions.h"
 #import "ScheduleEventWrapper.h"
-#import "ThemeConstants.h"
 #import "Foundation+KGOAdditions.h"
 #import "ReunionDetailPageHeaderView.h"
 #import "CalendarDataManager.h"
@@ -43,12 +42,12 @@
                                      title, @"title",
                                      subtitle, @"subtitle",
                                      [eventWrapper registrationURL], @"url",
-                                     TableViewCellAccessoryExternal, @"accessory",
+                                     KGOAccessoryTypeExternal, @"accessory",
                                      nil]];
         }
     }
     
-    if (_event.attendees) {
+    if (_event.attendees.count) {
         [attendeeInfo addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                  [NSString stringWithFormat:@"%d others attending", _event.attendees.count], @"title",
                                  KGOAccessoryTypeChevron, @"accessory",
@@ -74,8 +73,10 @@
                                     attendees, @"attendees",
                                     nil];
             [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameItemList forModuleTag:@"schedule" params:params];
+            return;
         }
     }
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 
 // uncomment when we have facebook/foursquare

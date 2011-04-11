@@ -5,6 +5,7 @@
 #import "PersonContact.h"
 #import "PersonOrganization.h"
 #import "PersonAddress.h"
+#import "AddressBookUtils.h"
 
 NSString * const KGOPersonContactTypeEmail = @"email";
 NSString * const KGOPersonContactTypePhone = @"phone";
@@ -648,40 +649,7 @@ webpages = _webpages;
 
 - (NSArray *)getMultiValueRecordProperty:(ABPropertyID)property {
     [self convertToABPerson]; // make sure we have a reference to the address book
-    NSMutableArray *result = nil;
-    
-    ABMultiValueRef multi = ABRecordCopyValue(_abRecord, property);
-    if (multi) {
-        CFIndex count = ABMultiValueGetCount(multi);
-        result = [NSMutableArray arrayWithCapacity:count];
-        
-        for (CFIndex i = 0; i < count; i++) {
-            NSDictionary *valueSet = nil;
-            
-            CFStringRef label = ABMultiValueCopyLabelAtIndex(multi, i);
-            CFTypeRef value = ABMultiValueCopyValueAtIndex(multi, i);
-            
-            if (label) {
-                valueSet = [NSDictionary dictionaryWithObjectsAndKeys:(NSString *)label, @"label", (id)value, @"value", nil];
-            } else if (value) {
-                valueSet = [NSDictionary dictionaryWithObjectsAndKeys:(id)value, @"value", nil];
-            }
-            
-            if (valueSet) {
-                [result addObject:valueSet];
-            }
-            
-            if (label) {
-                CFRelease(label);
-            }
-            if (value) {
-                CFRelease(value);
-            }
-        }
-        CFRelease(multi);
-    }
-    
-    return result;
+    return [AddressBookUtils getMultiValueRecordProperty:property record:_abRecord];
 }
 
 - (BOOL)saveToAddressBook {

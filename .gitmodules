@@ -10,3 +10,6 @@
 [submodule "Contrib/json-framework"]
 	path = Contrib/json-framework
 	url = https://github.com/stig/json-framework.git
+[submodule "Contrib/bump/bump-api2-ios-custom-ui"]
+	path = Contrib/bump/bump-api2-ios-custom-ui
+	url = https://github.com/bumptech/bump-api2-ios-custom-ui.git
