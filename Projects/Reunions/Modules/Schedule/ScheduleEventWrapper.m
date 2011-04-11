@@ -117,6 +117,17 @@
             [userInfo setObject:value forKey:@"regURL"];
         }
     }
+    
+    // checkins
+    NSString *facebookPlaceID = [dictionary stringForKey:@"fbPlaceId" nilIfEmpty:YES];
+    if (facebookPlaceID) {
+        [userInfo setObject:facebookPlaceID forKey:@"facebookID"];
+    }
+    NSString *foursquarePlaceID = [dictionary stringForKey:@"fqPlaceId" nilIfEmpty:YES];
+    if (foursquarePlaceID) {
+        [userInfo setObject:foursquarePlaceID forKey:@"foursquareID"];
+    }
+    
     self.userInfo = userInfo;
     
     NSArray *attendees = [dictionary arrayForKey:@"attendees"];
@@ -148,6 +159,16 @@
 - (NSString *)registrationURL
 {
     return [self.userInfo objectForKey:@"regURL"];
+}
+
+- (NSString *)facebookID
+{
+    return [self.userInfo objectForKey:@"facebookID"];
+}
+
+- (NSString *)foursquareID
+{
+    return [self.userInfo objectForKey:@"foursquareID"];
 }
 
 @end

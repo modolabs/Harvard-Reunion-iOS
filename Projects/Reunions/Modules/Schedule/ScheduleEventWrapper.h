@@ -8,4 +8,7 @@
 - (NSString *)registrationFee;
 - (NSString *)registrationURL;
 
+- (NSString *)facebookID;
+- (NSString *)foursquareID;
+
 @end
