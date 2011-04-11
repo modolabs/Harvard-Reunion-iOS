@@ -16,6 +16,7 @@ extern NSString * const TwitterStatusDidUpdateNotification;
 }
 
 - (void)hideChatBubble:(NSNotification *)aNotification;
+- (void)didLogin:(NSNotification *)aNotification;
 
 @property(nonatomic, retain) UIImage *buttonImage;
 @property(nonatomic, retain) NSString *labelText;

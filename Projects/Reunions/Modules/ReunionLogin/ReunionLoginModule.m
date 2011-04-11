@@ -79,7 +79,7 @@
         UIFont *font = [UIFont fontWithName:@"Georgia" size:38];
         CGSize size = CGSizeZero;
         if (text) {
-            [text sizeWithFont:font];
+            size = [text sizeWithFont:font];
         }
 
         UILabel *yearLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)] autorelease];

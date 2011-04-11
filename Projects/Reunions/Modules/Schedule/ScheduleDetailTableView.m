@@ -144,9 +144,7 @@
     
     CGFloat heightForSocialButtons = 0;
     
-    // TODO: cast events to ScheduleEventWrapper
-    
-    if ([_event facebookID]) {
+    if ([_event isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)_event facebookID]) {
         if (!_facebookButton) {
             _facebookButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
             UIImage *image = [UIImage imageWithPathName:@"modules/facebook/button-facebook.png"];
@@ -162,7 +160,7 @@
         _facebookButton = nil;
     }
 
-    if ([_event foursquareID]) {
+    if ([_event isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)_event foursquareID]) {
         if (!_foursquareButton) {
             _foursquareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
             UIImage *image = [UIImage imageWithPathName:@"modules/foursquare/foursquare.jpg"];

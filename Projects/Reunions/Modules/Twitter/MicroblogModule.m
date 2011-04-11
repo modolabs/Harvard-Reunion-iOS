@@ -4,6 +4,7 @@
 #import "UIKit+KGOAdditions.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "KGOHomeScreenViewController.h"
+#import "KGORequestManager.h"
 
 #define BUTTON_WIDTH_IPHONE 120
 #define BUTTON_HEIGHT_IPHONE 46
@@ -27,6 +28,10 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 
 - (void)hideChatBubble:(NSNotification *)aNotification {
     self.chatBubble.hidden = YES;
+}
+
+- (void)didLogin:(NSNotification *)aNotification
+{
 }
 
 - (UILabel *)chatBubbleTitleLabel {
@@ -133,6 +138,14 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 }
 
 - (KGOHomeScreenWidget *)buttonWidget {
+    if (!self.labelText) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(didLogin:)
+                                                     name:KGODidLoginNotification
+                                                   object:nil];
+        return nil;
+    }
+    
     if (!_buttonWidget) {
         CGRect frame = CGRectZero; // all frames are set at the end
         _buttonWidget = [[KGOHomeScreenWidget alloc] initWithFrame:frame];
@@ -180,9 +193,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 }
 
 - (NSArray *)widgetViews {
-    KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
-    UIViewController *homeVC = [appDelegate homescreen];
-    if (UIInterfaceOrientationIsPortrait(homeVC.interfaceOrientation)) {
+    if (self.buttonWidget) {
         return [NSArray arrayWithObjects:self.buttonWidget, self.chatBubble, nil];
     }
     return nil;

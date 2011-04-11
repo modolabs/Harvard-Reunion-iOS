@@ -7,6 +7,7 @@
 #import "Foundation+KGOAdditions.h"
 #import "FacebookUser.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
+#import "ReunionHomeModule.h"
 
 #define FACEBOOK_STATUS_POLL_FREQUENCY 60
 
@@ -54,6 +55,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 #pragma mark polling
 
 - (void)setupPolling {
+    /*
     NSLog(@"setting up polling...");
     if (![[KGOSocialMediaController sharedController] isFacebookLoggedIn]) {
         NSLog(@"waiting for facebook to log in...");
@@ -68,6 +70,9 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
                                                    object:nil];
         [self requestGroupOrStartPolling];
     }
+    */
+    
+    [self startPollingStatusUpdates];
 }
 
 - (void)shutdownPolling {
@@ -115,10 +120,9 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 }
 
 #pragma mark facebook connection
-
+/*
 - (void)requestGroupOrStartPolling {
     _lastMessageDate = [[NSDate distantPast] retain];
-    
     if (!_gid) {
         NSLog(@"requesting groups");
         [[KGOSocialMediaController sharedController] requestFacebookGraphPath:@"me/groups"
@@ -148,31 +152,23 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
-
+*/
 - (NSString *)groupID {
     return _gid;
 }
-
+/*
 - (void)didReceiveGroups:(id)result {
     NSArray *data = [result arrayForKey:@"data"];
     for (id aGroup in data) {
         // TODO: get group names from server
-        if ([[aGroup objectForKey:@"name"] isEqualToString:@"Modo Reunion Test"]) {
-        //if ([[aGroup objectForKey:@"name"] isEqualToString:@"Modo Labs UX"]) {
-
-            [_gid release];
-            _gid = [[aGroup objectForKey:@"id"] retain];
-            
+        if ([[aGroup objectForKey:@"id"] isEqualToString:_gid]) {
             [[NSNotificationCenter defaultCenter] postNotificationName:FacebookGroupReceivedNotification object:self];
 
-            [[NSUserDefaults standardUserDefaults] setObject:_gid forKey:FacebookGroupKey];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-            
             [self startPollingStatusUpdates];
         }
     }
 }
-
+*/
 - (NSArray *)latestFeedPosts {
     return _latestFeedPosts;
 }
@@ -225,7 +221,6 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     self = [super initWithDictionary:moduleDict];
     if (self) {
         self.buttonImage = [UIImage imageWithPathName:@"modules/facebook/button-facebook.png"];
-        self.labelText = @"Harvard-Radcliffe Reunion";
         
         KGONavigationStyle navStyle = [KGO_SHARED_APP_DELEGATE() navigationStyle];
         if (navStyle == KGONavigationStyleTabletSidebar) {
@@ -240,6 +235,16 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 - (NSArray *)objectModelNames {
     return [NSArray arrayWithObject:@"FacebookModel"];
+}
+
+- (void)didLogin:(NSNotification *)aNotification
+{
+    ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
+    self.labelText = [homeModule fbGroupName];
+    _gid = [[homeModule fbGroupID] retain];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:_gid forKey:FacebookGroupKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 #pragma mark -
@@ -268,7 +273,6 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 - (void)applicationDidFinishLaunching {
     [[KGOSocialMediaController sharedController] startupFacebook];
     _gid = [[[NSUserDefaults standardUserDefaults] objectForKey:FacebookGroupKey] retain];
-    NSLog(@"stored group id is %@", _gid);
     [self setupPolling];
 }
 

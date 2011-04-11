@@ -9,6 +9,61 @@
 		<key>Provider</key>
 		<string>Google</string>
 	</dict>
+	<key>UserSettings</key>
+	<dict>
+		<key>Login</key>
+		<array/>
+		<key>SocialMedia</key>
+		<array>
+			<dict>
+				<key>title</key>
+				<string>Facebook</string>
+				<key>service</key>
+				<string>Facebook</string>
+				<key>subtitle</key>
+				<string>Used for photos, videos, updates, and checkins</string>
+			</dict>
+			<dict>
+				<key>title</key>
+				<string>Foursquare</string>
+				<key>service</key>
+				<string>Foursquare</string>
+				<key>subtitle</key>
+				<string>Used for checkins</string>
+			</dict>
+			<dict>
+				<key>title</key>
+				<string>Twitter</string>
+				<key>service</key>
+				<string>Twitter</string>
+				<key>subtitle</key>
+				<string>Used for publishing tweets</string>
+			</dict>
+		</array>
+		<key>Widgets</key>
+		<array>
+			<dict>
+				<key>title</key>
+				<string>Twitter Stream</string>
+				<key>tag</key>
+				<string>twitter</string>
+			</dict>
+			<dict>
+				<key>title</key>
+				<string>Updates from Facebook Group</string>
+				<key>tag</key>
+				<string>facebook</string>
+			</dict>
+		</array>
+	</dict>
+	<key>DefaultUserSettings</key>
+	<dict>
+		<key>Widgets</key>
+		<array>
+			<string>facebook</string>
+			<string>twitter</string>
+		</array>
+	</dict>
 	<key>AppFeedbackAddress</key>
 	<string>digitalcomms@harvard.edu</string>
 	<key>Location</key>
@@ -97,6 +152,14 @@
 			<true/>
 			<key>tag</key>
 			<string>foursquare</string>
+		</dict>
+		<dict>
+			<key>class</key>
+			<string>SettingsModule</string>
+			<key>hidden</key>
+			<true/>
+			<key>tag</key>
+			<string>settings</string>
 		</dict>
 	</array>
 	<key>OrganizationName</key>
