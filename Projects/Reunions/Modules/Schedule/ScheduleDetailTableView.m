@@ -47,7 +47,7 @@
         }
     }
     
-    if (_event.attendees) {
+    if (_event.attendees.count) {
         [attendeeInfo addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                  [NSString stringWithFormat:@"%d others attending", _event.attendees.count], @"title",
                                  KGOAccessoryTypeChevron, @"accessory",
