@@ -153,7 +153,13 @@ CustomBumpUITags;
                          CGRectMake(20, 140, 280, 80)] autorelease];
     self.statusLabel.tag = kBumpStatusLabel;
     self.statusLabel.backgroundColor = [UIColor clearColor];
-    self.statusLabel.font = [[KGOTheme sharedTheme] defaultBoldFont];
+    NSString *fontName = [[KGOTheme sharedTheme] defaultFontName];
+    CGFloat fontSize = [[KGOTheme sharedTheme] defaultFontSize];
+    UIFont *font = [UIFont fontWithName:[NSString stringWithFormat:@"%@-Bold", fontName] size:fontSize];
+    if (!font) {
+        font = [UIFont fontWithName:fontName size:fontSize];
+    }
+    self.statusLabel.font = font;
     self.statusLabel.numberOfLines = 0;
     [self.view addSubview:self.statusLabel];
     
@@ -161,7 +167,8 @@ CustomBumpUITags;
                           CGRectMake(20, 240, 280, 80)] autorelease];
     self.messageLabel.tag = kBumpMessageLabel;
     self.messageLabel.backgroundColor = [UIColor clearColor];
-    self.messageLabel.font = [[KGOTheme sharedTheme] defaultFont];
+    font = [UIFont fontWithName:fontName size:fontSize];
+    self.messageLabel.font = font;
     self.messageLabel.numberOfLines = 0;
     [self.view addSubview:self.messageLabel];
         
