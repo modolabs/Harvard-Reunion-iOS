@@ -1,9 +1,5 @@
 //
 //  ConnectViewController.m
-//  Universitas
-//
-//  Created by Jim Kang on 3/22/11.
-//  Copyright 2011 Modo Labs. All rights reserved.
 //
 
 #import "ConnectViewController.h"
@@ -21,11 +17,20 @@ typedef enum
 }
 CustomBumpUITags;
 
+#define kBumpStatusConnecting @"Preparing Bump session."
+#define kBumpStatusConnectedToNetwork @"Connected to the Bump network. "\
+"You may start Bumping other devices with the Reunion app!"
+#define kBumpStatusDisconnected @"Not connected to the Bump network."
+#define kBumpStatusConnectedToPerson @"Connected to another person."
+
+static const CGFloat kConnectViewSubviewMargin = 20.0f;
+
 #pragma mark Private methods
 
 @interface ConnectViewController (Private)
 
 - (void)setUpBump;
+- (void)takeDownBump;
 
 #pragma mark Address book
 - (void)showPicker;
@@ -35,34 +40,42 @@ CustomBumpUITags;
 #pragma mark Bump UI
 - (void)showAlert:(NSString *)message;
 
+// status: The current state of the Bump connection.
+// message: The most recent notification about the Bump connection.
+// Making either of them nil will leave them unchanged.
+- (void)updateStatus:(NSString *)status andMessage:(NSString *)message;
+
 @end
 
 @implementation ConnectViewController (Private)
 
-- (void)setUpBump
-{
+- (void)setUpBump {
     BumpAPI *bumpObject = [BumpAPI sharedInstance];        
-//    [self.customBumpUI setParentView:self.view];
-//    [self.customBumpUI setBumpAPIObject:[BumpAPI sharedInstance]];
-    [[BumpAPI sharedInstance] configUIDelegate:self];
-    
-    // Start Bump.
-    [bumpObject configAPIKey:@"57571df95089489d906d0d396ace290d"];
+    [bumpObject configUIDelegate:self];
     [bumpObject configDelegate:self];
+    [bumpObject configAPIKey:@"57571df95089489d906d0d396ace290d"];
     [bumpObject configParentView:self.view];
     [bumpObject configActionMessage:
      @"Bump with another app user to get started."];
     [bumpObject requestSession];
 }
 
+- (void)takeDownBump {
+    [[BumpAPI sharedInstance] endSession];
+    [[BumpAPI sharedInstance] configUIDelegate:nil];
+    [[BumpAPI sharedInstance] configDelegate:nil];
+    [[BumpAPI sharedInstance] configParentView:nil];    
+}    
+
 #pragma mark Address book
 - (void)showPicker {
     addressBookPickerShowing = YES;
     ABPeoplePickerNavigationController *picker =
-    [[ABPeoplePickerNavigationController alloc] init];
+    [[ABPeoplePickerNavigationController alloc] init];    
     picker.peoplePickerDelegate = self;
     
     [self presentModalViewController:picker animated:YES];
+    picker.navigationBar.topItem.prompt = @"Select a contact to share";
     [picker release];    
 }
 
@@ -124,22 +137,39 @@ CustomBumpUITags;
     [alertView release];
 }
 
+- (void)updateStatus:(NSString *)status andMessage:(NSString *)message {
+    if (status) {
+        self.statusLabel.text = status;
+        
+        if ([status isEqualToString:kBumpStatusConnecting]) {
+            [self.spinner startAnimating];
+        }
+        else {
+            [self.spinner stopAnimating];
+        }
+
+    }
+    if (message) {
+        self.messageLabel.text = message;
+    }
+}
+
 @end
 
 
 @implementation ConnectViewController
 
-@synthesize customBumpUI;
 @synthesize incomingABRecordDict;
 @synthesize statusLabel;
 @synthesize messageLabel;
+@synthesize spinner;
 
 // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)init
 {
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
-        self.customBumpUI = [[[CustomBumpUI alloc] init] autorelease];
+        self.navigationItem.title = @"Connect";
     }
     return self;
 }
@@ -148,9 +178,15 @@ CustomBumpUITags;
 - (void)loadView {
     [super loadView];
     //self.view.backgroundColor = [UIColor greenColor];
-        
-    self.statusLabel = [[[UILabel alloc] initWithFrame:
-                         CGRectMake(20, 140, 280, 80)] autorelease];
+    CGFloat viewWidth = self.view.frame.size.width;
+            
+    self.statusLabel = 
+    [[[UILabel alloc] initWithFrame:
+      CGRectMake(kConnectViewSubviewMargin, 
+                 100, 
+                 viewWidth - 2 * kConnectViewSubviewMargin, 
+                 80)] 
+     autorelease];
     self.statusLabel.tag = kBumpStatusLabel;
     self.statusLabel.backgroundColor = [UIColor clearColor];
     NSString *fontName = [[KGOTheme sharedTheme] defaultFontName];
@@ -162,9 +198,23 @@ CustomBumpUITags;
     self.statusLabel.font = font;
     self.statusLabel.numberOfLines = 0;
     [self.view addSubview:self.statusLabel];
+
+    self.spinner = 
+    [[[UIActivityIndicatorView alloc] 
+      initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge]
+     autorelease];
+    CGRect spinnerFrame = self.spinner.frame;
+    spinnerFrame.origin.x = viewWidth/2;
+    spinnerFrame.origin.y = 210; 
+    self.spinner.frame = spinnerFrame;
+    [self.view addSubview:self.spinner];
     
-    self.messageLabel = [[[UILabel alloc] initWithFrame:
-                          CGRectMake(20, 240, 280, 80)] autorelease];
+    self.messageLabel = 
+    [[[UILabel alloc] initWithFrame:
+      CGRectMake(kConnectViewSubviewMargin, 
+                 240, 
+                 viewWidth - 2 * kConnectViewSubviewMargin, 
+                 80)] autorelease];    
     self.messageLabel.tag = kBumpMessageLabel;
     self.messageLabel.backgroundColor = [UIColor clearColor];
     font = [UIFont fontWithName:fontName size:fontSize];
@@ -206,14 +256,11 @@ CustomBumpUITags;
 
 - (void)dealloc {
     // Stop bump.
-    [[BumpAPI sharedInstance] configUIDelegate:nil];
-    [[BumpAPI sharedInstance] configDelegate:nil];
-    [[BumpAPI sharedInstance] configParentView:nil];    
-    [[BumpAPI sharedInstance] endSession];
+    [self takeDownBump];
     
+    [spinner release];
     [messageLabel release];
     [statusLabel release];
-    [customBumpUI release];
     [incomingABRecordDict release];
     
     [super dealloc];
@@ -245,10 +292,10 @@ CustomBumpUITags;
 	NSString *alertText;
 	switch (reason) {
 		case END_OTHER_USER_QUIT:
-			alertText = @"Other user has quit the session.";
+			alertText = @"Other user has quit the session.";            
 			break;
 		case END_LOST_NET:
-			alertText = @"Connection to Bump server was lost.";
+			alertText = @"Connection to Bump network was lost.";
 			break;
 		case END_OTHER_USER_LOST:
 			alertText = @"Connection to other user was lost.";
@@ -260,9 +307,17 @@ CustomBumpUITags;
 			alertText = @"You have been disconnected.";
 			break;
 	}
+    
+    [self updateStatus:kBumpStatusDisconnected andMessage:alertText];
 	
-	if(reason != END_USER_QUIT){ 
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Disconnected" message:alertText delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+	if (reason != END_USER_QUIT) { 
+		UIAlertView *alert = 
+        [[UIAlertView alloc] 
+         initWithTitle:@"Disconnected" 
+         message:alertText 
+         delegate:nil 
+         cancelButtonTitle:@"OK" 
+         otherButtonTitles:nil];
 		[alert show];
 		[alert release];
 	}
@@ -274,6 +329,7 @@ CustomBumpUITags;
 	switch (reason) {
 		case FAIL_NETWORK_UNAVAILABLE:
 			alertText = @"Please check your network settings and try again.";
+            [self updateStatus:kBumpStatusDisconnected andMessage:alertText];
 			break;
 		case FAIL_INVALID_AUTHORIZATION:
 			//the user should never see this, since we'll pass in the correct API auth strings.
@@ -284,8 +340,10 @@ CustomBumpUITags;
 			alertText = @"Failed to connect to the Bump service.";
 			break;
 	}
+
+    [self updateStatus:kBumpStatusDisconnected andMessage:alertText];
 	
-	if(reason != FAIL_USER_CANCELED){
+	if (reason != FAIL_USER_CANCELED) {
 		//if the user canceled they know it and they don't need a popup.
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Connection Failed" message:alertText delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 		[alert show];
@@ -343,8 +401,7 @@ CustomBumpUITags;
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (alertView.tag == kBumpConnectRequestAlertTag) {
-        switch (buttonIndex) 
-        {
+        switch (buttonIndex) {
             case 0: 
                 // Cancelled.
                 [[BumpAPI sharedInstance] confirmMatch:NO];
@@ -362,6 +419,14 @@ CustomBumpUITags;
         }
         self.incomingABRecordDict = nil;
     }
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0f * NSEC_PER_SEC), 
+                   dispatch_get_current_queue(), 
+                   ^{
+                       // Start over.
+                       [self takeDownBump];
+                       [self setUpBump];
+                   });
 }
 
 
@@ -374,9 +439,7 @@ CustomBumpUITags;
  */
 - (void)bumpRequestSessionCalled
 {
-//    [self showAlert:@"bumpRequestSessionCalled"];
-    self.statusLabel.text = @"Starting up the Bump session...";
-    self.messageLabel.text = @"";
+    [self updateStatus:kBumpStatusConnecting andMessage:@""];
 }
 
 /**
@@ -385,9 +448,8 @@ CustomBumpUITags;
  */
 - (void)bumpFailedToConnectToBumpNetwork
 {
-//    [self showAlert:@"bumpFailedToConnectToBumpNetwork"];
-    self.statusLabel.text = @"Not connected to the Bump network.";
-    self.messageLabel.text = @"Failed to connect to the Bump network.";    
+    [self updateStatus:kBumpStatusDisconnected 
+            andMessage:@"Failed to connect to the Bump network."];
 }
 
 /**
@@ -396,10 +458,7 @@ CustomBumpUITags;
  */
 - (void)bumpConnectedToBumpNetwork
 {
-//    [self showAlert:@"bumpConnectedToBumpNetwork"];
-    self.statusLabel.text = @"Connected to the Bump network. "\
-    "You may start Bumping other devices with the Reunion app!";
-    self.messageLabel.text = @"";
+    [self updateStatus:kBumpStatusConnectedToNetwork andMessage:@""];
 }
 
 /**
@@ -409,8 +468,7 @@ CustomBumpUITags;
  */
 - (void)bumpEndSessionCalled
 {
-    //[self showAlert:@"bumpEndSessionCalled"];
-    NSLog(@"bumpEndSessionCalled");
+    [self updateStatus:kBumpStatusDisconnected andMessage:@""];
 }
 
 /**
@@ -421,9 +479,8 @@ CustomBumpUITags;
  */
 - (void)bumpNetworkLost
 {
-//    [self showAlert:@"bumpNetworkLost"];
-    self.statusLabel.text = @"Lost connection to the Bump network.";
-    self.messageLabel.text = @"Not connected to the Bump network.";
+    [self updateStatus:kBumpStatusDisconnected 
+            andMessage:@"Lost connection to the Bump network."];
 }
 
 /**
@@ -432,8 +489,7 @@ CustomBumpUITags;
  */
 - (void)bumpOccurred
 {
-    //[self showAlert:@"bumpOccurred"];
-    self.messageLabel.text = @"Bumped!";
+    [self updateStatus:nil andMessage:@"Bumped!"];
 }
 
 /**
@@ -442,9 +498,7 @@ CustomBumpUITags;
  */
 - (void)bumpMatchFailedReason:(BumpMatchFailedReason)reason
 {
-//    [self showAlert:[NSString stringWithFormat:
-//                     @"bumpFailedToConnectToBumpNetwork reason: %d", reason]];
-    self.messageLabel.text = @"Could not make a Bump match.";
+    [self updateStatus:nil andMessage:@"Could not make a Bump match."];
 }
 
 /**
@@ -464,6 +518,8 @@ CustomBumpUITags;
      otherButtonTitles:@"Connect", nil];
     alertView.tag = kBumpConnectRequestAlertTag;
     [alertView show];
+    
+    [self updateStatus:kBumpStatusConnectedToPerson andMessage:nil];
 }
 
 /**
@@ -472,9 +528,7 @@ CustomBumpUITags;
  */
 - (void)bumpSessionStarted
 {
-//    [self showAlert:@"bumpSessionStarted"];
-    self.messageLabel.text = @"Connected!";
-    self.statusLabel.text = @"Connected to another person...";
+    [self updateStatus:kBumpStatusConnectedToPerson andMessage:@"Connected!"];
 }
 
 
