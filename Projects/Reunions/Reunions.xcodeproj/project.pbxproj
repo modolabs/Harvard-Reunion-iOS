@@ -15,6 +15,7 @@
 		3A82708D103DAA2400BB4109 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A82708C103DAA2400BB4109 /* SystemConfiguration.framework */; };
 		3AA219501039D74700DB7637 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA2194F1039D74700DB7637 /* CoreData.framework */; };
 		4463CCB210D6F5750048CA83 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4463CCB110D6F5750048CA83 /* CoreLocation.framework */; };
+		A63DE7A7134F9F98001C52BF /* AddressBookUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A63DE7A6134F9F98001C52BF /* AddressBookUtils.m */; };
 		A6F2099D134E61CC009F597D /* ConnectModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20998134E61CC009F597D /* ConnectModule.m */; };
 		A6F2099E134E61CC009F597D /* ConnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F2099A134E61CC009F597D /* ConnectViewController.m */; };
 		A6F2099F134E61CC009F597D /* CustomBumpUI.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F2099C134E61CC009F597D /* CustomBumpUI.m */; };
@@ -268,6 +269,8 @@
 		3A82708C103DAA2400BB4109 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = ../../../../../System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SOURCE_ROOT; };
 		3AA2194F1039D74700DB7637 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		4463CCB110D6F5750048CA83 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		A63DE7A5134F9F98001C52BF /* AddressBookUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddressBookUtils.h; sourceTree = "<group>"; };
+		A63DE7A6134F9F98001C52BF /* AddressBookUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddressBookUtils.m; sourceTree = "<group>"; };
 		A6F20997134E61CC009F597D /* ConnectModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectModule.h; sourceTree = "<group>"; };
 		A6F20998134E61CC009F597D /* ConnectModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectModule.m; sourceTree = "<group>"; };
 		A6F20999134E61CC009F597D /* ConnectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectViewController.h; sourceTree = "<group>"; };
@@ -982,6 +985,8 @@
 				EB0CF8BF133FC86E003B8E45 /* MapKit+KGOAdditions.m */,
 				EB0CF8C0133FC86E003B8E45 /* UIKit+KGOAdditions.h */,
 				EB0CF8C1133FC86E003B8E45 /* UIKit+KGOAdditions.m */,
+				A63DE7A5134F9F98001C52BF /* AddressBookUtils.h */,
+				A63DE7A6134F9F98001C52BF /* AddressBookUtils.m */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -1825,6 +1830,7 @@
 				A6F20B15134E67E3009F597D /* BumpAPIWaitPage.m in Sources */,
 				A6F20B16134E67E3009F597D /* BumpHandsView.m in Sources */,
 				EB46A2C2134D44D4005796E4 /* ScheduleTabletTableViewCell.m in Sources */,
+				A63DE7A7134F9F98001C52BF /* AddressBookUtils.m in Sources */,
 				EB46A3E4134FAA60005796E4 /* KGOSplitViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
