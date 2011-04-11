@@ -79,28 +79,42 @@
     [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 
-// uncomment when we have facebook/foursquare
-/*
+// overriding to accommodate facebook/foursquare buttons
 - (void)headerViewFrameDidChange:(KGODetailPageHeaderView *)headerView
 {
-    CGRect frame = _facebookButton.frame;
-    frame.origin.x = 10;
-    frame.origin.y = _headerView.frame.size.height;
-    _facebookButton.frame = frame;
+    CGRect frame = _headerView.frame;
+    CGFloat heightForSocialButtons = 0;
     
-    frame.origin.x += _facebookButton.frame.size.width + 10;
-    _foursquareButton.frame = frame;
+    if (_facebookButton) {
+        frame = _facebookButton.frame;
+        frame.origin.x = 10;
+        frame.origin.y = _headerView.frame.size.height;
+        _facebookButton.frame = frame;
+        heightForSocialButtons = _facebookButton.frame.size.height;
+    }
     
-    frame = _headerView.frame;
-    frame.size.height += _foursquareButton.frame.size.height + 20;
+    if (_foursquareButton) {
+        frame = _foursquareButton.frame;
+        frame.origin.x = 10;
+        if (_facebookButton) {
+            frame.origin.x += _facebookButton.frame.size.width;
+        }
+        _foursquareButton.frame = frame;
+        heightForSocialButtons = _foursquareButton.frame.size.height;
+    }
+    
+    if (heightForSocialButtons > 0) {
+        frame = _headerView.frame;
+        frame.size.height += heightForSocialButtons;
+        _headerView.frame = frame;
+    }
     
     if (frame.size.height != self.tableHeaderView.frame.size.height) {
         self.tableHeaderView.frame = frame;
-        self.tableHeaderView = self.tableHeaderView;
     }
+    self.tableHeaderView = self.tableHeaderView;
 }
-*/
-// TODO: use proper images for both 4square and fb
+
 - (UIView *)viewForTableHeader
 {
     if (!_headerView) {
@@ -110,6 +124,9 @@
     }
     _headerView.detailItem = self.event;
     
+    UIView *containerView = [[[UIView alloc] initWithFrame:_headerView.frame] autorelease];
+    [containerView addSubview:_headerView];
+
     // time
     NSString *dateString = [self.dataManager mediumDateStringFromDate:_event.startDate];
     NSString *timeString = nil;
@@ -124,29 +141,46 @@
                       [self.dataManager shortTimeStringFromDate:_event.startDate]];
     }
     _headerView.subtitleLabel.text = timeString;
-    /*(=    
-    if (!_facebookButton) {
-        _facebookButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
-        UIImage *image = [UIImage imageWithPathName:@"modules/facebook/button-facebook.png"];
-        _facebookButton.frame = CGRectMake(0, 0, image.size.width, image.size.height);
-        [_facebookButton setImage:image forState:UIControlStateNormal];
-        [_facebookButton addTarget:self action:@selector(facebookButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    }
     
-    if (!_foursquareButton) {
-        _foursquareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
-        UIImage *image = [UIImage imageWithPathName:@"modules/foursquare/foursquare.jpg"];
-        [_foursquareButton setImage:image forState:UIControlStateNormal];
-        [_foursquareButton addTarget:self action:@selector(foursquareButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    }
-    */
-    CGRect frame = _headerView.frame;
-    //frame.size.height += _foursquareButton.frame.size.height;
-    UIView *containerView = [[[UIView alloc] initWithFrame:frame] autorelease];
+    CGFloat heightForSocialButtons = 0;
     
-    [containerView addSubview:_headerView];
-    //[containerView addSubview:_foursquareButton];
-    //[containerView addSubview:_facebookButton];
+    if ([_event isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)_event facebookID]) {
+        if (!_facebookButton) {
+            _facebookButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+            UIImage *image = [UIImage imageWithPathName:@"modules/facebook/button-facebook.png"];
+            _facebookButton.frame = CGRectMake(0, 0, image.size.width, image.size.height);
+            [_facebookButton setImage:image forState:UIControlStateNormal];
+            [_facebookButton addTarget:self action:@selector(facebookButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+            heightForSocialButtons = _facebookButton.frame.size.height;
+            [containerView addSubview:_facebookButton];
+        }
+    } else if (_facebookButton) {
+        [_facebookButton removeFromSuperview];
+        [_facebookButton release];
+        _facebookButton = nil;
+    }
+
+    if ([_event isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)_event foursquareID]) {
+        if (!_foursquareButton) {
+            _foursquareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+            UIImage *image = [UIImage imageWithPathName:@"modules/foursquare/foursquare.jpg"];
+            _foursquareButton.frame = CGRectMake(0, 0, image.size.width, image.size.height);
+            [_foursquareButton setImage:image forState:UIControlStateNormal];
+            [_foursquareButton addTarget:self action:@selector(foursquareButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+            heightForSocialButtons = _foursquareButton.frame.size.height;
+            [containerView addSubview:_foursquareButton];
+        }
+    } else if (_foursquareButton) {
+        [_foursquareButton removeFromSuperview];
+        [_foursquareButton release];
+        _foursquareButton = nil;
+    }
+
+    if (heightForSocialButtons > 0) {
+        CGRect frame = containerView.frame;
+        frame.size.height += heightForSocialButtons;
+        containerView.frame = frame;
+    }
     
     return containerView;
 }

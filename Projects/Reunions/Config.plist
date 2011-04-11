@@ -11,6 +11,14 @@
 	</dict>
 	<key>AppFeedbackAddress</key>
 	<string>digitalcomms@harvard.edu</string>
+	<key>DefaultUserSettings</key>
+	<dict>
+		<key>Widgets</key>
+		<array>
+			<string>facebook</string>
+			<string>twitter</string>
+		</array>
+	</dict>
 	<key>Location</key>
 	<dict>
 		<key>DefaultCenter</key>
@@ -98,6 +106,14 @@
 			<key>tag</key>
 			<string>foursquare</string>
 		</dict>
+		<dict>
+			<key>class</key>
+			<string>SettingsModule</string>
+			<key>hidden</key>
+			<true/>
+			<key>tag</key>
+			<string>settings</string>
+		</dict>
 	</array>
 	<key>OrganizationName</key>
 	<string>Harvard</string>
@@ -168,7 +184,7 @@
 			<key>AppID</key>
 			<string></string>
 		</dict>
-		<key>Foursquare</key>
+		<key>foursquare</key>
 		<dict>
 			<key>ClientID</key>
 			<string></string>
@@ -182,6 +198,58 @@
 			<key>OAuthConsumerSecret</key>
 			<string></string>
 		</dict>
+	</dict>
+	<key>UserSettings</key>
+	<dict>
+		<key>Login</key>
+		<array>
+			<dict>
+				<key>title</key>
+				<string></string>
+			</dict>
+		</array>
+		<key>SocialMedia</key>
+		<array>
+			<dict>
+				<key>service</key>
+				<string>Facebook</string>
+				<key>subtitle</key>
+				<string>Used for photos, videos, updates, and checkins</string>
+				<key>title</key>
+				<string>Facebook</string>
+			</dict>
+			<dict>
+				<key>service</key>
+				<string>foursquare</string>
+				<key>subtitle</key>
+				<string>Used for checkins</string>
+				<key>title</key>
+				<string>foursquare</string>
+			</dict>
+			<dict>
+				<key>service</key>
+				<string>Twitter</string>
+				<key>subtitle</key>
+				<string>Used for publishing tweets</string>
+				<key>title</key>
+				<string>Twitter</string>
+			</dict>
+		</array>
+		<key>Widgets</key>
+		<array>
+			<dict>
+				<key>tag</key>
+				<string>twitter</string>
+				<key>title</key>
+				<string>Twitter Stream</string>
+			</dict>
+			<dict>
+				<key>tag</key>
+				<string>facebook</string>
+				<key>title</key>
+				<string>Updates from Facebook Group</string>
+			</dict>
+		</array>
 	</dict>
 </dict>
 </plist>

@@ -10,11 +10,15 @@
     
     NSDate *_lastUpdate;
     NSDateFormatter *_twitterDateFormatter;
+    
+    NSString *_hashTag;
 }
 
 - (void)startPollingStatusUpdates;
 - (void)stopPollingStatusUpdates;
 - (void)requestStatusUpdates:(NSTimer *)aTimer;
+
+- (void)didLogin:(NSNotification *)aNotification;
 
 @property (nonatomic, readonly) NSDateFormatter *twitterDateFormatter;
 @property (nonatomic, readonly) NSArray *latestTweets;

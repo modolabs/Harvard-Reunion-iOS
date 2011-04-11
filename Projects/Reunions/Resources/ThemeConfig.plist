@@ -12,6 +12,8 @@
 		<string>#333333</string>
 		<key>PrimaryCellBackground</key>
 		<string>#FFFFFF</string>
+		<key>ToolbarTintColor</key>
+		<string>#666666</string>
 		<key>SearchBarTintColor</key>
 		<string>#666666</string>
 		<key>SecondaryCellBackground</key>
@@ -39,12 +41,19 @@
 		</dict>
 		<key>DefaultFont</key>
 		<string>Helvetica</string>
-		<key>SectionHeaderGrouped</key>
+		<key>NavListSubtitle</key>
 		<dict>
 			<key>color</key>
-			<string>#EBE7E3</string>
-			<key>font</key>
-			<string>Helvetica-Bold</string>
+			<string>#505050</string>
+			<key>size</key>
+			<integer>-1</integer>
+		</dict>
+		<key>NavListTitle</key>
+		<dict>
+			<key>bold</key>
+			<true/>
+			<key>color</key>
+			<string>#1A1611</string>
 			<key>size</key>
 			<integer>2</integer>
 		</dict>
@@ -57,17 +66,12 @@
 			<key>size</key>
 			<integer>0</integer>
 		</dict>
-		<key>NavListSubtitle</key>
+		<key>SectionHeaderGrouped</key>
 		<dict>
 			<key>color</key>
-			<string>#505050</string>
-			<key>size</key>
-			<integer>-2</integer>
-		</dict>
-		<key>NavListTitle</key>
-		<dict>
-			<key>color</key>
-			<string>#1A1611</string>
+			<string>#EBE7E3</string>
+			<key>font</key>
+			<string>Helvetica-Bold</string>
 			<key>size</key>
 			<integer>2</integer>
 		</dict>
@@ -126,6 +130,8 @@
 		<string>30 20</string>
 		<key>ShowsSearchBar</key>
 		<false/>
+		<key>ShowsSettingsInNavBar</key>
+		<true/>
 	</dict>
 	<key>Images</key>
 	<dict>

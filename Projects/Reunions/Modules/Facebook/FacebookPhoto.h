@@ -1,6 +1,13 @@
 #import "FacebookParentPost.h"
 
 
+typedef enum {
+     TINY,
+     SMALL,
+     MEDIUM,
+     NORMAL
+} FacebookPhotoSize;
+
 @interface FacebookPhoto : FacebookParentPost {
     NSString *_thumbSrc;
     
@@ -17,7 +24,7 @@
 @property (nonatomic, retain) NSString *thumbSrc;
 
 + (FacebookPhoto *)photoWithID:(NSString *)identifier;
-+ (FacebookPhoto *)photoWithDictionary:(NSDictionary *)dictionary;
-- (void)updateWithDictionary:(NSDictionary *)dictionary;
++ (FacebookPhoto *)photoWithDictionary:(NSDictionary *)dictionary size:(FacebookPhotoSize)size;
+- (void)updateWithDictionary:(NSDictionary *)dictionary size:(FacebookPhotoSize)size;
 
 @end

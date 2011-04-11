@@ -6,6 +6,7 @@
 #import "Foundation+KGOAdditions.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "TwitterFeedViewController.h"
+#import "ReunionHomeModule.h"
 
 #define TWITTER_BUTTON_WIDTH_IPHONE 120
 #define TWITTER_BUTTON_HEIGHT_IPHONE 51
@@ -36,8 +37,13 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
 - (id)initWithDictionary:(NSDictionary *)moduleDict {
     self = [super initWithDictionary:moduleDict];
     if (self) {
+        
         self.buttonImage = [UIImage imageWithPathName:@"modules/twitter/button-twitter.png"];
-        self.labelText = @"#testhvd01";
+        
+        _hashTag = [[[NSUserDefaults standardUserDefaults] stringForKey:TwitterHashTagKey] retain];
+        if (_hashTag) {
+            self.labelText = _hashTag;
+        }
         
         // TODO: we are cheating here as we know where twitter and facebook will
         // be placed on the home screen under each condition.  if/when there is
@@ -52,6 +58,16 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
         }
     }
     return self;
+}
+
+- (void)didLogin:(NSNotification *)aNotification
+{
+    ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
+    self.labelText = [homeModule twitterHashTag];
+    _hashTag = [[homeModule twitterHashTag] retain];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:_hashTag forKey:TwitterHashTagKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
@@ -122,7 +138,9 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
 }
 
 - (void)requestStatusUpdates:(NSTimer *)aTimer {
-    [_twitterSearch searchTwitterHashtag:@"testhvd01"];
+    if (_hashTag) {
+        [_twitterSearch searchTwitterHashtag:_hashTag];
+    }
 }
 
 - (void)twitterSearch:(TwitterSearch *)twitterSearch didReceiveSearchResults:(NSArray *)results {
@@ -159,6 +177,12 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
 
 - (NSSet *)socialMediaTypes {
     return [NSSet setWithObject:KGOSocialMediaTypeTwitter];
+}
+
+- (void)dealloc
+{
+    // TODO: release other stuff
+    [super dealloc];
 }
 
 @end

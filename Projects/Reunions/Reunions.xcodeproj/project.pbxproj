@@ -15,6 +15,9 @@
 		3A82708D103DAA2400BB4109 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A82708C103DAA2400BB4109 /* SystemConfiguration.framework */; };
 		3AA219501039D74700DB7637 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA2194F1039D74700DB7637 /* CoreData.framework */; };
 		4463CCB210D6F5750048CA83 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4463CCB110D6F5750048CA83 /* CoreLocation.framework */; };
+		4B1153CB135243D40097DAD9 /* MediaContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B1153CA135243D40097DAD9 /* MediaContainerView.m */; };
+		4B5B40B31350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B5B40B21350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib */; };
+		4BD36E0A134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BD36E09134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib */; };
 		A63DE7A7134F9F98001C52BF /* AddressBookUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A63DE7A6134F9F98001C52BF /* AddressBookUtils.m */; };
 		A6F2099D134E61CC009F597D /* ConnectModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20998134E61CC009F597D /* ConnectModule.m */; };
 		A6F2099E134E61CC009F597D /* ConnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F2099A134E61CC009F597D /* ConnectViewController.m */; };
@@ -270,6 +273,10 @@
 		3A82708C103DAA2400BB4109 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = ../../../../../System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SOURCE_ROOT; };
 		3AA2194F1039D74700DB7637 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		4463CCB110D6F5750048CA83 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		4B1153C9135243D40097DAD9 /* MediaContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaContainerView.h; sourceTree = "<group>"; };
+		4B1153CA135243D40097DAD9 /* MediaContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaContainerView.m; sourceTree = "<group>"; };
+		4B5B40B21350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "FacebookMediaDetailViewController-iPad.xib"; sourceTree = "<group>"; };
+		4BD36E09134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "FacebookMediaViewController-iPad.xib"; sourceTree = "<group>"; };
 		A63DE7A5134F9F98001C52BF /* AddressBookUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddressBookUtils.h; sourceTree = "<group>"; };
 		A63DE7A6134F9F98001C52BF /* AddressBookUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddressBookUtils.m; sourceTree = "<group>"; };
 		A6F20997134E61CC009F597D /* ConnectModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectModule.h; sourceTree = "<group>"; };
@@ -1184,9 +1191,13 @@
 				EB677DFF132ED19300981523 /* FacebookMediaViewController.h */,
 				EB677E00132ED19B00981523 /* FacebookMediaViewController.m */,
 				EB677E01132ED19B00981523 /* FacebookMediaViewController.xib */,
+				4BD36E09134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib */,
 				EB677E07132FD4AF00981523 /* FacebookMediaDetailViewController.h */,
 				EB677E08132FD4AF00981523 /* FacebookMediaDetailViewController.m */,
 				EB677E09132FD4AF00981523 /* FacebookMediaDetailViewController.xib */,
+				4B5B40B21350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib */,
+				4B1153C9135243D40097DAD9 /* MediaContainerView.h */,
+				4B1153CA135243D40097DAD9 /* MediaContainerView.m */,
 			);
 			path = Facebook;
 			sourceTree = "<group>";
@@ -1652,6 +1663,8 @@
 				EB913B871347CC7F00D2EEF6 /* release.xcconfig in Resources */,
 				EB913B881347CC7F00D2EEF6 /* stage_server.xcconfig in Resources */,
 				EB913B891347CC7F00D2EEF6 /* test_server.xcconfig in Resources */,
+				4BD36E0A134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib in Resources */,
+				4B5B40B31350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib in Resources */,
 				A6F20AF6134E67E3009F597D /* BumpAPIAssets.bundle in Resources */,
 				A6F20AF8134E67E3009F597D /* BumpApiLocalizable.strings in Resources */,
 				A6F20AF9134E67E3009F597D /* Localization-ReadMe.txt in Resources */,
@@ -1824,6 +1837,7 @@
 				EB46A158134CC0C4005796E4 /* ReunionHomeViewController.m in Sources */,
 				EB46A15B134CCC9D005796E4 /* ReunionHomeModule.m in Sources */,
 				EB46A15F134CCCA8005796E4 /* ReunionLoginModule.m in Sources */,
+				4B1153CB135243D40097DAD9 /* MediaContainerView.m in Sources */,
 				A6F2099D134E61CC009F597D /* ConnectModule.m in Sources */,
 				A6F2099E134E61CC009F597D /* ConnectViewController.m in Sources */,
 				A6F2099F134E61CC009F597D /* CustomBumpUI.m in Sources */,

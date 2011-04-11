@@ -1,4 +1,5 @@
 #import "FacebookPhotosViewController.h"
+#import "MediaContainerView.h"
 #import "Foundation+KGOAdditions.h"
 #import "FacebookModel.h"
 #import <QuartzCore/QuartzCore.h>
@@ -7,6 +8,16 @@
 #import "PhotoUploadViewController.h"
 #import "PhotosModule.h"
 #import "FacebookModule.h"
+#import "KGOTheme.h"
+
+@interface FacebookPhotosViewController (Private)
+
+- (FacebookPhotoSize)thumbSize;
+
+- (NSDictionary *)paramsForPhotoDetails:(FacebookPhoto *)photo;
+- (void)focusThumbnail:(FacebookThumbnail *)thumbnail animated:(BOOL)animated completion:(void (^)(BOOL finished))completion;
+
+@end
 
 @implementation FacebookPhotosViewController
 
@@ -22,7 +33,7 @@
                 if ([type isEqualToString:@"photo"]) {
                     NSString *pid = [aPost stringForKey:@"object_id" nilIfEmpty:YES];
                     if (pid && ![_photosByID objectForKey:pid]) {
-                        FacebookPhoto *aPhoto = [FacebookPhoto photoWithDictionary:aPost];
+                        FacebookPhoto *aPhoto = [FacebookPhoto photoWithDictionary:aPost size:[self thumbSize]];
                         if (aPhoto) {
                             aPhoto.postIdentifier = [aPost stringForKey:@"id" nilIfEmpty:YES];
                             NSLog(@"%@", [aPhoto description]);
@@ -76,19 +87,26 @@
     self.title = @"Photos";
     
     CGRect frame = _scrollView.frame;
-    frame.origin.y += _signedInUserView.frame.size.height;
+    frame.origin.y = _signedInUserView.frame.size.height;
     frame.size.height -= _signedInUserView.frame.size.height;
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        resizeFactor = 1.;
+    } else {
+        resizeFactor = 1.9;
+    }
+    CGFloat spacing = 10. * resizeFactor;
+    
     _iconGrid = [[IconGrid alloc] initWithFrame:frame];
     _iconGrid.delegate = self;
-    _iconGrid.spacing = GridSpacingMake(10, 10);
-    _iconGrid.padding = GridPaddingMake(10, 10, 10, 10);
+    _iconGrid.spacing = GridSpacingMake(spacing, spacing);
+    _iconGrid.padding = GridPaddingMake(spacing, spacing, spacing, spacing);
     _iconGrid.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _iconGrid.backgroundColor = [UIColor clearColor];
     
     [_scrollView addSubview:_iconGrid];
     
     _icons = [[NSMutableArray alloc] init];
-    _photosByThumbSrc = [[NSMutableDictionary alloc] init];
     _photosByID = [[NSMutableDictionary alloc] init];
     _displayedPhotos = [[NSMutableSet alloc] init];
     
@@ -99,7 +117,6 @@
                                                                                             target:self
                                                                                             action:@selector(showUploadPhotoController:)] autorelease];
 }
-
 
 /*
 // Override to allow orientations other than the default portrait orientation.
@@ -117,6 +134,8 @@
 }
 
 - (void)viewDidUnload {
+    [_detailViewController release];
+    _detailViewController = nil;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -129,7 +148,6 @@
     [_iconGrid release];
     [_icons release];
     [_displayedPhotos release];
-    [_photosByThumbSrc release];
     [_photosByID release];
     [super dealloc];
 }
@@ -162,9 +180,11 @@
     }
     
     if (photo.thumbSrc || photo.thumbData || photo.data) { // omitting photo.src so we don't download full image until detail view
-        FacebookThumbnail *thumbnail = [[[FacebookThumbnail alloc] initWithFrame:CGRectMake(0, 0, 90, 130)] autorelease];
+        CGRect frame = CGRectMake(0, 0, 90 * resizeFactor, 90 * resizeFactor + 40);
+        
+        FacebookThumbnail *thumbnail = [[[FacebookThumbnail alloc] initWithFrame:frame] autorelease];
         thumbnail.photo = photo;
-        thumbnail.rotationAngle = (_icons.count % 2 == 0) ? M_PI/12 : -M_PI/12;
+        thumbnail.rotationAngle = (_icons.count % 2 == 0) ? M_PI/30 : -M_PI/30;
         [thumbnail addTarget:self action:@selector(thumbnailTapped:) forControlEvents:UIControlEventTouchUpInside];
         [_icons addObject:thumbnail];
         _iconGrid.icons = _icons;
@@ -174,16 +194,41 @@
     }
 }
 
-- (void)thumbnail:(MITThumbnailView *)thumbnail didLoadData:(NSData *)data {
-    FacebookPhoto *photo = [_photosByThumbSrc objectForKey:thumbnail.imageURL];
-    if (photo) {
-        photo.thumbData = data;
-    }
-    [[CoreDataManager sharedManager] saveData];
-}
-
 - (void)thumbnailTapped:(FacebookThumbnail *)sender {
     FacebookPhoto *photo = sender.photo;
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        NSDictionary *params = [self paramsForPhotoDetails:photo];
+        [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail forModuleTag:PhotosTag params:params];
+    } else {
+        [self focusThumbnail:sender animated:YES completion:^(BOOL finished) {
+            NSDictionary *params = [self paramsForPhotoDetails:photo];
+            [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail forModuleTag:PhotosTag params:params];
+        }];
+    }
+}
+
+- (void)focusThumbnail:(FacebookThumbnail *)thumbnail animated:(BOOL)animated completion:(void (^)(BOOL finished))completion {
+    _scrollView.scrollEnabled = NO;
+    NSTimeInterval duration = animated ? 0.75 : -1.0;
+    [UIView animateWithDuration:duration animations:^{
+        for (FacebookThumbnail *icon in _icons) {
+            if (icon != thumbnail) {
+                [icon hide];
+            }
+        }
+        // this frame is designed to match the frame for image in the
+        // detailed view
+        CGSize imageSize = CGSizeMake([thumbnail.photo.width floatValue], [thumbnail.photo.height floatValue]);
+        CGFloat maximumWidth = self.view.frame.size.width - 40;
+        CGFloat height = [MediaContainerView heightForImageSize:imageSize fitToWidth:maximumWidth];
+        [thumbnail highlightIntoFrame:CGRectMake(
+                                                 15, _scrollView.contentOffset.y - _signedInUserView.frame.size.height + 15, 
+                                                maximumWidth, height)];
+        
+    } completion:completion];
+}
+
+- (NSDictionary *)paramsForPhotoDetails:(FacebookPhoto *)photo {
     NSMutableArray *photos = [NSMutableArray array];
     [_icons enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         FacebookThumbnail *thumbnail = (FacebookThumbnail *)obj;
@@ -191,9 +236,7 @@
         [photos addObject:thumbnail.photo];
     }];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:photo, @"photo", photos, @"photos", nil];
-    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail
-                           forModuleTag:PhotosTag
-                                 params:params];
+    return params;
 }
 
 #pragma mark Photo uploads
@@ -284,15 +327,23 @@
     FacebookPhoto *photo = [_photosByID objectForKey:identifier];
     
     if (photo) {
-        [photo updateWithDictionary:photoInfo];
+        [photo updateWithDictionary:photoInfo size:[self thumbSize]];
         [self displayPhoto:photo];
         
     } else {
-        photo = [FacebookPhoto photoWithDictionary:photoInfo];
+        photo = [FacebookPhoto photoWithDictionary:photoInfo size:[self thumbSize]];
         if (photo) {
             [_photosByID setObject:photo forKey:photo.identifier];
             [self displayPhoto:photo];
         }
+    }
+}
+
+- (FacebookPhotoSize)thumbSize {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        return TINY;
+    } else {
+        return MEDIUM;
     }
 }
 
@@ -305,16 +356,29 @@
     if (self) {
         self.backgroundColor = [UIColor clearColor];
         
-        _label = [[UILabel alloc] initWithFrame:CGRectMake(0, 90, 90, 40)];
+        CGRect labelFrame = CGRectMake(0, frame.size.height-40, frame.size.width, 40);
+        _label = [[UILabel alloc] initWithFrame:labelFrame];
         _label.backgroundColor = [UIColor clearColor];
         _label.textColor = [UIColor whiteColor];
         _label.numberOfLines = 3;
-        _label.font = [UIFont systemFontOfSize:10];
+        _label.font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySmallPrint];
         _label.userInteractionEnabled = NO;
         
-        _thumbnail = [[MITThumbnailView alloc] initWithFrame:CGRectMake(0, 0, 90, 90)];
+        CGRectMake(0, 0, frame.size.width, frame.size.height-40);
+        _thumbnail = [[MITThumbnailView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height-40)];
         _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
         _thumbnail.userInteractionEnabled = NO;
+        _thumbnail.delegate = self;
+        
+        // add drop shadow
+        _thumbnail.layer.shadowOffset = CGSizeMake(0, 1);
+        _thumbnail.layer.shadowColor = [[UIColor blackColor] CGColor];
+        _thumbnail.layer.shadowRadius = 4.0;
+        _thumbnail.layer.shadowOpacity = 0.8;
+        
+        // this prevents choppy looking edges 
+        // when photo is rotated
+        _thumbnail.layer.shouldRasterize = YES;
 
         [self addSubview:_thumbnail];
         [self addSubview:_label];
@@ -333,12 +397,17 @@
     _label.text = photo.title;
     if (photo.thumbData) {
         _thumbnail.imageData = photo.thumbData;
-    } else if (photo.thumbSrc) {
-        _thumbnail.imageURL = photo.thumbSrc;
     } else if (photo.data) {
         _thumbnail.imageData = photo.data;
+    } else if (photo.thumbSrc) {
+        _thumbnail.imageURL = photo.thumbSrc;
+        [_thumbnail loadImage];
     }
-    [_thumbnail loadImage];
+}
+
+- (void)thumbnail:(MITThumbnailView *)thumbnail didLoadData:(NSData *)data {
+    _photo.thumbData = data;
+    [[CoreDataManager sharedManager] saveData];
 }
 
 - (CGFloat)rotationAngle {
@@ -350,8 +419,27 @@
     _thumbnail.transform = CGAffineTransformMakeRotation(rotationAngle);
 }
 
+- (void)highlightIntoFrame:(CGRect)frame {
+    // frame given relative the super view
+    CGRect thumbnailFrame = CGRectMake(
+        frame.origin.x - self.frame.origin.x, 
+        frame.origin.y - self.frame.origin.y,
+        frame.size.width,
+        frame.size.height);
+    
+    _thumbnail.transform = CGAffineTransformMakeRotation(0);
+    _thumbnail.frame = thumbnailFrame;
+    _label.alpha = 0.0;
+}
+
+- (void)hide {
+    _thumbnail.alpha = 0.0;
+    _label.alpha = 0.0;
+}
+
 - (void)dealloc {
     self.photo = nil;
+    _thumbnail.delegate = nil;
     [_thumbnail release];
     [_label release];
     [super dealloc];

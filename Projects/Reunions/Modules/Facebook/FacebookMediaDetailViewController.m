@@ -3,11 +3,17 @@
 #import "Foundation+KGOAdditions.h"
 #import "KGOSocialMediaController+FacebookAPI.h"
 #import "KGOAppDelegate.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
 #import "FacebookModel.h"
+#import <QuartzCore/QuartzCore.h>
+
+#define LIKE_TAG 1
+#define UNLIKE_TAG 2
 
 @implementation FacebookMediaDetailViewController
 
 @synthesize post, posts, tableView = _tableView;
+@synthesize moduleTag;
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -18,9 +24,11 @@
     return self;
 }
 */
+
 - (void)dealloc
 {
     [_comments release];
+    self.moduleTag = nil;
     [super dealloc];
 }
 
@@ -43,9 +51,9 @@
 
 - (IBAction)likeButtonPressed:(UIBarButtonItem *)sender {
     _likeButton.enabled = NO;
-    if ([_likeButton.title isEqualToString:@"Like"]) {
+    if (_likeButton.tag == LIKE_TAG) {
         [[KGOSocialMediaController sharedController] likeFacebookPost:self.post receiver:self callback:@selector(didLikePost:)];
-    } else if ([_likeButton.title isEqualToString:@"Unlike"]) {
+    } else if (_likeButton.tag == UNLIKE_TAG) {
         [[KGOSocialMediaController sharedController] unlikeFacebookPost:self.post receiver:self callback:@selector(didUnlikePost:)];
     }
 }
@@ -54,7 +62,8 @@
     DLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
         _likeButton.enabled = YES;
-        _likeButton.title = @"Unlike";
+        _likeButton.tag = UNLIKE_TAG;
+        [_likeButton setImage:[UIImage imageWithPathName:@"modules/facebook/unlike.png"] forState:UIControlStateNormal];
     }
 }
 
@@ -62,7 +71,8 @@
     NSLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
         _likeButton.enabled = YES;
-        _likeButton.title = @"Like";
+        _likeButton.tag = LIKE_TAG;
+        [_likeButton setImage:[UIImage imageWithPathName:@"modules/facebook/like.png"] forState:UIControlStateNormal];
     }
 }
 
@@ -70,6 +80,10 @@
 
 }
 
+- (IBAction)closeButtonPressed:(id)sender {
+    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome forModuleTag:moduleTag params:nil];
+}
+     
 - (void)getCommentsForPost {
     NSString *objectID = self.post.postIdentifier.length ? self.post.postIdentifier : self.post.identifier;
     NSString *path = [NSString stringWithFormat:@"%@/comments", objectID];
@@ -125,15 +139,32 @@
         self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:pager] autorelease];
     }
     
-    CGRect frame = self.view.bounds;
-    frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio
-    UIView *tableHeaderView = [[[UIView alloc] initWithFrame:frame] autorelease];
-
-    _thumbnail = [[MITThumbnailView alloc] initWithFrame:CGRectMake(5, 5, frame.size.width - 10, frame.size.height - 10)];
-    _thumbnail.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
-    [tableHeaderView addSubview:_thumbnail];
-    self.tableView.tableHeaderView = tableHeaderView;
+    _likeButton.tag = LIKE_TAG;
+    [_likeButton setImage:[UIImage imageWithPathName:@"modules/facebook/like.png"] forState:UIControlStateNormal];
+    
+    if (!_mediaView) {
+        CGRect frame = self.view.bounds;
+        frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio
+        _mediaView = [[[UIView alloc] initWithFrame:frame] autorelease];
+    } 
+    
+    CGRect mediaFrame = _mediaView.frame;
+    if(!_mediaImageView) { 
+        _mediaImageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, mediaFrame.size.width - 10, mediaFrame.size.height - 10)];
+        _mediaImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _mediaImageView.contentMode = UIViewContentModeScaleAspectFit;
+        [_mediaView addSubview:_mediaImageView];
+    }
+    
+    _mediaView.imageView = _mediaImageView;
+ 
+    // add drop show to image background
+    if (_mediaImageBackgroundView) {
+        _mediaImageBackgroundView.layer.shadowOffset = CGSizeMake(0, 1);
+        _mediaImageBackgroundView.layer.shadowColor = [[UIColor blackColor] CGColor];
+        _mediaImageBackgroundView.layer.shadowRadius = 3.0;
+        _mediaImageBackgroundView.layer.shadowOpacity = 0.8;
+    }
     
     [self displayPost];
 }
@@ -155,7 +186,7 @@
     if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
         CGRect frame = self.view.frame;
         height = frame.size.width * self.view.transform.c + frame.size.height * self.view.transform.d;
-        height -= _bottomToolbar.frame.size.height;
+        height -= _buttonsBar.frame.size.height;
     } else {
         height = floor(_tableView.frame.size.width * 9 / 16);
     }
@@ -167,8 +198,17 @@
     _tableView.scrollEnabled = UIInterfaceOrientationIsPortrait(self.interfaceOrientation);
 }
 
+- (void)setMediaImage:(UIImage *)image {
+    [_mediaView setImage:image];
+}
+    
 - (void)displayPost {
     // subclasses should override this
+}
+
+- (NSString *)postTitle {
+    // subclasses hsould override this
+    return nil;
 }
 
 #pragma mark - KGODetailPager
@@ -201,12 +241,27 @@
 #pragma mark - Table view methods
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return _comments.count;
+    return _comments.count + 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    FacebookComment *aComment = [_comments objectAtIndex:indexPath.row];
-    NSLog(@"%@", [aComment description]);
+    NSString *text;
+    NSDate *date;
+    NSString *ownerName;
+    if (indexPath.row == 0) {
+        text = [self postTitle];
+        date = self.post.date;
+        ownerName = self.post.owner.name;
+    } else {
+        FacebookComment *aComment = [_comments objectAtIndex:indexPath.row-1];
+        NSLog(@"%@", [aComment description]);
+        
+        text = aComment.text;
+        ownerName = aComment.owner.name;
+        date = aComment.date;
+    }
+    
+
     
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -221,33 +276,33 @@
     UILabel *commentLabel = (UILabel *)[cell.contentView viewWithTag:commentTag];
     if (!commentLabel) {
         UIFont *commentFont = [UIFont systemFontOfSize:15];
-        commentLabel = [UILabel multilineLabelWithText:aComment.text font:commentFont width:tableView.frame.size.width - 20];
+        commentLabel = [UILabel multilineLabelWithText:text font:commentFont width:tableView.frame.size.width - 20];
         commentLabel.tag = commentTag;
         CGRect frame = commentLabel.frame;
         frame.origin.x = 10;
         frame.origin.y = 5;
         commentLabel.frame = frame;
     } else {
-        commentLabel.text = aComment.text;
+        commentLabel.text = text;
     }
     [cell.contentView addSubview:commentLabel];
     
     UILabel *authorLabel = (UILabel *)[cell.contentView viewWithTag:authorTag];
     if (!authorLabel) {
         UIFont *authorFont = [UIFont systemFontOfSize:13];
-        authorLabel = [UILabel multilineLabelWithText:aComment.owner.name font:authorFont width:tableView.frame.size.width - 20];
+        authorLabel = [UILabel multilineLabelWithText:ownerName font:authorFont width:tableView.frame.size.width - 20];
         authorLabel.tag = authorTag;
         CGRect frame = authorLabel.frame;
         frame.origin.x = 10;
         frame.origin.y = 80;
         authorLabel.frame = frame;
     } else {
-        authorLabel.text = aComment.owner.name;
+        authorLabel.text = ownerName;
     }
     [cell.contentView addSubview:authorLabel];
     
     UILabel *dateLabel = (UILabel *)[cell.contentView viewWithTag:dateTag];
-    NSString *dateString = [aComment.date agoString];
+    NSString *dateString = [date agoString];
     if (!dateLabel) {
         UIFont *dateFont = [UIFont systemFontOfSize:13];
         dateLabel = [UILabel multilineLabelWithText:dateString font:dateFont width:tableView.frame.size.width - 20];
