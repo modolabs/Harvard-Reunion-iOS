@@ -119,7 +119,7 @@
 															<int key="NSColorSpace">3</int>
 															<bytes key="NSWhite">MC41AA</bytes>
 														</object>
-														<object class="NSCustomResource" key="IBUINormalImage" id="517086796">
+														<object class="NSCustomResource" key="IBUINormalImage" id="27952298">
 															<string key="NSClassName">NSImage</string>
 															<string key="NSResourceName">modules/facebook/like.png</string>
 														</object>
@@ -143,12 +143,12 @@
 															<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
 														</object>
 														<reference key="IBUINormalTitleShadowColor" ref="895117659"/>
-														<reference key="IBUINormalImage" ref="517086796"/>
+														<reference key="IBUINormalImage" ref="27952298"/>
 													</object>
 													<object class="IBUIButton" id="161453940">
 														<reference key="NSNextResponder" ref="292828924"/>
 														<int key="NSvFlags">265</int>
-														<string key="NSFrame">{{414, 8}, {55, 46}}</string>
+														<string key="NSFrame">{{404, 8}, {55, 46}}</string>
 														<reference key="NSSuperview" ref="292828924"/>
 														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView"/>
@@ -164,10 +164,10 @@
 															<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
 														</object>
 														<reference key="IBUINormalTitleShadowColor" ref="895117659"/>
-														<reference key="IBUINormalImage" ref="517086796"/>
+														<reference key="IBUINormalImage" ref="27952298"/>
 													</object>
 												</object>
-												<string key="NSFrame">{{10, 246}, {470, 58}}</string>
+												<string key="NSFrame">{{10, 241}, {460, 58}}</string>
 												<reference key="NSSuperview" ref="845029506"/>
 												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="792331816"/>
@@ -183,7 +183,7 @@
 											<object class="IBUIImageView" id="688728643">
 												<reference key="NSNextResponder" ref="845029506"/>
 												<int key="NSvFlags">274</int>
-												<string key="NSFrame">{{10, 10}, {470, 235}}</string>
+												<string key="NSFrame">{{10, 10}, {460, 230}}</string>
 												<reference key="NSSuperview" ref="845029506"/>
 												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="292828924"/>
@@ -193,7 +193,7 @@
 												<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 											</object>
 										</object>
-										<string key="NSFrameSize">{490, 304}</string>
+										<string key="NSFrame">{{5, 5}, {480, 299}}</string>
 										<reference key="NSSuperview" ref="515346578"/>
 										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="688728643"/>
@@ -430,6 +430,14 @@
 					</object>
 					<int key="connectionID">42</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">_mediaImageBackgroundView</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="845029506"/>
+					</object>
+					<int key="connectionID">44</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -624,7 +632,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">42</int>
+			<int key="maxID">44</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -686,6 +694,7 @@
 							<string>_buttonsBar</string>
 							<string>_commentButton</string>
 							<string>_likeButton</string>
+							<string>_mediaImageBackgroundView</string>
 							<string>_mediaImageView</string>
 							<string>_mediaView</string>
 							<string>_tableView</string>
@@ -696,6 +705,7 @@
 							<string>UIView</string>
 							<string>UIButton</string>
 							<string>UIButton</string>
+							<string>UIView</string>
 							<string>UIImageView</string>
 							<string>MediaContainerView</string>
 							<string>UITableView</string>
@@ -709,6 +719,7 @@
 							<string>_buttonsBar</string>
 							<string>_commentButton</string>
 							<string>_likeButton</string>
+							<string>_mediaImageBackgroundView</string>
 							<string>_mediaImageView</string>
 							<string>_mediaView</string>
 							<string>_tableView</string>
@@ -730,6 +741,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">_likeButton</string>
 								<string key="candidateClassName">UIButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_mediaImageBackgroundView</string>
+								<string key="candidateClassName">UIView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">_mediaImageView</string>

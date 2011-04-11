@@ -5,6 +5,7 @@
 #import "KGOAppDelegate.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "FacebookModel.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define LIKE_TAG 1
 #define UNLIKE_TAG 2
@@ -156,6 +157,15 @@
     }
     
     _mediaView.imageView = _mediaImageView;
+ 
+    // add drop show to image background
+    if (_mediaImageBackgroundView) {
+        _mediaImageBackgroundView.layer.shadowOffset = CGSizeMake(0, 1);
+        _mediaImageBackgroundView.layer.shadowColor = [[UIColor blackColor] CGColor];
+        _mediaImageBackgroundView.layer.shadowRadius = 3.0;
+        _mediaImageBackgroundView.layer.shadowOpacity = 0.8;
+    }
+    
     [self displayPost];
 }
 

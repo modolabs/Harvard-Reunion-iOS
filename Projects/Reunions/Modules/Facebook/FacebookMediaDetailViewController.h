@@ -16,8 +16,10 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
     IBOutlet UIButton *_likeButton;
     IBOutlet UIButton *_bookmarkButton;
     IBOutlet UIView *_buttonsBar;
+    
     IBOutlet MediaContainerView *_mediaView;
     IBOutlet UIImageView *_mediaImageView;
+    IBOutlet UIView *_mediaImageBackgroundView;
     
     NSArray *_comments;
 }

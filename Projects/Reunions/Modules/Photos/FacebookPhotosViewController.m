@@ -219,10 +219,10 @@
         // this frame is designed to match the frame for image in the
         // detailed view
         CGSize imageSize = CGSizeMake([thumbnail.photo.width floatValue], [thumbnail.photo.height floatValue]);
-        CGFloat maximumWidth = self.view.frame.size.width - 30;
+        CGFloat maximumWidth = self.view.frame.size.width - 40;
         CGFloat height = [MediaContainerView heightForImageSize:imageSize fitToWidth:maximumWidth];
         [thumbnail highlightIntoFrame:CGRectMake(
-                                                 10, _scrollView.contentOffset.y - _signedInUserView.frame.size.height + 10, 
+                                                 15, _scrollView.contentOffset.y - _signedInUserView.frame.size.height + 15, 
                                                 maximumWidth, height)];
         
     } completion:completion];
