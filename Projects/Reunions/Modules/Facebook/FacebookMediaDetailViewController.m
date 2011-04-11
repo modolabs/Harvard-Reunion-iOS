@@ -5,6 +5,9 @@
 #import "KGOAppDelegate.h"
 #import "FacebookModel.h"
 
+#define LIKE_TAG 1
+#define UNLIKE_TAG 2
+
 @implementation FacebookMediaDetailViewController
 
 @synthesize post, posts, tableView = _tableView;
@@ -18,6 +21,7 @@
     return self;
 }
 */
+
 - (void)dealloc
 {
     [_comments release];
@@ -43,9 +47,9 @@
 
 - (IBAction)likeButtonPressed:(UIBarButtonItem *)sender {
     _likeButton.enabled = NO;
-    if ([_likeButton.title isEqualToString:@"Like"]) {
+    if (_likeButton.tag == LIKE_TAG) {
         [[KGOSocialMediaController sharedController] likeFacebookPost:self.post receiver:self callback:@selector(didLikePost:)];
-    } else if ([_likeButton.title isEqualToString:@"Unlike"]) {
+    } else if (_likeButton.tag == UNLIKE_TAG) {
         [[KGOSocialMediaController sharedController] unlikeFacebookPost:self.post receiver:self callback:@selector(didUnlikePost:)];
     }
 }
@@ -54,7 +58,8 @@
     DLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
         _likeButton.enabled = YES;
-        _likeButton.title = @"Unlike";
+        _likeButton.tag = UNLIKE_TAG;
+        [_likeButton setImage:[UIImage imageWithPathName:@"modules/unlike"] forState:UIControlStateNormal];
     }
 }
 
@@ -62,7 +67,8 @@
     NSLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
         _likeButton.enabled = YES;
-        _likeButton.title = @"Like";
+        _likeButton.tag = LIKE_TAG;
+        [_likeButton setImage:[UIImage imageWithPathName:@"modules/like"] forState:UIControlStateNormal];
     }
 }
 
@@ -125,16 +131,24 @@
         self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:pager] autorelease];
     }
     
-    CGRect frame = self.view.bounds;
-    frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio
-    UIView *tableHeaderView = [[[UIView alloc] initWithFrame:frame] autorelease];
-
-    _thumbnail = [[MITThumbnailView alloc] initWithFrame:CGRectMake(5, 5, frame.size.width - 10, frame.size.height - 10)];
-    _thumbnail.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
-    [tableHeaderView addSubview:_thumbnail];
-    self.tableView.tableHeaderView = tableHeaderView;
+    _likeButton.tag = LIKE_TAG;
+    [_likeButton setImage:[UIImage imageWithPathName:@"modules/facebook/like.png"] forState:UIControlStateNormal];
     
+    if (!_mediaView) {
+        CGRect frame = self.view.bounds;
+        frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio
+        _mediaView = [[[UIView alloc] initWithFrame:frame] autorelease];
+    } 
+    
+    CGRect mediaFrame = _mediaView.frame;
+    if(!_mediaImageView) { 
+        _mediaImageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, mediaFrame.size.width - 10, mediaFrame.size.height - 10)];
+        _mediaImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _mediaImageView.contentMode = UIViewContentModeScaleAspectFit;
+        [_mediaView addSubview:_mediaImageView];
+    }
+    
+    _mediaView.imageView = _mediaImageView;
     [self displayPost];
 }
 
@@ -155,7 +169,7 @@
     if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
         CGRect frame = self.view.frame;
         height = frame.size.width * self.view.transform.c + frame.size.height * self.view.transform.d;
-        height -= _bottomToolbar.frame.size.height;
+        height -= _buttonsBar.frame.size.height;
     } else {
         height = floor(_tableView.frame.size.width * 9 / 16);
     }
@@ -167,8 +181,15 @@
     _tableView.scrollEnabled = UIInterfaceOrientationIsPortrait(self.interfaceOrientation);
 }
 
+- (void)setPreviewImage:(UIImage *)image {
+    
+}
 - (void)displayPost {
     // subclasses should override this
+}
+
+- (void)setMediaImage:(UIImage *)image {
+    [_mediaView setImage:image];
 }
 
 #pragma mark - KGODetailPager

@@ -1,4 +1,5 @@
 #import "FacebookPhotosViewController.h"
+#import "MediaContainerView.h"
 #import "Foundation+KGOAdditions.h"
 #import "FacebookModel.h"
 #import <QuartzCore/QuartzCore.h>
@@ -13,8 +14,8 @@
 
 - (FacebookPhotoSize)thumbSize;
 
-- (void)showPageForPhoto:(FacebookPhoto *)photo;
-- (void)highlightThumbnail:(FacebookThumbnail *)thumbnail animated:(BOOL)animated;
+- (NSDictionary *)paramsForPhotoDetails:(FacebookPhoto *)photo;
+- (void)focusThumbnail:(FacebookThumbnail *)thumbnail animated:(BOOL)animated completion:(void (^)(BOOL finished))completion;
 
 @end
 
@@ -86,7 +87,7 @@
     self.title = @"Photos";
     
     CGRect frame = _scrollView.frame;
-    frame.origin.y += _signedInUserView.frame.size.height;
+    frame.origin.y = _signedInUserView.frame.size.height;
     frame.size.height -= _signedInUserView.frame.size.height;
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
@@ -106,7 +107,6 @@
     [_scrollView addSubview:_iconGrid];
     
     _icons = [[NSMutableArray alloc] init];
-    _photosByThumbSrc = [[NSMutableDictionary alloc] init];
     _photosByID = [[NSMutableDictionary alloc] init];
     _displayedPhotos = [[NSMutableSet alloc] init];
     
@@ -117,7 +117,6 @@
                                                                                             target:self
                                                                                             action:@selector(showUploadPhotoController:)] autorelease];
 }
-
 
 /*
 // Override to allow orientations other than the default portrait orientation.
@@ -135,6 +134,8 @@
 }
 
 - (void)viewDidUnload {
+    [_detailViewController release];
+    _detailViewController = nil;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -147,7 +148,6 @@
     [_iconGrid release];
     [_icons release];
     [_displayedPhotos release];
-    [_photosByThumbSrc release];
     [_photosByID release];
     [super dealloc];
 }
@@ -194,24 +194,20 @@
     }
 }
 
-- (void)thumbnail:(MITThumbnailView *)thumbnail didLoadData:(NSData *)data {
-    FacebookPhoto *photo = [_photosByThumbSrc objectForKey:thumbnail.imageURL];
-    if (photo) {
-        photo.thumbData = data;
-    }
-    [[CoreDataManager sharedManager] saveData];
-}
-
 - (void)thumbnailTapped:(FacebookThumbnail *)sender {
     FacebookPhoto *photo = sender.photo;
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        [self showPageForPhoto:photo];
+        NSDictionary *params = [self paramsForPhotoDetails:photo];
+        [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail forModuleTag:PhotosTag params:params];
     } else {
-        [self highlightThumbnail:sender animated:YES];
+        [self focusThumbnail:sender animated:YES completion:^(BOOL finished) {
+            NSDictionary *params = [self paramsForPhotoDetails:photo];
+            [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail forModuleTag:PhotosTag params:params];
+        }];
     }
 }
 
-- (void)highlightThumbnail:(FacebookThumbnail *)thumbnail animated:(BOOL)animated {
+- (void)focusThumbnail:(FacebookThumbnail *)thumbnail animated:(BOOL)animated completion:(void (^)(BOOL finished))completion {
     _scrollView.scrollEnabled = NO;
     NSTimeInterval duration = animated ? 0.75 : -1.0;
     [UIView animateWithDuration:duration animations:^{
@@ -220,11 +216,19 @@
                 [icon hide];
             }
         }
-        [thumbnail highlightIntoFrame:CGRectMake(0, _scrollView.contentOffset.y, self.view.frame.size.width, 200.0)];
-    }];
+        // this frame is designed to match the frame for image in the
+        // detailed view
+        CGSize imageSize = CGSizeMake([thumbnail.photo.width floatValue], [thumbnail.photo.height floatValue]);
+        CGFloat maximumWidth = self.view.frame.size.width - 30;
+        CGFloat height = [MediaContainerView heightForImageSize:imageSize fitToWidth:maximumWidth];
+        [thumbnail highlightIntoFrame:CGRectMake(
+                                                 10, _scrollView.contentOffset.y - _signedInUserView.frame.size.height + 10, 
+                                                maximumWidth, height)];
+        
+    } completion:completion];
 }
 
-- (void)showPageForPhoto:(FacebookPhoto *)photo {
+- (NSDictionary *)paramsForPhotoDetails:(FacebookPhoto *)photo {
     NSMutableArray *photos = [NSMutableArray array];
     [_icons enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         FacebookThumbnail *thumbnail = (FacebookThumbnail *)obj;
@@ -232,9 +236,7 @@
         [photos addObject:thumbnail.photo];
     }];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:photo, @"photo", photos, @"photos", nil];
-    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail
-                           forModuleTag:PhotosTag
-                                 params:params];    
+    return params;
 }
 
 #pragma mark Photo uploads
@@ -366,6 +368,7 @@
         _thumbnail = [[MITThumbnailView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height-40)];
         _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
         _thumbnail.userInteractionEnabled = NO;
+        _thumbnail.delegate = self;
 
         [self addSubview:_thumbnail];
         [self addSubview:_label];
@@ -384,12 +387,17 @@
     _label.text = photo.title;
     if (photo.thumbData) {
         _thumbnail.imageData = photo.thumbData;
-    } else if (photo.thumbSrc) {
-        _thumbnail.imageURL = photo.thumbSrc;
     } else if (photo.data) {
         _thumbnail.imageData = photo.data;
+    } else if (photo.thumbSrc) {
+        _thumbnail.imageURL = photo.thumbSrc;
+        [_thumbnail loadImage];
     }
-    [_thumbnail loadImage];
+}
+
+- (void)thumbnail:(MITThumbnailView *)thumbnail didLoadData:(NSData *)data {
+    _photo.thumbData = data;
+    [[CoreDataManager sharedManager] saveData];
 }
 
 - (CGFloat)rotationAngle {
@@ -421,6 +429,7 @@
 
 - (void)dealloc {
     self.photo = nil;
+    _thumbnail.delegate = nil;
     [_thumbnail release];
     [_label release];
     [super dealloc];

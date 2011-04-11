@@ -33,9 +33,9 @@
 #pragma mark -
 
 - (void)displayPost {
-    _thumbnail.imageURL = self.photo.src;
-    _thumbnail.imageData = self.photo.data;
-    [_thumbnail loadImage];
+    NSLog(@"%@", self.photo);
+    UIImage *image = [UIImage imageWithData:self.photo.thumbData];
+    [self setMediaImage:image];
     
     if (!self.photo.comments.count) {
         [self getCommentsForPost];
