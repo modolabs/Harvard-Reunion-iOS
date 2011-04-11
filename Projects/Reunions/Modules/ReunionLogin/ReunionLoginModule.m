@@ -17,7 +17,8 @@
     
     KGOHomeScreenViewController *homeVC = (KGOHomeScreenViewController *)[KGO_SHARED_APP_DELEGATE() homescreen];
     CGRect frame = [homeVC springboardFrame];
-    frame = CGRectMake(10, 10, frame.size.width - 20, 90);
+    UIImage *image = [UIImage imageWithPathName:@"modules/home/ribbon"];
+    frame = CGRectMake(10, 10, frame.size.width - image.size.width - 20, 90);
     KGOHomeScreenWidget *widget = [[[KGOHomeScreenWidget alloc] initWithFrame:frame] autorelease];
     
     NSString *title = self.username;
@@ -33,7 +34,7 @@
     
     if (subtitle) {
         UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText];
-        CGSize size = [self.userDescription sizeWithFont:font];
+        CGSize size = [self.userDescription sizeWithFont:font constrainedToSize:widget.frame.size];
         UILabel *subtitleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, y, size.width, size.height)] autorelease];
         subtitleLabel.font = font;
         subtitleLabel.backgroundColor = [UIColor clearColor];
@@ -47,13 +48,12 @@
     
     if (title) {
         UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
-        CGSize size = [title sizeWithFont:font];
-        
-        titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, y, size.width, size.height)] autorelease];
-        titleLabel.font = font;
-        titleLabel.text = title;
-        titleLabel.backgroundColor = [UIColor clearColor];
+        titleLabel = [UILabel multilineLabelWithText:title font:font width:widget.frame.size.width];
         titleLabel.textColor = [UIColor whiteColor];
+        CGRect frame = titleLabel.frame;
+        frame.origin.x = 10;
+        frame.origin.y = y;
+        titleLabel.frame = frame;
         
         [widget addSubview:titleLabel];
     }
@@ -63,7 +63,7 @@
     return widget;
 }
 
-- (UIView *)ribbonWidget
+- (KGOHomeScreenWidget *)ribbonWidget
 {
     KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
     

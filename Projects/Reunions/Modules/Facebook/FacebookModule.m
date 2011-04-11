@@ -11,8 +11,6 @@
 
 #define FACEBOOK_STATUS_POLL_FREQUENCY 60
 
-static NSString * const FacebookGroupKey = @"FBGroup";
-
 NSString * const FacebookGroupReceivedNotification = @"FBGroupReceived";
 NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
@@ -55,7 +53,6 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 #pragma mark polling
 
 - (void)setupPolling {
-    /*
     NSLog(@"setting up polling...");
     if (![[KGOSocialMediaController sharedController] isFacebookLoggedIn]) {
         NSLog(@"waiting for facebook to log in...");
@@ -70,9 +67,6 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
                                                    object:nil];
         [self requestGroupOrStartPolling];
     }
-    */
-    
-    [self startPollingStatusUpdates];
 }
 
 - (void)shutdownPolling {
@@ -120,7 +114,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 }
 
 #pragma mark facebook connection
-/*
+
 - (void)requestGroupOrStartPolling {
     _lastMessageDate = [[NSDate distantPast] retain];
     if (!_gid) {
@@ -152,23 +146,30 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
-*/
+
 - (NSString *)groupID {
     return _gid;
 }
-/*
+
 - (void)didReceiveGroups:(id)result {
     NSArray *data = [result arrayForKey:@"data"];
+
+    BOOL isMemberOfGroup = NO;
     for (id aGroup in data) {
         // TODO: get group names from server
         if ([[aGroup objectForKey:@"id"] isEqualToString:_gid]) {
+            isMemberOfGroup = YES;
             [[NSNotificationCenter defaultCenter] postNotificationName:FacebookGroupReceivedNotification object:self];
 
             [self startPollingStatusUpdates];
         }
     }
+    
+    if (!isMemberOfGroup) {
+        // TODO: have some way to communicate this state to other modules
+    }
 }
-*/
+
 - (NSArray *)latestFeedPosts {
     return _latestFeedPosts;
 }
@@ -243,6 +244,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     self.labelText = [homeModule fbGroupName];
     _gid = [[homeModule fbGroupID] retain];
     
+    [[NSUserDefaults standardUserDefaults] setObject:[homeModule fbGroupName] forKey:FacebookGroupTitleKey];
     [[NSUserDefaults standardUserDefaults] setObject:_gid forKey:FacebookGroupKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }

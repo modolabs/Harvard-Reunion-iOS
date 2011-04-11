@@ -5,6 +5,7 @@
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "KGOHomeScreenViewController.h"
 #import "KGORequestManager.h"
+#import "Foundation+KGOAdditions.h"
 
 #define BUTTON_WIDTH_IPHONE 120
 #define BUTTON_HEIGHT_IPHONE 46
@@ -193,7 +194,9 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 }
 
 - (NSArray *)widgetViews {
-    if (self.buttonWidget) {
+    NSDictionary *settings = [[NSUserDefaults standardUserDefaults] objectForKey:KGOUserPreferencesKey];
+    NSArray *wantedWidgets = [settings arrayForKey:@"Widgets"];
+    if (self.buttonWidget && [wantedWidgets containsObject:self.tag]) {
         return [NSArray arrayWithObjects:self.buttonWidget, self.chatBubble, nil];
     }
     return nil;

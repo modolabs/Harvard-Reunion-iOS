@@ -17,18 +17,18 @@ extern NSString * const FacebookFeedDidUpdateNotification;
 // TODO: move this to Common if we find this format used in other places
 + (NSDate *)dateFromRFC3339DateTimeString:(NSString *)string;
 
-//- (void)requestGroupOrStartPolling;
+- (void)requestGroupOrStartPolling;
 - (void)startPollingStatusUpdates;
 - (void)stopPollingStatusUpdates;
 
 - (void)requestStatusUpdates:(NSTimer *)aTimer;
 
-//- (void)didReceiveGroups:(id)result;
+- (void)didReceiveGroups:(id)result;
 - (void)didReceiveFeed:(id)result;
-/*
+
 - (void)facebookDidLogout:(NSNotification *)aNotification;
 - (void)facebookDidLogin:(NSNotification *)aNotification;
-*/
+
 @property(nonatomic, readonly) NSArray *latestFeedPosts;
 @property(nonatomic, readonly) NSString *groupID;
 

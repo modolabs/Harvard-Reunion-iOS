@@ -39,12 +39,19 @@
 		</dict>
 		<key>DefaultFont</key>
 		<string>Helvetica</string>
-		<key>SectionHeaderGrouped</key>
+		<key>NavListSubtitle</key>
 		<dict>
 			<key>color</key>
 			<string>#1A1611</string>
-			<key>font</key>
-			<string>Helvetica-Bold</string>
+			<key>size</key>
+			<integer>-1</integer>
+		</dict>
+		<key>NavListTitle</key>
+		<dict>
+			<key>color</key>
+			<string>#1A1611</string>
+			<key>bold</key>
+			<true/>
 			<key>size</key>
 			<integer>2</integer>
 		</dict>
@@ -57,17 +64,12 @@
 			<key>size</key>
 			<integer>0</integer>
 		</dict>
-		<key>NavListTitle</key>
+		<key>SectionHeaderGrouped</key>
 		<dict>
 			<key>color</key>
 			<string>#1A1611</string>
-			<key>size</key>
-			<integer>-2</integer>
-		</dict>
-		<key>NavListSubtitle</key>
-		<dict>
-			<key>color</key>
-			<string>#1A1611</string>
+			<key>font</key>
+			<string>Helvetica-Bold</string>
 			<key>size</key>
 			<integer>2</integer>
 		</dict>

@@ -44,10 +44,12 @@
 			<key>color</key>
 			<string>#505050</string>
 			<key>size</key>
-			<integer>-2</integer>
+			<integer>-1</integer>
 		</dict>
 		<key>NavListTitle</key>
 		<dict>
+			<key>bold</key>
+			<true/>
 			<key>color</key>
 			<string>#1A1611</string>
 			<key>size</key>

@@ -33,6 +33,7 @@ static NSString * const AboutSectionsPrefKey = @"AboutSections";
                                                       font:[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySmallPrint]
                                                      width:self.view.frame.size.width - 20];
     footerLabel.textAlignment = UITextAlignmentCenter;
+    footerLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySmallPrint];
     UIView *footerView = [[[UIView alloc] initWithFrame:footerLabel.frame] autorelease];
     [footerView addSubview:footerLabel];
     self.tableView.tableFooterView = footerView;

@@ -40,6 +40,11 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
         
         self.buttonImage = [UIImage imageWithPathName:@"modules/twitter/button-twitter.png"];
         
+        _hashTag = [[[NSUserDefaults standardUserDefaults] stringForKey:TwitterHashTagKey] retain];
+        if (_hashTag) {
+            self.labelText = _hashTag;
+        }
+        
         // TODO: we are cheating here as we know where twitter and facebook will
         // be placed on the home screen under each condition.  if/when there is
         // a home screen notification module/widget for Kurogo, replace the chat
@@ -60,6 +65,9 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
     ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
     self.labelText = [homeModule twitterHashTag];
     _hashTag = [[homeModule twitterHashTag] retain];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:_hashTag forKey:TwitterHashTagKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
