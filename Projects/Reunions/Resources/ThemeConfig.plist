@@ -12,6 +12,8 @@
 		<string>#333333</string>
 		<key>PrimaryCellBackground</key>
 		<string>#FFFFFF</string>
+		<key>ToolbarTintColor</key>
+		<string>#666666</string>
 		<key>SearchBarTintColor</key>
 		<string>#666666</string>
 		<key>SecondaryCellBackground</key>
