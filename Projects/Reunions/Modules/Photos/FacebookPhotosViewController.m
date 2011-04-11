@@ -369,6 +369,16 @@
         _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
         _thumbnail.userInteractionEnabled = NO;
         _thumbnail.delegate = self;
+        
+        // add drop shadow
+        _thumbnail.layer.shadowOffset = CGSizeMake(0, 1);
+        _thumbnail.layer.shadowColor = [[UIColor blackColor] CGColor];
+        _thumbnail.layer.shadowRadius = 4.0;
+        _thumbnail.layer.shadowOpacity = 0.8;
+        
+        // this prevents choppy looking edges 
+        // when photo is rotated
+        _thumbnail.layer.shouldRasterize = YES;
 
         [self addSubview:_thumbnail];
         [self addSubview:_label];
