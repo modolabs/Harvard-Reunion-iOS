@@ -1,12 +1,12 @@
 #import "FacebookVideosViewController.h"
 #import "IconGrid.h"
-#import "MITThumbnailView.h"
 #import "Foundation+KGOAdditions.h"
 #import "UIKit+KGOAdditions.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "FacebookVideo.h"
 #import "FacebookUser.h"
 #import "FacebookModule.h"
+#import "CoreDataManager.h"
 
 @implementation FacebookVideosViewController
 
@@ -59,6 +59,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    _videosForThumbSrc = [NSMutableDictionary new];
     
     self.title = @"Videos";
     
@@ -95,6 +96,8 @@
 }
 
 - (void)viewDidUnload {
+    [_videosForThumbSrc release];
+    _videosForThumbSrc = nil;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -150,8 +153,10 @@
     if (!thumbnail) {
         thumbnail = [[[MITThumbnailView alloc] initWithFrame:CGRectMake(1, 1, 70, 70)] autorelease];
         thumbnail.tag = thumbnailTag;
+        thumbnail.delegate = self;
     }
     thumbnail.imageURL = aVideo.thumbSrc;
+    [_videosForThumbSrc setObject:aVideo forKey:aVideo.thumbSrc];
     [thumbnail loadImage];
     [cell.contentView addSubview:thumbnail];
     
@@ -195,4 +200,10 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
+#pragma Thumbnail delegate for saving video thumbnails
+- (void)thumbnail:(MITThumbnailView *)thumbnail didLoadData:(NSData *)data {
+    FacebookVideo *video = [_videosForThumbSrc objectForKey:thumbnail.imageURL];
+    video.thumbData = data;
+    [[CoreDataManager sharedManager] saveData];
+}
 @end

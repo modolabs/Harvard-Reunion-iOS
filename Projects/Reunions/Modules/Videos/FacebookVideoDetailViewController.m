@@ -88,8 +88,7 @@
     [button setImage:[UIImage imageWithPathName:@"common/arrow-white-right"] forState:UIControlStateNormal];
     button.frame = CGRectMake(120, 80, 80, 60);
     [button addTarget:self action:@selector(playVideo:) forControlEvents:UIControlEventTouchUpInside];
-    [_mediaImageView addSubview:button];
-    
+    [_mediaImageView addSubview:button];    
 }
 
 - (void)viewDidUnload
@@ -99,7 +98,7 @@
     // e.g. self.myOutlet = nil;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+- (NSString *)postTitle {
     return self.video.name;
 }
 

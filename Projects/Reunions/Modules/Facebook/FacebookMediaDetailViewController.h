@@ -38,6 +38,7 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
 - (IBAction)closeButtonPressed:(id)sender;
 
 - (void)displayPost;
+- (NSString *)postTitle;
 
 - (void)getCommentsForPost;
 - (void)didReceiveComments:(id)result;

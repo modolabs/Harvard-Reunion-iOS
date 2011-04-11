@@ -198,15 +198,17 @@
     _tableView.scrollEnabled = UIInterfaceOrientationIsPortrait(self.interfaceOrientation);
 }
 
-- (void)setPreviewImage:(UIImage *)image {
-    
+- (void)setMediaImage:(UIImage *)image {
+    [_mediaView setImage:image];
 }
+    
 - (void)displayPost {
     // subclasses should override this
 }
 
-- (void)setMediaImage:(UIImage *)image {
-    [_mediaView setImage:image];
+- (NSString *)postTitle {
+    // subclasses hsould override this
+    return nil;
 }
 
 #pragma mark - KGODetailPager
@@ -239,12 +241,27 @@
 #pragma mark - Table view methods
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return _comments.count;
+    return _comments.count + 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    FacebookComment *aComment = [_comments objectAtIndex:indexPath.row];
-    NSLog(@"%@", [aComment description]);
+    NSString *text;
+    NSDate *date;
+    NSString *ownerName;
+    if (indexPath.row == 0) {
+        text = [self postTitle];
+        date = self.post.date;
+        ownerName = self.post.owner.name;
+    } else {
+        FacebookComment *aComment = [_comments objectAtIndex:indexPath.row-1];
+        NSLog(@"%@", [aComment description]);
+        
+        text = aComment.text;
+        ownerName = aComment.owner.name;
+        date = aComment.date;
+    }
+    
+
     
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -259,33 +276,33 @@
     UILabel *commentLabel = (UILabel *)[cell.contentView viewWithTag:commentTag];
     if (!commentLabel) {
         UIFont *commentFont = [UIFont systemFontOfSize:15];
-        commentLabel = [UILabel multilineLabelWithText:aComment.text font:commentFont width:tableView.frame.size.width - 20];
+        commentLabel = [UILabel multilineLabelWithText:text font:commentFont width:tableView.frame.size.width - 20];
         commentLabel.tag = commentTag;
         CGRect frame = commentLabel.frame;
         frame.origin.x = 10;
         frame.origin.y = 5;
         commentLabel.frame = frame;
     } else {
-        commentLabel.text = aComment.text;
+        commentLabel.text = text;
     }
     [cell.contentView addSubview:commentLabel];
     
     UILabel *authorLabel = (UILabel *)[cell.contentView viewWithTag:authorTag];
     if (!authorLabel) {
         UIFont *authorFont = [UIFont systemFontOfSize:13];
-        authorLabel = [UILabel multilineLabelWithText:aComment.owner.name font:authorFont width:tableView.frame.size.width - 20];
+        authorLabel = [UILabel multilineLabelWithText:ownerName font:authorFont width:tableView.frame.size.width - 20];
         authorLabel.tag = authorTag;
         CGRect frame = authorLabel.frame;
         frame.origin.x = 10;
         frame.origin.y = 80;
         authorLabel.frame = frame;
     } else {
-        authorLabel.text = aComment.owner.name;
+        authorLabel.text = ownerName;
     }
     [cell.contentView addSubview:authorLabel];
     
     UILabel *dateLabel = (UILabel *)[cell.contentView viewWithTag:dateTag];
-    NSString *dateString = [aComment.date agoString];
+    NSString *dateString = [date agoString];
     if (!dateLabel) {
         UIFont *dateFont = [UIFont systemFontOfSize:13];
         dateLabel = [UILabel multilineLabelWithText:dateString font:dateFont width:tableView.frame.size.width - 20];

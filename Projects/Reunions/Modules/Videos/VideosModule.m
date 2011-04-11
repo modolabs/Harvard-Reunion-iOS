@@ -9,13 +9,23 @@
 @implementation VideosModule
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
+    NSString *homeNibName;
+    NSString *detailNibName;
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        homeNibName = @"FacebookMediaViewController";
+        detailNibName = @"FacebookMediaDetailViewController";
+    } else {
+        homeNibName = @"FacebookMediaViewController-iPad";
+        detailNibName = @"FacebookMediaDetailViewController-iPad";
+    }
+    
     UIViewController *vc = nil;
     if ([pageName isEqualToString:LocalPathPageNameHome]) {
-        vc = [[[FacebookVideosViewController alloc] initWithNibName:@"FacebookMediaViewController" bundle:nil] autorelease];
+        vc = [[[FacebookVideosViewController alloc] initWithNibName:homeNibName bundle:nil] autorelease];
     } else if ([pageName isEqualToString:LocalPathPageNameDetail]) {
         FacebookVideo *video = [params objectForKey:@"video"];
         if (video) {
-            vc = [[[FacebookVideoDetailViewController alloc] initWithNibName:@"FacebookMediaDetailViewController" bundle:nil] autorelease];
+            vc = [[[FacebookVideoDetailViewController alloc] initWithNibName:detailNibName bundle:nil] autorelease];
             [(FacebookVideoDetailViewController *)vc setVideo:video];
             NSArray *videos = [params objectForKey:@"videos"];
             if (videos) {

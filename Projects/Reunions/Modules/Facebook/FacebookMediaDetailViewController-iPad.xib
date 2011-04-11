@@ -119,7 +119,7 @@
 															<int key="NSColorSpace">3</int>
 															<bytes key="NSWhite">MC41AA</bytes>
 														</object>
-														<object class="NSCustomResource" key="IBUINormalImage" id="27952298">
+														<object class="NSCustomResource" key="IBUINormalImage" id="801273976">
 															<string key="NSClassName">NSImage</string>
 															<string key="NSResourceName">modules/facebook/like.png</string>
 														</object>
@@ -143,7 +143,7 @@
 															<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
 														</object>
 														<reference key="IBUINormalTitleShadowColor" ref="895117659"/>
-														<reference key="IBUINormalImage" ref="27952298"/>
+														<reference key="IBUINormalImage" ref="801273976"/>
 													</object>
 													<object class="IBUIButton" id="161453940">
 														<reference key="NSNextResponder" ref="292828924"/>
@@ -164,10 +164,10 @@
 															<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
 														</object>
 														<reference key="IBUINormalTitleShadowColor" ref="895117659"/>
-														<reference key="IBUINormalImage" ref="27952298"/>
+														<reference key="IBUINormalImage" ref="801273976"/>
 													</object>
 												</object>
-												<string key="NSFrame">{{10, 241}, {460, 58}}</string>
+												<string key="NSFrame">{{10, 227}, {460, 58}}</string>
 												<reference key="NSSuperview" ref="845029506"/>
 												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="792331816"/>
@@ -183,7 +183,7 @@
 											<object class="IBUIImageView" id="688728643">
 												<reference key="NSNextResponder" ref="845029506"/>
 												<int key="NSvFlags">274</int>
-												<string key="NSFrame">{{10, 10}, {460, 230}}</string>
+												<string key="NSFrame">{{10, 10}, {460, 216}}</string>
 												<reference key="NSSuperview" ref="845029506"/>
 												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="292828924"/>
@@ -193,7 +193,7 @@
 												<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 											</object>
 										</object>
-										<string key="NSFrame">{{5, 5}, {480, 299}}</string>
+										<string key="NSFrame">{{5, 5}, {480, 285}}</string>
 										<reference key="NSSuperview" ref="515346578"/>
 										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="688728643"/>
@@ -201,7 +201,7 @@
 										<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 									</object>
 								</object>
-								<string key="NSFrameSize">{490, 313}</string>
+								<string key="NSFrameSize">{490, 300}</string>
 								<reference key="NSSuperview" ref="1455157"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="845029506"/>
@@ -217,7 +217,6 @@
 						<bool key="IBUIClipsSubviews">YES</bool>
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 						<bool key="IBUIAlwaysBounceVertical">YES</bool>
-						<int key="IBUISeparatorStyle">1</int>
 						<int key="IBUISectionIndexMinimumDisplayRowCount">0</int>
 						<bool key="IBUIShowsSelectionImmediatelyOnTouchBegin">YES</bool>
 						<float key="IBUIRowHeight">44</float>

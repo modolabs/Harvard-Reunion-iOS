@@ -89,11 +89,9 @@
 
 #pragma mark - Table view methods
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return self.photo.title;
-    //return [NSString stringWithFormat:@"x users like this"];
+- (NSString *)postTitle {
+    return  self.photo.title;
 }
-
 
 - (void)requestImage:(FacebookPhoto *)photo {
     
