@@ -6,14 +6,16 @@
 
 @class FacebookPhoto;
 
-@interface FacebookPhotosViewController : FacebookMediaViewController <MITThumbnailDelegate, IconGridDelegate,
+@interface FacebookPhotosViewController : FacebookMediaViewController <IconGridDelegate,
 UINavigationControllerDelegate, UIImagePickerControllerDelegate, FacebookUploadDelegate> {
     
     IconGrid *_iconGrid;
     NSMutableArray *_icons;
     NSMutableSet *_displayedPhotos;
     NSMutableDictionary *_photosByID;
-    NSMutableDictionary *_photosByThumbSrc;
+    CGFloat resizeFactor;
+    
+    UIViewController *_detailViewController;
 }
 
 - (void)didReceivePhoto:(id)result;
@@ -23,7 +25,7 @@ UINavigationControllerDelegate, UIImagePickerControllerDelegate, FacebookUploadD
 
 @end
 
-@interface FacebookThumbnail : UIControl {
+@interface FacebookThumbnail : UIControl <MITThumbnailDelegate> {
     UILabel *_label;
     MITThumbnailView *_thumbnail;
     CGFloat _rotationAngle;
@@ -32,5 +34,8 @@ UINavigationControllerDelegate, UIImagePickerControllerDelegate, FacebookUploadD
 
 @property (nonatomic) CGFloat rotationAngle;
 @property (nonatomic, retain) FacebookPhoto *photo;
+
+- (void)highlightIntoFrame:(CGRect)frame;
+- (void)hide;
 
 @end

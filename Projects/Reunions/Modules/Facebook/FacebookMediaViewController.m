@@ -3,6 +3,7 @@
 #import "FacebookUser.h"
 
 #import "KGOFoursquareEngine.h"
+#import "KGOTheme.h"
 
 @implementation FacebookMediaViewController
 
@@ -101,6 +102,7 @@
 
 - (void)facebookDidLogin:(NSNotification *)aNotification
 {
+    facebookUserLoggedIn = YES;
     [self hideLoginView];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(facebookDidLogout:)
@@ -110,6 +112,7 @@
 
 - (void)facebookDidLogout:(NSNotification *)aNotification
 {
+    facebookUserLoggedIn = NO;
     [self showLoginView];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(facebookDidLogin:)
@@ -123,6 +126,9 @@
 {
     [super viewDidLoad];
     
+    if (facebookUserLoggedIn) {
+        [self hideLoginView];
+    }
     _loginHintLabel.text = NSLocalizedString(@"Reunion photos are posted etc etc etc.", nil);
     [_loginButton setTitle:@"Sign in to Facebook" forState:UIControlStateNormal];
 }

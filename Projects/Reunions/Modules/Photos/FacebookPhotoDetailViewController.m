@@ -3,9 +3,19 @@
 #import "Foundation+KGOAdditions.h"
 #import "KGOSocialMediaController+FacebookAPI.h"
 #import "KGOAppDelegate.h"
+#import "CoreDataManager.h"
 #import "FacebookModel.h"
 
+@interface FacebookPhotoDetailViewController (Private)
+
+- (void)requestImage:(FacebookPhoto *)photo;
+
+@end
+
 @implementation FacebookPhotoDetailViewController
+
+@synthesize connection;
+@synthesize currentURL;
 
 /*
  - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -33,9 +43,17 @@
 #pragma mark -
 
 - (void)displayPost {
-    _thumbnail.imageURL = self.photo.src;
-    _thumbnail.imageData = self.photo.data;
-    [_thumbnail loadImage];
+    NSLog(@"%@", self.photo);
+    
+    UIImage *image;
+    if (self.photo.data) {
+        image = [UIImage imageWithData:self.photo.data];
+    } else if(self.photo.thumbData) {
+        image = [UIImage imageWithData:self.photo.thumbData];
+        [self requestImage:self.photo];
+    }
+    
+    [self setMediaImage:image];
     
     if (!self.photo.comments.count) {
         [self getCommentsForPost];
@@ -60,6 +78,10 @@
 
 - (void)viewDidUnload
 {
+    self.photo = nil;
+    self.currentURL = nil;
+    self.connection.delegate = nil;
+    self.connection = nil;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -67,9 +89,45 @@
 
 #pragma mark - Table view methods
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return self.photo.title;
-    //return [NSString stringWithFormat:@"x users like this"];
+- (NSString *)postTitle {
+    return  self.photo.title;
 }
+
+- (void)requestImage:(FacebookPhoto *)photo {
+    
+    if ([self.connection isConnected]) {
+        [self.connection cancel];
+    }
+    
+    if (!self.connection) {
+        self.connection = [[[ConnectionWrapper alloc] initWithDelegate:self] autorelease];
+    }
+    self.currentURL = [NSURL URLWithString:photo.src];
+    if ([self.connection requestDataFromURL:self.currentURL allowCachedResponse:YES]) {    
+        [KGO_SHARED_APP_DELEGATE() showNetworkActivityIndicator];
+    }
+}
+
+// ConnectionWrapper delegate
+- (void)connection:(ConnectionWrapper *)wrapper handleData:(NSData *)data {
+    // TODO: If memory usage becomes a concern, convert images to PNG using UIImagePNGRepresentation(). PNGs use considerably less RAM.
+    if (connection.theURL == self.currentURL) {
+        UIImage *image = [UIImage imageWithData:data];
+        if(image) {
+            self.photo.data = data;
+            [[CoreDataManager sharedManager] saveData];
+            [self setMediaImage:image];
+        }
+    }
+    
+    self.connection = nil;
+    [KGO_SHARED_APP_DELEGATE() hideNetworkActivityIndicator];
+}
+
+- (void)connection:(ConnectionWrapper *)wrapper handleConnectionFailureWithError:(NSError *)error {
+    self.connection = nil;
+    [KGO_SHARED_APP_DELEGATE() hideNetworkActivityIndicator];
+}
+
 
 @end

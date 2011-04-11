@@ -12,17 +12,29 @@ NSString * const LocalPathPageNamePhotoUpload = @"uploadPhoto";
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
     UIViewController *vc = nil;
+    
+    NSString *homeNibName;
+    NSString *detailNibName;
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        homeNibName = @"FacebookMediaViewController";
+        detailNibName = @"FacebookMediaDetailViewController";
+    } else {
+        homeNibName = @"FacebookMediaViewController-iPad";
+        detailNibName = @"FacebookMediaDetailViewController-iPad";
+    }
+    
     if ([pageName isEqualToString:LocalPathPageNameHome]) {
-        vc = [[[FacebookPhotosViewController alloc] initWithNibName:@"FacebookMediaViewController" bundle:nil] autorelease];
+        vc = [[[FacebookPhotosViewController alloc] initWithNibName:homeNibName bundle:nil] autorelease];
     } else if ([pageName isEqualToString:LocalPathPageNameDetail]) {
         FacebookPhoto *photo = [params objectForKey:@"photo"];
         if (photo) {
-            vc = [[[FacebookPhotoDetailViewController alloc] initWithNibName:@"FacebookMediaDetailViewController" bundle:nil] autorelease];
+            vc = [[[FacebookPhotoDetailViewController alloc] initWithNibName:detailNibName bundle:nil] autorelease];
             [(FacebookPhotoDetailViewController *)vc setPhoto:photo];
             NSArray *photos = [params objectForKey:@"photos"];
             if (photos) {
                 [(FacebookPhotoDetailViewController *)vc setPosts:photos];
             }
+            [(FacebookPhotoDetailViewController *)vc setModuleTag:PhotosTag];
         }
     } else if ([pageName isEqualToString:LocalPathPageNamePhotoUpload]) {
         UIImage *image = [params objectForKey:@"photo"];
