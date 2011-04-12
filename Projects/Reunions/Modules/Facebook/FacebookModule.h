@@ -32,4 +32,6 @@ extern NSString * const FacebookFeedDidUpdateNotification;
 @property(nonatomic, readonly) NSArray *latestFeedPosts;
 @property(nonatomic, readonly) NSString *groupID;
 
+- (BOOL)isMemberOfFBGroup;
+
 @end

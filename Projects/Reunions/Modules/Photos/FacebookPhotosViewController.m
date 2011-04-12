@@ -51,9 +51,10 @@
             }
 
         } else {
+            [fbModule requestStatusUpdates:nil];
             [[NSNotificationCenter defaultCenter] addObserver:self
                                                      selector:@selector(getGroupPhotos)
-                                                         name:FacebookGroupReceivedNotification
+                                                         name:FacebookFeedDidUpdateNotification
                                                        object:nil];
         }
         
@@ -64,7 +65,7 @@
     } else {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(getGroupPhotos)
-                                                     name:FacebookFeedDidUpdateNotification
+                                                     name:FacebookGroupReceivedNotification
                                                    object:nil];
     }
 }
@@ -87,8 +88,6 @@
     self.title = @"Photos";
     
     CGRect frame = _scrollView.frame;
-    frame.origin.y = _signedInUserView.frame.size.height;
-    frame.size.height -= _signedInUserView.frame.size.height;
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         resizeFactor = 1.;
@@ -156,7 +155,7 @@
 
 - (void)iconGridFrameDidChange:(IconGrid *)iconGrid {
     CGSize size = _scrollView.contentSize;
-    size.height = iconGrid.frame.size.height + _signedInUserView.frame.size.height;
+    size.height = iconGrid.frame.size.height;
     _scrollView.contentSize = size;
 }
 
@@ -170,7 +169,7 @@
         NSLog(@"found cached photo %@", aPhoto.identifier);
         //[self displayPhoto:aPhoto];
     }
-    [[CoreDataManager sharedManager] deleteObjects:photos];
+    //[[CoreDataManager sharedManager] deleteObjects:photos];
 }
 
 - (void)displayPhoto:(FacebookPhoto *)photo
@@ -221,8 +220,7 @@
         CGSize imageSize = CGSizeMake([thumbnail.photo.width floatValue], [thumbnail.photo.height floatValue]);
         CGFloat maximumWidth = self.view.frame.size.width - 40;
         CGFloat height = [MediaContainerView heightForImageSize:imageSize fitToWidth:maximumWidth];
-        [thumbnail highlightIntoFrame:CGRectMake(
-                                                 15, _scrollView.contentOffset.y - _signedInUserView.frame.size.height + 15, 
+        [thumbnail highlightIntoFrame:CGRectMake(15, _scrollView.contentOffset.y + 15, 
                                                 maximumWidth, height)];
         
     } completion:completion];

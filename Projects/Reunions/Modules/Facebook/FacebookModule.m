@@ -11,6 +11,8 @@
 
 #define FACEBOOK_STATUS_POLL_FREQUENCY 60
 
+static NSString * const FacebookGroupIsMemberKey = @"FacebookGroupMember";
+
 NSString * const FacebookGroupReceivedNotification = @"FBGroupReceived";
 NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
@@ -115,7 +117,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 - (void)requestGroupOrStartPolling {
     _lastMessageDate = [[NSDate distantPast] retain];
-    if (!_gid) {
+    if (!_gid || ![self isMemberOfFBGroup]) {
         NSLog(@"requesting groups");
         [[KGOSocialMediaController sharedController] requestFacebookGraphPath:@"me/groups"
                                                                      receiver:self
@@ -141,6 +143,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     
     [self shutdownPolling];
     
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupIsMemberKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
@@ -152,19 +155,16 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 - (void)didReceiveGroups:(id)result {
     NSArray *data = [result arrayForKey:@"data"];
 
-    BOOL isMemberOfGroup = NO;
     for (id aGroup in data) {
         // TODO: get group names from server
         if ([[aGroup objectForKey:@"id"] isEqualToString:_gid]) {
-            isMemberOfGroup = YES;
+            [[NSUserDefaults standardUserDefaults] setObject:_gid forKey:FacebookGroupIsMemberKey];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            
             [[NSNotificationCenter defaultCenter] postNotificationName:FacebookGroupReceivedNotification object:self];
 
             [self startPollingStatusUpdates];
         }
-    }
-    
-    if (!isMemberOfGroup) {
-        // TODO: have some way to communicate this state to other modules
     }
 }
 
@@ -247,6 +247,12 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (BOOL)isMemberOfFBGroup
+{
+    NSString *belongingGroup = [[NSUserDefaults standardUserDefaults] objectForKey:FacebookGroupIsMemberKey];
+    return [belongingGroup isEqualToString:_gid];
+}
+
 #pragma mark -
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
@@ -273,6 +279,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 - (void)applicationDidFinishLaunching {
     [[KGOSocialMediaController sharedController] startupFacebook];
     _gid = [[[NSUserDefaults standardUserDefaults] objectForKey:FacebookGroupKey] retain];
+    
     [self setupPolling];
 }
 

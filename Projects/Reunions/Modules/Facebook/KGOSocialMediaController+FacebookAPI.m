@@ -143,7 +143,9 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
 
     NSArray *identifiers = [[_fbRequestIdentifiers copy] autorelease];
     for (FBRequestIdentifier *anIdentifier in identifiers) {
+        DLog(@"found receiver: %@", anIdentifier.receiver);
         if (anIdentifier.receiver == receiver) {
+            DLog(@"detatching %@", anIdentifier.receiver);
             anIdentifier.receiver = nil;
             NSInteger index = [_fbRequestIdentifiers indexOfObject:anIdentifier];
             if (index != NSNotFound) {

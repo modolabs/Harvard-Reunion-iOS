@@ -3,12 +3,12 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1056</int>
 		<string key="IBDocument.SystemVersion">10J869</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1305</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1306</string>
 		<string key="IBDocument.AppKitVersion">1038.35</string>
 		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-			<string key="NS.object.0">300</string>
+			<string key="NS.object.0">301</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -17,7 +17,6 @@
 			<string>IBUILabel</string>
 			<string>IBUIToolbar</string>
 			<string>IBUIButton</string>
-			<string>IBUIWebView</string>
 			<string>IBUISegmentedControl</string>
 			<string>IBUIScrollView</string>
 			<string>IBUIView</string>
@@ -127,29 +126,14 @@
 					<object class="IBUIScrollView" id="134251218">
 						<reference key="NSNextResponder" ref="603733316"/>
 						<int key="NSvFlags">274</int>
-						<object class="NSMutableArray" key="NSSubviews">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBUIWebView" id="604200484">
-								<reference key="NSNextResponder" ref="134251218"/>
-								<int key="NSvFlags">290</int>
-								<string key="NSFrameSize">{450, 36}</string>
-								<reference key="NSSuperview" ref="134251218"/>
-								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="757204285"/>
-								<object class="NSColor" key="IBUIBackgroundColor" id="273834085">
-									<int key="NSColorSpace">3</int>
-									<bytes key="NSWhite">MCAwAA</bytes>
-								</object>
-								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-								<int key="IBUIDataDetectorTypes">1</int>
-								<bool key="IBUIDetectsPhoneNumbers">YES</bool>
-							</object>
-						</object>
 						<string key="NSFrame">{{0, 44}, {450, 571}}</string>
 						<reference key="NSSuperview" ref="603733316"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="604200484"/>
-						<reference key="IBUIBackgroundColor" ref="273834085"/>
+						<reference key="NSNextKeyView"/>
+						<object class="NSColor" key="IBUIBackgroundColor" id="273834085">
+							<int key="NSColorSpace">3</int>
+							<bytes key="NSWhite">MCAwAA</bytes>
+						</object>
 						<bool key="IBUIClipsSubviews">YES</bool>
 						<bool key="IBUIMultipleTouchEnabled">YES</bool>
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -184,10 +168,9 @@
 							<object class="IBUIButton" id="954590453">
 								<reference key="NSNextResponder" ref="757204285"/>
 								<int key="NSvFlags">319</int>
-								<string key="NSFrame">{{190, 250}, {70, 40}}</string>
+								<string key="NSFrame">{{175, 250}, {100, 40}}</string>
 								<reference key="NSSuperview" ref="757204285"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<bool key="IBUIOpaque">NO</bool>
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 								<int key="IBUIContentHorizontalAlignment">0</int>
@@ -289,27 +272,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">_signedInUserView</string>
-						<reference key="source" ref="841351856"/>
-						<reference key="destination" ref="604200484"/>
-					</object>
-					<int key="connectionID">35</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">view</string>
 						<reference key="source" ref="841351856"/>
 						<reference key="destination" ref="603733316"/>
 					</object>
 					<int key="connectionID">36</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="604200484"/>
-						<reference key="destination" ref="841351856"/>
-					</object>
-					<int key="connectionID">37</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
@@ -386,7 +353,6 @@
 						<reference key="object" ref="134251218"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="604200484"/>
 						</object>
 						<reference key="parent" ref="603733316"/>
 						<string key="objectName">Scroll View</string>
@@ -416,12 +382,6 @@
 						<reference key="object" ref="954590453"/>
 						<reference key="parent" ref="757204285"/>
 					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">19</int>
-						<reference key="object" ref="604200484"/>
-						<reference key="parent" ref="134251218"/>
-						<string key="objectName">Web View</string>
-					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -432,7 +392,6 @@
 					<string>-2.CustomClassName</string>
 					<string>14.IBPluginDependency</string>
 					<string>17.IBPluginDependency</string>
-					<string>19.IBPluginDependency</string>
 					<string>20.IBPluginDependency</string>
 					<string>21.IBPluginDependency</string>
 					<string>22.IBPluginDependency</string>
@@ -447,7 +406,6 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>FacebookMediaViewController</string>
 					<string>UIResponder</string>
-					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -522,7 +480,6 @@
 							<string>_loginHintLabel</string>
 							<string>_loginView</string>
 							<string>_scrollView</string>
-							<string>_signedInUserView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -531,7 +488,6 @@
 							<string>UILabel</string>
 							<string>UIView</string>
 							<string>UIScrollView</string>
-							<string>UIWebView</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -543,7 +499,6 @@
 							<string>_loginHintLabel</string>
 							<string>_loginView</string>
 							<string>_scrollView</string>
-							<string>_signedInUserView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -566,10 +521,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">_scrollView</string>
 								<string key="candidateClassName">UIScrollView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">_signedInUserView</string>
-								<string key="candidateClassName">UIWebView</string>
 							</object>
 						</object>
 					</object>
@@ -596,6 +547,6 @@
 		</object>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
-		<string key="IBCocoaTouchPluginVersion">300</string>
+		<string key="IBCocoaTouchPluginVersion">301</string>
 	</data>
 </archive>

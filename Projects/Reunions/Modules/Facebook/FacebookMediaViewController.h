@@ -1,9 +1,8 @@
 #import <UIKit/UIKit.h>
 
-@interface FacebookMediaViewController : UIViewController <UIWebViewDelegate> {
+@interface FacebookMediaViewController : UIViewController {
     
     IBOutlet UISegmentedControl *_filterControl;
-    IBOutlet UIWebView *_signedInUserView;
     IBOutlet UIScrollView *_scrollView;
     
     // hidden for logged-in users
@@ -19,9 +18,8 @@
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender;
 - (IBAction)loginButtonPressed:(UIButton *)sender;
 
-- (void)showLoginView;
-- (void)hideLoginView;
-- (void)showSignedInUserView:(NSNotification *)aNotification;
+- (void)showLoginViewAnimated:(BOOL)animated;
+- (void)hideLoginViewAnimated:(BOOL)animated;
 
 - (void)facebookDidLogout:(NSNotification *)aNotification;
 - (void)facebookDidLogin:(NSNotification *)aNotification;
