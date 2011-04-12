@@ -8,6 +8,8 @@
 #import "TwitterFeedViewController.h"
 #import "ReunionHomeModule.h"
 #import "MITThumbnailView.h"
+#import "KGOHomeScreenViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define TWITTER_BUTTON_WIDTH_IPHONE 120
 #define TWITTER_BUTTON_HEIGHT_IPHONE 51
@@ -79,10 +81,67 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
             vc = [[[TwitterFeedViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
         }
     } else {
+        if (_modalTwitterController) {
+            return nil;
+        }
+        
+        // circumvent the app delegate and present our own thing
+        UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
+        
+        TwitterFeedViewController *twitterVC = [[[TwitterFeedViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
+        _modalTwitterController = [[UINavigationController alloc] initWithRootViewController:twitterVC];
+        
+        twitterVC.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                                    target:self
+                                                                                                    action:@selector(hideModalTwitterController:)] autorelease];
+
+        CGRect frame = self.chatBubble.frame;
+        frame.size.height -= 15;
+        _modalTwitterController.view.frame = frame;
+        
+        twitterVC.view.layer.cornerRadius = 6;
+        _modalTwitterController.view.layer.cornerRadius = 6;
+        
+        CGRect screenFrame = [(KGOHomeScreenViewController *)homescreen springboardFrame];
+        CGFloat bottom = frame.origin.y + frame.size.height;
+        CGFloat top = 48;
+        frame = CGRectMake(10, top, screenFrame.size.width - 20, bottom - top);
+        
+        _scrim = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenFrame.size.width, screenFrame.size.height)];
+        _scrim.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
+        _scrim.alpha = 0;
+        
+        [homescreen.view addSubview:_scrim];
+        [homescreen.view addSubview:_modalTwitterController.view];
+        
+        [UIView animateWithDuration:0.4 animations:^(void) {
+            _modalTwitterController.view.frame = frame;
+            _scrim.alpha = 1;
+        }];
         
     }
     return vc;
 }
+
+- (void)hideModalTwitterController:(id)sender
+{
+    CGRect frame = self.chatBubble.frame;
+    frame.size.height -= 15;
+    
+    [UIView animateWithDuration:0.4 animations:^(void) {
+        _modalTwitterController.view.frame = frame;
+        _scrim.alpha = 0;
+
+    } completion:^(BOOL finished) {
+        [_scrim removeFromSuperview];
+        [_scrim release];
+        _scrim = nil;
+        
+        [_modalTwitterController.view removeFromSuperview];
+        [_modalTwitterController release];
+        _modalTwitterController = nil;
+    }];
+}                                                      
 
 - (void)applicationDidFinishLaunching {
     [self startPollingStatusUpdates];

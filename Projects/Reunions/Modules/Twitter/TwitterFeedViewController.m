@@ -30,16 +30,12 @@
     [self reloadDataForTableView:self.tableView];
 }
 
-- (void)loginButtonPressed:(UIButton *)sender {
-
-    // TODO: this isn't really what we want -- we want the
-    // social media controller to handle this for us
+- (void)tweetButtonPressed:(id)sender
+{
     TwitterViewController *twitterVC = [[[TwitterViewController alloc] init] autorelease];
-    [KGO_SHARED_APP_DELEGATE() presentAppModalNavigationController:twitterVC animated:YES];
-}
-
-- (void)sendButtonPressed:(UIButton *)sender {
-    ;
+    twitterVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+    [self presentModalViewController:twitterVC animated:YES];
+    //[KGO_SHARED_APP_DELEGATE() presentAppModalNavigationController:twitterVC animated:YES];
 }
 
 #pragma mark - View lifecycle
@@ -60,20 +56,10 @@
                                                  name:TwitterStatusDidUpdateNotification
                                                object:nil];
     
-    // TODO: don't hard code UI settings
-    _loginView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 70)];
-    _loginView.backgroundColor = [UIColor colorWithHexString:@"99CCFF"];
-    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(20, 20, 180, 30)] autorelease];
-    label.text = NSLocalizedString(@"You are not logged in", nil);
-    label.backgroundColor = [UIColor clearColor];
-    UIButton *loginButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [loginButton setTitle:NSLocalizedString(@"Log in", nil) forState:UIControlStateNormal];
-    [loginButton addTarget:self action:@selector(loginButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    loginButton.frame = CGRectMake(220, 20, 80, 30);
-    [_loginView addSubview:label];
-    [_loginView addSubview:loginButton];
-    
-    self.tableView.tableHeaderView = _loginView;
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Tweet"
+                                                                               style:UIBarButtonItemStyleDone
+                                                                              target:self
+                                                                              action:@selector(tweetButtonPressed:)] autorelease];
 }
 
 - (void)viewDidUnload
