@@ -36,6 +36,7 @@
 
 - (void)dealloc
 {
+    self.dataManager.delegate = nil;
     [_myEvents release];
     [super dealloc];
 }

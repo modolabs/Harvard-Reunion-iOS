@@ -157,6 +157,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     
     NSDictionary *attendeeDict = [self.attendees objectAtIndex:indexPath.row];
     cell.textLabel.text = [attendeeDict objectForKey:@"display_name"];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
 }

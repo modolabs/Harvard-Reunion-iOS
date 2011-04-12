@@ -69,7 +69,7 @@
 		<key>SectionHeaderGrouped</key>
 		<dict>
 			<key>color</key>
-			<string>#1A1611</string>
+			<string>#EBE7E3</string>
 			<key>font</key>
 			<string>Helvetica-Bold</string>
 			<key>size</key>
@@ -78,7 +78,7 @@
 		<key>SmallPrint</key>
 		<dict>
 			<key>color</key>
-			<string>#1A1611</string>
+			<string>#EBE7E3</string>
 			<key>size</key>
 			<integer>-3</integer>
 		</dict>
