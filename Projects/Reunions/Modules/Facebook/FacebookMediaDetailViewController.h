@@ -18,7 +18,7 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
     IBOutlet UIView *_buttonsBar;
     
     IBOutlet MediaContainerView *_mediaView;
-    IBOutlet UIImageView *_mediaImageView;
+    IBOutlet UIView *_mediaPreviewView;
     IBOutlet UIView *_mediaImageBackgroundView;
     
     NSArray *_comments;
@@ -28,9 +28,9 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
 @property(nonatomic, retain) FacebookParentPost *post;
 @property(nonatomic, retain) UITableView *tableView;
 @property(nonatomic, retain) NSString *moduleTag;
+@property(readonly) MediaContainerView *mediaView;
 
 
-- (void)setMediaImage:(UIImage *)image;
 
 - (IBAction)commentButtonPressed:(id)sender;
 - (IBAction)likeButtonPressed:(id)sender;

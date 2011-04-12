@@ -9,7 +9,22 @@
 @end
 
 @implementation MediaContainerView
-@synthesize imageView;
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if(self) {
+        _previewSize = CGSizeMake(0, 0);
+    }
+    return self;
+}
+
+- (id)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if(self) {
+        _previewSize = CGSizeMake(0, 0);
+    }
+    return self;
+}
 
 + (CGFloat)heightForImageSize:(CGSize)size fitToWidth:(CGFloat)width {
     CGFloat newHeight = size.height *  (width / size.width);
@@ -19,31 +34,49 @@
     return  newHeight;
 }
 
-- (void)setImage:(UIImage *)image {
-    self.imageView.image = image;
+/*
+ *  Only call this once this assumes the input view is already
+ *  part of the view heirarchy, and has the correct
+ *  frame and autoresizing property;
+ */
+- (void)initPreviewView:(UIView *)view {
+    _previewView = view;
+}
+
+- (void)setPreviewView:(UIView *)view {
+    CGRect frame = _previewView.frame;
+    view.frame = frame;
+    view.autoresizingMask = _previewView.autoresizingMask;
+    UIView *previewSuperView = [_previewView superview];
+    [_previewView removeFromSuperview];
+    _previewView = view;
+    [previewSuperView addSubview:_previewView];    
+}
+
+- (UIView *)previewView {
+    return _previewView;
+}
+
+- (void)setPreviewSize:(CGSize)size {
     
-    CGFloat newHeight;
-    if (image) {
-        newHeight = [MediaContainerView heightForImageSize:image.size 
-                                                   fitToWidth:self.imageView.frame.size.width];
-    } else {
-        newHeight = 0;
-    }
+    _previewSize = size;
+    CGFloat newHeight = [MediaContainerView heightForImageSize:size 
+                                                   fitToWidth:_previewView.frame.size.width];
     
     [self setFrame:self.frame withImageHeight:newHeight];
 }
 
 - (void)setFrame:(CGRect)frame withImageHeight:(CGFloat)height {
-    CGFloat deltaHeight = height - self.imageView.frame.size.height;
+    CGFloat deltaHeight = height - _previewView.frame.size.height;
     frame.size.height = frame.size.height + deltaHeight;
     [super setFrame:frame];
 }
 
 - (void)setFrame:(CGRect)frame {
-    if(self.imageView.image) {
+    if(_previewSize.width > 0) {
         CGFloat deltaWidth = frame.size.width - self.frame.size.width;
-        CGFloat newWidth = self.imageView.frame.size.width + deltaWidth;
-        CGFloat newHeight = [MediaContainerView heightForImageSize:self.imageView.image.size fitToWidth:newWidth];
+        CGFloat newWidth = _previewView.frame.size.width + deltaWidth;
+        CGFloat newHeight = [MediaContainerView heightForImageSize:_previewSize fitToWidth:newWidth];
         [self setFrame:frame withImageHeight:newHeight];
     } else {
         [super setFrame:frame];

@@ -14,9 +14,8 @@
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<string>IBProxyObject</string>
 			<string>IBUIBarButtonItem</string>
-			<string>IBUIImageView</string>
-			<string>IBUIToolbar</string>
 			<string>IBUIButton</string>
+			<string>IBUIToolbar</string>
 			<string>IBUISegmentedControl</string>
 			<string>IBUITableView</string>
 			<string>IBUIView</string>
@@ -62,6 +61,22 @@
 										<int key="NSvFlags">274</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
+											<object class="IBUIView" id="220154256">
+												<reference key="NSNextResponder" ref="845029506"/>
+												<int key="NSvFlags">274</int>
+												<string key="NSFrame">{{10, 10}, {460, 216}}</string>
+												<reference key="NSSuperview" ref="845029506"/>
+												<reference key="NSWindow"/>
+												<reference key="NSNextKeyView" ref="292828924"/>
+												<object class="NSColor" key="IBUIBackgroundColor">
+													<int key="NSColorSpace">3</int>
+													<bytes key="NSWhite">MQA</bytes>
+													<object class="NSColorSpace" key="NSCustomColorSpace" id="182904234">
+														<int key="NSID">2</int>
+													</object>
+												</object>
+												<string key="targetRuntimeIdentifier">IBIPadFramework</string>
+											</object>
 											<object class="IBUIView" id="292828924">
 												<reference key="NSNextResponder" ref="845029506"/>
 												<int key="NSvFlags">266</int>
@@ -174,29 +189,15 @@
 												<object class="NSColor" key="IBUIBackgroundColor">
 													<int key="NSColorSpace">3</int>
 													<bytes key="NSWhite">MQA</bytes>
-													<object class="NSColorSpace" key="NSCustomColorSpace">
-														<int key="NSID">2</int>
-													</object>
+													<reference key="NSCustomColorSpace" ref="182904234"/>
 												</object>
-												<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-											</object>
-											<object class="IBUIImageView" id="688728643">
-												<reference key="NSNextResponder" ref="845029506"/>
-												<int key="NSvFlags">274</int>
-												<string key="NSFrame">{{10, 10}, {460, 216}}</string>
-												<reference key="NSSuperview" ref="845029506"/>
-												<reference key="NSWindow"/>
-												<reference key="NSNextKeyView" ref="292828924"/>
-												<reference key="IBUIBackgroundColor" ref="303148431"/>
-												<int key="IBUIContentMode">1</int>
-												<bool key="IBUIUserInteractionEnabled">NO</bool>
 												<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 											</object>
 										</object>
 										<string key="NSFrame">{{5, 5}, {480, 285}}</string>
 										<reference key="NSSuperview" ref="515346578"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="688728643"/>
+										<reference key="NSNextKeyView" ref="220154256"/>
 										<reference key="IBUIBackgroundColor" ref="1022567284"/>
 										<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 									</object>
@@ -386,14 +387,6 @@
 					<int key="connectionID">33</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">_mediaImageView</string>
-						<reference key="source" ref="372490531"/>
-						<reference key="destination" ref="688728643"/>
-					</object>
-					<int key="connectionID">36</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">likeButtonPressed:</string>
 						<reference key="source" ref="792331816"/>
@@ -436,6 +429,14 @@
 						<reference key="destination" ref="845029506"/>
 					</object>
 					<int key="connectionID">44</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">_mediaPreviewView</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="220154256"/>
+					</object>
+					<int key="connectionID">46</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -526,15 +527,10 @@
 						<reference key="object" ref="845029506"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="688728643"/>
 							<reference ref="292828924"/>
+							<reference ref="220154256"/>
 						</object>
 						<reference key="parent" ref="515346578"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">35</int>
-						<reference key="object" ref="688728643"/>
-						<reference key="parent" ref="845029506"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">12</int>
@@ -568,6 +564,11 @@
 						<reference key="object" ref="792331816"/>
 						<reference key="parent" ref="292828924"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">45</int>
+						<reference key="object" ref="220154256"/>
+						<reference key="parent" ref="845029506"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -587,8 +588,8 @@
 					<string>17.IBPluginDependency</string>
 					<string>32.CustomClassName</string>
 					<string>32.IBPluginDependency</string>
-					<string>35.IBPluginDependency</string>
 					<string>4.IBPluginDependency</string>
+					<string>45.IBPluginDependency</string>
 					<string>5.CustomClassName</string>
 					<string>5.IBPluginDependency</string>
 					<string>7.IBPluginDependency</string>
@@ -631,7 +632,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">44</int>
+			<int key="maxID">46</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -694,7 +695,7 @@
 							<string>_commentButton</string>
 							<string>_likeButton</string>
 							<string>_mediaImageBackgroundView</string>
-							<string>_mediaImageView</string>
+							<string>_mediaPreviewView</string>
 							<string>_mediaView</string>
 							<string>_tableView</string>
 						</object>
@@ -705,7 +706,7 @@
 							<string>UIButton</string>
 							<string>UIButton</string>
 							<string>UIView</string>
-							<string>UIImageView</string>
+							<string>UIView</string>
 							<string>MediaContainerView</string>
 							<string>UITableView</string>
 						</object>
@@ -719,7 +720,7 @@
 							<string>_commentButton</string>
 							<string>_likeButton</string>
 							<string>_mediaImageBackgroundView</string>
-							<string>_mediaImageView</string>
+							<string>_mediaPreviewView</string>
 							<string>_mediaView</string>
 							<string>_tableView</string>
 						</object>
@@ -746,8 +747,8 @@
 								<string key="candidateClassName">UIView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">_mediaImageView</string>
-								<string key="candidateClassName">UIImageView</string>
+								<string key="name">_mediaPreviewView</string>
+								<string key="candidateClassName">UIView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">_mediaView</string>

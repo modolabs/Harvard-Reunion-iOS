@@ -10,12 +10,15 @@
 
 
 @interface MediaContainerView : UIView {
-    
+    CGSize _previewSize;
+    UIView *_previewView;
 }
 
-@property (nonatomic, retain) UIImageView *imageView;
+- (UIView *)previewView;
 
-- (void)setImage:(UIImage *)image;
+- (void)setPreviewSize:(CGSize)size;
+- (void)initPreviewView:(UIView *)view;
+- (void)setPreviewView:(UIView *)view;
 + (CGFloat)heightForImageSize:(CGSize)size fitToWidth:(CGFloat)width;
 
 @end

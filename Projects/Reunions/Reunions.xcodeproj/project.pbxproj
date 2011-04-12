@@ -18,6 +18,7 @@
 		4B1153CB135243D40097DAD9 /* MediaContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B1153CA135243D40097DAD9 /* MediaContainerView.m */; };
 		4B5B40B31350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B5B40B21350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib */; };
 		4BD36E0A134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BD36E09134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib */; };
+		4BDDE7E31353F9D400660FD1 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BDDE7E21353F9D400660FD1 /* MediaPlayer.framework */; };
 		A63DE7A7134F9F98001C52BF /* AddressBookUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A63DE7A6134F9F98001C52BF /* AddressBookUtils.m */; };
 		A6F2099D134E61CC009F597D /* ConnectModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20998134E61CC009F597D /* ConnectModule.m */; };
 		A6F2099E134E61CC009F597D /* ConnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F2099A134E61CC009F597D /* ConnectViewController.m */; };
@@ -278,6 +279,7 @@
 		4B1153CA135243D40097DAD9 /* MediaContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaContainerView.m; sourceTree = "<group>"; };
 		4B5B40B21350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "FacebookMediaDetailViewController-iPad.xib"; sourceTree = "<group>"; };
 		4BD36E09134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "FacebookMediaViewController-iPad.xib"; sourceTree = "<group>"; };
+		4BDDE7E21353F9D400660FD1 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		A63DE7A5134F9F98001C52BF /* AddressBookUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddressBookUtils.h; sourceTree = "<group>"; };
 		A63DE7A6134F9F98001C52BF /* AddressBookUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddressBookUtils.m; sourceTree = "<group>"; };
 		A6F20997134E61CC009F597D /* ConnectModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectModule.h; sourceTree = "<group>"; };
@@ -666,6 +668,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BDDE7E31353F9D400660FD1 /* MediaPlayer.framework in Frameworks */,
 				EB0CF934133FC924003B8E45 /* EventKit.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
@@ -723,6 +726,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4BDDE7E21353F9D400660FD1 /* MediaPlayer.framework */,
 				EB4C2CDE127F138100058748 /* libsqlite3.dylib */,
 				EB4C2CE0127F138900058748 /* CFNetwork.framework */,
 				296F9EDC110A0F5400EC8FCA /* AudioToolbox.framework */,
