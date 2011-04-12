@@ -165,11 +165,11 @@
     // TODO: sort by date or whatever
     NSArray *photos = [[CoreDataManager sharedManager] objectsForEntity:FacebookPhotoEntityName matchingPredicate:nil];
     for (FacebookPhoto *aPhoto in photos) {
-        //[_photosByID setObject:aPhoto forKey:aPhoto.identifier];
+        [_photosByID setObject:aPhoto forKey:aPhoto.identifier];
         NSLog(@"found cached photo %@", aPhoto.identifier);
-        //[self displayPhoto:aPhoto];
+        [self displayPhoto:aPhoto];
     }
-    [[CoreDataManager sharedManager] deleteObjects:photos];
+    //[[CoreDataManager sharedManager] deleteObjects:photos];
 }
 
 - (void)displayPhoto:(FacebookPhoto *)photo
@@ -395,8 +395,10 @@
     _label.text = photo.title;
     if (photo.thumbData) {
         _thumbnail.imageData = photo.thumbData;
+        [_thumbnail displayImage];
     } else if (photo.data) {
         _thumbnail.imageData = photo.data;
+        [_thumbnail displayImage];
     } else if (photo.thumbSrc) {
         _thumbnail.imageURL = photo.thumbSrc;
         [_thumbnail loadImage];
