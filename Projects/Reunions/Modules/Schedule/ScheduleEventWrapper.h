@@ -4,6 +4,8 @@
     
 }
 
+- (NSString *)placemarkID;
+
 - (BOOL)isRegistered;
 - (NSString *)registrationFee;
 - (NSString *)registrationURL;

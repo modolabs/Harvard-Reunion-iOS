@@ -11,7 +11,8 @@
         
         KGOPlacemark *place = [params objectForKey:@"place"];
         if (place) {
-            detailVC.placemark = place;
+            detailVC.annotation = place;
+            //detailVC.placemark = place;
         }
         id<KGODetailPagerController> controller = [params objectForKey:@"pagerController"];
         if (controller) {

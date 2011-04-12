@@ -2,10 +2,13 @@
 #import "KGOPlacemark.h"
 #import "KGOTheme.h"
 #import "KGOHTMLTemplate.h"
+#import "ScheduleEventWrapper.h"
+#import <MapKit/MKAnnotation.h>
 
 @implementation ReunionMapDetailViewController
 
-@synthesize placemark, pager;
+//@synthesize placemark,
+@synthesize annotation, pager;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -33,12 +36,14 @@
 
 - (void)pager:(KGODetailPager*)pager showContentForPage:(id<KGOSearchResult>)content {
     if ([content isKindOfClass:[KGOPlacemark class]]) {
-        self.placemark = (KGOPlacemark *)content;
+        //self.placemark = (KGOPlacemark *)content;
+        self.annotation = (id<MKAnnotation, KGOSearchResult>)content;
         
         _webViewHeight = 0;
         _thumbViewHeight = 0;
         
-        _headerView.detailItem = self.placemark;
+        //_headerView.detailItem = self.placemark;
+        _headerView.detailItem = self.annotation;
         [self.tableView reloadData];
     }
 }
@@ -66,7 +71,8 @@
         _headerView.delegate = self;
         _headerView.showsBookmarkButton = YES;
     }
-    _headerView.detailItem = self.placemark;
+    //_headerView.detailItem = self.placemark;
+    _headerView.detailItem = self.annotation;
     self.tableView.tableHeaderView = _headerView;
     
     _webViewHeight = 0;
@@ -147,15 +153,24 @@
         case 1:
         {
             MITThumbnailView *thumbView = (MITThumbnailView *)[cell.contentView viewWithTag:2];
-            if (!thumbView) {
-                thumbView = [[[MITThumbnailView alloc] initWithFrame:CGRectMake(10, 10, 1, 1)] autorelease];
-                thumbView.tag = 2;
-                thumbView.delegate = self;
-                [cell.contentView addSubview:thumbView];
+
+            UIImage *image = nil;
+            NSString *imageURL = nil;
+            if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
+                image = [UIImage imageWithData:[(KGOPlacemark *)self.annotation photo]];
+                imageURL = [(KGOPlacemark *)self.annotation photoURL];
+            } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]]) {
+                
             }
             
-            if (self.placemark.photo) {
-                UIImage *image = [UIImage imageWithData:self.placemark.photo];
+            if (image || imageURL) {
+                if (!thumbView) {
+                    thumbView = [[[MITThumbnailView alloc] initWithFrame:CGRectMake(10, 10, 1, 1)] autorelease];
+                    thumbView.tag = 2;
+                    thumbView.delegate = self;
+                    [cell.contentView addSubview:thumbView];
+                }
+
                 if (image) {
                     CGFloat maxWidth = tableView.frame.size.width - 40;
                     CGFloat ratio = maxWidth / image.size.width;
@@ -163,14 +178,23 @@
                     frame.size = CGSizeMake(floor(ratio * image.size.width), floor(ratio * image.size.height));
                     thumbView.frame = frame;
                     _thumbViewHeight = frame.size.height;
-                    thumbView.imageData = self.placemark.photo;
+                    thumbView.imageData = UIImagePNGRepresentation(image);
                     [thumbView displayImage];
+                    
+                } else {
+                    thumbView.imageURL = imageURL;
+                    [thumbView loadImage];
                 }
-                
-            } else if (self.placemark.photoURL) {
-                thumbView.imageURL = self.placemark.photoURL;
-                [thumbView loadImage];
-                
+            }
+            
+            NSString *info = nil;
+            if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
+                info = [(KGOPlacemark *)self.annotation info];
+
+            } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]]
+                       && [(ScheduleEventWrapper *)self.annotation placemarkID]
+            ) {
+                info = [NSString stringWithFormat:@"Building Number: %@", [(ScheduleEventWrapper *)self.annotation placemarkID]];
             }
             
             UIWebView *webView = (UIWebView *)[cell.contentView viewWithTag:1];
@@ -190,7 +214,7 @@
                 webView.frame = CGRectMake(10, y + 10, webView.frame.size.width, webView.frame.size.height);
             }
             
-            NSDictionary *replacements = [NSDictionary dictionaryWithObjectsAndKeys:self.placemark.info, @"BODY", nil];
+            NSDictionary *replacements = [NSDictionary dictionaryWithObjectsAndKeys:info, @"BODY", nil];
             NSString *string = [_htmlTemplate stringWithReplacements:replacements];
             [webView loadHTMLString:string baseURL:nil];
             break;
@@ -208,10 +232,12 @@
 {
     NSString *search = nil;
     
-    if (self.placemark.coordinate.latitude || self.placemark.coordinate.longitude) {
-        search = [NSString stringWithFormat:@"%.5f,%.5f", self.placemark.coordinate.latitude, self.placemark.coordinate.longitude];
-    } else if (self.placemark.street) {
-        search = self.placemark.street;
+    if (self.annotation.coordinate.latitude || self.annotation.coordinate.longitude) {
+        search = [NSString stringWithFormat:@"%.5f,%.5f", self.annotation.coordinate.latitude, self.annotation.coordinate.longitude];
+    } else if ([self.annotation isKindOfClass:[KGOPlacemark class]] && [(KGOPlacemark *)self.annotation street]) {
+        search = [(KGOPlacemark *)self.annotation street];
+    } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)self.annotation location]) {
+        search = [(ScheduleEventWrapper *)self.annotation location];
     }
     
     NSString *urlString = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%@", [search stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
@@ -243,18 +269,23 @@
 
 - (void)thumbnail:(MITThumbnailView *)thumbnail didLoadData:(NSData *)data
 {
-    if ([thumbnail.imageURL isEqualToString:self.placemark.photoURL]) {
-        self.placemark.photo = data;
+    if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
+        KGOPlacemark *placemark = (KGOPlacemark *)self.annotation;
         
-        UIImage *image = [UIImage imageWithData:data];
-        CGFloat maxWidth = self.view.frame.size.width - 40;
-        CGFloat ratio = maxWidth / image.size.width;
-        CGRect frame = thumbnail.frame;
-        frame.size = CGSizeMake(floor(ratio * image.size.width), floor(ratio * image.size.height));
-        thumbnail.frame = frame;
-        _thumbViewHeight = frame.size.height;
-        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1]
-                      withRowAnimation:UITableViewRowAnimationNone];
+        if ([thumbnail.imageURL isEqualToString:placemark.photoURL]) {
+            placemark.photo = data;
+            
+            UIImage *image = [UIImage imageWithData:data];
+            CGFloat maxWidth = self.view.frame.size.width - 40;
+            CGFloat ratio = maxWidth / image.size.width;
+            CGRect frame = thumbnail.frame;
+            frame.size = CGSizeMake(floor(ratio * image.size.width), floor(ratio * image.size.height));
+            thumbnail.frame = frame;
+            _thumbViewHeight = frame.size.height;
+            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1]
+                          withRowAnimation:UITableViewRowAnimationNone];
+        }
+        
     }
 }
 

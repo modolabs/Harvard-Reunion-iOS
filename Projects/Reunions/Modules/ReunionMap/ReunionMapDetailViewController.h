@@ -4,6 +4,7 @@
 #import "MITThumbnailView.h"
 #import "ReunionDetailPageHeaderView.h"
 
+@protocol MKAnnotation;
 @class KGOPlacemark, KGOHTMLTemplate;
 
 // not subclassing MapDetailViewController b/c we don't want a tabbed view
@@ -17,7 +18,8 @@ UIWebViewDelegate, KGODetailPageHeaderDelegate, MITThumbnailDelegate> {
     
 }
 
-@property(nonatomic, retain) KGOPlacemark *placemark;
+//@property(nonatomic, retain) KGOPlacemark *placemark;
+@property(nonatomic, retain) id<MKAnnotation, KGOSearchResult> annotation;
 @property(nonatomic, retain) KGODetailPager *pager;
 
 @end
