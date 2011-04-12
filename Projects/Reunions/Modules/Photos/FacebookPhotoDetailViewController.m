@@ -53,7 +53,11 @@
         [self requestImage:self.photo];
     }
     
-    [self setMediaImage:image];
+    UIImageView *imageView = [UIImageView new];
+    imageView.image = image;
+    imageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.mediaView setPreviewView:imageView];
+    [self.mediaView setPreviewSize:image.size];
     
     if (!self.photo.comments.count) {
         [self getCommentsForPost];
@@ -116,7 +120,8 @@
         if(image) {
             self.photo.data = data;
             [[CoreDataManager sharedManager] saveData];
-            [self setMediaImage:image];
+            UIImageView *imageView = (UIImageView *)self.mediaView.previewView;
+            imageView.image = [UIImage imageWithData:data];
         }
     }
     

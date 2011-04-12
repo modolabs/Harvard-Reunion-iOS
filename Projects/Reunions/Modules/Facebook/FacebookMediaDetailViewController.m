@@ -13,6 +13,7 @@
 @implementation FacebookMediaDetailViewController
 
 @synthesize post, posts, tableView = _tableView;
+@synthesize mediaView = _mediaView;
 @synthesize moduleTag;
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -147,16 +148,8 @@
         frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio
         _mediaView = [[[UIView alloc] initWithFrame:frame] autorelease];
     } 
-    
-    CGRect mediaFrame = _mediaView.frame;
-    if(!_mediaImageView) { 
-        _mediaImageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, mediaFrame.size.width - 10, mediaFrame.size.height - 10)];
-        _mediaImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        _mediaImageView.contentMode = UIViewContentModeScaleAspectFit;
-        [_mediaView addSubview:_mediaImageView];
-    }
-    
-    _mediaView.imageView = _mediaImageView;
+     
+    [_mediaView initPreviewView:_mediaPreviewView];
  
     // add drop show to image background
     if (_mediaImageBackgroundView) {
@@ -196,10 +189,6 @@
     [_tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
     
     _tableView.scrollEnabled = UIInterfaceOrientationIsPortrait(self.interfaceOrientation);
-}
-
-- (void)setMediaImage:(UIImage *)image {
-    [_mediaView setImage:image];
 }
     
 - (void)displayPost {
