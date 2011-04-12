@@ -198,6 +198,9 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 
 - (NSArray *)widgetViews {
     NSDictionary *settings = [[NSUserDefaults standardUserDefaults] objectForKey:KGOUserPreferencesKey];
+    if (!settings) {
+        settings = [[KGO_SHARED_APP_DELEGATE() appConfig] objectForKey:@"DefaultUserSettings"];
+    }
     NSArray *wantedWidgets = [settings arrayForKey:@"Widgets"];
     if (self.buttonWidget && [wantedWidgets containsObject:self.tag]) {
         return [NSArray arrayWithObjects:self.buttonWidget, self.chatBubble, nil];

@@ -32,16 +32,17 @@
             [_tableView reloadData];
             
         } else {
+            [fbModule requestStatusUpdates:nil];
             [[NSNotificationCenter defaultCenter] addObserver:self
                                                      selector:@selector(getGroupVideos)
-                                                         name:FacebookGroupReceivedNotification
+                                                         name:FacebookFeedDidUpdateNotification
                                                        object:nil];
         }
         
     } else {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(getGroupVideos)
-                                                     name:FacebookFeedDidUpdateNotification
+                                                     name:FacebookGroupReceivedNotification
                                                    object:nil];
     }
 }
