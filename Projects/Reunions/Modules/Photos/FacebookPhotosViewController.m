@@ -169,7 +169,7 @@
         NSLog(@"found cached photo %@", aPhoto.identifier);
         //[self displayPhoto:aPhoto];
     }
-    //[[CoreDataManager sharedManager] deleteObjects:photos];
+    [[CoreDataManager sharedManager] deleteObjects:photos];
 }
 
 - (void)displayPhoto:(FacebookPhoto *)photo
