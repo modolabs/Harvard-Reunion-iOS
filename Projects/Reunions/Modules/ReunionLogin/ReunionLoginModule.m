@@ -75,6 +75,7 @@
             frame.origin.x = 10;
             frame.origin.y = y;
             titleLabel.frame = frame;
+            titleLabel.textColor = [UIColor whiteColor];
             
         } else {
             UIFont *font = [UIFont boldSystemFontOfSize:IPAD_CURRENTUSER_FONT];
