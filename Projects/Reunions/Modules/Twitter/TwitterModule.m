@@ -103,15 +103,16 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
                                              selector:@selector(hideChatBubble:)
                                                  name:FacebookStatusDidUpdateNotification
                                                object:nil];
-    [self requestStatusUpdates:nil];
     
     if (!_twitterSearch) {
          // avoid warning about ConnectionWrapper which has the same signature
         _twitterSearch = [(TwitterSearch *)[TwitterSearch alloc] initWithDelegate:self];
     }
     
+    [self requestStatusUpdates:nil];
+    
     if (!_statusPoller) {
-        NSLog(@"scheduling timer...");
+        DLog(@"scheduling twitter timer...");
         NSTimeInterval interval = TWITTER_STATUS_POLL_FREQUENCY;
         _statusPoller = [[NSTimer timerWithTimeInterval:interval
                                                  target:self
@@ -149,7 +150,7 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
         _latestTweets = [results retain];
         
         NSDictionary *aTweet = [_latestTweets objectAtIndex:0];
-        NSLog(@"%@", aTweet);
+        DLog(@"received tweet %@", aTweet);
         NSString *title = [aTweet stringForKey:@"text" nilIfEmpty:YES];
         NSString *user = [aTweet stringForKey:@"from_user" nilIfEmpty:YES];
         NSString *dateString = [aTweet stringForKey:@"created_at" nilIfEmpty:YES];

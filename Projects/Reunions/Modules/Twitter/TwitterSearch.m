@@ -15,11 +15,17 @@
 }
 
 - (void)searchTwitterHashtag:(NSString *)hashtag {
-    if (_connection) {
+    if (_connection || !hashtag.length) {
         return;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"http://search.twitter.com/search.json?q=#%@&result_type=recent", hashtag];
+    if (![hashtag characterAtIndex:0] == '#') {
+        hashtag = [NSString stringWithFormat:@"#%@", hashtag];
+    }
+        
+    DLog(@"searching twitter for %@", hashtag);
+    
+    NSString *urlString = [NSString stringWithFormat:@"http://search.twitter.com/search.json?q=%@&result_type=recent", hashtag];
     urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     _connection = [[ConnectionWrapper alloc] initWithDelegate:self];
