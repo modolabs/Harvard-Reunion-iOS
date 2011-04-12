@@ -4,6 +4,7 @@ extern NSString * const FacebookStatusDidUpdateNotification;
 extern NSString * const TwitterStatusDidUpdateNotification;
 
 @class KGOHomeScreenWidget;
+@class MITThumbnailView;
 
 #define CHAT_BUBBLE_TAG 35892
 
@@ -14,6 +15,7 @@ extern NSString * const TwitterStatusDidUpdateNotification;
     
     UILabel *_chatBubbleTitleLabel;
     UILabel *_chatBubbleSubtitleLabel;
+    MITThumbnailView *_chatBubbleThumbnail;
     
 }
 
@@ -29,6 +31,7 @@ extern NSString * const TwitterStatusDidUpdateNotification;
 @property(nonatomic, readonly) KGOHomeScreenWidget *chatBubble;
 @property(nonatomic, readonly) UILabel *chatBubbleTitleLabel;
 @property(nonatomic, readonly) UILabel *chatBubbleSubtitleLabel;
+@property(nonatomic, readonly) MITThumbnailView *chatBubbleThumbnail;
 @property(nonatomic) CGFloat chatBubbleCaratOffset;
 
 @end

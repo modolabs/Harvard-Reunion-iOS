@@ -82,6 +82,24 @@
 			<key>size</key>
 			<integer>-3</integer>
 		</dict>
+		<key>ScrollTabSelected</key>
+		<dict>
+			<key>color</key>
+			<string>#FFFFFF</string>
+			<key>size</key>
+			<integer>-1</integer>
+			<key>bold</key>
+			<true/>
+		</dict>
+		<key>ScrollTab</key>
+		<dict>
+			<key>color</key>
+			<string>#FFFFFF</string>
+			<key>bold</key>
+			<true/>
+			<key>size</key>
+			<integer>-1</integer>
+		</dict>
 	</dict>
 	<key>HomeScreen</key>
 	<dict>

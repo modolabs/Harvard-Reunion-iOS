@@ -7,6 +7,7 @@
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "TwitterFeedViewController.h"
 #import "ReunionHomeModule.h"
+#import "MITThumbnailView.h"
 
 #define TWITTER_BUTTON_WIDTH_IPHONE 120
 #define TWITTER_BUTTON_HEIGHT_IPHONE 51
@@ -70,10 +71,15 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
+- (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params
+{
     UIViewController *vc = nil;
-    if ([pageName isEqualToString:LocalPathPageNameHome]) {
-        vc = [[[TwitterFeedViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] != KGONavigationStyleTabletSidebar) {
+        if ([pageName isEqualToString:LocalPathPageNameHome]) {
+            vc = [[[TwitterFeedViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
+        }
+    } else {
+        
     }
     return vc;
 }
@@ -96,7 +102,8 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
 
 #pragma mark polling
 
-- (void)startPollingStatusUpdates {
+- (void)startPollingStatusUpdates
+{
     [[KGOSocialMediaController sharedController] startupTwitter];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -154,6 +161,7 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
         NSString *title = [aTweet stringForKey:@"text" nilIfEmpty:YES];
         NSString *user = [aTweet stringForKey:@"from_user" nilIfEmpty:YES];
         NSString *dateString = [aTweet stringForKey:@"created_at" nilIfEmpty:YES];
+        NSString *imageURL = [aTweet stringForKey:@"profile_image_url" nilIfEmpty:YES];
         NSDate *date = [[self twitterDateFormatter] dateFromString:dateString];
         
         if (!_lastUpdate || [_lastUpdate compare:date] == NSOrderedAscending) {
@@ -162,6 +170,8 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
             self.chatBubble.hidden = NO;
             self.chatBubbleTitleLabel.text = title;
             self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:@"%@ at %@", user, [date agoString]];
+            self.chatBubbleThumbnail.imageURL = imageURL;
+            [self.chatBubbleThumbnail loadImage];
             [[NSNotificationCenter defaultCenter] postNotificationName:TwitterStatusDidUpdateNotification object:nil];
         }
     }

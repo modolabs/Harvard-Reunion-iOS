@@ -4,6 +4,7 @@
 #import "Foundation+KGOAdditions.h"
 #import "UIKit+KGOAdditions.h"
 #import "TwitterViewController.h"
+#import "MITThumbnailView.h"
 
 @implementation TwitterFeedViewController
 
@@ -119,28 +120,48 @@
     NSString *title = [aTweet stringForKey:@"text" nilIfEmpty:YES];
     NSString *user = [aTweet stringForKey:@"from_user" nilIfEmpty:YES];
     NSString *dateString = [aTweet stringForKey:@"created_at" nilIfEmpty:YES];
+    NSString *imageURL = [aTweet stringForKey:@"profile_image_url" nilIfEmpty:YES];
+    
+    MITThumbnailView *thumbView = [[[MITThumbnailView alloc] initWithFrame:CGRectMake(10, 10, 50, 50)] autorelease];
+    thumbView.imageURL = imageURL;
+    [thumbView loadImage];
+    
     NSDate *date = [[twitterModule twitterDateFormatter] dateFromString:dateString];
 
-    UIFont *titleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
-    UIFont *detailFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
-    CGFloat width = tableView.frame.size.width - 20;
-    
+    UIFont *titleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText];
+    UIFont *detailFont = [UIFont systemFontOfSize:12];
+    CGFloat width = tableView.frame.size.width - 20 - thumbView.frame.size.width;
+
+    // tweet text
     UILabel *titleLabel = [UILabel multilineLabelWithText:title
                                                      font:titleFont
                                                     width:width];
     CGRect frame = titleLabel.frame;
-    frame.origin.x = 5;
-    frame.origin.y = 5;
+    frame.origin.x = thumbView.frame.size.width + 20;
+    frame.origin.y = 10;
+    UIFont *userFont = [UIFont boldSystemFontOfSize:12];
+    CGSize size = [user sizeWithFont:userFont];
+    frame.size = size;
+
+    // username
+    UILabel *userLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
+    userLabel.font = userFont;
+    userLabel.text = user;
+    frame.origin.y += userLabel.frame.size.height + 2;
+
+    frame.size = titleLabel.frame.size;
     titleLabel.frame = frame;
 
-    frame.origin.y += titleLabel.frame.size.height + 10;
-    frame.size.height = detailFont.lineHeight + 4;
+    // tweet time
+    frame.origin.y += titleLabel.frame.size.height + 2;
+    frame.size.height = detailFont.lineHeight;
+
     UILabel *subtitleLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
-    subtitleLabel.text = [NSString stringWithFormat:@"%@ %@", user, [date agoString]];
+    subtitleLabel.text = [date agoString];
     subtitleLabel.font = detailFont;
     subtitleLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyNavListSubtitle];
     
-    return [NSArray arrayWithObjects:titleLabel, subtitleLabel, nil];
+    return [NSArray arrayWithObjects:thumbView, userLabel, titleLabel, subtitleLabel, nil];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

@@ -5,6 +5,7 @@
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "KGOHomeScreenViewController.h"
 #import "KGORequestManager.h"
+#import "MITThumbnailView.h"
 #import "Foundation+KGOAdditions.h"
 
 #define BUTTON_WIDTH_IPHONE 120
@@ -16,7 +17,7 @@
 #define BOTTOM_SHADOW_HEIGHT 8
 #define LEFT_SHADOW_WIDTH 5
 
-#define BUBBLE_HEIGHT_SIDEBAR 150
+#define BUBBLE_HEIGHT_SIDEBAR 160
 
 NSString * const FacebookStatusDidUpdateNotification = @"FacebookUpdate";
 NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
@@ -43,6 +44,11 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
     return _chatBubbleSubtitleLabel;
 }
 
+- (MITThumbnailView *)chatBubbleThumbnail
+{
+    return  _chatBubbleThumbnail;
+}
+
 - (KGOHomeScreenWidget *)chatBubble
 {
     if (!_chatBubble) {
@@ -64,10 +70,12 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 
         KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
         KGONavigationStyle navStyle = [appDelegate navigationStyle];
+        BOOL isTablet = (navStyle == KGONavigationStyleTabletSidebar);
+        
         KGOHomeScreenViewController *homeVC = (KGOHomeScreenViewController *)[appDelegate homescreen];
         CGRect bounds = homeVC.springboardFrame;
         
-        if (navStyle == KGONavigationStyleTabletSidebar) {
+        if (isTablet) {
             numberOfLinesForSubtitle = 2;
             frame = CGRectMake(5, bounds.size.height - BUBBLE_HEIGHT_SIDEBAR - BUTTON_HEIGHT_IPAD, 150, BUBBLE_HEIGHT_SIDEBAR);
             bubbleView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height - caratView.frame.size.height);
@@ -99,21 +107,31 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         NSLog(@"%@ %@", [caratView description], [bubbleView description]);
         
         CGFloat bubbleHPadding = 10;
-        CGFloat bubbleVPadding = 6;
-        frame = bubbleView.frame;
-        frame.origin.x = bubbleHPadding + bubbleView.frame.origin.x;
-        frame.origin.y = bubbleVPadding;
-        frame.size.width -= bubbleHPadding * 2;
-        frame.size.height = floor(bubbleView.frame.size.height * 0.6) - bubbleVPadding;
+        CGFloat bubbleVPadding = isTablet ? 8 : 6;
+        frame = CGRectMake(bubbleHPadding + bubbleView.frame.origin.x,
+                           bubbleVPadding,
+                           bubbleView.frame.size.width - bubbleHPadding * 2,
+                           floor(bubbleView.frame.size.height * (isTablet ? 0.5 : 0.6)) - bubbleVPadding);
+
         _chatBubbleTitleLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
         _chatBubbleTitleLabel.numberOfLines = 0;
         _chatBubbleTitleLabel.text = NSLocalizedString(@"Loading...", nil);
         _chatBubbleTitleLabel.font = [UIFont systemFontOfSize:13];
         _chatBubbleTitleLabel.backgroundColor = [UIColor clearColor];
         [_chatBubble addSubview:_chatBubbleTitleLabel];
+
+        frame.origin.y = frame.size.height + bubbleVPadding * 2;
+        frame.size.height = bubbleView.frame.size.height - frame.origin.y - bubbleVPadding * 2;
+
+        if (isTablet) {
+            CGFloat oldWidth = frame.size.width;
+            frame.size.width = frame.size.height;
+            _chatBubbleThumbnail = [[[MITThumbnailView alloc] initWithFrame:frame] autorelease];
+            [_chatBubble addSubview:_chatBubbleThumbnail];
+            frame.origin.x += frame.size.width + 10;
+            frame.size.width = oldWidth - frame.size.width - 10;
+        }
         
-        frame.origin.y = frame.origin.y + frame.size.height + bubbleVPadding;
-        frame.size.height = bubbleView.frame.size.height - frame.origin.y - bubbleVPadding;
         _chatBubbleSubtitleLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
         _chatBubbleSubtitleLabel.numberOfLines = numberOfLinesForSubtitle;
         _chatBubbleSubtitleLabel.font = [UIFont systemFontOfSize:12];
