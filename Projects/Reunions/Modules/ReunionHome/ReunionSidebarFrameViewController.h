@@ -6,6 +6,8 @@
     
     NSArray *_subclassPrimaryModules;
     NSArray *_subclassSecondaryModules;
+    
+    NSMutableArray *_hiddenRotatingWidgets;
 }
 
 @property(nonatomic, assign) ReunionHomeModule *homeModule;

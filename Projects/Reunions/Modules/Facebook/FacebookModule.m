@@ -80,8 +80,6 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
                                                  name:TwitterStatusDidUpdateNotification
                                                object:nil];
     
-    [self requestStatusUpdates:nil];
-    
     if (!_statusPoller) {
         NSLog(@"scheduling timer...");
         NSTimeInterval interval = FACEBOOK_STATUS_POLL_FREQUENCY;
@@ -103,7 +101,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 }
 
 - (void)requestStatusUpdates:(NSTimer *)aTimer {
-    NSLog(@"requesting status update");
+    DLog(@"requesting facebook status update");
     
     NSString *feedPath = [NSString stringWithFormat:@"%@/feed", _gid];
     [[KGOSocialMediaController sharedController] requestFacebookGraphPath:feedPath
