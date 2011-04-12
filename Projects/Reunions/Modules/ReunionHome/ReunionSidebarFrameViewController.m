@@ -1,8 +1,8 @@
-#import "ReunionHomeViewController.h"
+#import "ReunionSidebarFrameViewController.h"
 #import "ReunionHomeModule.h"
 #import "LoginModule.h"
 
-@implementation ReunionHomeViewController
+@implementation ReunionSidebarFrameViewController
 
 @synthesize homeModule;
 
@@ -13,6 +13,13 @@
     }
     
     [super loginDidComplete:aNotification];
+    
+    if (self.primaryModules.count) {
+        KGOModule *defaultModule = [self.primaryModules objectAtIndex:0];
+        [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome
+                               forModuleTag:defaultModule.tag
+                                     params:nil];
+    }
 }
 
 - (void)loadModules {

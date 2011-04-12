@@ -3,6 +3,7 @@
 
 #import "KGOSidebarFrameViewController.h"
 #import "ReunionHomeViewController.h"
+#import "ReunionSidebarFrameViewController.h"
 
 NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
 
@@ -32,6 +33,10 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
             ReunionHomeViewController *homeVC = [[[ReunionHomeViewController alloc] init] autorelease];
             homeVC.homeModule = self;
             return homeVC;
+        } else if (style == KGONavigationStyleTabletSidebar) {
+            ReunionSidebarFrameViewController *homeVC = [[[ReunionSidebarFrameViewController alloc] init] autorelease];
+            homeVC.homeModule = self;
+            return homeVC;
         }
     }
     return [super modulePage:pageName params:params];
@@ -49,6 +54,11 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
     return _homeScreenConfig;
 }
 
+- (NSArray *)moduleOrder
+{
+    return [NSArray arrayWithObjects:
+            @"schedule", @"map", @"photos", @"video", @"info", @"news", @"connect", @"notes", @"attendees", nil];
+}
 
 - (void)dealloc {
     [_homeScreenConfig release];

@@ -1,9 +1,9 @@
-#import "KGOPortletHomeViewController.h"
+#import "KGOSidebarFrameViewController.h"
 
 @class ReunionHomeModule;
 
-@interface ReunionHomeViewController : KGOPortletHomeViewController {
-
+@interface ReunionSidebarFrameViewController : KGOSidebarFrameViewController {
+    
     NSArray *_subclassPrimaryModules;
     NSArray *_subclassSecondaryModules;
 }

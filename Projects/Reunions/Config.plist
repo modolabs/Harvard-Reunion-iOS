@@ -54,11 +54,11 @@
 			<key>class</key>
 			<string>VideosModule</string>
 			<key>longName</key>
-			<string>Videos</string>
+			<string>Video</string>
 			<key>secondary</key>
 			<false/>
 			<key>shortName</key>
-			<string>Videos</string>
+			<string>Video</string>
 			<key>tag</key>
 			<string>video</string>
 		</dict>

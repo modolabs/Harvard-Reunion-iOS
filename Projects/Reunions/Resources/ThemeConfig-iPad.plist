@@ -12,14 +12,14 @@
 		<string>#333333</string>
 		<key>PrimaryCellBackground</key>
 		<string>#FFFFFF</string>
-		<key>ToolbarTintColor</key>
-		<string>#666666</string>
 		<key>SearchBarTintColor</key>
 		<string>#666666</string>
 		<key>SecondaryCellBackground</key>
 		<string>#FFFFFFAA</string>
 		<key>TableSeparator</key>
 		<string>#C0C0BF</string>
+		<key>ToolbarTintColor</key>
+		<string>#666666</string>
 	</dict>
 	<key>Fonts</key>
 	<dict>
@@ -50,10 +50,10 @@
 		</dict>
 		<key>NavListTitle</key>
 		<dict>
-			<key>color</key>
-			<string>#1A1611</string>
 			<key>bold</key>
 			<true/>
+			<key>color</key>
+			<string>#1A1611</string>
 			<key>size</key>
 			<integer>2</integer>
 		</dict>
@@ -130,6 +130,8 @@
 		<string>30 20</string>
 		<key>ShowsSearchBar</key>
 		<false/>
+		<key>ShowsSettingsInNavBar</key>
+		<true/>
 	</dict>
 	<key>Images</key>
 	<dict>
