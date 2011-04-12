@@ -48,7 +48,9 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
     if (!_chatBubble) {
         
         _chatBubble = [[KGOHomeScreenWidget alloc] initWithFrame:CGRectZero];
+        _chatBubble.module = self;
         _chatBubble.overlaps = YES;
+        _chatBubble.tag = CHAT_BUBBLE_TAG;
         
         UIImage *bubbleImage = [UIImage imageWithPathName:@"common/chatbubble-body"];
         bubbleImage = [bubbleImage stretchableImageWithLeftCapWidth:10 topCapHeight:10];
@@ -152,6 +154,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         _buttonWidget = [[KGOHomeScreenWidget alloc] initWithFrame:frame];
         _buttonWidget.gravity = KGOLayoutGravityBottomLeft;
         _buttonWidget.behavesAsIcon = YES;
+        _buttonWidget.module = self;
         
         UIImageView *imageView = [[[UIImageView alloc] initWithImage:self.buttonImage] autorelease];
         [_buttonWidget addSubview:imageView];

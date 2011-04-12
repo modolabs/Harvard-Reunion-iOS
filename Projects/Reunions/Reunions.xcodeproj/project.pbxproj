@@ -193,6 +193,7 @@
 		EB677E23132FF9CF00981523 /* FacebookPost.m in Sources */ = {isa = PBXBuildFile; fileRef = EB677E22132FF9CC00981523 /* FacebookPost.m */; };
 		EB677E261330043300981523 /* FacebookVideoDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB677E251330043300981523 /* FacebookVideoDetailViewController.m */; };
 		EB6D02A911E3784100B65CE3 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB6D02A811E3784100B65CE3 /* MapKit.framework */; };
+		EB7C98841353F78500FBFAAB /* ReunionSidebarFrameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB7C98831353F78400FBFAAB /* ReunionSidebarFrameViewController.m */; };
 		EB7F327F10CD6C5B00188BCD /* PeopleDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EB7F326A10CD6C5B00188BCD /* PeopleDataModel.xcdatamodeld */; };
 		EB7F328310CD6C5B00188BCD /* PeopleDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB7F327310CD6C5B00188BCD /* PeopleDetailsViewController.m */; };
 		EB7F328410CD6C5B00188BCD /* PeopleModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB7F327510CD6C5B00188BCD /* PeopleModule.m */; };
@@ -610,6 +611,8 @@
 		EB677E241330043300981523 /* FacebookVideoDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookVideoDetailViewController.h; sourceTree = "<group>"; };
 		EB677E251330043300981523 /* FacebookVideoDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookVideoDetailViewController.m; sourceTree = "<group>"; };
 		EB6D02A811E3784100B65CE3 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		EB7C98821353F78400FBFAAB /* ReunionSidebarFrameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReunionSidebarFrameViewController.h; sourceTree = "<group>"; };
+		EB7C98831353F78400FBFAAB /* ReunionSidebarFrameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionSidebarFrameViewController.m; sourceTree = "<group>"; };
 		EB7F327210CD6C5B00188BCD /* PeopleDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeopleDetailsViewController.h; sourceTree = "<group>"; };
 		EB7F327310CD6C5B00188BCD /* PeopleDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = PeopleDetailsViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB7F327410CD6C5B00188BCD /* PeopleModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeopleModule.h; sourceTree = "<group>"; };
@@ -1235,6 +1238,8 @@
 				EB46A15A134CCC9C005796E4 /* ReunionHomeModule.m */,
 				EB46A156134CC0C4005796E4 /* ReunionHomeViewController.h */,
 				EB46A157134CC0C4005796E4 /* ReunionHomeViewController.m */,
+				EB7C98821353F78400FBFAAB /* ReunionSidebarFrameViewController.h */,
+				EB7C98831353F78400FBFAAB /* ReunionSidebarFrameViewController.m */,
 			);
 			path = ReunionHome;
 			sourceTree = "<group>";
@@ -1856,6 +1861,7 @@
 				EB46A3E4134FAA60005796E4 /* KGOSplitViewController.m in Sources */,
 				EB46A60A13529894005796E4 /* KGOEventParticipant.m in Sources */,
 				EB46A60B13529894005796E4 /* KGOEventParticipantRelation.m in Sources */,
+				EB7C98841353F78500FBFAAB /* ReunionSidebarFrameViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

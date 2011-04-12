@@ -5,6 +5,8 @@ extern NSString * const TwitterStatusDidUpdateNotification;
 
 @class KGOHomeScreenWidget;
 
+#define CHAT_BUBBLE_TAG 35892
+
 @interface MicroblogModule : KGOModule {
     
     KGOHomeScreenWidget *_chatBubble;
