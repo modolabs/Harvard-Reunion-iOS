@@ -36,20 +36,49 @@
 
 - (void)showDetailViewController:(UIViewController *)viewController
 {
+    if (_detailViewController) {
+        [self hideDetailViewController];
+    }
+    
     _detailViewController = [viewController retain];
-    _detailViewController.view.frame = CGRectMake(_container.frame.size.width - DETAIL_VIEW_WIDTH - 10,
-                                                  _container.frame.size.height - DETAIL_VIEW_HEIGHT - 10,
-                                                  DETAIL_VIEW_WIDTH,
-                                                  DETAIL_VIEW_HEIGHT);
+    _detailViewController.view.frame = CGRectMake(self.view.bounds.size.width - 20,
+                                                  self.view.bounds.size.height - 20,
+                                                  10,
+                                                  10);
     _detailViewController.view.layer.cornerRadius = 5;
-    [_container addSubview:_detailViewController.view];
+    _detailViewController.view.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
+
+    [self.view addSubview:_detailViewController.view];
+
+    CGRect afterFrame = CGRectMake(self.view.bounds.size.width - DETAIL_VIEW_WIDTH - 10,
+                                   self.view.bounds.size.height - DETAIL_VIEW_HEIGHT - 10,
+                                   DETAIL_VIEW_WIDTH,
+                                   DETAIL_VIEW_HEIGHT);
+
+    [UIView animateWithDuration:0.4 animations:^(void) {
+        _detailViewController.view.frame = afterFrame;
+        
+    }];
 }
 
 - (void)hideDetailViewController
 {
-    [_detailViewController.view removeFromSuperview];
-    [_detailViewController release];
+    _outgoingDetailViewController = _detailViewController;
     _detailViewController = nil;
+    
+    CGRect afterFrame = CGRectMake(self.view.bounds.size.width - 20,
+                                   self.view.bounds.size.height - 20,
+                                   10,
+                                   10);
+    
+    [UIView animateWithDuration:0.4 animations:^(void) {
+        _outgoingDetailViewController.view.frame = afterFrame;
+        
+    } completion:^(BOOL finished) {
+        [_outgoingDetailViewController.view removeFromSuperview];
+        [_outgoingDetailViewController release];
+        _outgoingDetailViewController = nil;
+    }];
 }
 
 - (UIViewController *)visibleViewController {
