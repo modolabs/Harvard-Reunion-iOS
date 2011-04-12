@@ -1,6 +1,9 @@
 #import "ReunionSidebarFrameViewController.h"
 #import "ReunionHomeModule.h"
 #import "LoginModule.h"
+#import "KGOHomeScreenWidget.h"
+#import "TwitterModule.h"
+#import "FacebookModule.h"
 
 @implementation ReunionSidebarFrameViewController
 
@@ -73,6 +76,53 @@
 - (NSArray *)secondaryModules
 {
     return _subclassSecondaryModules;
+}
+
+- (void)refreshWidgets
+{
+    [super refreshWidgets];
+    
+    for (KGOHomeScreenWidget *aWidget in [self widgetViews]) {
+        if ([aWidget.module isKindOfClass:[FacebookModule class]]) {
+            CGRect frame = aWidget.frame;
+            if (UIInterfaceOrientationIsPortrait([self interfaceOrientation])) {
+                frame.origin.x = 10;
+            } else {
+                frame.origin.x = self.view.bounds.size.width - frame.size.width * 2 - 6 * 2;
+            }
+            frame.origin.y = self.view.bounds.size.height - frame.size.height;
+            aWidget.frame = frame;
+            
+        } else if ([aWidget.module isKindOfClass:[TwitterModule class]]) {
+            CGRect frame = aWidget.frame;
+            if (UIInterfaceOrientationIsPortrait([self interfaceOrientation])) {
+                frame.origin.x = frame.size.width + 6 * 2;
+            } else {
+                frame.origin.x = self.view.bounds.size.width - frame.size.width - 6;
+            }
+            frame.origin.y = self.view.bounds.size.height - frame.size.height;
+            aWidget.frame = frame;
+        }
+    }
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    for (KGOHomeScreenWidget *aWidget in [self widgetViews]) {
+        if ([aWidget.module isKindOfClass:[MicroblogModule class]]) {
+            aWidget.hidden = YES;
+        }
+    }
+    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+    for (KGOHomeScreenWidget *aWidget in [self widgetViews]) {
+        if ([aWidget.module isKindOfClass:[MicroblogModule class]] && aWidget.tag != CHAT_BUBBLE_TAG) {
+            aWidget.hidden = NO;
+        }
+    }
 }
 
 @end

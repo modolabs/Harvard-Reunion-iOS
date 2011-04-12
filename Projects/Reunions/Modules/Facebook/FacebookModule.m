@@ -292,7 +292,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 }
 
 #pragma mark View on home screen
-
+/*
 - (KGOHomeScreenWidget *)buttonWidget {
     KGOHomeScreenWidget *widget = [super buttonWidget];
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
@@ -300,7 +300,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     }
     return widget;
 }
-
+*/
 #pragma mark Social media controller
 
 - (NSSet *)socialMediaTypes {

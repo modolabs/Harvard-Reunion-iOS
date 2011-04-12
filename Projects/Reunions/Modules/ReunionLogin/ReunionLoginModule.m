@@ -50,10 +50,10 @@
             CGSize size = [subtitle sizeWithFont:font constrainedToSize:widget.frame.size];
             frame = CGRectMake(10, y, size.width, size.height);
         } else {
+            subtitle = [NSString stringWithFormat:@"%@ : ", subtitle];
             font = [UIFont boldSystemFontOfSize:IPAD_CURRENTUSER_FONT];
             CGSize size = [subtitle sizeWithFont:font];
             frame = CGRectMake(0, 0, size.width, size.height);
-            subtitle = [NSString stringWithFormat:@" : %@", subtitle];
         }
         
         subtitleLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
@@ -89,9 +89,9 @@
             CGFloat width = titleLabel.frame.size.width;
             if (subtitleLabel) {
                 width += subtitleLabel.frame.size.width;
-                CGRect subtitleFrame = subtitleLabel.frame;
-                subtitleFrame.origin.x += titleLabel.frame.size.width;
-                subtitleLabel.frame = subtitleFrame;
+                CGRect titleFrame = titleLabel.frame;
+                titleFrame.origin.x += subtitleLabel.frame.size.width;
+                titleLabel.frame = titleFrame;
             }
         }
         
@@ -108,6 +108,7 @@
         frame.origin.x = floorf((outerFrame.size.width - frame.size.width) / 2);
         
         widget.frame = frame;
+        widget.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         widget.overlaps = YES;
     }
     
