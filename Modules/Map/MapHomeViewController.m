@@ -96,6 +96,12 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapTypeDidChange:) name:MapTypePreferenceChanged object:nil];
 
     [self setupToolbarButtons];
+    if (_toolbarDropShadow) {
+        UIImage *image = [[KGOTheme sharedTheme] backgroundImageForSearchBarDropShadow];
+        if (image) {
+            _toolbarDropShadow.image = image;
+        }
+    }
 
     // set up search bar
     _searchBar.placeholder = NSLocalizedString(@"Map Search Placeholder", nil);
@@ -124,6 +130,8 @@
 }
 
 - (void)viewDidUnload {
+    [_toolbarDropShadow release];
+    _toolbarDropShadow = nil;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -133,6 +141,7 @@
 - (void)dealloc {
     [_annotations release];
 	[_searchController release];
+    [_toolbarDropShadow release];
     [super dealloc];
 }
 
@@ -226,7 +235,7 @@
     KGOBookmarksViewController *vc = [[[KGOBookmarksViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
     vc.bookmarkedItems = array;
     vc.searchResultsDelegate = self;
-    // TODO: don't wrap in a nav controller for navstyles with no navigation controllers
+
     UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
     UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                            target:self
@@ -240,7 +249,7 @@
 	MapSettingsViewController *vc = [[[MapSettingsViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
     vc.title = @"Settings";
     vc.view.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
-    // TODO: don't wrap in a nav controller for navstyles with no navigation controllers
+
     UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
     UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                            target:self
