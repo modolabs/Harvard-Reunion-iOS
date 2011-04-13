@@ -85,7 +85,7 @@
 		<key>ScrollTab</key>
 		<dict>
 			<key>color</key>
-			<string>#FFFFFF</string>
+			<string>#f2e2e3</string>
 			<key>bold</key>
 			<true/>
 			<key>size</key>
