@@ -97,6 +97,12 @@
 
 #pragma mark - Table view data source
 
+- (CellManipulator)tableView:(UITableView *)tableView manipulatorForCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [[^(UITableViewCell *cell) {
+        cell.selectionStyle = UITableViewCellEditingStyleNone;
+    } copy] autorelease];
+}
 
 - (NSArray *)tableView:(UITableView *)tableView viewsForCellAtIndexPath:(NSIndexPath *)indexPath
 {
