@@ -3,11 +3,10 @@
 @interface ScheduleDetailTableView : EventDetailTableView {
     
     UIButton *_foursquareButton;
-    UIButton *_facebookButton;
+    UILabel *_checkinLabel;
     
 }
 
 - (void)foursquareButtonPressed:(id)sender;
-- (void)facebookButtonPressed:(id)sender;
 
 @end

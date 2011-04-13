@@ -133,11 +133,36 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
     id result = [parser objectWithData:_data];
     
     if ([result isKindOfClass:[NSDictionary class]]) {
-        NSLog(@"%@", [result description]);
-        [self.delegate foursquareRequest:self didSucceedWithResponse:result];
+        DLog(@"%@", [result description]);
+        id errorInfo = [result objectForKey:@"error"];
+        if (errorInfo) {
+            NSError *error = [NSError errorWithDomain:@"com.modolabs.foursquareEngine" code:1 userInfo:errorInfo];
+            [self.delegate foursquareRequest:self didFailWithError:error];
+            
+        } else {
+            [self.delegate foursquareRequest:self didSucceedWithResponse:result];
+        }
+        
     } else {
         NSLog(@"received result that was not a dictionary: %@", [result description]);
     }
+    
+    [_connection release];
+    _connection = nil;
+    [_data release];
+    _data = nil;
+}
+
+- (void)dealloc
+{
+    if (_connection) {
+        [_connection cancel];
+    }
+    [_httpMethod release];
+    [_postParams release];
+    [_data release];
+    
+    [super dealloc];
 }
 
 @end
@@ -163,6 +188,10 @@ static NSString * const FoursquareOAuthTokenKey = @"4squareToken";
 
 - (void)authorize
 {
+    if (!self.clientID) {
+        NSLog(@"foursquare client ID not set");
+    }
+    
     NSString *internalScheme = [KGO_SHARED_APP_DELEGATE() defaultURLScheme];
     
     if (internalScheme) {
@@ -184,6 +213,10 @@ static NSString * const FoursquareOAuthTokenKey = @"4squareToken";
 
 - (void)requestOAuthToken
 {
+    if (!self.clientSecret) {
+        NSLog(@"foursquare client secret not set");
+    }
+    
     NSString *urlString = [NSString stringWithFormat:@"https://foursquare.com/oauth2/access_token"
                            "?client_id=%@"
                            "&client_secret=%@"
@@ -195,7 +228,7 @@ static NSString * const FoursquareOAuthTokenKey = @"4squareToken";
                            self.redirectURI,
                            self.authCode];
     
-    _oauthRequest = [self requestWithDelegate:self];
+    _oauthRequest = [[self requestWithDelegate:self] retain];;
     [_oauthRequest requestFromURL:urlString];
 }
 
@@ -241,6 +274,9 @@ static NSString * const FoursquareOAuthTokenKey = @"4squareToken";
 
 - (void)foursquareRequest:(KGOFoursquareRequest *)request didFailWithError:(NSError *)error
 {
+    [_oauthRequest release];
+    _oauthRequest = nil;
+    
     NSLog(@"request failed with error: %@", [error description]);
 }
 
