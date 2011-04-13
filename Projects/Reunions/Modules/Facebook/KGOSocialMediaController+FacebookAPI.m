@@ -29,6 +29,13 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
 
 @implementation KGOSocialMediaController (FacebookAPI)
 
+- (NSString *)imageURLForGraphObject:(NSString *)graphID
+{
+    NSString *urlString = [NSString stringWithFormat:
+                           @"https://graph.facebook.com/%@/picture?access_token=%@",
+                           graphID, _facebook.accessToken];
+    return urlString;
+}
 
 - (BOOL)queueFacebookRequest:(FBRequest *)request withReceiver:(id)receiver callback:(SEL)callback {
     if ([receiver respondsToSelector:callback]) {

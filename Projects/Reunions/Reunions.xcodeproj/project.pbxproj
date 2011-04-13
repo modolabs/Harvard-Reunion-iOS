@@ -199,6 +199,7 @@
 		EB7F328410CD6C5B00188BCD /* PeopleModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB7F327510CD6C5B00188BCD /* PeopleModule.m */; };
 		EB7F32D310CD6FB300188BCD /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB7F32D210CD6FB300188BCD /* AddressBook.framework */; };
 		EB7F32D710CD6FBB00188BCD /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB7F32D610CD6FBB00188BCD /* AddressBookUI.framework */; };
+		EB85A55A13551E96002E966E /* FacebookFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB85A55913551E96002E966E /* FacebookFeedViewController.m */; };
 		EB8BF5951333DC07009ED854 /* TwitterFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8BF5941333DC07009ED854 /* TwitterFeedViewController.m */; };
 		EB913B841347CC7F00D2EEF6 /* dev_server.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EB913B7E1347CC7F00D2EEF6 /* dev_server.xcconfig */; };
 		EB913B851347CC7F00D2EEF6 /* kurogo.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EB913B7F1347CC7F00D2EEF6 /* kurogo.xcconfig */; };
@@ -619,6 +620,8 @@
 		EB7F327510CD6C5B00188BCD /* PeopleModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeopleModule.m; sourceTree = "<group>"; };
 		EB7F32D210CD6FB300188BCD /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		EB7F32D610CD6FBB00188BCD /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		EB85A55813551E96002E966E /* FacebookFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookFeedViewController.h; sourceTree = "<group>"; };
+		EB85A55913551E96002E966E /* FacebookFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookFeedViewController.m; sourceTree = "<group>"; };
 		EB8BF5931333DC07009ED854 /* TwitterFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterFeedViewController.h; sourceTree = "<group>"; };
 		EB8BF5941333DC07009ED854 /* TwitterFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TwitterFeedViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB913B7E1347CC7F00D2EEF6 /* dev_server.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = dev_server.xcconfig; sourceTree = "<group>"; };
@@ -1203,6 +1206,8 @@
 				EB677E08132FD4AF00981523 /* FacebookMediaDetailViewController.m */,
 				EB677E09132FD4AF00981523 /* FacebookMediaDetailViewController.xib */,
 				4B5B40B21350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib */,
+				EB85A55813551E96002E966E /* FacebookFeedViewController.h */,
+				EB85A55913551E96002E966E /* FacebookFeedViewController.m */,
 				4B1153C9135243D40097DAD9 /* MediaContainerView.h */,
 				4B1153CA135243D40097DAD9 /* MediaContainerView.m */,
 			);
@@ -1862,6 +1867,7 @@
 				EB46A60A13529894005796E4 /* KGOEventParticipant.m in Sources */,
 				EB46A60B13529894005796E4 /* KGOEventParticipantRelation.m in Sources */,
 				EB7C98841353F78500FBFAAB /* ReunionSidebarFrameViewController.m in Sources */,
+				EB85A55A13551E96002E966E /* FacebookFeedViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

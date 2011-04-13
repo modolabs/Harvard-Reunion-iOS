@@ -73,6 +73,7 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+// TODO: possibly move this into MicroblogModule
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params
 {
     UIViewController *vc = nil;

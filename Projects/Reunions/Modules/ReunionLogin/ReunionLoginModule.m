@@ -24,7 +24,7 @@
         KGOHomeScreenViewController *homeVC = (KGOHomeScreenViewController *)[appDelegate homescreen];
         frame = [homeVC springboardFrame];
         UIImage *image = [UIImage imageWithPathName:@"modules/home/ribbon"];
-        frame = CGRectMake(10, 10, frame.size.width - image.size.width - 20, 90);
+        frame = CGRectMake(10, 10, frame.size.width - image.size.width - 30, 90);
     } else {
         frame = CGRectZero;
     }

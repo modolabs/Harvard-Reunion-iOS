@@ -1,6 +1,5 @@
 #import "FacebookModule.h"
-#import "FacebookPhotosViewController.h"
-#import "KGOSocialMediaController.h"
+#import "KGOSocialMediaController+FacebookAPI.h"
 #import "KGOHomeScreenWidget.h"
 #import "KGOTheme.h"
 #import "UIKit+KGOAdditions.h"
@@ -8,6 +7,7 @@
 #import "FacebookUser.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "ReunionHomeModule.h"
+#import "FacebookFeedViewController.h"
 
 #define FACEBOOK_STATUS_POLL_FREQUENCY 60
 
@@ -255,13 +255,17 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 #pragma mark -
 
-- (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
+- (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params
+{
     UIViewController *vc = nil;
-    if ([pageName isEqualToString:LocalPathPageNameHome]) {
-        vc = [[[FacebookPhotosViewController alloc] init] autorelease];
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] != KGONavigationStyleTabletSidebar) {
+        if ([pageName isEqualToString:LocalPathPageNameHome]) {
+            vc = [[[FacebookFeedViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
+        }
     }
     return vc;
 }
+
 /*
 - (void)launch {
     [super launch];

@@ -32,6 +32,7 @@ extern NSString * const FacebookDidGetSelfInfoNotification;
             message:(NSString *)caption
            delegate:(id<FacebookUploadDelegate>)delegate;
 
+- (NSString *)imageURLForGraphObject:(NSString *)graphID;
 
 - (void)disconnectFacebookRequests:(id)receiver;
 
