@@ -102,6 +102,10 @@
         }
         
     } else if (_foursquareButton) {
+        [_checkinLabel removeFromSuperview];
+        [_checkinLabel release];
+        _checkinLabel = nil;
+        
         [_foursquareButton removeFromSuperview];
         [_foursquareButton release];
         _foursquareButton = nil;
@@ -248,7 +252,13 @@
 
 - (void)dealloc
 {
+    [[[KGOSocialMediaController sharedController] foursquareEngine] disconnectRequestsForDelegate:self];
+
     [_foursquareButton release];
+    //_foursquareButton = nil;
+    [_foursquareVenue release];
+    [_checkinLabel release];
+    
     [super dealloc];
 }
 

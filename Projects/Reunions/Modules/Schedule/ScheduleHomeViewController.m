@@ -191,26 +191,19 @@
         
         NSArray *eventsForSection = [_currentEventsBySection objectForKey:[_currentSections objectAtIndex:indexPath.section]];
         
-        BOOL needsFakeBorder = NO;
-        BOOL isLastInSection = NO;
-        BOOL isLastInTable = NO;
         if (_selectedIndexPath && indexPath.section == _selectedIndexPath.section) {
             if (indexPath.row == _selectedIndexPath.row) {
-                needsFakeBorder = YES;
                 cellType = ScheduleCellSelected;
             
             } else if (indexPath.row == _selectedIndexPath.row - 1) {
-                needsFakeBorder = YES;
                 cellType = ScheduleCellAboveSelectedRow;
             }
             
         } else if (indexPath.row == eventsForSection.count - 1) {
             if (indexPath.section == _currentSections.count - 1) {
-                isLastInTable = YES;
                 cellType = ScheduleCellLastInTable;
             
             } else {
-                isLastInSection = YES;
                 cellType = ScheduleCellLastInSection;
             }
         }

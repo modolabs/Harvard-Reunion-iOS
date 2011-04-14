@@ -91,6 +91,8 @@ typedef enum {
 - (void)checkinVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate;
 - (void)checkUserStatusForVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate;
 
+- (void)disconnectRequestsForDelegate:(id<KGOFoursquareCheckinDelegate>)delegate;
+
 - (void)authorize;
 - (void)requestOAuthToken;
 - (void)logout;

@@ -105,7 +105,11 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
             
         } else {
             NSDictionary *response = [result dictionaryForKey:@"response"];
-            [self.delegate foursquareRequest:self didSucceedWithResponse:response];
+            if (response) {
+                [self.delegate foursquareRequest:self didSucceedWithResponse:response];
+            } else {
+                [self.delegate foursquareRequest:self didSucceedWithResponse:result];
+            }
         }
         
     } else {
@@ -177,7 +181,7 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     request.resourceName = @"checkins";
     request.command = @"add";
     
-    NSMutableDictionary *mutableParams = [request.params mutableCopy];
+    NSMutableDictionary *mutableParams = [[request.params mutableCopy] autorelease];
     
     [mutableParams setObject:venue forKey:@"venueId"];
     
@@ -400,7 +404,11 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
                 NSArray *items = [checkinDict arrayForKey:@"items"];
                 NSString *checkedInVenueID = nil;
                 NSString *targetVenue = [currentPair.userData objectForKey:@"venue"];
+                
+                // TODO:
+                if (!targetVenue) return;
                 NSLog(@"%@", currentPair.userData);
+                
                 for (NSDictionary *itemDict in items) {
                     NSDictionary *venue = [itemDict dictionaryForKey:@"venue"];
                     NSString *venueID = [venue stringForKey:@"id" nilIfEmpty:YES];
@@ -439,6 +447,19 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     NSLog(@"request failed with error: %@", [error description]);
 }
 
+- (void)disconnectRequestsForDelegate:(id<KGOFoursquareCheckinDelegate>)delegate
+{
+    NSMutableArray *removed = [NSMutableArray array];
+    for (KGOFoursquareCheckinPair *aPair in _checkinQueue) {
+        if (aPair.delegate == delegate) {
+            aPair.delegate = nil;
+            [removed addObject:aPair];
+        }
+    }
+    for (KGOFoursquareCheckinPair *aPair in removed) {
+        [_checkinQueue removeObject:aPair];
+    }
+}
 
 - (void)dealloc
 {
