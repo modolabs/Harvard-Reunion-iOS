@@ -116,14 +116,16 @@ CustomBumpUITags;
  */
 - (void)bumpMatched:(Bumper*)bumper
 {
+    NSString *message = [NSString stringWithFormat:
+                         @"Do you want to connect with %@?", 
+                         [bumper userName]];
+    
     UIAlertView *alertView = 
-    [[UIAlertView alloc] 
-     initWithTitle:@"Connection made"
-     message:[NSString stringWithFormat:@"Do you want to connect with %@?", 
-              [bumper userName]] 
-     delegate:self 
-     cancelButtonTitle:@"Cancel" 
-     otherButtonTitles:@"Connect", nil];
+    [[[UIAlertView alloc] initWithTitle:@"Connection made"
+                                message:message
+                               delegate:self 
+                      cancelButtonTitle:@"Cancel" 
+                      otherButtonTitles:@"Connect", nil] autorelease];
     [alertView show];
 }
 
