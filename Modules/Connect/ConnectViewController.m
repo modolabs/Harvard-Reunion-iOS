@@ -523,7 +523,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
      otherButtonTitles:@"Connect", nil];
     alertView.tag = kBumpConnectRequestAlertTag;
     [alertView show];
-    
+    [alertView release];
     [self updateStatus:kBumpStatusConnectedToPerson andMessage:nil];
 }
 
