@@ -20,11 +20,10 @@
     
     // times
     NSTimeInterval startTimestamp = [dictionary floatForKey:@"start"];
-    if (startTimestamp) {
-        self.startDate = [NSDate dateWithTimeIntervalSince1970:startTimestamp];
-    }
+    self.startDate = [NSDate dateWithTimeIntervalSince1970:startTimestamp];
+
     NSTimeInterval endTimestamp = [dictionary floatForKey:@"end"];
-    if (endTimestamp) {
+    if (endTimestamp > startTimestamp) {
         self.endDate = [NSDate dateWithTimeIntervalSince1970:endTimestamp];
     }
     NSNumber *allDay = [dictionary objectForKey:@"allday"];

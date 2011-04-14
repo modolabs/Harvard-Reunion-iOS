@@ -248,7 +248,7 @@
     } else {
         picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     }
-    [KGO_SHARED_APP_DELEGATE() presentAppModalViewController:picker animated:YES];
+    [self presentModalViewController:picker animated:YES];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -268,7 +268,7 @@
 }
 
 - (void)uploadDidComplete:(FacebookPost *)result {
-    [KGO_SHARED_APP_DELEGATE() dismissAppModalViewControllerAnimated:YES];    
+    [self dismissModalViewControllerAnimated:YES];    
     
     FacebookPhoto *photo = (FacebookPhoto *)result;
     [_photosByID setObject:photo forKey:photo.identifier];

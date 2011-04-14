@@ -35,7 +35,6 @@
     TwitterViewController *twitterVC = [[[TwitterViewController alloc] init] autorelease];
     twitterVC.modalPresentationStyle = UIModalPresentationCurrentContext;
     [self presentModalViewController:twitterVC animated:YES];
-    //[KGO_SHARED_APP_DELEGATE() presentAppModalNavigationController:twitterVC animated:YES];
 }
 
 #pragma mark - View lifecycle
