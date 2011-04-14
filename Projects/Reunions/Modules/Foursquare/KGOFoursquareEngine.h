@@ -25,18 +25,18 @@ typedef enum {
     NSURLConnection *_connection;
     NSMutableData *_data;
     
-    NSString *_httpMethod;
     BOOL _isPostRequest;
     NSDictionary *_postParams;
 
 }
 
-- (void)checkinToVenueID:(NSString *)venueID broadcastLevel:(NSUInteger)level message:(NSString *)message;
-- (void)requestCheckinsForVenueID:(NSString *)venueID;
 - (void)requestFromURL:(NSString *)urlString;
+- (void)connect;
 
 - (NSString *)fullURLString;
 
+@property(nonatomic) BOOL isPostRequest;
+@property(nonatomic, retain) NSDictionary *postParams;
 @property(nonatomic, retain) NSString *resourceName;
 @property(nonatomic, retain) NSString *resourceID;
 @property(nonatomic, retain) NSString *command;
@@ -46,12 +46,24 @@ typedef enum {
 @end
 
 
+@protocol KGOFoursquareCheckinDelegate <NSObject>
+
+@optional
+
+- (void)venueCheckinDidSucceed:(NSString *)venue;
+- (void)venueCheckinDidFail:(NSString *)venue;
+- (void)venueCheckinStatusReceived:(BOOL)status forVenue:(NSString *)venue;
+
+@end
+
 
 
 @interface KGOFoursquareEngine : NSObject <KGOFoursquareRequestDelegate> {
     
     NSString *_oauthToken;
     KGOFoursquareRequest *_oauthRequest;
+    
+    NSMutableArray *_checkinQueue;
     
 }
 
@@ -63,10 +75,21 @@ typedef enum {
 // the tag "foursquare".  anything else will not work right now.
 @property(nonatomic, retain) NSString *redirectURI;
 
+- (KGOFoursquareRequest *)checkinRequestWithDelegate:(id<KGOFoursquareRequestDelegate>)delegate
+                                               venue:(NSString *)venue
+                                      broadcastLevel:(NSUInteger)level
+                                             message:(NSString *)message;
 
+- (KGOFoursquareRequest *)herenowRequestWithDelegate:(id<KGOFoursquareRequestDelegate>)delegate
+                                               venue:(NSString *)venue;
 
+- (KGOFoursquareRequest *)queryCheckinsRequestWithDelegate:(id<KGOFoursquareRequestDelegate>)delegate;
 
 - (KGOFoursquareRequest *)requestWithDelegate:(id<KGOFoursquareRequestDelegate>)delegate;
+
+// no message and broadcast "public"
+- (void)checkinVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate;
+- (void)checkUserStatusForVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate;
 
 - (void)authorize;
 - (void)requestOAuthToken;

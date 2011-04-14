@@ -10,14 +10,37 @@
 
 @implementation ScheduleDetailTableView
 
+- (BOOL)shouldShowFoursquareButton
+{
+    return [_event isKindOfClass:[ScheduleEventWrapper class]]
+        && [(ScheduleEventWrapper *)_event foursquareID]
+        && [[KGORequestManager sharedManager] isReachable];
+}
+
 - (void)foursquareButtonPressed:(id)sender
 {
     [[KGOSocialMediaController sharedController] startupFoursquare];
-    [[KGOSocialMediaController sharedController] loginFoursquare];
+    if (![[KGOSocialMediaController sharedController] isFoursquareLoggedIn]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(checkinFoursquarePlace)
+                                                     name:FoursquareDidLoginNotification
+                                                   object:nil];
+        [[KGOSocialMediaController sharedController] loginFoursquare];
+        
+    } else {
+        [self checkinFoursquarePlace];
+    }
 }
 
-- (void)facebookButtonPressed:(id)sender
+- (void)checkinFoursquarePlace
 {
+    [[[KGOSocialMediaController sharedController] foursquareEngine] checkinVenue:[(ScheduleEventWrapper *)_event foursquareID]
+                                                                        delegate:self];
+}
+
+- (void)venueCheckinDidSucceed:(NSString *)venue
+{
+    NSLog(@"checked in");
 }
 
 - (NSArray *)sectionForAttendeeInfo

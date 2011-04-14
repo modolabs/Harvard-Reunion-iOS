@@ -61,7 +61,7 @@
     }
     
     // checkins
-    NSString *foursquarePlaceID = [locationDict stringForKey:@"fqPlaceId" nilIfEmpty:YES];
+    NSString *foursquarePlaceID = [locationDict stringForKey:@"foursquareId" nilIfEmpty:YES];
     if (foursquarePlaceID) {
         [userInfo setObject:foursquarePlaceID forKey:@"foursquareID"];
     }
