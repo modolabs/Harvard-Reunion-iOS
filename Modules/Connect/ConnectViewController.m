@@ -30,12 +30,12 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 @interface ConnectViewController (Private)
 
 - (void)setUpBump;
-- (void)takeDownBump;
 
 #pragma mark Address book
 - (void)showPicker;
 - (void)addAddressBookRecordForDict:(NSDictionary *)serializedRecord;
 - (void)promptAboutAddingIncomingRecord;
++ (NSString *)nameFromAddressBookDict:(NSDictionary *)serializedRecord;
 
 #pragma mark Bump UI
 - (void)showAlert:(NSString *)message;
@@ -52,20 +52,13 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 - (void)setUpBump {
     BumpAPI *bumpObject = [BumpAPI sharedInstance];        
     [bumpObject configUIDelegate:self];
-    [bumpObject configDelegate:self];
     [bumpObject configAPIKey:@"57571df95089489d906d0d396ace290d"];
+    [bumpObject configDelegate:self];
     [bumpObject configParentView:self.view];
     [bumpObject configActionMessage:
      @"Bump with another app user to get started."];
     [bumpObject requestSession];
 }
-
-- (void)takeDownBump {
-    [[BumpAPI sharedInstance] endSession];
-    [[BumpAPI sharedInstance] configUIDelegate:nil];
-    [[BumpAPI sharedInstance] configDelegate:nil];
-    [[BumpAPI sharedInstance] configParentView:nil];    
-}    
 
 #pragma mark Address book
 - (void)showPicker {
@@ -104,9 +97,8 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     // Ask about adding person sent to us to address book.
     if (self.incomingABRecordDict) {
         NSString *alertQuestion = 
-        [NSString stringWithFormat:@"Do you want to add %@ %@ to your Contacts?",
-         [self.incomingABRecordDict objectForKey:@"kABPersonFirstNameProperty"],
-         [self.incomingABRecordDict objectForKey:@"kABPersonLastNameProperty"]];
+        [NSString stringWithFormat:@"Do you want to add %@ to your Contacts?",
+         [[self class] nameFromAddressBookDict:self.incomingABRecordDict]];
         
         UIAlertView *alert = 
         [[UIAlertView alloc]
@@ -120,6 +112,12 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
         // Can't do it yet.
         shouldPromptAboutAddingRecordAtNextChance = YES;
     }
+}
+
++ (NSString *)nameFromAddressBookDict:(NSDictionary *)serializedRecord {
+    return [NSString stringWithFormat:@"%@ %@",
+            [serializedRecord objectForKey:@"kABPersonFirstNameProperty"],
+            [serializedRecord objectForKey:@"kABPersonLastNameProperty"]];    
 }
 
 #pragma mark Bump UI
@@ -147,7 +145,6 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
         else {
             [self.spinner stopAnimating];
         }
-
     }
     if (message) {
         self.messageLabel.text = message;
@@ -191,7 +188,8 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     self.statusLabel.backgroundColor = [UIColor clearColor];
     NSString *fontName = [[KGOTheme sharedTheme] defaultFontName];
     CGFloat fontSize = [[KGOTheme sharedTheme] defaultFontSize];
-    UIFont *font = [UIFont fontWithName:[NSString stringWithFormat:@"%@-Bold", fontName] size:fontSize];
+    UIFont *font = [UIFont fontWithName:
+                    [NSString stringWithFormat:@"%@-Bold", fontName] size:fontSize];
     if (!font) {
         font = [UIFont fontWithName:fontName size:fontSize];
     }
@@ -256,7 +254,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 
 - (void)dealloc {
     // Stop bump.
-    [self takeDownBump];
+    [[BumpAPI sharedInstance] endSession];
     
     [spinner release];
     [messageLabel release];
@@ -270,6 +268,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 
 - (void)bumpDataReceived:(NSData *)chunk {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
 	// The chunk sent from the other user is a dictionary representing an ABRecord. 
     self.incomingABRecordDict = [NSKeyedUnarchiver unarchiveObjectWithData:chunk];
         
@@ -279,6 +278,9 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     else {
         [self promptAboutAddingIncomingRecord];
     }    
+    [self updateStatus:nil andMessage:
+     [NSString stringWithFormat:@"Received %@'s contact info!",
+      [[self class] nameFromAddressBookDict:self.incomingABRecordDict]]];
     
     [pool release];
 }
@@ -321,6 +323,9 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 		[alert show];
 		[alert release];
 	}
+    
+    // Start the session over.
+    [self setUpBump];    
 }
 
 - (void)bumpSessionFailedToStart:(BumpSessionStartFailedReason)reason {
@@ -404,7 +409,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
         switch (buttonIndex) {
             case 0: 
                 // Cancelled.
-                [[BumpAPI sharedInstance] confirmMatch:NO];
+                [[BumpAPI sharedInstance] confirmMatch:NO];                
                 break;
             default:
                 // Said yes to connect.
@@ -414,19 +419,19 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
         }
     }
     else {
+        // Response to alert asking whether or not to add address to address book.        
         if (buttonIndex == 0) {
             [self addAddressBookRecordForDict:self.incomingABRecordDict];
+            [self updateStatus:nil andMessage:
+             [NSString stringWithFormat:@"Added %@ to contacts.",
+              [[self class] nameFromAddressBookDict:self.incomingABRecordDict]]];
         }
         self.incomingABRecordDict = nil;
+        
+        // Start session over.
+        [[BumpAPI sharedInstance] endSession];
+        [self setUpBump];        
     }
-
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0f * NSEC_PER_SEC), 
-                   dispatch_get_current_queue(), 
-                   ^{
-                       // Start over.
-                       [self takeDownBump];
-                       [self setUpBump];
-                   });
 }
 
 
