@@ -315,6 +315,10 @@
         }
     }
     
+    // Make sure _appModalHolder.view is in front so that this modal view 
+    // shows up.
+    [[_appModalHolder.view superview] bringSubviewToFront:_appModalHolder.view];
+    
     [_appModalHolder presentModalViewController:presentedViewController animated:animated];
     
     if (viewController.modalPresentationStyle == UIModalPresentationFullScreen && !viewController.navigationItem.rightBarButtonItem) {
