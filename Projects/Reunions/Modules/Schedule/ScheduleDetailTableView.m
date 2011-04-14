@@ -10,14 +10,37 @@
 
 @implementation ScheduleDetailTableView
 
+- (BOOL)shouldShowFoursquareButton
+{
+    return [_event isKindOfClass:[ScheduleEventWrapper class]]
+        && [(ScheduleEventWrapper *)_event foursquareID]
+        && [[KGORequestManager sharedManager] isReachable];
+}
+
 - (void)foursquareButtonPressed:(id)sender
 {
     [[KGOSocialMediaController sharedController] startupFoursquare];
-    [[KGOSocialMediaController sharedController] loginFoursquare];
+    if (![[KGOSocialMediaController sharedController] isFoursquareLoggedIn]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(checkinFoursquarePlace)
+                                                     name:FoursquareDidLoginNotification
+                                                   object:nil];
+        [[KGOSocialMediaController sharedController] loginFoursquare];
+        
+    } else {
+        [self checkinFoursquarePlace];
+    }
 }
 
-- (void)facebookButtonPressed:(id)sender
+- (void)checkinFoursquarePlace
 {
+    [[[KGOSocialMediaController sharedController] foursquareEngine] checkinVenue:[(ScheduleEventWrapper *)_event foursquareID]
+                                                                        delegate:self];
+}
+
+- (void)venueCheckinDidSucceed:(NSString *)venue
+{
+    NSLog(@"checked in");
 }
 
 - (NSArray *)sectionForAttendeeInfo
@@ -79,33 +102,22 @@
     [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 
-// overriding to accommodate facebook/foursquare buttons
+// overriding to accommodate foursquare buttons
 - (void)headerViewFrameDidChange:(KGODetailPageHeaderView *)headerView
 {
     CGRect frame = _headerView.frame;
-    CGFloat heightForSocialButtons = 0;
-    
-    if (_facebookButton) {
-        frame = _facebookButton.frame;
-        frame.origin.x = 10;
-        frame.origin.y = _headerView.frame.size.height;
-        _facebookButton.frame = frame;
-        heightForSocialButtons = _facebookButton.frame.size.height;
-    }
     
     if (_foursquareButton) {
         frame = _foursquareButton.frame;
-        frame.origin.x = 10;
-        if (_facebookButton) {
-            frame.origin.x += _facebookButton.frame.size.width;
-        }
+        frame.origin.y = _headerView.frame.size.height;
         _foursquareButton.frame = frame;
-        heightForSocialButtons = _foursquareButton.frame.size.height;
-    }
-    
-    if (heightForSocialButtons > 0) {
+        
+        frame = _checkinLabel.frame;
+        frame.origin.y = _foursquareButton.frame.origin.y;
+        _checkinLabel.frame = frame;
+        
         frame = _headerView.frame;
-        frame.size.height += heightForSocialButtons;
+        frame.size.height += _foursquareButton.frame.size.height;
         _headerView.frame = frame;
     }
     
@@ -142,52 +154,55 @@
     }
     _headerView.subtitleLabel.text = timeString;
     
-    CGFloat heightForSocialButtons = 0;
-    
-    if ([_event isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)_event facebookID]) {
-        if (!_facebookButton) {
-            _facebookButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
-            UIImage *image = [UIImage imageWithPathName:@"modules/facebook/button-facebook.png"];
-            _facebookButton.frame = CGRectMake(0, 0, image.size.width, image.size.height);
-            [_facebookButton setImage:image forState:UIControlStateNormal];
-            [_facebookButton addTarget:self action:@selector(facebookButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-            heightForSocialButtons = _facebookButton.frame.size.height;
-            [containerView addSubview:_facebookButton];
-        }
-    } else if (_facebookButton) {
-        [_facebookButton removeFromSuperview];
-        [_facebookButton release];
-        _facebookButton = nil;
-    }
-
     if ([_event isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)_event foursquareID]) {
         if (!_foursquareButton) {
+            NSString *checkInString = @"Check in:";
+            UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText];
+            CGSize size = [checkInString sizeWithFont:font];
+            _checkinLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, size.width, size.height)];
+            _checkinLabel.text = checkInString;
+            _checkinLabel.font = font;
+            _checkinLabel.textColor = [UIColor whiteColor];
+            _checkinLabel.backgroundColor = [UIColor clearColor];
+            [containerView addSubview:_checkinLabel];
+            
             _foursquareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
-            UIImage *image = [UIImage imageWithPathName:@"modules/foursquare/foursquare.jpg"];
-            _foursquareButton.frame = CGRectMake(0, 0, image.size.width, image.size.height);
-            [_foursquareButton setImage:image forState:UIControlStateNormal];
-            [_foursquareButton addTarget:self action:@selector(foursquareButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-            heightForSocialButtons = _foursquareButton.frame.size.height;
+            UIImage *image = [UIImage imageWithPathName:@"modules/foursquare/button-foursquare"];
+            [_foursquareButton setImage:image
+                               forState:UIControlStateNormal];
+            [_foursquareButton setTitle:[KGOSocialMediaController localizedNameForService:KGOSocialMediaTypeFoursquare]
+                               forState:UIControlStateNormal];
+            [_foursquareButton addTarget:self
+                                  action:@selector(foursquareButtonPressed:)
+                        forControlEvents:UIControlEventTouchUpInside];
+            
+            CGFloat width = [_foursquareButton.titleLabel.text sizeWithFont:_foursquareButton.titleLabel.font].width;
+            _foursquareButton.frame = CGRectMake(_checkinLabel.frame.size.width + 20, 0,
+                                                 image.size.width + width + 10,
+                                                 image.size.height);
+
             [containerView addSubview:_foursquareButton];
         }
+        
+        CGRect frame = containerView.frame;
+        frame.size.height += _foursquareButton.frame.size.height;
+        containerView.frame = frame;
+        
     } else if (_foursquareButton) {
+        CGRect frame = containerView.frame;
+        frame.size.height -= _foursquareButton.frame.size.height;
+        containerView.frame = frame;
+        
         [_foursquareButton removeFromSuperview];
         [_foursquareButton release];
         _foursquareButton = nil;
     }
 
-    if (heightForSocialButtons > 0) {
-        CGRect frame = containerView.frame;
-        frame.size.height += heightForSocialButtons;
-        containerView.frame = frame;
-    }
-    
     return containerView;
 }
 
 - (void)dealloc
 {
-    [_facebookButton release];
     [_foursquareButton release];
     [super dealloc];
 }
