@@ -105,7 +105,11 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
             
         } else {
             NSDictionary *response = [result dictionaryForKey:@"response"];
-            [self.delegate foursquareRequest:self didSucceedWithResponse:response];
+            if (response) {
+                [self.delegate foursquareRequest:self didSucceedWithResponse:response];
+            } else {
+                [self.delegate foursquareRequest:self didSucceedWithResponse:result];
+            }
         }
         
     } else {
@@ -137,6 +141,7 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
 @interface KGOFoursquareCheckinPair : NSObject {
 }
 
+@property (nonatomic, retain) NSDictionary *userData;
 @property (nonatomic, assign) id<KGOFoursquareCheckinDelegate> delegate;
 @property (nonatomic, assign) KGOFoursquareRequest *request;
 
@@ -145,10 +150,11 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
 
 @implementation KGOFoursquareCheckinPair
 
-@synthesize delegate, request;
+@synthesize delegate, request, userData;
 
 - (void)dealloc
 {
+    self.userData = nil;
     self.delegate = nil;
     self.request = nil;
     [super dealloc];
@@ -175,7 +181,7 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     request.resourceName = @"checkins";
     request.command = @"add";
     
-    NSMutableDictionary *mutableParams = [request.params mutableCopy];
+    NSMutableDictionary *mutableParams = [[request.params mutableCopy] autorelease];
     
     [mutableParams setObject:venue forKey:@"venueId"];
     
@@ -259,7 +265,19 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
 
 - (void)checkUserStatusForVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate
 {
+    KGOFoursquareRequest *request = [self queryCheckinsRequestWithDelegate:self];
+    KGOFoursquareCheckinPair *pair = [[[KGOFoursquareCheckinPair alloc] init] autorelease];
+    pair.delegate = delegate;
+    pair.request = request;
+    pair.userData = [NSDictionary dictionaryWithObjectsAndKeys:venue, @"venue", nil];
     
+    if (!_checkinQueue) {
+        _checkinQueue = [[NSMutableArray alloc] init];
+    }
+    
+    [_checkinQueue addObject:pair];
+    
+    [request connect];
 }
 
 - (void)authorize
@@ -385,10 +403,17 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
                 NSDictionary *checkinDict = [response dictionaryForKey:@"checkins"];
                 NSArray *items = [checkinDict arrayForKey:@"items"];
                 NSString *checkedInVenueID = nil;
+                NSString *targetVenue = [currentPair.userData objectForKey:@"venue"];
+                
+                // TODO:
+                if (!targetVenue) return;
+                NSLog(@"%@", currentPair.userData);
+                
                 for (NSDictionary *itemDict in items) {
                     NSDictionary *venue = [itemDict dictionaryForKey:@"venue"];
                     NSString *venueID = [venue stringForKey:@"id" nilIfEmpty:YES];
-                    if (venueID && request.resourceID && [venueID isEqualToString:request.resourceID]) {
+                    NSLog(@"%@ %@", venueID, targetVenue);
+                    if (venueID && targetVenue && [venueID isEqualToString:targetVenue]) {
                         checkedInVenueID = venueID;
                         break;
                     }
@@ -422,6 +447,19 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     NSLog(@"request failed with error: %@", [error description]);
 }
 
+- (void)disconnectRequestsForDelegate:(id<KGOFoursquareCheckinDelegate>)delegate
+{
+    NSMutableArray *removed = [NSMutableArray array];
+    for (KGOFoursquareCheckinPair *aPair in _checkinQueue) {
+        if (aPair.delegate == delegate) {
+            aPair.delegate = nil;
+            [removed addObject:aPair];
+        }
+    }
+    for (KGOFoursquareCheckinPair *aPair in removed) {
+        [_checkinQueue removeObject:aPair];
+    }
+}
 
 - (void)dealloc
 {

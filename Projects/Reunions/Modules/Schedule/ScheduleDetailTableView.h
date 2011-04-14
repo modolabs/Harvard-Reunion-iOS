@@ -5,13 +5,13 @@
     
     UIButton *_foursquareButton;
     UILabel *_checkinLabel;
+    NSString *_foursquareVenue;
     
+    NSInteger _checkinStatus;
 }
 
-- (BOOL)shouldShowFoursquareButton;
-
 - (void)foursquareButtonPressed:(id)sender;
-
 - (void)checkinFoursquarePlace;
+- (void)setupFoursquareButton;
 
 @end

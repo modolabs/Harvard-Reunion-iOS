@@ -8,18 +8,15 @@
 #import "CalendarDataManager.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 
-@implementation ScheduleDetailTableView
+#define CHECKIN_STATUS_CHECKED_IN 438
+#define CHECKIN_STATUS_NOT_CHECKED_IN 41
+#define CHECKIN_STATUS_UNKNOWN 768
 
-- (BOOL)shouldShowFoursquareButton
-{
-    return [_event isKindOfClass:[ScheduleEventWrapper class]]
-        && [(ScheduleEventWrapper *)_event foursquareID]
-        && [[KGORequestManager sharedManager] isReachable];
-}
+
+@implementation ScheduleDetailTableView
 
 - (void)foursquareButtonPressed:(id)sender
 {
-    [[KGOSocialMediaController sharedController] startupFoursquare];
     if (![[KGOSocialMediaController sharedController] isFoursquareLoggedIn]) {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(checkinFoursquarePlace)
@@ -34,13 +31,85 @@
 
 - (void)checkinFoursquarePlace
 {
-    [[[KGOSocialMediaController sharedController] foursquareEngine] checkinVenue:[(ScheduleEventWrapper *)_event foursquareID]
-                                                                        delegate:self];
+    if (_foursquareVenue) {    
+        [[[KGOSocialMediaController sharedController] foursquareEngine] checkinVenue:_foursquareVenue
+                                                                            delegate:self];
+    }
 }
 
 - (void)venueCheckinDidSucceed:(NSString *)venue
 {
-    NSLog(@"checked in");
+    _checkinStatus = CHECKIN_STATUS_CHECKED_IN;
+    self.tableHeaderView = [self viewForTableHeader];
+}
+
+- (void)venueCheckinStatusReceived:(BOOL)status forVenue:(NSString *)venue
+{
+    if ([_foursquareVenue isEqualToString:venue]) {
+        if (status) {
+            _checkinStatus = CHECKIN_STATUS_CHECKED_IN;
+        } else {
+            _checkinStatus = CHECKIN_STATUS_NOT_CHECKED_IN;
+        }
+        self.tableHeaderView = [self viewForTableHeader];
+    }
+}
+
+- (void)setupFoursquareButton
+{
+    if (_checkinStatus == CHECKIN_STATUS_UNKNOWN && [[KGOSocialMediaController sharedController] isFoursquareLoggedIn]) {
+        [_foursquareButton setImage:[UIImage imageWithPathName:@"modules/foursquare/button-foursquare"]
+                           forState:UIControlStateNormal];
+        
+        [[[KGOSocialMediaController sharedController] foursquareEngine] checkUserStatusForVenue:_foursquareVenue
+                                                                                       delegate:self];
+        return;
+    }
+
+    if (_foursquareVenue) {
+        if (!_foursquareButton) {
+            NSString *checkInString = @"Check in:";
+            UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText];
+            CGSize size = [checkInString sizeWithFont:font];
+            _checkinLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, size.width, size.height)];
+            _checkinLabel.text = checkInString;
+            _checkinLabel.font = font;
+            _checkinLabel.textColor = [UIColor whiteColor];
+            _checkinLabel.backgroundColor = [UIColor clearColor];
+            
+            _foursquareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+            UIImage *image = [UIImage imageWithPathName:@"modules/foursquare/button-foursquare"];
+            [_foursquareButton setImage:image
+                               forState:UIControlStateNormal];
+            [_foursquareButton setTitle:[KGOSocialMediaController localizedNameForService:KGOSocialMediaTypeFoursquare]
+                               forState:UIControlStateNormal];
+            [_foursquareButton addTarget:self
+                                  action:@selector(foursquareButtonPressed:)
+                        forControlEvents:UIControlEventTouchUpInside];
+            
+            CGFloat width = [_foursquareButton.titleLabel.text sizeWithFont:_foursquareButton.titleLabel.font].width;
+            _foursquareButton.frame = CGRectMake(_checkinLabel.frame.size.width + 20, 0,
+                                                 image.size.width + width + 10,
+                                                 image.size.height);
+        }
+        
+        if (_checkinStatus == CHECKIN_STATUS_CHECKED_IN) {
+            [_foursquareButton setImage:[UIImage imageWithPathName:@"modules/foursquare/button-foursquare-checkedin"]
+                               forState:UIControlStateNormal];
+        } else {
+            [_foursquareButton setImage:[UIImage imageWithPathName:@"modules/foursquare/button-foursquare"]
+                               forState:UIControlStateNormal];
+        }
+        
+    } else if (_foursquareButton) {
+        [_checkinLabel removeFromSuperview];
+        [_checkinLabel release];
+        _checkinLabel = nil;
+        
+        [_foursquareButton removeFromSuperview];
+        [_foursquareButton release];
+        _foursquareButton = nil;
+    }
 }
 
 - (NSArray *)sectionForAttendeeInfo
@@ -129,6 +198,20 @@
 
 - (UIView *)viewForTableHeader
 {
+    NSString *foursquareVenue = nil;
+    
+    if ([_event isKindOfClass:[ScheduleEventWrapper class]]) {
+        foursquareVenue = [(ScheduleEventWrapper *)_event foursquareID];
+    } else {
+        foursquareVenue = nil;
+    }
+
+    if (![_foursquareVenue isEqualToString:foursquareVenue]) {
+        [_foursquareVenue release];
+        _foursquareVenue = [foursquareVenue retain];
+        _checkinStatus = CHECKIN_STATUS_UNKNOWN;
+    }
+    
     if (!_headerView) {
         _headerView = [[ReunionDetailPageHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 1)];
         _headerView.delegate = self;
@@ -153,57 +236,29 @@
                       [self.dataManager shortTimeStringFromDate:_event.startDate]];
     }
     _headerView.subtitleLabel.text = timeString;
-    
-    if ([_event isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)_event foursquareID]) {
-        if (!_foursquareButton) {
-            NSString *checkInString = @"Check in:";
-            UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText];
-            CGSize size = [checkInString sizeWithFont:font];
-            _checkinLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, size.width, size.height)];
-            _checkinLabel.text = checkInString;
-            _checkinLabel.font = font;
-            _checkinLabel.textColor = [UIColor whiteColor];
-            _checkinLabel.backgroundColor = [UIColor clearColor];
-            [containerView addSubview:_checkinLabel];
-            
-            _foursquareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
-            UIImage *image = [UIImage imageWithPathName:@"modules/foursquare/button-foursquare"];
-            [_foursquareButton setImage:image
-                               forState:UIControlStateNormal];
-            [_foursquareButton setTitle:[KGOSocialMediaController localizedNameForService:KGOSocialMediaTypeFoursquare]
-                               forState:UIControlStateNormal];
-            [_foursquareButton addTarget:self
-                                  action:@selector(foursquareButtonPressed:)
-                        forControlEvents:UIControlEventTouchUpInside];
-            
-            CGFloat width = [_foursquareButton.titleLabel.text sizeWithFont:_foursquareButton.titleLabel.font].width;
-            _foursquareButton.frame = CGRectMake(_checkinLabel.frame.size.width + 20, 0,
-                                                 image.size.width + width + 10,
-                                                 image.size.height);
 
-            [containerView addSubview:_foursquareButton];
-        }
-        
+    [self setupFoursquareButton];
+    
+    if (_foursquareButton) {
+        [containerView addSubview:_checkinLabel];
+        [containerView addSubview:_foursquareButton];
         CGRect frame = containerView.frame;
         frame.size.height += _foursquareButton.frame.size.height;
         containerView.frame = frame;
-        
-    } else if (_foursquareButton) {
-        CGRect frame = containerView.frame;
-        frame.size.height -= _foursquareButton.frame.size.height;
-        containerView.frame = frame;
-        
-        [_foursquareButton removeFromSuperview];
-        [_foursquareButton release];
-        _foursquareButton = nil;
     }
-
+    
     return containerView;
 }
 
 - (void)dealloc
 {
+    [[[KGOSocialMediaController sharedController] foursquareEngine] disconnectRequestsForDelegate:self];
+
     [_foursquareButton release];
+    //_foursquareButton = nil;
+    [_foursquareVenue release];
+    [_checkinLabel release];
+    
     [super dealloc];
 }
 
