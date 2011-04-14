@@ -25,7 +25,6 @@ typedef enum {
     UIWindow *window;
     UINavigationController *_appNavController;
     UIViewController *_appHomeScreen;
-    UIViewController *_appModalHolder;
     UIViewController *_visibleViewController;
     KGONavigationStyle _navigationStyle;
     
@@ -61,18 +60,6 @@ typedef enum {
 - (BOOL)handleFacebookURL:(NSURL *)url;
 
 @end
-
-// TODO: remove this whole category. modal views should belong to the view
-// controller that asked for them, not the application.
-@interface KGOAppDelegate (AppModalViewController)
-
-- (void)setupAppModalHolder;
-- (void)presentAppModalViewController:(UIViewController *)viewController animated:(BOOL)animated;
-- (void)presentAppModalNavigationController:(UIViewController *)viewController animated:(BOOL)animated;
-- (void)dismissAppModalViewControllerAnimated:(BOOL)animated;
-
-@end
-
 
 @interface KGOAppDelegate (Notifications)
 
