@@ -285,7 +285,6 @@
 
 #pragma mark -
 
-
 @implementation KGOAppDelegate (Notifications)
 
 - (void)registerForRemoteNotifications:(NSDictionary *)launchOptions {
