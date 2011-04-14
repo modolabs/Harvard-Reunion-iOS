@@ -47,7 +47,7 @@
     FacebookCommentViewController *vc = [[[FacebookCommentViewController alloc] initWithNibName:@"FacebookCommentViewController" bundle:nil] autorelease];
     vc.delegate = self;
     vc.post = self.post;
-    [KGO_SHARED_APP_DELEGATE() presentAppModalNavigationController:vc animated:YES];
+    [self.navigationController presentModalViewController:vc animated:YES];
 }
 
 - (IBAction)likeButtonPressed:(UIBarButtonItem *)sender {

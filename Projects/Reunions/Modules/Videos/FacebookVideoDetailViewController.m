@@ -6,9 +6,10 @@
 
 @implementation FacebookVideoDetailViewController
 
+@synthesize video;
+
 /*
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
@@ -17,13 +18,12 @@
 }
 */
 
-- (void)dealloc
-{
+- (void)dealloc {
+    [video release];
     [super dealloc];
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
     
@@ -53,6 +53,7 @@
         MPMoviePlayerController *player = [[MPMoviePlayerController alloc] initWithContentURL:url]; 
         player.shouldAutoplay = NO;
         [self.mediaView setPreviewView:player.view];
+        [player release];
         [self.mediaView setPreviewSize:CGSizeMake(10, 10)];
     } else {
         CGSize aspectRatio = CGSizeMake(16, 9); // default aspect ratio 
@@ -73,7 +74,8 @@
         [self.mediaView setPreviewSize:aspectRatio];
         NSURL *url = [NSURL URLWithString:urlString];
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
-        [webView loadRequest:request];   
+        [webView loadRequest:request];
+        [webView release];
     }
     
     if (!self.video.comments.count) {
@@ -94,8 +96,8 @@
     //[[CoreDataManager sharedManager] deleteObjects:photos];
 }
 
-- (void)setVideo:(FacebookVideo *)video {
-    self.post = video;
+- (void)setVideo:(FacebookVideo *)aVideo {
+    self.post = aVideo;
 }
 
 - (FacebookVideo *)video {
@@ -131,7 +133,7 @@
     button.frame = CGRectMake(120, 80, 80, 60);
     [button addTarget:self action:@selector(playVideo:) forControlEvents:UIControlEventTouchUpInside];
     [self.mediaView addSubview:button];    
-    */
+    */          
 }
 
 - (void)viewDidUnload
@@ -143,6 +145,29 @@
 
 - (NSString *)postTitle {
     return self.video.name;
+}
+
+#pragma mark FacebookMediaDetailViewController
+- (IBAction)commentButtonPressed:(UIBarButtonItem *)sender {
+    if (UIUserInterfaceIdiomPad == UI_USER_INTERFACE_IDIOM()) {
+        // Present comment view in a non-fullscreen dialog.
+        FacebookCommentViewController *vc = 
+        [[FacebookCommentViewController alloc] initWithNibName:
+          @"FacebookCommentViewController" bundle:nil];
+        vc.delegate = self;
+        vc.post = self.post;
+        vc.modalPresentationStyle = UIModalPresentationFormSheet;
+        [self presentModalViewController:vc animated:YES];
+        [vc release];
+    }
+    else {
+        [super commentButtonPressed:sender];
+    }        
+}
+
+#pragma mark UIPopoverControllerDelegate
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
+    // Make any post-comment changes to buttons here if necessary.
 }
 
 @end
