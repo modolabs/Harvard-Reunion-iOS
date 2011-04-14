@@ -115,9 +115,19 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
         [homescreen.view addSubview:_scrim];
         [homescreen.view addSubview:_modalTwitterController.view];
         
+        
+        UIBarButtonItem *item = twitterVC.navigationItem.rightBarButtonItem;
+        twitterVC.navigationItem.rightBarButtonItem = nil;
+        
+        __block TwitterFeedViewController *blockTwitterVC = twitterVC;
         [UIView animateWithDuration:0.4 animations:^(void) {
             _modalTwitterController.view.frame = frame;
             _scrim.alpha = 1;
+        } completion:^(BOOL finished) {
+            blockTwitterVC.navigationItem.rightBarButtonItem = item;
+        }];
+        
+        [UIView animateWithDuration:0.4 animations:^(void) {
         }];
         
     }
