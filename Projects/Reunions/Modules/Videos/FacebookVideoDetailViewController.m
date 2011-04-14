@@ -7,6 +7,7 @@
 @implementation FacebookVideoDetailViewController
 
 @synthesize video;
+@synthesize webView;
 
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -19,6 +20,7 @@
 */
 
 - (void)dealloc {
+    [webView release];
     [video release];
     [super dealloc];
 }
@@ -67,15 +69,13 @@
         } else {
             urlString = src;
         }
-        
-        
-        UIWebView *webView = [[[UIWebView alloc] init] autorelease];
-        [self.mediaView setPreviewView:webView];
+                
+        self.webView = [[[UIWebView alloc] init] autorelease];
+        [self.mediaView setPreviewView:self.webView];
         [self.mediaView setPreviewSize:aspectRatio];
         NSURL *url = [NSURL URLWithString:urlString];
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
-        [webView loadRequest:request];
-        [webView release];
+        [self.webView loadRequest:request];
     }
     
     if (!self.video.comments.count) {
