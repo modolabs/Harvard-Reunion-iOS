@@ -137,6 +137,7 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
 @interface KGOFoursquareCheckinPair : NSObject {
 }
 
+@property (nonatomic, retain) NSDictionary *userData;
 @property (nonatomic, assign) id<KGOFoursquareCheckinDelegate> delegate;
 @property (nonatomic, assign) KGOFoursquareRequest *request;
 
@@ -145,10 +146,11 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
 
 @implementation KGOFoursquareCheckinPair
 
-@synthesize delegate, request;
+@synthesize delegate, request, userData;
 
 - (void)dealloc
 {
+    self.userData = nil;
     self.delegate = nil;
     self.request = nil;
     [super dealloc];
@@ -259,7 +261,19 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
 
 - (void)checkUserStatusForVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate
 {
+    KGOFoursquareRequest *request = [self queryCheckinsRequestWithDelegate:self];
+    KGOFoursquareCheckinPair *pair = [[[KGOFoursquareCheckinPair alloc] init] autorelease];
+    pair.delegate = delegate;
+    pair.request = request;
+    pair.userData = [NSDictionary dictionaryWithObjectsAndKeys:venue, @"venue", nil];
     
+    if (!_checkinQueue) {
+        _checkinQueue = [[NSMutableArray alloc] init];
+    }
+    
+    [_checkinQueue addObject:pair];
+    
+    [request connect];
 }
 
 - (void)authorize
@@ -385,10 +399,13 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
                 NSDictionary *checkinDict = [response dictionaryForKey:@"checkins"];
                 NSArray *items = [checkinDict arrayForKey:@"items"];
                 NSString *checkedInVenueID = nil;
+                NSString *targetVenue = [currentPair.userData objectForKey:@"venue"];
+                NSLog(@"%@", currentPair.userData);
                 for (NSDictionary *itemDict in items) {
                     NSDictionary *venue = [itemDict dictionaryForKey:@"venue"];
                     NSString *venueID = [venue stringForKey:@"id" nilIfEmpty:YES];
-                    if (venueID && request.resourceID && [venueID isEqualToString:request.resourceID]) {
+                    NSLog(@"%@ %@", venueID, targetVenue);
+                    if (venueID && targetVenue && [venueID isEqualToString:targetVenue]) {
                         checkedInVenueID = venueID;
                         break;
                     }
