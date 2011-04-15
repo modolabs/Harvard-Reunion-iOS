@@ -9,6 +9,7 @@
 #import "PhotosModule.h"
 #import "FacebookModule.h"
 #import "KGOTheme.h"
+#import "FacebookThumbnail.h"
 
 @interface FacebookPhotosViewController (Private)
 
@@ -182,7 +183,7 @@
         CGRect frame = CGRectMake(0, 0, 90 * resizeFactor, 90 * resizeFactor + 40);
         
         FacebookThumbnail *thumbnail = [[[FacebookThumbnail alloc] initWithFrame:frame] autorelease];
-        thumbnail.photo = photo;
+        thumbnail.thumbSource = photo;
         thumbnail.rotationAngle = (_icons.count % 2 == 0) ? M_PI/30 : -M_PI/30;
         [thumbnail addTarget:self action:@selector(thumbnailTapped:) forControlEvents:UIControlEventTouchUpInside];
         [_icons addObject:thumbnail];
@@ -194,7 +195,7 @@
 }
 
 - (void)thumbnailTapped:(FacebookThumbnail *)sender {
-    FacebookPhoto *photo = sender.photo;
+    FacebookPhoto *photo = (FacebookPhoto *)sender.thumbSource;
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         NSDictionary *params = [self paramsForPhotoDetails:photo];
         [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail forModuleTag:PhotosTag params:params];
@@ -217,7 +218,9 @@
         }
         // this frame is designed to match the frame for image in the
         // detailed view
-        CGSize imageSize = CGSizeMake([thumbnail.photo.width floatValue], [thumbnail.photo.height floatValue]);
+        FacebookPhoto *photo = (FacebookPhoto *)thumbnail.thumbSource;
+        CGSize imageSize = 
+        CGSizeMake([photo.width floatValue], [photo.height floatValue]);
         CGFloat maximumWidth = self.view.frame.size.width - 40;
         CGFloat height = [MediaContainerView heightForImageSize:imageSize fitToWidth:maximumWidth];
         [thumbnail highlightIntoFrame:CGRectMake(15, _scrollView.contentOffset.y + 15, 
@@ -230,8 +233,9 @@
     NSMutableArray *photos = [NSMutableArray array];
     [_icons enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         FacebookThumbnail *thumbnail = (FacebookThumbnail *)obj;
-        NSLog(@"adding photo with id %@", thumbnail.photo.identifier);
-        [photos addObject:thumbnail.photo];
+        FacebookPhoto *photo = (FacebookPhoto *)thumbnail.thumbSource;
+        NSLog(@"adding photo with id %@", photo.identifier);
+        [photos addObject:photo];
     }];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:photo, @"photo", photos, @"photos", nil];
     return params;
@@ -248,7 +252,7 @@
     } else {
         picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     }
-    [KGO_SHARED_APP_DELEGATE() presentAppModalViewController:picker animated:YES];
+    [self presentModalViewController:picker animated:YES];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -268,7 +272,7 @@
 }
 
 - (void)uploadDidComplete:(FacebookPost *)result {
-    [KGO_SHARED_APP_DELEGATE() dismissAppModalViewControllerAnimated:YES];    
+    [self dismissModalViewControllerAnimated:YES];    
     
     FacebookPhoto *photo = (FacebookPhoto *)result;
     [_photosByID setObject:photo forKey:photo.identifier];
@@ -343,106 +347,6 @@
     } else {
         return MEDIUM;
     }
-}
-
-@end
-
-@implementation FacebookThumbnail
-
-- (id)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        self.backgroundColor = [UIColor clearColor];
-        
-        CGRect labelFrame = CGRectMake(0, frame.size.height-40, frame.size.width, 40);
-        _label = [[UILabel alloc] initWithFrame:labelFrame];
-        _label.backgroundColor = [UIColor clearColor];
-        _label.textColor = [UIColor whiteColor];
-        _label.numberOfLines = 3;
-        _label.font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySmallPrint];
-        _label.userInteractionEnabled = NO;
-        
-        CGRectMake(0, 0, frame.size.width, frame.size.height-40);
-        _thumbnail = [[MITThumbnailView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height-40)];
-        _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
-        _thumbnail.userInteractionEnabled = NO;
-        _thumbnail.delegate = self;
-        
-        // add drop shadow
-        _thumbnail.layer.shadowOffset = CGSizeMake(0, 1);
-        _thumbnail.layer.shadowColor = [[UIColor blackColor] CGColor];
-        _thumbnail.layer.shadowRadius = 4.0;
-        _thumbnail.layer.shadowOpacity = 0.8;
-        
-        // this prevents choppy looking edges 
-        // when photo is rotated
-        _thumbnail.layer.shouldRasterize = YES;
-
-        [self addSubview:_thumbnail];
-        [self addSubview:_label];
-    }
-    return self;
-}
-
-- (FacebookPhoto *)photo {
-    return _photo;
-}
-
-- (void)setPhoto:(FacebookPhoto *)photo {
-    [_photo release];
-    _photo = [photo retain];
-    
-    _label.text = photo.title;
-    if (photo.thumbData) {
-        _thumbnail.imageData = photo.thumbData;
-        [_thumbnail displayImage];
-    } else if (photo.data) {
-        _thumbnail.imageData = photo.data;
-        [_thumbnail displayImage];
-    } else if (photo.thumbSrc) {
-        _thumbnail.imageURL = photo.thumbSrc;
-        [_thumbnail loadImage];
-    }
-}
-
-- (void)thumbnail:(MITThumbnailView *)thumbnail didLoadData:(NSData *)data {
-    _photo.thumbData = data;
-    [[CoreDataManager sharedManager] saveData];
-}
-
-- (CGFloat)rotationAngle {
-    return _rotationAngle;
-}
-
-- (void)setRotationAngle:(CGFloat)rotationAngle {
-    _rotationAngle = rotationAngle;
-    _thumbnail.transform = CGAffineTransformMakeRotation(rotationAngle);
-}
-
-- (void)highlightIntoFrame:(CGRect)frame {
-    // frame given relative the super view
-    CGRect thumbnailFrame = CGRectMake(
-        frame.origin.x - self.frame.origin.x, 
-        frame.origin.y - self.frame.origin.y,
-        frame.size.width,
-        frame.size.height);
-    
-    _thumbnail.transform = CGAffineTransformMakeRotation(0);
-    _thumbnail.frame = thumbnailFrame;
-    _label.alpha = 0.0;
-}
-
-- (void)hide {
-    _thumbnail.alpha = 0.0;
-    _label.alpha = 0.0;
-}
-
-- (void)dealloc {
-    self.photo = nil;
-    _thumbnail.delegate = nil;
-    [_thumbnail release];
-    [_label release];
-    [super dealloc];
 }
 
 @end

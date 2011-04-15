@@ -1,13 +1,16 @@
 #import "EventDetailTableView.h"
+#import "KGOFoursquareEngine.h"
 
-@interface ScheduleDetailTableView : EventDetailTableView {
+@interface ScheduleDetailTableView : EventDetailTableView <KGOFoursquareCheckinDelegate> {
     
-    UIButton *_foursquareButton;
-    UIButton *_facebookButton;
+    UILabel *_checkinHeader;
+    NSString *_foursquareVenue;
     
+    NSInteger _checkinStatus;
 }
 
 - (void)foursquareButtonPressed:(id)sender;
-- (void)facebookButtonPressed:(id)sender;
+- (void)checkinFoursquarePlace;
+- (void)setupFoursquareButton;
 
 @end

@@ -3,7 +3,7 @@
 #import "KGOWebViewController.h"
 #import "KGOAppDelegate.h"
 
-@implementation KGOSocialMediaController (Foursquare)
+@implementation KGOSocialMediaController (foursquare)
 
 - (void)startupFoursquare {
     _foursquareStartupCount++;
@@ -22,6 +22,11 @@
         [_foursquareEngine release];
         _foursquareEngine = nil;
     }
+}
+
+- (BOOL)isFoursquareLoggedIn
+{
+    return [_foursquareEngine isLoggedIn];
 }
 
 - (void)loginFoursquare

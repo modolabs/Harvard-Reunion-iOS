@@ -1,12 +1,15 @@
 #import <UIKit/UIKit.h>
 #import "KGOShareButtonController.h"
 #import "KGODetailPageHeaderView.h"
+#import <MessageUI/MFMailComposeViewController.h>
+#import "KGORequest.h"
 
 @class KGOEventWrapper, CalendarDataManager;
 @class CalendarDetailViewController;
 
 @interface EventDetailTableView : UITableView <UITableViewDelegate,
-UITableViewDataSource, KGODetailPageHeaderDelegate> {
+UITableViewDataSource, KGODetailPageHeaderDelegate, MFMailComposeViewControllerDelegate,
+KGORequestDelegate> {
     
     NSArray *_sections;
     KGOEventWrapper *_event;
@@ -16,6 +19,8 @@ UITableViewDataSource, KGODetailPageHeaderDelegate> {
     
     KGODetailPageHeaderView *_headerView;
     UILabel *_descriptionLabel;
+    
+    KGORequest *_eventDetailRequest;
 }
 
 @property (nonatomic, assign) CalendarDetailViewController *viewController;
@@ -30,5 +35,8 @@ UITableViewDataSource, KGODetailPageHeaderDelegate> {
 - (NSArray *)sectionForAttendeeInfo;
 - (NSArray *)sectionForContactInfo;
 - (NSArray *)sectionForExtendedInfo;
+
+- (void)requestEventDetails;
+- (void)eventDetailsDidChange;
 
 @end

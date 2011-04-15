@@ -24,4 +24,6 @@
 - (void)facebookDidLogout:(NSNotification *)aNotification;
 - (void)facebookDidLogin:(NSNotification *)aNotification;
 
+@property (nonatomic, retain) UIScrollView *scrollView;
+
 @end

@@ -45,7 +45,7 @@
 - (void)displayPost {
     NSLog(@"%@", self.photo);
     
-    UIImage *image;
+    UIImage *image = nil;
     if (self.photo.data) {
         image = [UIImage imageWithData:self.photo.data];
     } else if(self.photo.thumbData) {
@@ -53,8 +53,7 @@
         [self requestImage:self.photo];
     }
     
-    UIImageView *imageView = [UIImageView new];
-    imageView.image = image;
+    UIImageView *imageView = [[[UIImageView alloc] initWithImage:image] autorelease];
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.mediaView setPreviewView:imageView];
     [self.mediaView setPreviewSize:image.size];

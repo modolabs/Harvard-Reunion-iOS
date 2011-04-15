@@ -20,6 +20,7 @@
 
 - (void)didLogin:(NSNotification *)aNotification;
 
+@property (nonatomic, readonly) NSString *hashtag;
 @property (nonatomic, readonly) NSDateFormatter *twitterDateFormatter;
 @property (nonatomic, readonly) NSArray *latestTweets;
 

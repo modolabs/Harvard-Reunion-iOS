@@ -7,6 +7,7 @@
 #import "KGORequestManager.h"
 #import "MITThumbnailView.h"
 #import "Foundation+KGOAdditions.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define BUTTON_WIDTH_IPHONE 120
 #define BUTTON_HEIGHT_IPHONE 46
@@ -26,14 +27,14 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 
 @synthesize buttonImage, labelText, chatBubbleCaratOffset;
 
+- (void)didLogin:(NSNotification *)aNotification
+{
+}
+
 #pragma mark View on home screen
 
 - (void)hideChatBubble:(NSNotification *)aNotification {
     self.chatBubble.hidden = YES;
-}
-
-- (void)didLogin:(NSNotification *)aNotification
-{
 }
 
 - (UILabel *)chatBubbleTitleLabel {
@@ -224,6 +225,97 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         return [NSArray arrayWithObjects:self.buttonWidget, self.chatBubble, nil];
     }
     return nil;
+}
+
+#pragma mark ipad animation
+
+- (Class)feedViewControllerClass
+{
+    return [UIViewController class];
+}
+
+- (void)willShowModalFeedController
+{
+}
+
+- (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params
+{
+    UIViewController *vc = nil;
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] != KGONavigationStyleTabletSidebar) {
+        if ([pageName isEqualToString:LocalPathPageNameHome]) {
+            vc = [[[[self feedViewControllerClass] alloc] initWithStyle:UITableViewStylePlain] autorelease];
+        }
+        
+    } else {
+        if (_modalFeedController) {
+            return nil;
+        }
+        
+        [self willShowModalFeedController];
+        
+        // circumvent the app delegate and present our own thing
+        UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
+        
+        UIViewController *feedVC = [[[[self feedViewControllerClass] alloc] initWithStyle:UITableViewStylePlain] autorelease];
+        _modalFeedController = [[UINavigationController alloc] initWithRootViewController:feedVC];
+        
+        feedVC.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                                 target:self
+                                                                                                 action:@selector(hideModalFeedController:)] autorelease];
+        
+        CGRect frame = self.chatBubble.frame;
+        frame.size.height -= 15;
+        _modalFeedController.view.frame = frame;
+        
+        feedVC.view.layer.cornerRadius = 6;
+        _modalFeedController.view.layer.cornerRadius = 6;
+        
+        CGRect screenFrame = [(KGOHomeScreenViewController *)homescreen springboardFrame];
+        CGFloat bottom = frame.origin.y + frame.size.height;
+        CGFloat top = 48;
+        frame = CGRectMake(10, top, screenFrame.size.width - 20, bottom - top);
+        
+        _scrim = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenFrame.size.width, screenFrame.size.height)];
+        _scrim.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
+        _scrim.alpha = 0;
+        
+        [homescreen.view addSubview:_scrim];
+        [homescreen.view addSubview:_modalFeedController.view];
+        
+        // remove this temporarily to avoid animation artifacts
+        UIBarButtonItem *item = feedVC.navigationItem.rightBarButtonItem;
+        feedVC.navigationItem.rightBarButtonItem = nil;
+        
+        __block UIViewController *blockFeedVC = feedVC;
+        [UIView animateWithDuration:0.4 animations:^(void) {
+            _modalFeedController.view.frame = frame;
+            _scrim.alpha = 1;
+            
+        } completion:^(BOOL finished) {
+            blockFeedVC.navigationItem.rightBarButtonItem = item;
+        }];
+    }
+    return vc;
+}
+
+- (void)hideModalFeedController:(id)sender
+{
+    CGRect frame = self.chatBubble.frame;
+    frame.size.height -= 15;
+    
+    [UIView animateWithDuration:0.4 animations:^(void) {
+        _modalFeedController.view.frame = frame;
+        _scrim.alpha = 0;
+        
+    } completion:^(BOOL finished) {
+        [_scrim removeFromSuperview];
+        [_scrim release];
+        _scrim = nil;
+        
+        [_modalFeedController.view removeFromSuperview];
+        [_modalFeedController release];
+        _modalFeedController = nil;
+    }];
 }
 
 @end

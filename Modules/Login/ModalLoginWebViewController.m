@@ -29,36 +29,51 @@
 {
     [super viewDidLoad];
     
+    if ([[KGORequestManager sharedManager] isUserLoggedIn]) {
+        DLog(@"user logged in while we were being presented");
+        [self dismissModalViewControllerAnimated:YES];
+        return;
+    }
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(dismissModalViewControllerAnimated:)
                                                  name:KGODidLoginNotification
                                                object:nil];
 }
 
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
+    [super webView:webView didFailLoadWithError:error];
+
+    if ([[KGORequestManager sharedManager] isUserLoggedIn]) {
+        [self dismissModalViewControllerAnimated:YES];
+    }
+}
+
+
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
     DLog(@"attempting to load %@ %@ %p", request.URL, request, request);
+
+    DLog(@"%@ %@", [[request URL] host], [[KGORequestManager sharedManager] host]);
+
+    /*
+    if (![[[request URL] host] isEqualToString:[[KGORequestManager sharedManager] host]]) {
+        if ([[UIApplication sharedApplication] canOpenURL:[request URL]]) {
+            [[UIApplication sharedApplication] openURL:[request URL]];
+        }
+        return NO;
+    }
+    */
 
     if ([[KGORequestManager sharedManager] isUserLoggedIn]) {
         [self dismissModalViewControllerAnimated:YES];
         return NO;
     }
-    
-    // we have to keep calling this because we can't tell when the user is 
-    // looking at which screen
-    if ([[KGORequestManager sharedManager] requestingSessionInfo]) {
-        DLog(@"session info request in progress, delaying request");
-#ifdef USE_MOBILE_DEV
-        if ([[[request URL] absoluteString] isEqualToString:@"about:blank"]) {
-            return YES;
-        }
-#endif
-        [webView performSelector:@selector(loadRequest:) withObject:request afterDelay:0.1];
-        return NO;
 
+    if (![[KGORequestManager sharedManager] requestingSessionInfo]) {
+        [[KGORequestManager sharedManager] requestSessionInfo];
     }
-
-    [[KGORequestManager sharedManager] requestSessionInfo];
     
 #ifdef USE_MOBILE_DEV
     

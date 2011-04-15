@@ -46,6 +46,10 @@
 
 - (void)dealloc
 {
+    if (_eventDetailRequest) {
+        [_eventDetailRequest cancel];
+        [_eventDetailRequest release];
+    }
     self.event = nil;
     self.delegate = nil;
     self.dataSource = nil;
@@ -64,20 +68,37 @@
     [_event release];
     _event = [event retain];
     
-    NSLog(@"%@ %@ %@ %@", [_event description], _event.title, _event.location, _event.userInfo);
+    DLog(@"%@ %@ %@ %@", [_event description], _event.title, _event.location, _event.userInfo);
     
     [_sections release];
+    _sections = nil;
+    
+    if (_event) {
+        [self reloadData];
+        self.tableHeaderView = [self viewForTableHeader];
+        
+        [self eventDetailsDidChange];
+
+        // TODO: see if there is a way to tell we don't need to update this event
+        if (!_event.summary.length) {
+            [self requestEventDetails];
+        }
+    }
+}
+
+- (void)eventDetailsDidChange
+{
     NSMutableArray *mutableSections = [NSMutableArray array];
     NSArray *basicInfo = [self sectionForBasicInfo];
     if (basicInfo.count) {
         [mutableSections addObject:basicInfo];
     }
-
+    
     NSArray *attendeeInfo = [self sectionForAttendeeInfo];
     if (attendeeInfo.count) {
         [mutableSections addObject:attendeeInfo];
     }
-
+    
     NSArray *contactInfo = [self sectionForContactInfo];
     if (contactInfo.count) {
         [mutableSections addObject:contactInfo];
@@ -92,10 +113,8 @@
     
     [self reloadData];
     
-    
     self.tableHeaderView = [self viewForTableHeader];
 }
-
 
 
 - (NSArray *)sectionForBasicInfo
@@ -213,6 +232,8 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    DLog(@"%d %@", section, [_sections objectAtIndex:section]);
+    
     return [[_sections objectAtIndex:section] count];
 }
 
@@ -225,6 +246,7 @@
 {
     UITableViewCellStyle style = UITableViewCellStyleDefault;
     NSString *cellIdentifier;
+    DLog(@"%@ %@", indexPath, [_sections objectAtIndex:indexPath.section]);
     id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     if ([cellData isKindOfClass:[NSDictionary class]]) {    
         if ([cellData objectForKey:@"subtitle"]) {
@@ -298,7 +320,10 @@
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
         } else if ([accessory isEqualToString:KGOAccessoryTypeEmail]) {
-            [MITMailComposeController presentMailControllerWithEmail:[cellData objectForKey:@"subtitle"] subject:nil body:nil];
+            [self.viewController presentMailControllerWithEmail:[cellData objectForKey:@"subtitle"]
+                                                        subject:nil
+                                                           body:nil
+                                                       delegate:self];
             
         } else if ([accessory isEqualToString:KGOAccessoryTypeMap]) {
             NSArray *annotations = [NSArray arrayWithObject:_event];
@@ -306,6 +331,13 @@
             [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome forModuleTag:MapTag params:params];
         }
     }
+}
+
+- (void)mailComposeController:(MFMailComposeViewController*)controller
+          didFinishWithResult:(MFMailComposeResult)result
+                        error:(NSError*)error 
+{
+    [self.viewController dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - Table header
@@ -349,6 +381,47 @@
 - (void)headerView:(KGODetailPageHeaderView *)headerView shareButtonPressed:(id)sender
 {
     [self.viewController shareButtonPressed:sender];
+}
+
+#pragma mark detail
+
+- (void)requestEventDetails
+{
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            _event.identifier, @"id",
+                            [NSString stringWithFormat:@"%.0f", [_event.startDate timeIntervalSince1970]], @"start",
+                            nil];
+    NSLog(@"%@", params);
+    if (_eventDetailRequest) {
+        [_eventDetailRequest cancel];
+        [_eventDetailRequest release];
+        _eventDetailRequest = nil;
+    }
+    
+    _eventDetailRequest = [[[KGORequestManager sharedManager] requestWithDelegate:self
+                                                                           module:self.dataManager.moduleTag
+                                                                             path:@"detail"
+                                                                           params:params] retain];
+    [_eventDetailRequest connect];
+}
+
+- (void)request:(KGORequest *)request didFailWithError:(NSError *)error
+{
+    NSLog(@"%@", [error description]);
+}
+
+- (void)request:(KGORequest *)request didReceiveResult:(id)result
+{
+    [_event updateWithDictionary:result];
+    [_event saveToCoreData];
+
+    [self eventDetailsDidChange];
+}
+
+- (void)requestWillTerminate:(KGORequest *)request
+{
+    [_eventDetailRequest release];
+    _eventDetailRequest = nil;
 }
 
 @end

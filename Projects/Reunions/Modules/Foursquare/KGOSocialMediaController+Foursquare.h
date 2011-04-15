@@ -1,6 +1,9 @@
 #import "KGOSocialMediaController.h"
 
-@interface KGOSocialMediaController (Foursquare)
+extern NSString * const FoursquareDidLoginNotification;
+extern NSString * const FoursquareDidLogoutNotification;
+
+@interface KGOSocialMediaController (foursquare)
 
 - (void)startupFoursquare;
 - (void)shutdownFoursquare;
@@ -8,5 +11,8 @@
 
 - (void)didReceiveFoursquareAuthCode:(NSString *)code;
 
+- (BOOL)isFoursquareLoggedIn;
+
+- (KGOFoursquareEngine *)foursquareEngine;
 
 @end

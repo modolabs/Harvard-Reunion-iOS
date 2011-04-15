@@ -11,7 +11,6 @@ typedef enum {
 @interface ScheduleTabletTableViewCell : UITableViewCell {
     
     UIView *_fakeCardBorder;
-    UIView *_fakeBehindCardBorder;
     UIImageView *_fakeTopOfNextCell;
     
     ScheduleCellType _scheduleCellType;

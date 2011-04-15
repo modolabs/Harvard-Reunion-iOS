@@ -24,7 +24,7 @@
         KGOHomeScreenViewController *homeVC = (KGOHomeScreenViewController *)[appDelegate homescreen];
         frame = [homeVC springboardFrame];
         UIImage *image = [UIImage imageWithPathName:@"modules/home/ribbon"];
-        frame = CGRectMake(10, 10, frame.size.width - image.size.width - 20, 90);
+        frame = CGRectMake(10, 10, frame.size.width - image.size.width - 30, 90);
     } else {
         frame = CGRectZero;
     }
@@ -103,8 +103,13 @@
         CGRect outerFrame = [(KGOHomeScreenViewController *)[appDelegate homescreen] springboardFrame];
         
         frame = widget.frame;
-        frame.size.width = titleLabel.frame.size.width + subtitleLabel.frame.size.width; // latter may be zero
-        frame.size.height = fmaxf(titleLabel.frame.size.height, subtitleLabel.frame.size.height);
+        CGFloat titleWidth = (titleLabel != nil) ? titleLabel.frame.size.width : 0;
+        CGFloat subtitleWidth = (subtitleLabel != nil) ? subtitleLabel.frame.size.width : 0;
+        CGFloat titleHeight = (titleLabel != nil) ? titleLabel.frame.size.height : 0;
+        CGFloat subtitleHeight = (subtitleLabel != nil) ? subtitleLabel.frame.size.height : 0;
+        
+        frame.size.width = titleWidth + subtitleWidth;
+        frame.size.height = fmaxf(titleHeight, subtitleHeight);
         frame.origin.y = 10;
         frame.origin.x = floorf((outerFrame.size.width - frame.size.width) / 2);
         

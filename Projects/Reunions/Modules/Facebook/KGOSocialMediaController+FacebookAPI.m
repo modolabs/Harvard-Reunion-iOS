@@ -29,6 +29,13 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
 
 @implementation KGOSocialMediaController (FacebookAPI)
 
+- (NSString *)imageURLForGraphObject:(NSString *)graphID
+{
+    NSString *urlString = [NSString stringWithFormat:
+                           @"https://graph.facebook.com/%@/picture?access_token=%@",
+                           graphID, _facebook.accessToken];
+    return urlString;
+}
 
 - (BOOL)queueFacebookRequest:(FBRequest *)request withReceiver:(id)receiver callback:(SEL)callback {
     if ([receiver respondsToSelector:callback]) {
@@ -111,6 +118,22 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
     [_fbUploadData addObject:tempData];
     
     return YES;
+}
+
+- (BOOL)postStatus:(NSString *)message toProfile:(NSString *)profile delegate:(id<FacebookUploadDelegate>)delegate {
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:message, @"message", nil];
+    NSString *graphPath = [NSString stringWithFormat:@"%@/feed", profile];
+    FBRequest *request = [_facebook requestWithGraphPath:graphPath andParams:params andHttpMethod:@"POST" andDelegate:self];
+    
+    // TODO: clean this this fragile dictionary structure
+    NSMutableDictionary *tempData = [[params mutableCopy] autorelease];
+    [tempData setObject:@"status" forKey:@"type"];
+    [tempData setObject:delegate forKey:@"delegate"];
+    
+    [_fbUploadQueue addObject:request];
+    [_fbUploadData addObject:tempData];
+    
+    return YES;  
 }
 
 - (BOOL)uploadPhoto:(UIImage *)photo
@@ -242,7 +265,9 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
         
         NSDictionary *dictionary = [_fbUploadData objectAtIndex:index];
         NSString *type = [dictionary objectForKey:@"type"];
-        if ([type isEqualToString:@"comment"] && [result isKindOfClass:[NSDictionary class]]) {
+        if (([type isEqualToString:@"comment"] || [type isEqualToString:@"status"])
+            && [result isKindOfClass:[NSDictionary class]]
+        ) {
             NSString *identifier = [result stringForKey:@"id" nilIfEmpty:YES];
             FacebookComment *aComment = [FacebookComment commentWithID:identifier];
             if (aComment) {

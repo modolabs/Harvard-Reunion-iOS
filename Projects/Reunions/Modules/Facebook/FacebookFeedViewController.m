@@ -1,19 +1,20 @@
-#import "TwitterFeedViewController.h"
+#import "FacebookFeedViewController.h"
+#import "KGOSocialMediaController+FacebookAPI.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
-#import "TwitterModule.h"
+#import "FacebookModule.h"
 #import "Foundation+KGOAdditions.h"
 #import "UIKit+KGOAdditions.h"
-#import "TwitterViewController.h"
 #import "MITThumbnailView.h"
+#import "FacebookModel.h"
 
-@implementation TwitterFeedViewController
+@implementation FacebookFeedViewController
 
-@synthesize latestTweets;
+@synthesize feedPosts;
 
 - (void)dealloc
 {
-    self.latestTweets = nil;
-    twitterModule = nil;
+    self.feedPosts = nil;
+    _facebookModule = nil;
     [super dealloc];
 }
 
@@ -25,48 +26,52 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
-- (void)twitterFeedDidUpdate:(NSNotification *)aNotification {
-    self.latestTweets = twitterModule.latestTweets;
+- (void)facebookFeedDidUpdate:(NSNotification *)aNotification
+{
+    NSMutableArray *statusUpdates = [NSMutableArray array];
+    for (NSDictionary *aPost in _facebookModule.latestFeedPosts) {
+        NSString *type = [aPost stringForKey:@"type" nilIfEmpty:YES];
+        if ([type isEqualToString:@"status"]) {
+            [statusUpdates addObject:aPost];
+        }
+    }
+    self.feedPosts = statusUpdates;
+    
     [self reloadDataForTableView:self.tableView];
 }
 
-- (void)tweetButtonPressed:(id)sender
+- (void)postButtonPressed:(id)sender
 {
-    if (_inputView) {
-       [[KGOSocialMediaController sharedController] postToTwitter:_inputView.text];
-        [self hideInputView];
-
-    } else if (![[KGOSocialMediaController sharedController] isTwitterLoggedIn]) {
-        TwitterViewController *twitterVC = [[[TwitterViewController alloc] init] autorelease];
-        twitterVC.delegate = self;
-        twitterVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-        [self presentModalViewController:twitterVC animated:YES];
-
+    if (![[KGOSocialMediaController sharedController] isFacebookLoggedIn]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(postButtonPressed:)
+                                                     name:FacebookDidLoginNotification object:nil];
+        [[KGOSocialMediaController sharedController] loginFacebook];
+        return;
+    }
+    
+    if (!_inputView) { // user is beginning to post
+        _inputView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 180)];
+        
+        _inputView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        _inputView.delegate = self;
+        
+        [self reloadDataForTableView:self.tableView];
+        [_inputView becomeFirstResponder];
+        
     } else {
-        [self showInputView];
+        [[KGOSocialMediaController sharedController] postStatus:_inputView.text
+                                                      toProfile:_facebookModule.groupID
+                                                       delegate:self];
+        
+        [_inputView release];
+        _inputView = nil;
     }
 }
 
-- (void)controllerDidLogin:(TwitterViewController *)controller
+- (void)uploadDidComplete:(FacebookPost *)result
 {
-    [self dismissModalViewControllerAnimated:YES];
-    [self showInputView];
-}
-
-- (void)showInputView
-{
-    _inputView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 180)];
-    _inputView.delegate = self;
-    _inputView.text = [NSString stringWithFormat:@" %@", twitterModule.hashtag];
-    _inputView.selectedRange = NSMakeRange(0, 0);
-    [self reloadDataForTableView:self.tableView];
-    [_inputView becomeFirstResponder];
-}
-
-- (void)hideInputView
-{
-    [_inputView release];
-    _inputView = nil;
+    [_facebookModule requestStatusUpdates:nil];
     [self reloadDataForTableView:self.tableView];
 }
 
@@ -76,22 +81,29 @@
 {
     [super viewDidLoad];
     
-    twitterModule = (TwitterModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"twitter"];
-    self.latestTweets = twitterModule.latestTweets;
+    _facebookModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+    NSMutableArray *statusUpdates = [NSMutableArray array];
+    for (NSDictionary *aPost in _facebookModule.latestFeedPosts) {
+        NSString *type = [aPost stringForKey:@"type" nilIfEmpty:YES];
+        if ([type isEqualToString:@"status"]) {
+            [statusUpdates addObject:aPost];
+        }
+    }
+    self.feedPosts = statusUpdates;
     
-    if (!self.latestTweets) {
-        [twitterModule requestStatusUpdates:nil];
+    if (!self.feedPosts.count) {
+        [_facebookModule requestStatusUpdates:nil];
     }
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(twitterFeedDidUpdate:)
-                                                 name:TwitterStatusDidUpdateNotification
+                                             selector:@selector(facebookFeedDidUpdate:)
+                                                 name:FacebookStatusDidUpdateNotification
                                                object:nil];
     
-    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Tweet"
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Post"
                                                                                style:UIBarButtonItemStyleDone
                                                                               target:self
-                                                                              action:@selector(tweetButtonPressed:)] autorelease];
+                                                                              action:@selector(postButtonPressed:)] autorelease];
 }
 
 - (void)viewDidUnload
@@ -139,6 +151,7 @@
 - (NSArray *)tableView:(UITableView *)tableView viewsForCellAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger rownum = indexPath.row;
+    
     if (_inputView) {
         if (rownum == 0) {
             return [NSArray arrayWithObject:_inputView];
@@ -147,19 +160,25 @@
         }
     }
     
-    NSDictionary *aTweet = [self.latestTweets objectAtIndex:rownum];
+    NSDictionary *aPost = [self.feedPosts objectAtIndex:rownum];
+
+    NSString *title = [aPost stringForKey:@"message" nilIfEmpty:YES];
+    NSDictionary *from = [aPost dictionaryForKey:@"from"];
+    FacebookUser *user = [FacebookUser userWithDictionary:from];
+    NSString *username = user.name;
     
-    NSString *title = [aTweet stringForKey:@"text" nilIfEmpty:YES];
-    NSString *user = [aTweet stringForKey:@"from_user" nilIfEmpty:YES];
-    NSString *dateString = [aTweet stringForKey:@"created_at" nilIfEmpty:YES];
-    NSString *imageURL = [aTweet stringForKey:@"profile_image_url" nilIfEmpty:YES];
+    NSDate *date = nil;
+    NSString *dateString = [aPost stringForKey:@"updated_time" nilIfEmpty:YES];
+    if (dateString) {
+        date = [FacebookModule dateFromRFC3339DateTimeString:dateString];
+    }
     
     MITThumbnailView *thumbView = [[[MITThumbnailView alloc] initWithFrame:CGRectMake(10, 10, 50, 50)] autorelease];
-    thumbView.imageURL = imageURL;
-    [thumbView loadImage];
+    if (user.identifier) {
+        thumbView.imageURL = [[KGOSocialMediaController sharedController] imageURLForGraphObject:user.identifier];
+        [thumbView loadImage];
+    }
     
-    NSDate *date = [[twitterModule twitterDateFormatter] dateFromString:dateString];
-
     UIFont *titleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText];
     UIFont *detailFont = [UIFont systemFontOfSize:12];
     CGFloat width = tableView.frame.size.width - 20 - thumbView.frame.size.width;
@@ -172,13 +191,13 @@
     frame.origin.x = thumbView.frame.size.width + 20;
     frame.origin.y = 10;
     UIFont *userFont = [UIFont boldSystemFontOfSize:12];
-    CGSize size = [user sizeWithFont:userFont];
+    CGSize size = [username sizeWithFont:userFont];
     frame.size = size;
 
     // username
     UILabel *userLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
     userLabel.font = userFont;
-    userLabel.text = user;
+    userLabel.text = username;
     frame.origin.y += userLabel.frame.size.height + 2;
 
     frame.size = titleLabel.frame.size;
@@ -198,23 +217,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger num = self.latestTweets.count;
+    NSInteger num = self.feedPosts.count;
     if (_inputView) {
-        num++;
+        num += 1;
     }
     return num;
-}
-
-#pragma mark UITextView
-
-#define TWEET_MAX_CHARS 140
-
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-	if (textView.text.length - range.length + text.length <= TWEET_MAX_CHARS) {
-		return YES;
-	} else {
-		return NO;
-	}
 }
 
 @end

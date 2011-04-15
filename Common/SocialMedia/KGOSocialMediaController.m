@@ -443,7 +443,6 @@ static KGOSocialMediaController *s_controller = nil;
 	[KGO_SHARED_APP_DELEGATE() hideNetworkActivityIndicator];
 }
 
-
 #pragma mark - Facebook
 
 - (BOOL)isFacebookLoggedIn {
@@ -536,14 +535,21 @@ static KGOSocialMediaController *s_controller = nil;
     
     if (_facebookStartupCount <= 0) {
         NSLog(@"shutting down facebook");
-        for (FBRequest *aRequest in _fbRequestQueue) {
-            aRequest.delegate = nil;
-            [_fbRequestQueue removeObject:aRequest];
-        }
+        [_fbRequestQueue enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            [(FBRequest *)obj setDelegate:nil];
+        }];
+        
         [_fbRequestQueue release];
+        _fbRequestQueue = nil;
+        
         [_fbRequestIdentifiers release];
+        _fbRequestIdentifiers = nil;
+        
         [_fbUploadQueue release];
+        _fbUploadQueue = nil;
+        
         [_fbUploadData release];
+        _fbUploadData = nil;
 
         if (_facebook) {
             [_facebook release];
@@ -601,11 +607,11 @@ static KGOSocialMediaController *s_controller = nil;
 
 #pragma mark Facebook - FBSessionDelegate
 
-/**
- * Called when the user has logged in successfully.
- */
+// called if user logs in successfully via pop-up dialog
+// (3G or equivalent devices and lower)
 - (void)fbDidLogin {
     NSLog(@"facebook logged in!");
+    [[NSNotificationCenter defaultCenter] postNotificationName:FacebookDidLoginNotification object:self];
 }
 
 /**
@@ -620,7 +626,7 @@ static KGOSocialMediaController *s_controller = nil;
  */
 - (void)fbDidLogout {
 	//[self.facebookDelegate facebookDidLogout];
-    [[NSNotificationCenter defaultCenter] postNotificationName:FacebookDidLoginNotification object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:FacebookDidLogoutNotification object:self];
 }
 
 #pragma mark Facebook - FBRequestDelegate

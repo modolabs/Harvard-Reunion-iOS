@@ -143,6 +143,15 @@ NSInteger widthSort(id imageDict1, id imageDict2, void *context);
     }
 }
 
+#pragma mark FacebookThumbSource
+- (NSString *)thumbnailSourceURLString {
+    return _thumbSrc;
+}
+
+- (NSData *)mediaData {
+    return self.data;
+}
+
 @end
 
 NSInteger widthSort(id imageDict1, id imageDict2, void *context) {

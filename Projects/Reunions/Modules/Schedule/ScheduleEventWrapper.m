@@ -19,12 +19,11 @@
     self.summary = [dictionary stringForKey:@"description" nilIfEmpty:YES];
     
     // times
-    NSTimeInterval startTimestamp = [dictionary floatForKey:@"start"];
-    if (startTimestamp) {
-        self.startDate = [NSDate dateWithTimeIntervalSince1970:startTimestamp];
-    }
-    NSTimeInterval endTimestamp = [dictionary floatForKey:@"end"];
-    if (endTimestamp) {
+    NSTimeInterval startTimestamp = (double)[dictionary integerForKey:@"start"];
+    self.startDate = [NSDate dateWithTimeIntervalSince1970:startTimestamp];
+
+    NSTimeInterval endTimestamp = (double)[dictionary integerForKey:@"end"];
+    if (endTimestamp > startTimestamp) {
         self.endDate = [NSDate dateWithTimeIntervalSince1970:endTimestamp];
     }
     NSNumber *allDay = [dictionary objectForKey:@"allday"];
@@ -58,6 +57,12 @@
     NSString *building = [locationDict stringForKey:@"building" nilIfEmpty:YES];
     if (building) {
         [userInfo setObject:building forKey:@"building"];
+    }
+    
+    // checkins
+    NSString *foursquarePlaceID = [locationDict stringForKey:@"foursquareId" nilIfEmpty:YES];
+    if (foursquarePlaceID) {
+        [userInfo setObject:foursquarePlaceID forKey:@"foursquareID"];
     }
     
     self.lastUpdate = [NSDate date];
@@ -118,16 +123,6 @@
         }
     }
     
-    // checkins
-    NSString *facebookPlaceID = [dictionary stringForKey:@"fbPlaceId" nilIfEmpty:YES];
-    if (facebookPlaceID) {
-        [userInfo setObject:facebookPlaceID forKey:@"facebookID"];
-    }
-    NSString *foursquarePlaceID = [dictionary stringForKey:@"fqPlaceId" nilIfEmpty:YES];
-    if (foursquarePlaceID) {
-        [userInfo setObject:foursquarePlaceID forKey:@"foursquareID"];
-    }
-    
     self.userInfo = userInfo;
     
     NSArray *attendees = [dictionary arrayForKey:@"attendees"];
@@ -159,11 +154,6 @@
 - (NSString *)registrationURL
 {
     return [self.userInfo objectForKey:@"regURL"];
-}
-
-- (NSString *)facebookID
-{
-    return [self.userInfo objectForKey:@"facebookID"];
 }
 
 - (NSString *)foursquareID

@@ -34,6 +34,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     self.title = @"Attendees";
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = [UIColor clearColor];
+    self.tableView.backgroundView = nil;
     
     if (!self.attendees) {
         self.attendees = [[NSUserDefaults standardUserDefaults] objectForKey:AllReunionAttendeesPrefKey];

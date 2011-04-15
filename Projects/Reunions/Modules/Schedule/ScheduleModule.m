@@ -3,6 +3,7 @@
 #import "ScheduleDetailViewController.h"
 #import "ScheduleDataManager.h"
 #import "AttendeesTableViewController.h"
+#import "KGOSocialMediaController+Foursquare.h"
 
 @implementation ScheduleModule
 
@@ -12,7 +13,10 @@
         self.dataManager = [[[ScheduleDataManager alloc] init] autorelease];
         self.dataManager.moduleTag = self.tag;
     }
-    [super launch];
+    if (!self.isLaunched) {
+        [[KGOSocialMediaController sharedController] startupFoursquare];
+        [super launch];
+    }
 }
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {

@@ -8,6 +8,8 @@
 #import "TwitterFeedViewController.h"
 #import "ReunionHomeModule.h"
 #import "MITThumbnailView.h"
+#import "KGOHomeScreenViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define TWITTER_BUTTON_WIDTH_IPHONE 120
 #define TWITTER_BUTTON_HEIGHT_IPHONE 51
@@ -16,8 +18,6 @@
 #define TWITTER_BUTTON_HEIGHT_IPAD 100
 
 #define TWITTER_STATUS_POLL_FREQUENCY 60
-
-NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
 
 @implementation TwitterModule
 
@@ -61,6 +61,11 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
     return self;
 }
 
+- (NSString *)hashtag
+{
+    return _hashTag;
+}
+
 - (void)didLogin:(NSNotification *)aNotification
 {
     ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
@@ -71,17 +76,15 @@ NSString * const TwitterFeedDidUpdateNotification = @"twitterUpdated";
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params
+- (Class)feedViewControllerClass
 {
-    UIViewController *vc = nil;
-    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] != KGONavigationStyleTabletSidebar) {
-        if ([pageName isEqualToString:LocalPathPageNameHome]) {
-            vc = [[[TwitterFeedViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
-        }
-    } else {
-        
-    }
-    return vc;
+    return [TwitterFeedViewController class];
+}
+
+- (void)willShowModalFeedController
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:TwitterStatusDidUpdateNotification object:self];
+    self.chatBubble.hidden = NO;
 }
 
 - (void)applicationDidFinishLaunching {

@@ -1,6 +1,5 @@
 #import "FacebookModule.h"
-#import "FacebookPhotosViewController.h"
-#import "KGOSocialMediaController.h"
+#import "KGOSocialMediaController+FacebookAPI.h"
 #import "KGOHomeScreenWidget.h"
 #import "KGOTheme.h"
 #import "UIKit+KGOAdditions.h"
@@ -8,6 +7,7 @@
 #import "FacebookUser.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "ReunionHomeModule.h"
+#import "FacebookFeedViewController.h"
 
 #define FACEBOOK_STATUS_POLL_FREQUENCY 60
 
@@ -146,6 +146,11 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupIsMemberKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(facebookDidLogin:)
+                                                 name:FacebookDidLoginNotification
+                                               object:nil];
 }
 
 - (NSString *)groupID {
@@ -255,13 +260,6 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 #pragma mark -
 
-- (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
-    UIViewController *vc = nil;
-    if ([pageName isEqualToString:LocalPathPageNameHome]) {
-        vc = [[[FacebookPhotosViewController alloc] init] autorelease];
-    }
-    return vc;
-}
 /*
 - (void)launch {
     [super launch];
@@ -306,6 +304,19 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     return widget;
 }
 */
+
+
+- (Class)feedViewControllerClass
+{
+    return [FacebookFeedViewController class];
+}
+
+- (void)willShowModalFeedController
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:FacebookStatusDidUpdateNotification object:self];
+    self.chatBubble.hidden = NO;
+}
+
 #pragma mark Social media controller
 
 - (NSSet *)socialMediaTypes {

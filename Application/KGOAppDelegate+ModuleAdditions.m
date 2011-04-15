@@ -2,6 +2,7 @@
 #import "KGOSpringboardViewController.h"
 #import "HarvardNavigationController.h"
 #import "KGOSidebarFrameViewController.h"
+#import "KGOSplitViewController.h"
 #import "KGOTheme.h"
 #import "KGOModule+Factory.h"
 #import "HomeModule.h"
@@ -67,7 +68,6 @@
         homeData = [NSDictionary dictionaryWithObjectsAndKeys:
                     @"HomeModule", @"class",
                     @"home", @"tag",
-                    @"hidden", [NSNumber numberWithBool:YES],
                     nil];
     }
     KGOModule *homeModule = [KGOModule moduleWithDictionary:homeData];
@@ -186,7 +186,9 @@
             // so assuming it's never deallocated when we try to access it
             _visibleViewController = vc;
             
-            if (_visibleModule != module) {
+            BOOL moduleDidChange = (_visibleModule != module);
+
+            if (moduleDidChange) {
                 [_visibleModule willBecomeHidden];
                 [module willBecomeVisible];
                 _visibleModule = module;
@@ -202,37 +204,33 @@
                 }
                 case KGONavigationStyleTabletSplitView:
                 {
-                    UISplitViewController *splitVC = (UISplitViewController *)_appHomeScreen;
-                    UIViewController *detailVC = [splitVC.viewControllers objectAtIndex:1];
-                    if (detailVC.modalViewController) {
-                        if ([detailVC.modalViewController isKindOfClass:[UINavigationController class]]) {
-                            [(UINavigationController *)detailVC.modalViewController pushViewController:vc animated:YES];
-                        } else if (detailVC.modalViewController.navigationController) {
-                            [detailVC.modalViewController.navigationController pushViewController:vc animated:YES];
+                    KGOSplitViewController *splitVC = (KGOSplitViewController *)_appHomeScreen;
+                    if (splitVC.rightViewController.modalViewController) {
+                        UIViewController *modalVC = splitVC.rightViewController.modalViewController;
+                        if ([modalVC isKindOfClass:[UINavigationController class]]) {
+                            [(UINavigationController *)modalVC pushViewController:vc animated:YES];
+                        } else if (modalVC.navigationController) {
+                            [modalVC.navigationController pushViewController:vc animated:YES];
                         }
                         
                     } else {
-                        splitVC.viewControllers = [NSArray arrayWithObjects:
-                                                   [splitVC.viewControllers objectAtIndex:0],
-                                                   vc,
-                                                   nil];
+                        if (moduleDidChange) {
+                            splitVC.isShowingModuleHome = YES;
+                            splitVC.rightViewController = vc;
+                        } else {
+                            splitVC.isShowingModuleHome = NO;
+                            [splitVC.rightViewController.navigationController pushViewController:vc animated:YES];
+                        }
                     }
                     break;
                 }
                 default:
                 {
                     // if the visible view controller is modal, push new view controllers on the modal nav controller.
-                    // there should be no reason to push a view controller behind what's visible.
-                    // TODO: get rid of appModalHolder and thus the first condition here
                     UIViewController *homescreen = [self homescreen];
                     UIViewController *topVC = homescreen.navigationController.topViewController;
                     
-                    if (!_appModalHolder.view.hidden
-                        && [_appModalHolder.modalViewController isKindOfClass:[UINavigationController class]]
-                    ) {
-                        [(UINavigationController *)_appModalHolder.modalViewController pushViewController:vc animated:YES];
-                        
-                    } else if (topVC.modalViewController && [topVC.modalViewController isKindOfClass:[UINavigationController class]]) {
+                    if (topVC.modalViewController && [topVC.modalViewController isKindOfClass:[UINavigationController class]]) {
                         [(UINavigationController *)topVC.modalViewController pushViewController:vc animated:YES];
                         
                     } else {
@@ -253,12 +251,23 @@
 }
 
 - (UIViewController *)visibleViewController {
-    if (_appNavController) {
-        return _appNavController.visibleViewController;
-    } else if (_appHomeScreen && [_appHomeScreen isKindOfClass:[KGOSidebarFrameViewController class]]) {
-        return [(KGOSidebarFrameViewController *)_appHomeScreen visibleViewController];
+    KGONavigationStyle navStyle = [self navigationStyle];
+    switch (navStyle) {
+        case KGONavigationStyleTabletSidebar:
+        {
+            return _appHomeScreen;
+        }
+        case KGONavigationStyleTabletSplitView:
+        {
+            KGOSplitViewController *splitVC = (KGOSplitViewController *)_appHomeScreen;
+            return splitVC.rightViewController.navigationController.topViewController;
+        }
+        default:
+        {
+            UIViewController *homescreen = [self homescreen];
+            return homescreen.navigationController.topViewController;
+        }
     }
-    return nil;
 }
 
 - (KGONavigationStyle)navigationStyle {
