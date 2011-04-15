@@ -19,10 +19,10 @@
     self.summary = [dictionary stringForKey:@"description" nilIfEmpty:YES];
     
     // times
-    NSTimeInterval startTimestamp = [dictionary floatForKey:@"start"];
+    NSTimeInterval startTimestamp = (double)[dictionary integerForKey:@"start"];
     self.startDate = [NSDate dateWithTimeIntervalSince1970:startTimestamp];
 
-    NSTimeInterval endTimestamp = [dictionary floatForKey:@"end"];
+    NSTimeInterval endTimestamp = (double)[dictionary integerForKey:@"end"];
     if (endTimestamp > startTimestamp) {
         self.endDate = [NSDate dateWithTimeIntervalSince1970:endTimestamp];
     }

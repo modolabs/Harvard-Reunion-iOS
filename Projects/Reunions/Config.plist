@@ -124,9 +124,9 @@
 			<key>APIPath</key>
 			<string>rest</string>
 			<key>Host</key>
-			<string>haa-dev.modolabs.com</string>
+			<string>m-dev.reunion.harvard.edu</string>
 			<key>PathExtension</key>
-			<string>build3</string>
+			<string>qa</string>
 			<key>UseHTTPS</key>
 			<true/>
 		</dict>
@@ -135,33 +135,33 @@
 			<key>APIPath</key>
 			<string>rest</string>
 			<key>Host</key>
-			<string>www.harvard-example.edu</string>
+			<string>m-dev.reunion.harvard.edu</string>
 			<key>PathExtension</key>
 			<string></string>
 			<key>UseHTTPS</key>
-			<false/>
+			<true/>
 		</dict>
 		<key>Staging</key>
 		<dict>
 			<key>APIPath</key>
 			<string>rest</string>
 			<key>Host</key>
-			<string>staging.harvard-example.edu</string>
+			<string>m-dev.reunion.harvard.edu</string>
 			<key>PathExtension</key>
 			<string></string>
 			<key>UseHTTPS</key>
-			<false/>
+			<true/>
 		</dict>
 		<key>Testing</key>
 		<dict>
 			<key>APIPath</key>
 			<string>rest</string>
 			<key>Host</key>
-			<string>localhost</string>
+			<string>m-dev.reunion.harvard.edu</string>
 			<key>PathExtension</key>
-			<string></string>
+			<string>qa</string>
 			<key>UseHTTPS</key>
-			<false/>
+			<true/>
 		</dict>
 	</dict>
 	<key>SocialMedia</key>

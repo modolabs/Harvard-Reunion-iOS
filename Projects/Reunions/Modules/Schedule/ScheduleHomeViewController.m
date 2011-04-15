@@ -6,6 +6,7 @@
 #import "ScheduleDetailTableView.h"
 #import "ScheduleTabletTableViewCell.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MapKit+KGOAdditions.h"
 
 @implementation ScheduleHomeViewController
 
@@ -43,12 +44,16 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    // since we don't get notified when user (un)bookmarks an event
-    NSMutableArray *allEvents = [NSMutableArray array];
-    for (NSArray *events in [_currentEventsBySection allValues]) {
-        [allEvents addObjectsFromArray:events];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        // since we don't get notified when user (un)bookmarks an event
+        NSMutableArray *allEvents = [NSMutableArray array];
+        for (NSArray *events in [_currentEventsBySection allValues]) {
+            [allEvents addObjectsFromArray:events];
+        }
+        [self eventsDidChange:allEvents calendar:_currentCalendar];
     }
-    [self eventsDidChange:allEvents calendar:_currentCalendar];
+
+    [super viewWillAppear:animated];
 }
 
 - (void)loadTableViewWithStyle:(UITableViewStyle)style
@@ -64,11 +69,13 @@
     }
     
     if (_isTablet) {
+        [self.tableView removeFromSuperview];
+        
         frame.origin.x += 8;
         frame.origin.y += 8;
         frame.size.width -= 16;
-        frame.size.height -= 16;
-
+        frame.size.height -= 8;
+        
         self.tableView = [[[UITableView alloc] initWithFrame:frame style:style] autorelease];
         self.tableView.backgroundColor = [UIColor clearColor];
         self.tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
@@ -101,9 +108,9 @@
         CGFloat hPadding = 10.0f;
         CGFloat viewHeight = font.lineHeight + 5.0f;
         
-        UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(hPadding + 8,
+        UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(hPadding,
                                                                     floor((viewHeight - size.height) / 2),
-                                                                    tableView.bounds.size.width - 8 - hPadding * 2,
+                                                                    tableView.bounds.size.width - hPadding * 2,
                                                                     size.height)] autorelease];
         
         label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySectionHeader];
@@ -115,8 +122,8 @@
         labelContainer.backgroundColor = [UIColor clearColor];
         labelContainer.opaque = NO;
 
-        UIImageView *labelBackground = [[[UIImageView alloc] initWithFrame:CGRectMake(8, 0,
-                                                                                      tableView.frame.size.width - 8,
+        UIImageView *labelBackground = [[[UIImageView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                                      tableView.frame.size.width,
                                                                                       viewHeight + 5)] autorelease];
         labelBackground.image = [[UIImage imageWithPathName:@"modules/schedule/fakeheader"] stretchableImageWithLeftCapWidth:5 topCapHeight:0];
         labelBackground.layer.cornerRadius = 5;
@@ -182,6 +189,9 @@
     }
 }
 
+#define TABLE_TAG 1
+#define MAP_TAG 2
+#define BOOKMARK_TAG 888
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -222,43 +232,67 @@
         
         ScheduleEventWrapper *event = [eventsForSection objectAtIndex:indexPath.row];
         
-        [[cell.contentView viewWithTag:1] removeFromSuperview];
-        [[cell.contentView viewWithTag:2] removeFromSuperview];
-
+        cell.textLabel.text = event.title;
+        cell.detailTextLabel.text = [self.dataManager shortDateTimeStringFromDate:event.startDate];
+        
+        [[cell.contentView viewWithTag:TABLE_TAG] removeFromSuperview];
+        [[cell.contentView viewWithTag:MAP_TAG] removeFromSuperview];
+        
+        UIImageView *bookmarkView = (UIImageView *)[cell.contentView viewWithTag:BOOKMARK_TAG];
+        if ([event isRegistered] || [event isBookmarked]) {
+            if (!bookmarkView) {
+                UIImage *ribbon = [UIImage imageWithPathName:@"modules/schedule/list-bookmark"];
+                bookmarkView = [[[UIImageView alloc] initWithImage:ribbon] autorelease];
+                bookmarkView.tag = BOOKMARK_TAG;
+                CGRect frame = bookmarkView.frame;
+                frame.origin.y = -4;
+                frame.size.height = 30; // TODO: change this when we get the right asset
+                frame.origin.x = tableView.frame.size.width - 40;
+                bookmarkView.frame = frame;
+                [cell.contentView addSubview:bookmarkView];
+            }
+        } else if (bookmarkView) {
+            [bookmarkView removeFromSuperview];
+        }
+        
         switch (cellType) {
             case ScheduleCellSelected:
             case ScheduleCellLastInTable:
             {
                 CGFloat width = floor((tableView.frame.size.width - 30) / 2);
-                ScheduleDetailTableView *tableView = (ScheduleDetailTableView *)[cell.contentView viewWithTag:1];
+                ScheduleDetailTableView *tableView = (ScheduleDetailTableView *)[cell.contentView viewWithTag:TABLE_TAG];
                 if (!tableView) {
-                    tableView = [[[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(10, 10, width, 480)
+                    tableView = [[[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(10, 60, width, 430)
                                                                           style:UITableViewStyleGrouped] autorelease];
-                    tableView.event = event;
                     tableView.backgroundColor = [UIColor clearColor];
-                    tableView.tag = 1;
+                    tableView.backgroundView = nil;
+                    tableView.tag = TABLE_TAG;
+                    tableView.dataManager = self.dataManager;
                     [cell.contentView addSubview:tableView];
                 }
+                tableView.event = event;
                 
-                MKMapView *mapView = (MKMapView *)[cell.contentView viewWithTag:2];
+                MKMapView *mapView = (MKMapView *)[cell.contentView viewWithTag:MAP_TAG];
                 if (!mapView) {
-                    [[[MKMapView alloc] initWithFrame:CGRectMake(300, 10, width, 480)] autorelease];
-                    mapView.tag = 2;
+                    mapView = [[[MKMapView alloc] initWithFrame:CGRectMake(300, 60, width, 430)] autorelease];
+                    mapView.tag = MAP_TAG;
+                    if (event.coordinate.latitude) {
+                        // we only need to check one assuming there will not
+                        // be any events on the equator
+                        [mapView addAnnotation:event];
+                        mapView.region = MKCoordinateRegionMake(event.coordinate, MKCoordinateSpanMake(0.01, 0.01));
+                    } else {
+                        [mapView centerAndZoomToDefaultRegion];
+                    }
                     [cell.contentView addSubview:mapView];
                 }
+                
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 
                 break;
             }
             default:
                 cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                cell.textLabel.text = event.title;
-                cell.detailTextLabel.text = [self.dataManager shortDateTimeStringFromDate:event.startDate];
-                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                if ([event isRegistered] || [event isBookmarked]) {
-                    cell.imageView.image = [UIImage imageWithPathName:@"modules/schedule/list-bookmark"];
-                } else {
-                    cell.imageView.image = nil;
-                }
                 break;
         }
 
@@ -359,6 +393,7 @@ static bool isOverOneHour(NSTimeInterval interval) {
         }
         
         for (ScheduleEventWrapper *event in sortedEvents) {
+            DLog(@"adding event to section %@", event);
             NSString *title = [formatter stringFromDate:event.startDate];
             NSMutableArray *eventsForCurrentSection = [eventsBySection objectForKey:title];
             if (!eventsForCurrentSection) {
