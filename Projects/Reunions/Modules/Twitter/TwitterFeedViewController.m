@@ -34,10 +34,9 @@
 {
     if (_inputView) {
        [[KGOSocialMediaController sharedController] postToTwitter:_inputView.text];
-        return;
-    }
-    
-    if (![[KGOSocialMediaController sharedController] isTwitterLoggedIn]) {
+        [self hideInputView];
+
+    } else if (![[KGOSocialMediaController sharedController] isTwitterLoggedIn]) {
         TwitterViewController *twitterVC = [[[TwitterViewController alloc] init] autorelease];
         twitterVC.delegate = self;
         twitterVC.modalPresentationStyle = UIModalPresentationCurrentContext;
@@ -57,8 +56,11 @@
 - (void)showInputView
 {
     _inputView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 180)];
-    _inputView.text = twitterModule.hashtag;
+    _inputView.delegate = self;
+    _inputView.text = [NSString stringWithFormat:@" %@", twitterModule.hashtag];
+    _inputView.selectedRange = NSMakeRange(0, 0);
     [self reloadDataForTableView:self.tableView];
+    [_inputView becomeFirstResponder];
 }
 
 - (void)hideInputView
