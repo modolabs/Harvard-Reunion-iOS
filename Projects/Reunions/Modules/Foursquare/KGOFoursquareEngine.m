@@ -1,7 +1,7 @@
 #import "KGOFoursquareEngine.h"
 #import "JSON.h"
 #import "KGOWebViewController.h"
-#import "KGOAppDelegate.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
 #import "Foundation+KGOAdditions.h"
 
 NSString * const FoursquareDidLoginNotification = @"foursquareDidLogin";

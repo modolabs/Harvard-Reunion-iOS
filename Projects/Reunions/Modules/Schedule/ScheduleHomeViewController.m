@@ -6,6 +6,7 @@
 #import "ScheduleDetailTableView.h"
 #import "ScheduleTabletTableViewCell.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MapKit+KGOAdditions.h"
 
 @implementation ScheduleHomeViewController
 
@@ -67,7 +68,7 @@
         frame.origin.x += 8;
         frame.origin.y += 8;
         frame.size.width -= 16;
-        frame.size.height -= 16;
+        frame.size.height -= 8;
 
         self.tableView = [[[UITableView alloc] initWithFrame:frame style:style] autorelease];
         self.tableView.backgroundColor = [UIColor clearColor];
@@ -101,9 +102,9 @@
         CGFloat hPadding = 10.0f;
         CGFloat viewHeight = font.lineHeight + 5.0f;
         
-        UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(hPadding + 8,
+        UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(hPadding,
                                                                     floor((viewHeight - size.height) / 2),
-                                                                    tableView.bounds.size.width - 8 - hPadding * 2,
+                                                                    tableView.bounds.size.width - hPadding * 2,
                                                                     size.height)] autorelease];
         
         label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySectionHeader];
@@ -115,8 +116,8 @@
         labelContainer.backgroundColor = [UIColor clearColor];
         labelContainer.opaque = NO;
 
-        UIImageView *labelBackground = [[[UIImageView alloc] initWithFrame:CGRectMake(8, 0,
-                                                                                      tableView.frame.size.width - 8,
+        UIImageView *labelBackground = [[[UIImageView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                                      tableView.frame.size.width,
                                                                                       viewHeight + 5)] autorelease];
         labelBackground.image = [[UIImage imageWithPathName:@"modules/schedule/fakeheader"] stretchableImageWithLeftCapWidth:5 topCapHeight:0];
         labelBackground.layer.cornerRadius = 5;
@@ -234,16 +235,26 @@
                 if (!tableView) {
                     tableView = [[[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(10, 10, width, 480)
                                                                           style:UITableViewStyleGrouped] autorelease];
-                    tableView.event = event;
                     tableView.backgroundColor = [UIColor clearColor];
+                    tableView.backgroundView = nil;
                     tableView.tag = 1;
+                    tableView.dataManager = self.dataManager;
                     [cell.contentView addSubview:tableView];
                 }
+                tableView.event = event;
                 
                 MKMapView *mapView = (MKMapView *)[cell.contentView viewWithTag:2];
                 if (!mapView) {
-                    [[[MKMapView alloc] initWithFrame:CGRectMake(300, 10, width, 480)] autorelease];
+                    mapView = [[[MKMapView alloc] initWithFrame:CGRectMake(300, 10, width, 480)] autorelease];
                     mapView.tag = 2;
+                    if (event.coordinate.latitude) {
+                        // we only need to check one assuming there will not
+                        // be any events on the equator
+                        [mapView addAnnotation:event];
+                        mapView.region = MKCoordinateRegionMake(event.coordinate, MKCoordinateSpanMake(0.01, 0.01));
+                    } else {
+                        [mapView centerAndZoomToDefaultRegion];
+                    }
                     [cell.contentView addSubview:mapView];
                 }
                 

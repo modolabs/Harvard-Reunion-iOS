@@ -3,8 +3,7 @@
 
 @interface ScheduleDetailTableView : EventDetailTableView <KGOFoursquareCheckinDelegate> {
     
-    UIButton *_foursquareButton;
-    UILabel *_checkinLabel;
+    UILabel *_checkinHeader;
     NSString *_foursquareVenue;
     
     NSInteger _checkinStatus;
