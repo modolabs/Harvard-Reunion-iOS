@@ -3,6 +3,7 @@
 #import "UIKit+KGOAdditions.h"
 #import "CoreDataManager.h"
 #import "MediaPlayer/MediaPlayer.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
 
 @implementation FacebookVideoDetailViewController
 
@@ -163,6 +164,11 @@
     else {
         [super commentButtonPressed:sender];
     }        
+}
+
+- (IBAction)closeButtonPressed:(id)sender {    
+    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome 
+                           forModuleTag:VideoModuleTag params:nil];    
 }
 
 #pragma mark UIPopoverControllerDelegate
