@@ -69,11 +69,13 @@
     }
     
     if (_isTablet) {
+        [self.tableView removeFromSuperview];
+        
         frame.origin.x += 8;
         frame.origin.y += 8;
         frame.size.width -= 16;
         frame.size.height -= 8;
-
+        
         self.tableView = [[[UITableView alloc] initWithFrame:frame style:style] autorelease];
         self.tableView.backgroundColor = [UIColor clearColor];
         self.tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
