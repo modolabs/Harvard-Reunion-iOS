@@ -1,7 +1,7 @@
 #import "FacebookParentPost.h"
+#import "FacebookThumbnail.h"
 
-
-@interface FacebookVideo : FacebookParentPost {
+@interface FacebookVideo : FacebookParentPost <FacebookThumbSource> {
 @private
 }
 @property (nonatomic, retain) NSString * name;

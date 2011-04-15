@@ -517,11 +517,11 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
                          @"Do you want to connect with %@?", 
                          [bumper userName]];
     
-    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:@"Connection made"
-                                                         message:message
-                                                        delegate:self 
-                                               cancelButtonTitle:@"Cancel" 
-                                               otherButtonTitles:@"Connect", nil] autorelease];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Connection made"
+                                                        message:message
+                                                       delegate:self 
+                                              cancelButtonTitle:@"Cancel" 
+                                              otherButtonTitles:@"Connect", nil];
     alertView.tag = kBumpConnectRequestAlertTag;
     [alertView show];
     [alertView release];

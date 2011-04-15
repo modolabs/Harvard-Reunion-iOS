@@ -10,6 +10,7 @@
 
 @property (nonatomic, retain) FacebookVideo *video;
 //@property (nonatomic, retain) UIPopoverController *commentPopover;
+@property (nonatomic, retain) UIWebView *webView;
 
 - (void)loadVideosFromCache;
 

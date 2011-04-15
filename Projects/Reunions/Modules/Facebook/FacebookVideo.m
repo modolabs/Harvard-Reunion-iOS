@@ -77,4 +77,13 @@ NSString * const FacebookVideoEntityName = @"FacebookVideo";
     return aVideo;
 }
 
+#pragma mark FacebookThumbSource
+- (NSString *)thumbnailSourceURLString {
+    return self.thumbSrc;
+}
+
+- (NSString *)title {
+    return self.name;
+}
+
 @end

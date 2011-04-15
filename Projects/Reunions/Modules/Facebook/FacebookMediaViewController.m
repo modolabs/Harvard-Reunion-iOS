@@ -7,6 +7,8 @@
 
 @implementation FacebookMediaViewController
 
+@synthesize scrollView = _scrollView;
+
 #pragma mark -
 
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender {
@@ -64,6 +66,7 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_scrollView release];
     [super dealloc];
 }
 
