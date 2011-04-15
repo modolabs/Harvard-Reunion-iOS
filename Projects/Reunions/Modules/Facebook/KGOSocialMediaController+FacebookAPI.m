@@ -120,6 +120,22 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
     return YES;
 }
 
+- (BOOL)postStatus:(NSString *)message toProfile:(NSString *)profile delegate:(id<FacebookUploadDelegate>)delegate {
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:message, @"message", nil];
+    NSString *graphPath = [NSString stringWithFormat:@"%@/feed", profile];
+    FBRequest *request = [_facebook requestWithGraphPath:graphPath andParams:params andHttpMethod:@"POST" andDelegate:self];
+    
+    // TODO: clean this this fragile dictionary structure
+    NSMutableDictionary *tempData = [[params mutableCopy] autorelease];
+    [tempData setObject:@"status" forKey:@"type"];
+    [tempData setObject:delegate forKey:@"delegate"];
+    
+    [_fbUploadQueue addObject:request];
+    [_fbUploadData addObject:tempData];
+    
+    return YES;  
+}
+
 - (BOOL)uploadPhoto:(UIImage *)photo
   toFacebookProfile:(NSString *)profile
             message:(NSString *)caption
@@ -249,7 +265,9 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
         
         NSDictionary *dictionary = [_fbUploadData objectAtIndex:index];
         NSString *type = [dictionary objectForKey:@"type"];
-        if ([type isEqualToString:@"comment"] && [result isKindOfClass:[NSDictionary class]]) {
+        if (([type isEqualToString:@"comment"] || [type isEqualToString:@"status"])
+            && [result isKindOfClass:[NSDictionary class]]
+        ) {
             NSString *identifier = [result stringForKey:@"id" nilIfEmpty:YES];
             FacebookComment *aComment = [FacebookComment commentWithID:identifier];
             if (aComment) {

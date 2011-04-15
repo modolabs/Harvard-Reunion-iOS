@@ -1,11 +1,14 @@
 #import "KGOTableViewController.h"
+#import "TwitterViewController.h"
 
 @class TwitterModule;
 
-@interface TwitterFeedViewController : KGOTableViewController {
+@interface TwitterFeedViewController : KGOTableViewController <TwitterViewControllerDelegate, UITextViewDelegate> {
     
     // keep a copy ourselves since TwitterModule's might update on us
     TwitterModule *twitterModule;
+    
+    UITextView *_inputView;
     
 }
 
@@ -13,5 +16,8 @@
 
 - (void)twitterFeedDidUpdate:(NSNotification *)aNotification;
 - (void)tweetButtonPressed:(id)sender;
+
+- (void)showInputView;
+- (void)hideInputView;
 
 @end

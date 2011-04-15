@@ -146,6 +146,11 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupIsMemberKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(facebookDidLogin:)
+                                                 name:FacebookDidLoginNotification
+                                               object:nil];
 }
 
 - (NSString *)groupID {
@@ -255,17 +260,6 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 #pragma mark -
 
-- (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params
-{
-    UIViewController *vc = nil;
-    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] != KGONavigationStyleTabletSidebar) {
-        if ([pageName isEqualToString:LocalPathPageNameHome]) {
-            vc = [[[FacebookFeedViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
-        }
-    }
-    return vc;
-}
-
 /*
 - (void)launch {
     [super launch];
@@ -310,6 +304,19 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     return widget;
 }
 */
+
+
+- (Class)feedViewControllerClass
+{
+    return [FacebookFeedViewController class];
+}
+
+- (void)willShowModalFeedController
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:FacebookStatusDidUpdateNotification object:self];
+    self.chatBubble.hidden = NO;
+}
+
 #pragma mark Social media controller
 
 - (NSSet *)socialMediaTypes {

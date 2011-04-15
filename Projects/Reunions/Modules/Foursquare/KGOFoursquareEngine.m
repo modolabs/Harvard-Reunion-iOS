@@ -301,7 +301,7 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
         KGOWebViewController *webVC = [[[KGOWebViewController alloc] init] autorelease];
         webVC.requestURL = [NSURL URLWithString:urlString];
         webVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        [KGO_SHARED_APP_DELEGATE() presentAppModalViewController:webVC animated:YES];
+        [[KGO_SHARED_APP_DELEGATE() visibleViewController] presentModalViewController:webVC animated:YES];
     }
 }
 
@@ -378,7 +378,7 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
             NSLog(@"received oauth token %@", _oauthToken);
         }
         
-        [KGO_SHARED_APP_DELEGATE() dismissAppModalViewControllerAnimated:YES];
+        [[KGO_SHARED_APP_DELEGATE() visibleViewController] dismissModalViewControllerAnimated:YES];
 
     } else {
         

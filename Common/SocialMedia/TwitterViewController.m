@@ -14,7 +14,7 @@
 
 @implementation TwitterViewController
 
-@synthesize longURL, preCannedMessage, shortURL;
+@synthesize longURL, preCannedMessage, shortURL, delegate;
 
 - (void)viewDidLoad
 {
@@ -25,8 +25,8 @@
                                                                               target:self
                                                                               action:@selector(tweetButtonPressed:)] autorelease];
     self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                                                                                           target:KGO_SHARED_APP_DELEGATE()
-                                                                                           action:@selector(dismissAppModalViewControllerAnimated:)] autorelease];
+                                                                                           target:self
+                                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
     
     self.title = NSLocalizedString(@"Twitter", nil);
     
@@ -88,6 +88,8 @@
 - (void)twitterDidLogin:(NSNotification *)aNotification
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:TwitterDidLoginNotification object:nil];
+    
+    [self.delegate controllerDidLogin:self];
     
     self.title = NSLocalizedString(@"Post to Twitter", nil);
     _messageContainerView.hidden = NO;

@@ -12,10 +12,6 @@
     NSDateFormatter *_twitterDateFormatter;
     
     NSString *_hashTag;
-    
-    // ipad only
-    UINavigationController *_modalTwitterController;
-    UIView *_scrim;
 }
 
 - (void)startPollingStatusUpdates;
@@ -24,8 +20,7 @@
 
 - (void)didLogin:(NSNotification *)aNotification;
 
-- (void)hideModalTwitterController:(id)sender;
-
+@property (nonatomic, readonly) NSString *hashtag;
 @property (nonatomic, readonly) NSDateFormatter *twitterDateFormatter;
 @property (nonatomic, readonly) NSArray *latestTweets;
 

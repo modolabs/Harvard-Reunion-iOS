@@ -17,10 +17,16 @@ extern NSString * const TwitterStatusDidUpdateNotification;
     UILabel *_chatBubbleSubtitleLabel;
     MITThumbnailView *_chatBubbleThumbnail;
     
+    UINavigationController *_modalFeedController;
+    UIView *_scrim;
 }
 
 - (void)hideChatBubble:(NSNotification *)aNotification;
 - (void)didLogin:(NSNotification *)aNotification;
+
+- (Class)feedViewControllerClass;
+- (void)hideModalFeedController:(id)sender;
+- (void)willShowModalFeedController;
 
 @property(nonatomic, retain) UIImage *buttonImage;
 @property(nonatomic, retain) NSString *labelText;
