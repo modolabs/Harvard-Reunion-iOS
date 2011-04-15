@@ -13,6 +13,7 @@
 @implementation FacebookThumbnail
 
 @synthesize thumbSource;
+@synthesize thumbnailView = _thumbnail;
 
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];

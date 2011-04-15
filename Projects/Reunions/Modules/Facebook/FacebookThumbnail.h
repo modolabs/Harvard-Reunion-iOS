@@ -30,6 +30,7 @@
 
 @property (nonatomic) CGFloat rotationAngle;
 @property (nonatomic, retain) NSObject<FacebookThumbSource> *thumbSource;
+@property (nonatomic, retain) MITThumbnailView *thumbnailView;
 
 - (void)highlightIntoFrame:(CGRect)frame;
 - (void)hide;

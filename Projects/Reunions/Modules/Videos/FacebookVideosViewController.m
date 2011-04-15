@@ -8,11 +8,16 @@
 #import "FacebookModule.h"
 #import "CoreDataManager.h"
 
+
+static const NSInteger kTransitionImageViewTag = 0x701;
+
 #pragma mark Private methods
 
 @interface FacebookVideosViewController (Private)
 
 - (void)addVideoThumbnailsToGrid;
+- (CGRect)thumbnailFrame;
++ (CGRect)frameForImageInImageView:(UIImageView *)imageView;
 
 @end
 
@@ -87,7 +92,15 @@
     self.iconGrid.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.iconGrid.backgroundColor = [UIColor clearColor];
     
-    [self.scrollView addSubview:self.iconGrid];    
+    [self.scrollView addSubview:self.iconGrid];
+    
+    // Add the image view used to animated transitions to the detail view.
+    UIImageView *transitionImageView = 
+    [[UIImageView alloc] initWithFrame:[self thumbnailFrame]];
+    transitionImageView.tag = kTransitionImageViewTag;
+    transitionImageView.alpha = 0.0f;
+    [self.view addSubview:transitionImageView];
+    [transitionImageView release];
     
     _videos = [[NSMutableArray alloc] init];
     _videoIDs = [[NSMutableSet alloc] init];
@@ -159,10 +172,9 @@
     NSAutoreleasePool *thumbnailLoadingPool = [[NSAutoreleasePool alloc] init];
     NSMutableArray *thumbnails = [NSMutableArray arrayWithCapacity:_videos.count];
     for (FacebookVideo *video in _videos) {
-        CGRect frame = 
-        CGRectMake(0, 0, 90 * resizeFactor, 90 * resizeFactor + 40);
         FacebookThumbnail *thumbnail = 
-        [[[FacebookThumbnail alloc] initWithFrame:frame] autorelease];
+        [[[FacebookThumbnail alloc] initWithFrame:[self thumbnailFrame]] 
+         autorelease];
         thumbnail.thumbSource = video;
         [thumbnail addTarget:self action:@selector(thumbnailTapped:) 
             forControlEvents:UIControlEventTouchUpInside];
@@ -175,20 +187,94 @@
     [thumbnailLoadingPool release];
 }
 
+- (CGRect)thumbnailFrame {
+    return CGRectMake(0, 0, 90 * resizeFactor, 90 * resizeFactor + 40);
+}
+
+// Predicts what the size of the image in the imageView will be after 
+// it is scaled to fit.
++ (CGRect)frameForImageInImageView:(UIImageView *)imageView {
+    UIImage *image = imageView.image;
+    CGFloat heightDiff = image.size.height - imageView.frame.size.height;
+    CGFloat widthDiff = image.size.width - imageView.frame.size.width;
+    
+    CGRect frame = CGRectZero;
+    
+    CGFloat imageScale = 1.0f;
+    if ((imageView.frame.size.width > 0.01f) && 
+        (imageView.frame.size.height > 0.01f) && 
+        (imageView.image.size.width > 0.01f) && 
+        (imageView.image.size.height > 0.01f)) {
+        
+        if (heightDiff > widthDiff) {
+            imageScale = imageView.frame.size.height / image.size.height;
+        }
+        else {
+            imageScale = imageView.frame.size.width / image.size.width;
+        }
+    }
+    
+    CGFloat width = round(image.size.width * imageScale);
+    CGFloat height = round(image.size.height * imageScale);
+    CGFloat x = round((imageView.frame.size.width - width) / 2);
+    CGFloat y = round((imageView.frame.size.height - height) / 2);
+    return CGRectMake(x, y, width, height);
+}
+
 #pragma mark MITThumbnailDelegate
 - (void)thumbnail:(MITThumbnailView *)thumbnail didLoadData:(NSData *)data {
     [[CoreDataManager sharedManager] saveData];    
 }
 
 #pragma mark Icon grid-related actions
-- (void)thumbnailTapped:(FacebookThumbnail *)sender {
-    FacebookVideo *video = (FacebookVideo *)sender.thumbSource;
-    
+- (void)thumbnailTapped:(FacebookThumbnail *)thumbnail {
+    FacebookVideo *video = (FacebookVideo *)thumbnail.thumbSource;
+        
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                             _videos, @"videos", video, @"video", nil];
-    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail 
-                           forModuleTag:@"video" 
-                                 params:params];
+    
+    UIImageView *transitionImageView = 
+    (UIImageView *)[self.view viewWithTag:kTransitionImageViewTag];
+    transitionImageView.image = thumbnail.thumbnailView.imageView.image;
+//    transitionImageView.backgroundColor = [UIColor greenColor];
+    CGRect transitionFrame = CGRectZero;
+    CGRect frameForImage = 
+    [[self class] frameForImageInImageView:thumbnail.thumbnailView.imageView];
+    transitionFrame.size = frameForImage.size;
+    
+    transitionFrame.origin = self.iconGrid.frame.origin;
+    
+    transitionFrame.origin.x += thumbnail.frame.origin.x;
+    transitionFrame.origin.x += thumbnail.thumbnailView.imageView.frame.origin.x;
+    transitionFrame.origin.x += frameForImage.origin.x;
+    
+    transitionFrame.origin.y += thumbnail.frame.origin.y;
+    transitionFrame.origin.y += thumbnail.thumbnailView.imageView.frame.origin.y;
+    // TODO: Get rid of this fudge factor.
+    transitionFrame.origin.y += (3 * frameForImage.origin.y);
+    transitionImageView.frame = transitionFrame;
+    transitionImageView.alpha = 1.0f;
+
+    [UIView 
+     animateWithDuration:0.2f 
+     animations:
+     ^{
+         // Expand the transition view.
+         // TODO: Proportion this size to match frameForImage.
+         CGRect futureThumbnailFrame = CGRectMake(0, 60, 588, 500);
+         transitionImageView.frame = futureThumbnailFrame;
+         
+     }
+     completion:
+     ^(BOOL finished) {
+         // Hide the transition view.
+         transitionImageView.alpha = 0.0f;
+         transitionImageView.image = nil;
+         
+         [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail 
+                                forModuleTag:@"video" 
+                                      params:params];         
+     }];
 }
 
 @end
