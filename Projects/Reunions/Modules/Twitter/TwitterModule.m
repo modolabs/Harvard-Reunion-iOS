@@ -61,6 +61,11 @@
     return self;
 }
 
+- (NSString *)hashtag
+{
+    return _hashTag;
+}
+
 - (void)didLogin:(NSNotification *)aNotification
 {
     ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];

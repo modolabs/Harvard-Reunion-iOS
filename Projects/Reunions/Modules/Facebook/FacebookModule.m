@@ -146,6 +146,11 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupIsMemberKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(facebookDidLogin:)
+                                                 name:FacebookDidLoginNotification
+                                               object:nil];
 }
 
 - (NSString *)groupID {

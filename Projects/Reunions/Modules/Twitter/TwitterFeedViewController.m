@@ -32,9 +32,40 @@
 
 - (void)tweetButtonPressed:(id)sender
 {
-    TwitterViewController *twitterVC = [[[TwitterViewController alloc] init] autorelease];
-    twitterVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-    [self presentModalViewController:twitterVC animated:YES];
+    if (_inputView) {
+       [[KGOSocialMediaController sharedController] postToTwitter:_inputView.text];
+        return;
+    }
+    
+    if (![[KGOSocialMediaController sharedController] isTwitterLoggedIn]) {
+        TwitterViewController *twitterVC = [[[TwitterViewController alloc] init] autorelease];
+        twitterVC.delegate = self;
+        twitterVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+        [self presentModalViewController:twitterVC animated:YES];
+
+    } else {
+        [self showInputView];
+    }
+}
+
+- (void)controllerDidLogin:(TwitterViewController *)controller
+{
+    [self dismissModalViewControllerAnimated:YES];
+    [self showInputView];
+}
+
+- (void)showInputView
+{
+    _inputView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 180)];
+    _inputView.text = twitterModule.hashtag;
+    [self reloadDataForTableView:self.tableView];
+}
+
+- (void)hideInputView
+{
+    [_inputView release];
+    _inputView = nil;
+    [self reloadDataForTableView:self.tableView];
 }
 
 #pragma mark - View lifecycle
@@ -105,8 +136,16 @@
 
 - (NSArray *)tableView:(UITableView *)tableView viewsForCellAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSInteger rownum = indexPath.row;
+    if (_inputView) {
+        if (rownum == 0) {
+            return [NSArray arrayWithObject:_inputView];
+        } else {
+            rownum--;
+        }
+    }
     
-    NSDictionary *aTweet = [self.latestTweets objectAtIndex:indexPath.row];
+    NSDictionary *aTweet = [self.latestTweets objectAtIndex:rownum];
     
     NSString *title = [aTweet stringForKey:@"text" nilIfEmpty:YES];
     NSString *user = [aTweet stringForKey:@"from_user" nilIfEmpty:YES];
@@ -157,8 +196,23 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.latestTweets.count;
+    NSInteger num = self.latestTweets.count;
+    if (_inputView) {
+        num++;
+    }
+    return num;
 }
 
+#pragma mark UITextView
+
+#define TWEET_MAX_CHARS 140
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+	if (textView.text.length - range.length + text.length <= TWEET_MAX_CHARS) {
+		return YES;
+	} else {
+		return NO;
+	}
+}
 
 @end

@@ -42,15 +42,22 @@
 
 - (void)postButtonPressed:(id)sender
 {
+    if (![[KGOSocialMediaController sharedController] isFacebookLoggedIn]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(postButtonPressed:)
+                                                     name:FacebookDidLoginNotification object:nil];
+        [[KGOSocialMediaController sharedController] loginFacebook];
+        return;
+    }
+    
     if (!_inputView) { // user is beginning to post
-        _inputView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0,
-                                                                  self.tableView.frame.size.width,
-                                                                  self.tableView.frame.size.height)];
+        _inputView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 180)];
         
-        _inputView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _inputView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         _inputView.delegate = self;
         
         [self reloadDataForTableView:self.tableView];
+        [_inputView becomeFirstResponder];
         
     } else {
         [[KGOSocialMediaController sharedController] postStatus:_inputView.text
