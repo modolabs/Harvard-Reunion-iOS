@@ -52,10 +52,10 @@
     NSString *src = self.video.src;
     if ([src rangeOfString:@"fbcdn.net"].location != NSNotFound) {
         NSURL *url = [NSURL URLWithString:src];
-        MPMoviePlayerController *player = [[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
+        MPMoviePlayerController *player = 
+        [[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
         player.shouldAutoplay = NO;
         [self.mediaView setPreviewView:player.view];
-        [player release];
         [self.mediaView setPreviewSize:CGSizeMake(10, 10)];
     } else {
         CGSize aspectRatio = CGSizeMake(16, 9); // default aspect ratio 

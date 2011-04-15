@@ -1,5 +1,5 @@
 #import "FacebookParentPost.h"
-
+#import "FacebookThumbnail.h"
 
 typedef enum {
      TINY,
@@ -8,7 +8,7 @@ typedef enum {
      NORMAL
 } FacebookPhotoSize;
 
-@interface FacebookPhoto : FacebookParentPost {
+@interface FacebookPhoto : FacebookParentPost <FacebookThumbSource> {
     NSString *_thumbSrc;
     
 @private
