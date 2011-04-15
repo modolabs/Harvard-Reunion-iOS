@@ -44,12 +44,16 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    // since we don't get notified when user (un)bookmarks an event
-    NSMutableArray *allEvents = [NSMutableArray array];
-    for (NSArray *events in [_currentEventsBySection allValues]) {
-        [allEvents addObjectsFromArray:events];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        // since we don't get notified when user (un)bookmarks an event
+        NSMutableArray *allEvents = [NSMutableArray array];
+        for (NSArray *events in [_currentEventsBySection allValues]) {
+            [allEvents addObjectsFromArray:events];
+        }
+        [self eventsDidChange:allEvents calendar:_currentCalendar];
     }
-    [self eventsDidChange:allEvents calendar:_currentCalendar];
+
+    [super viewWillAppear:animated];
 }
 
 - (void)loadTableViewWithStyle:(UITableViewStyle)style
@@ -223,6 +227,9 @@
         
         ScheduleEventWrapper *event = [eventsForSection objectAtIndex:indexPath.row];
         
+        cell.textLabel.text = event.title;
+        cell.detailTextLabel.text = [self.dataManager shortDateTimeStringFromDate:event.startDate];
+        
         [[cell.contentView viewWithTag:1] removeFromSuperview];
         [[cell.contentView viewWithTag:2] removeFromSuperview];
 
@@ -233,7 +240,7 @@
                 CGFloat width = floor((tableView.frame.size.width - 30) / 2);
                 ScheduleDetailTableView *tableView = (ScheduleDetailTableView *)[cell.contentView viewWithTag:1];
                 if (!tableView) {
-                    tableView = [[[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(10, 10, width, 480)
+                    tableView = [[[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(10, 60, width, 430)
                                                                           style:UITableViewStyleGrouped] autorelease];
                     tableView.backgroundColor = [UIColor clearColor];
                     tableView.backgroundView = nil;
@@ -245,7 +252,7 @@
                 
                 MKMapView *mapView = (MKMapView *)[cell.contentView viewWithTag:2];
                 if (!mapView) {
-                    mapView = [[[MKMapView alloc] initWithFrame:CGRectMake(300, 10, width, 480)] autorelease];
+                    mapView = [[[MKMapView alloc] initWithFrame:CGRectMake(300, 60, width, 430)] autorelease];
                     mapView.tag = 2;
                     if (event.coordinate.latitude) {
                         // we only need to check one assuming there will not
@@ -258,12 +265,12 @@
                     [cell.contentView addSubview:mapView];
                 }
                 
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                
                 break;
             }
             default:
                 cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                cell.textLabel.text = event.title;
-                cell.detailTextLabel.text = [self.dataManager shortDateTimeStringFromDate:event.startDate];
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                 if ([event isRegistered] || [event isBookmarked]) {
                     cell.imageView.image = [UIImage imageWithPathName:@"modules/schedule/list-bookmark"];
@@ -370,6 +377,7 @@ static bool isOverOneHour(NSTimeInterval interval) {
         }
         
         for (ScheduleEventWrapper *event in sortedEvents) {
+            DLog(@"adding event to section %@", event);
             NSString *title = [formatter stringFromDate:event.startDate];
             NSMutableArray *eventsForCurrentSection = [eventsBySection objectForKey:title];
             if (!eventsForCurrentSection) {

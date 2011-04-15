@@ -20,14 +20,12 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-
+    
     self.layer.cornerRadius = 5;
 
     if (self.scheduleCellType == ScheduleCellSelected) {
-        self.backgroundColor = [UIColor clearColor];
-        
         if (!_fakeCardBorder) {
-            _fakeCardBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 500)];// - 8, 500)];
+            _fakeCardBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 500)];
             _fakeCardBorder.tag = 3;
             _fakeCardBorder.layer.cornerRadius = 5;
             _fakeCardBorder.backgroundColor = [UIColor whiteColor];
@@ -54,9 +52,22 @@
         _fakeTopOfNextCell.hidden = NO;
     }
     
+    if (self.scheduleCellType == ScheduleCellLastInTable || self.scheduleCellType == ScheduleCellSelected) {
+        CGFloat gap = self.detailTextLabel.frame.origin.y - self.textLabel.frame.origin.y;
+        
+        CGRect frame = self.textLabel.frame;
+        frame.origin.y = 10;
+        self.textLabel.frame = frame;
+        
+        frame = self.detailTextLabel.frame;
+        frame.origin.y = self.textLabel.frame.origin.y + gap;
+        self.detailTextLabel.frame = frame;
+    }
+    
     UIImage *image = nil;
     if (self.scheduleCellType == ScheduleCellLastInSection || self.scheduleCellType == ScheduleCellTypeOther) {
         if (self.scheduleCellType == ScheduleCellLastInSection) {
+            
             image = [UIImage imageWithPathName:@"modules/schedule/faketop-section"];
         } else {
             image = [UIImage imageWithPathName:@"modules/schedule/faketop-cell"];
