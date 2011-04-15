@@ -46,6 +46,10 @@
 
 - (void)dealloc
 {
+    if (_eventDetailRequest) {
+        [_eventDetailRequest cancel];
+        [_eventDetailRequest release];
+    }
     self.event = nil;
     self.delegate = nil;
     self.dataSource = nil;
@@ -64,45 +68,53 @@
     [_event release];
     _event = [event retain];
     
-    NSLog(@"%@ %@ %@ %@", [_event description], _event.title, _event.location, _event.userInfo);
+    DLog(@"%@ %@ %@ %@", [_event description], _event.title, _event.location, _event.userInfo);
     
     [_sections release];
+    _sections = nil;
     
     if (_event) {
+        [self reloadData];
+        self.tableHeaderView = [self viewForTableHeader];
+        
+        [self eventDetailsDidChange];
+
         // TODO: see if there is a way to tell we don't need to update this event
         if (!_event.summary.length) {
             [self requestEventDetails];
         }
-        
-        NSMutableArray *mutableSections = [NSMutableArray array];
-        NSArray *basicInfo = [self sectionForBasicInfo];
-        if (basicInfo.count) {
-            [mutableSections addObject:basicInfo];
-        }
-        
-        NSArray *attendeeInfo = [self sectionForAttendeeInfo];
-        if (attendeeInfo.count) {
-            [mutableSections addObject:attendeeInfo];
-        }
-        
-        NSArray *contactInfo = [self sectionForContactInfo];
-        if (contactInfo.count) {
-            [mutableSections addObject:contactInfo];
-        }
-        
-        NSArray *extendedInfo = [self sectionForExtendedInfo];
-        if (extendedInfo.count) {
-            [mutableSections addObject:extendedInfo];
-        }
-        
-        _sections = [mutableSections copy];
-        
-        [self reloadData];
-        
-        self.tableHeaderView = [self viewForTableHeader];
     }
 }
 
+- (void)eventDetailsDidChange
+{
+    NSMutableArray *mutableSections = [NSMutableArray array];
+    NSArray *basicInfo = [self sectionForBasicInfo];
+    if (basicInfo.count) {
+        [mutableSections addObject:basicInfo];
+    }
+    
+    NSArray *attendeeInfo = [self sectionForAttendeeInfo];
+    if (attendeeInfo.count) {
+        [mutableSections addObject:attendeeInfo];
+    }
+    
+    NSArray *contactInfo = [self sectionForContactInfo];
+    if (contactInfo.count) {
+        [mutableSections addObject:contactInfo];
+    }
+    
+    NSArray *extendedInfo = [self sectionForExtendedInfo];
+    if (extendedInfo.count) {
+        [mutableSections addObject:extendedInfo];
+    }
+    
+    _sections = [mutableSections copy];
+    
+    [self reloadData];
+    
+    self.tableHeaderView = [self viewForTableHeader];
+}
 
 
 - (NSArray *)sectionForBasicInfo
@@ -220,6 +232,8 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    DLog(@"%d %@", section, [_sections objectAtIndex:section]);
+    
     return [[_sections objectAtIndex:section] count];
 }
 
@@ -232,6 +246,7 @@
 {
     UITableViewCellStyle style = UITableViewCellStyleDefault;
     NSString *cellIdentifier;
+    DLog(@"%@ %@", indexPath, [_sections objectAtIndex:indexPath.section]);
     id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     if ([cellData isKindOfClass:[NSDictionary class]]) {    
         if ([cellData objectForKey:@"subtitle"]) {
@@ -398,12 +413,9 @@
 - (void)request:(KGORequest *)request didReceiveResult:(id)result
 {
     [_event updateWithDictionary:result];
-    [_event convertToKGOEvent];
+    [_event saveToCoreData];
 
-    // TODO: decide whether this line is necessary given the available info
-    self.tableHeaderView = [self viewForTableHeader];
-
-    [self reloadData];
+    [self eventDetailsDidChange];
 }
 
 - (void)requestWillTerminate:(KGORequest *)request
