@@ -64,6 +64,7 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
         }
     }
     
+    [KGO_SHARED_APP_DELEGATE() showNetworkActivityIndicator];
     _connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 }
 
@@ -87,7 +88,8 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
     _data = nil;
     [_connection release];
     _connection = nil;
-    
+
+    [KGO_SHARED_APP_DELEGATE() hideNetworkActivityIndicator];
     [self.delegate foursquareRequest:self didFailWithError:error];
 }
 
@@ -120,6 +122,8 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
     _connection = nil;
     [_data release];
     _data = nil;
+
+    [KGO_SHARED_APP_DELEGATE() hideNetworkActivityIndicator];
 }
 
 - (void)dealloc
