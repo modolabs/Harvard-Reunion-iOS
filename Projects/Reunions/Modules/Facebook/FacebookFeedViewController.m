@@ -42,6 +42,30 @@
 
 - (void)postButtonPressed:(id)sender
 {
+    if (!_inputView) { // user is beginning to post
+        _inputView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                  self.tableView.frame.size.width,
+                                                                  self.tableView.frame.size.height)];
+        
+        _inputView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _inputView.delegate = self;
+        
+        [self reloadDataForTableView:self.tableView];
+        
+    } else {
+        [[KGOSocialMediaController sharedController] postStatus:_inputView.text
+                                                      toProfile:_facebookModule.groupID
+                                                       delegate:self];
+        
+        [_inputView release];
+        _inputView = nil;
+    }
+}
+
+- (void)uploadDidComplete:(FacebookPost *)result
+{
+    [_facebookModule requestStatusUpdates:nil];
+    [self reloadDataForTableView:self.tableView];
 }
 
 #pragma mark - View lifecycle
@@ -119,7 +143,17 @@
 
 - (NSArray *)tableView:(UITableView *)tableView viewsForCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *aPost = [self.feedPosts objectAtIndex:indexPath.row];
+    NSInteger rownum = indexPath.row;
+    
+    if (_inputView) {
+        if (rownum == 0) {
+            return [NSArray arrayWithObject:_inputView];
+        } else {
+            rownum--;
+        }
+    }
+    
+    NSDictionary *aPost = [self.feedPosts objectAtIndex:rownum];
 
     NSString *title = [aPost stringForKey:@"message" nilIfEmpty:YES];
     NSDictionary *from = [aPost dictionaryForKey:@"from"];
@@ -176,7 +210,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.feedPosts.count;
+    NSInteger num = self.feedPosts.count;
+    if (_inputView) {
+        num += 1;
+    }
+    return num;
 }
 
 @end

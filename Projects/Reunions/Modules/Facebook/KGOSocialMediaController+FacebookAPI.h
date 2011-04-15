@@ -4,6 +4,8 @@ extern NSString * const FacebookDidGetSelfInfoNotification;
 
 @class FacebookPost, FacebookParentPost, FacebookUser;
 
+// TODO: add failure delegate methods
+
 @protocol FacebookPhotoUploadDelegate <NSObject>
 
 - (void)didUploadPhoto:(id)result;
@@ -31,6 +33,8 @@ extern NSString * const FacebookDidGetSelfInfoNotification;
   toFacebookProfile:(NSString *)graphPath
             message:(NSString *)caption
            delegate:(id<FacebookUploadDelegate>)delegate;
+
+- (BOOL)postStatus:(NSString *)message toProfile:(NSString *)profile delegate:(id<FacebookUploadDelegate>)delegate;
 
 - (NSString *)imageURLForGraphObject:(NSString *)graphID;
 

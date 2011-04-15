@@ -119,7 +119,7 @@
     [_comments release];
     _comments = [[self.post.comments sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] retain];
     
-    [KGO_SHARED_APP_DELEGATE() dismissAppModalViewControllerAnimated:YES];
+    [self dismissModalViewControllerAnimated:YES];
     [_tableView reloadData];
 }
 
