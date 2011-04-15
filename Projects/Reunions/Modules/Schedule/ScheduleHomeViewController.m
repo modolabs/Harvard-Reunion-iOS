@@ -187,6 +187,9 @@
     }
 }
 
+#define TABLE_TAG 1
+#define MAP_TAG 2
+#define BOOKMARK_TAG 888
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -230,30 +233,47 @@
         cell.textLabel.text = event.title;
         cell.detailTextLabel.text = [self.dataManager shortDateTimeStringFromDate:event.startDate];
         
-        [[cell.contentView viewWithTag:1] removeFromSuperview];
-        [[cell.contentView viewWithTag:2] removeFromSuperview];
-
+        [[cell.contentView viewWithTag:TABLE_TAG] removeFromSuperview];
+        [[cell.contentView viewWithTag:MAP_TAG] removeFromSuperview];
+        
+        UIImageView *bookmarkView = (UIImageView *)[cell.contentView viewWithTag:BOOKMARK_TAG];
+        if ([event isRegistered] || [event isBookmarked]) {
+            if (!bookmarkView) {
+                UIImage *ribbon = [UIImage imageWithPathName:@"modules/schedule/list-bookmark"];
+                bookmarkView = [[[UIImageView alloc] initWithImage:ribbon] autorelease];
+                bookmarkView.tag = BOOKMARK_TAG;
+                CGRect frame = bookmarkView.frame;
+                frame.origin.y = -4;
+                frame.size.height = 30; // TODO: change this when we get the right asset
+                frame.origin.x = tableView.frame.size.width - 40;
+                bookmarkView.frame = frame;
+                [cell.contentView addSubview:bookmarkView];
+            }
+        } else if (bookmarkView) {
+            [bookmarkView removeFromSuperview];
+        }
+        
         switch (cellType) {
             case ScheduleCellSelected:
             case ScheduleCellLastInTable:
             {
                 CGFloat width = floor((tableView.frame.size.width - 30) / 2);
-                ScheduleDetailTableView *tableView = (ScheduleDetailTableView *)[cell.contentView viewWithTag:1];
+                ScheduleDetailTableView *tableView = (ScheduleDetailTableView *)[cell.contentView viewWithTag:TABLE_TAG];
                 if (!tableView) {
                     tableView = [[[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(10, 60, width, 430)
                                                                           style:UITableViewStyleGrouped] autorelease];
                     tableView.backgroundColor = [UIColor clearColor];
                     tableView.backgroundView = nil;
-                    tableView.tag = 1;
+                    tableView.tag = TABLE_TAG;
                     tableView.dataManager = self.dataManager;
                     [cell.contentView addSubview:tableView];
                 }
                 tableView.event = event;
                 
-                MKMapView *mapView = (MKMapView *)[cell.contentView viewWithTag:2];
+                MKMapView *mapView = (MKMapView *)[cell.contentView viewWithTag:MAP_TAG];
                 if (!mapView) {
                     mapView = [[[MKMapView alloc] initWithFrame:CGRectMake(300, 60, width, 430)] autorelease];
-                    mapView.tag = 2;
+                    mapView.tag = MAP_TAG;
                     if (event.coordinate.latitude) {
                         // we only need to check one assuming there will not
                         // be any events on the equator
@@ -271,12 +291,6 @@
             }
             default:
                 cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                if ([event isRegistered] || [event isBookmarked]) {
-                    cell.imageView.image = [UIImage imageWithPathName:@"modules/schedule/list-bookmark"];
-                } else {
-                    cell.imageView.image = nil;
-                }
                 break;
         }
 

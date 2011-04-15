@@ -86,8 +86,6 @@
     } else if (image) {
         _fakeTopOfNextCell.image = [image stretchableImageWithLeftCapWidth:5 topCapHeight:0];
     }
-    
-    DLog(@"%@ %@", self.textLabel.text, self);
 }
 
 - (ScheduleCellType)scheduleCellType
