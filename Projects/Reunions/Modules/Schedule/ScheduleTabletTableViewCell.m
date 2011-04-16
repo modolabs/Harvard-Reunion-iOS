@@ -73,10 +73,6 @@
             image = [UIImage imageWithPathName:@"modules/schedule/faketop-cell"];
         }
         
-    } else if (self.scheduleCellType == ScheduleCellAboveSelectedRow) {
-        image = [UIImage imageWithPathName:@"modules/schedule/faketop-above-selection"];
-        //self.layer.shadowOpacity = 0;
-        DLog(@"hid fake top of next cell for %@", self.textLabel.text);
     }
 
     if (image && !_fakeTopOfNextCell) {

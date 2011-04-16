@@ -204,9 +204,6 @@
         if (_selectedIndexPath && indexPath.section == _selectedIndexPath.section) {
             if (indexPath.row == _selectedIndexPath.row) {
                 cellType = ScheduleCellSelected;
-            
-            } else if (indexPath.row == _selectedIndexPath.row - 1) {
-                cellType = ScheduleCellAboveSelectedRow;
             }
             
         } else if (indexPath.row == eventsForSection.count - 1) {
@@ -286,6 +283,8 @@
                     }
                     [cell.contentView addSubview:mapView];
                 }
+                tableView.mapView = mapView;
+                mapView.delegate = tableView;
                 
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 

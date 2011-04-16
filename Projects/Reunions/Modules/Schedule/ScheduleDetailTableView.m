@@ -15,6 +15,8 @@
 
 @implementation ScheduleDetailTableView
 
+@synthesize mapView;
+
 - (void)foursquareButtonPressed:(id)sender
 {
     if (![[KGOSocialMediaController sharedController] isFoursquareLoggedIn]) {
@@ -58,6 +60,11 @@
 - (void)eventDetailsDidChange
 {
     [super eventDetailsDidChange];
+    
+    if (self.mapView && ![self.mapView annotations].count && _event.coordinate.latitude) {
+        [self.mapView addAnnotation:_event];
+        [self.mapView setRegion:MKCoordinateRegionMake(_event.coordinate, MKCoordinateSpanMake(0.01, 0.01))];
+    }
     
     NSString *foursquareVenue = nil;
     
@@ -239,8 +246,25 @@
 
     [_foursquareVenue release];
     [_checkinHeader release];
+
+    self.mapView.delegate = nil;
+    self.mapView = nil;
     
     [super dealloc];
+}
+
+#pragma mark MKMapViewDelegate
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation
+{
+    if ([annotation isKindOfClass:[ScheduleEventWrapper class]]) {
+        ScheduleEventWrapper *event = (ScheduleEventWrapper *)annotation;
+        MKAnnotationView *view = [[[MKAnnotationView alloc] initWithAnnotation:event reuseIdentifier:@"hfawue"] autorelease];
+        view.canShowCallout = YES;
+        view.image = [event annotationImage];
+        return view;
+    }
+    return nil;
 }
 
 @end
