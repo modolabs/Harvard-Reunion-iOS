@@ -19,6 +19,11 @@
 		4B5B40B31350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B5B40B21350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib */; };
 		4BD36E0A134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BD36E09134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib */; };
 		4BDDE7E31353F9D400660FD1 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BDDE7E21353F9D400660FD1 /* MediaPlayer.framework */; };
+		5661D34D1359A0C000ACB0BB /* NewNoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5661D3441359A0C000ACB0BB /* NewNoteViewController.m */; };
+		5661D34E1359A0C000ACB0BB /* NotesModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5661D3461359A0C000ACB0BB /* NotesModule.m */; };
+		5661D34F1359A0C000ACB0BB /* NotesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5661D3481359A0C000ACB0BB /* NotesTableViewController.m */; };
+		5661D3501359A0C000ACB0BB /* NotesTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5661D34A1359A0C000ACB0BB /* NotesTextView.m */; };
+		5661D3511359A0C000ACB0BB /* NotesUnselectedTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5661D34C1359A0C000ACB0BB /* NotesUnselectedTableViewCell.m */; };
 		A62A26831357B36900870DC1 /* FacebookThumbnail.m in Sources */ = {isa = PBXBuildFile; fileRef = A62A26821357B36900870DC1 /* FacebookThumbnail.m */; };
 		A63DE7A7134F9F98001C52BF /* AddressBookUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A63DE7A6134F9F98001C52BF /* AddressBookUtils.m */; };
 		A6F2099D134E61CC009F597D /* ConnectModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20998134E61CC009F597D /* ConnectModule.m */; };
@@ -282,6 +287,16 @@
 		4B5B40B21350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "FacebookMediaDetailViewController-iPad.xib"; sourceTree = "<group>"; };
 		4BD36E09134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "FacebookMediaViewController-iPad.xib"; sourceTree = "<group>"; };
 		4BDDE7E21353F9D400660FD1 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		5661D3431359A0C000ACB0BB /* NewNoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NewNoteViewController.h; path = Notes/NewNoteViewController.h; sourceTree = "<group>"; };
+		5661D3441359A0C000ACB0BB /* NewNoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NewNoteViewController.m; path = Notes/NewNoteViewController.m; sourceTree = "<group>"; };
+		5661D3451359A0C000ACB0BB /* NotesModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesModule.h; path = Notes/NotesModule.h; sourceTree = "<group>"; };
+		5661D3461359A0C000ACB0BB /* NotesModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotesModule.m; path = Notes/NotesModule.m; sourceTree = "<group>"; };
+		5661D3471359A0C000ACB0BB /* NotesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesTableViewController.h; path = Notes/NotesTableViewController.h; sourceTree = "<group>"; };
+		5661D3481359A0C000ACB0BB /* NotesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotesTableViewController.m; path = Notes/NotesTableViewController.m; sourceTree = "<group>"; };
+		5661D3491359A0C000ACB0BB /* NotesTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesTextView.h; path = Notes/NotesTextView.h; sourceTree = "<group>"; };
+		5661D34A1359A0C000ACB0BB /* NotesTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotesTextView.m; path = Notes/NotesTextView.m; sourceTree = "<group>"; };
+		5661D34B1359A0C000ACB0BB /* NotesUnselectedTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesUnselectedTableViewCell.h; path = Notes/NotesUnselectedTableViewCell.h; sourceTree = "<group>"; };
+		5661D34C1359A0C000ACB0BB /* NotesUnselectedTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotesUnselectedTableViewCell.m; path = Notes/NotesUnselectedTableViewCell.m; sourceTree = "<group>"; };
 		A62A26811357B36900870DC1 /* FacebookThumbnail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookThumbnail.h; sourceTree = "<group>"; };
 		A62A26821357B36900870DC1 /* FacebookThumbnail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookThumbnail.m; sourceTree = "<group>"; };
 		A63DE7A5134F9F98001C52BF /* AddressBookUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddressBookUtils.h; sourceTree = "<group>"; };
@@ -754,6 +769,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		5661D3421359A0A800ACB0BB /* Notes */ = {
+			isa = PBXGroup;
+			children = (
+				5661D3431359A0C000ACB0BB /* NewNoteViewController.h */,
+				5661D3441359A0C000ACB0BB /* NewNoteViewController.m */,
+				5661D3451359A0C000ACB0BB /* NotesModule.h */,
+				5661D3461359A0C000ACB0BB /* NotesModule.m */,
+				5661D3471359A0C000ACB0BB /* NotesTableViewController.h */,
+				5661D3481359A0C000ACB0BB /* NotesTableViewController.m */,
+				5661D3491359A0C000ACB0BB /* NotesTextView.h */,
+				5661D34A1359A0C000ACB0BB /* NotesTextView.m */,
+				5661D34B1359A0C000ACB0BB /* NotesUnselectedTableViewCell.h */,
+				5661D34C1359A0C000ACB0BB /* NotesUnselectedTableViewCell.m */,
+			);
+			name = Notes;
+			sourceTree = "<group>";
+		};
 		A6F20A91134E67D2009F597D /* bump */ = {
 			isa = PBXGroup;
 			children = (
@@ -810,6 +842,7 @@
 		DE715445102FE468005E6111 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				5661D3421359A0A800ACB0BB /* Notes */,
 				EB46A15C134CCCA6005796E4 /* ReunionLogin */,
 				EB46A155134CBFBA005796E4 /* ReunionHome */,
 				EB46A14E134CB1F6005796E4 /* Attendees */,
@@ -1874,6 +1907,11 @@
 				EB7C98841353F78500FBFAAB /* ReunionSidebarFrameViewController.m in Sources */,
 				EB85A55A13551E96002E966E /* FacebookFeedViewController.m in Sources */,
 				A62A26831357B36900870DC1 /* FacebookThumbnail.m in Sources */,
+				5661D34D1359A0C000ACB0BB /* NewNoteViewController.m in Sources */,
+				5661D34E1359A0C000ACB0BB /* NotesModule.m in Sources */,
+				5661D34F1359A0C000ACB0BB /* NotesTableViewController.m in Sources */,
+				5661D3501359A0C000ACB0BB /* NotesTextView.m in Sources */,
+				5661D3511359A0C000ACB0BB /* NotesUnselectedTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
