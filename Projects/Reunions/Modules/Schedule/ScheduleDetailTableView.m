@@ -61,15 +61,15 @@
 {
     [super eventDetailsDidChange];
     
-    if (self.mapView && ![self.mapView annotations].count && self.event.coordinate.latitude) {
-        [self.mapView addAnnotation:self.event];
-        [self.mapView setRegion:MKCoordinateRegionMake(self.event.coordinate, MKCoordinateSpanMake(0.01, 0.01))];
+    if (self.mapView && ![self.mapView annotations].count && _event.coordinate.latitude) {
+        [self.mapView addAnnotation:_event];
+        [self.mapView setRegion:MKCoordinateRegionMake(_event.coordinate, MKCoordinateSpanMake(0.01, 0.01))];
     }
     
     NSString *foursquareVenue = nil;
     
-    if ([self.event isKindOfClass:[ScheduleEventWrapper class]]) {
-        foursquareVenue = [(ScheduleEventWrapper *)self.event foursquareID];
+    if ([_event isKindOfClass:[ScheduleEventWrapper class]]) {
+        foursquareVenue = [(ScheduleEventWrapper *)_event foursquareID];
     } else {
         foursquareVenue = nil;
     }
@@ -157,7 +157,7 @@
 {
     NSMutableArray *attendeeInfo = [NSMutableArray array];
 
-    ScheduleEventWrapper *eventWrapper = (ScheduleEventWrapper *)self.event;
+    ScheduleEventWrapper *eventWrapper = (ScheduleEventWrapper *)_event;
     if ([eventWrapper registrationFee]) {
         if ([eventWrapper isRegistered]) {
             UIImage *image = [UIImage imageWithPathName:@"modules/schedule/badge-confirmed"];
@@ -180,9 +180,9 @@
         }
     }
     
-    if (self.event.attendees.count) {
+    if (_event.attendees.count) {
         [attendeeInfo addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                 [NSString stringWithFormat:@"%d others attending", self.event.attendees.count], @"title",
+                                 [NSString stringWithFormat:@"%d others attending", _event.attendees.count], @"title",
                                  KGOAccessoryTypeChevron, @"accessory",
                                  nil]];
     }
@@ -220,17 +220,17 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    id cellData = [[self.sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     if ([cellData isKindOfClass:[NSDictionary class]]) {    
         NSString *accessory = [cellData objectForKey:@"accessory"];
         if ([accessory isEqualToString:KGOAccessoryTypeChevron]) {
-            NSMutableArray *attendees = [NSMutableArray arrayWithCapacity:self.event.attendees.count];
-            [self.event.attendees enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+            NSMutableArray *attendees = [NSMutableArray arrayWithCapacity:_event.attendees.count];
+            [_event.attendees enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
                 KGOAttendeeWrapper *attendee = (KGOAttendeeWrapper *)obj;
                 [attendees addObject:[NSDictionary dictionaryWithObjectsAndKeys:attendee.name, @"display_name", nil]];
             }];
             NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    self.event.title, @"title",
+                                    _event.title, @"title",
                                     attendees, @"attendees",
                                     nil];
             [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameItemList forModuleTag:@"schedule" params:params];

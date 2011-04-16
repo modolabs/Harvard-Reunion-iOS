@@ -63,11 +63,6 @@
     return _event;
 }
 
-- (NSArray *)sections
-{
-    return _sections;
-}
-
 - (void)setEvent:(KGOEventWrapper *)event
 {
     [_event release];

@@ -34,7 +34,6 @@ NSString * const TransitTag    = @"transit";
 NSString * const PhotosTag     = @"photos";
 NSString * const LoginTag      = @"login";
 NSString * const VideoModuleTag     = @"video";
-NSString * const NotesModuleTag = @"notes";
 
 
 

@@ -114,20 +114,6 @@
 			<key>tag</key>
 			<string>settings</string>
 		</dict>
-		<dict>
-			<key>class</key>
-			<string>NotesModule</string>
-			<key>hidden</key>
-			<false/>
-			<key>iconImage</key>
-			<string>modules/home/schedule.png</string>
-			<key>longName</key>
-			<string>Notes</string>
-			<key>shortName</key>
-			<string>notes</string>
-			<key>tag</key>
-			<string>notes</string>
-		</dict>
 	</array>
 	<key>OrganizationName</key>
 	<string>Harvard</string>

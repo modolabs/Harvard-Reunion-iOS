@@ -17,7 +17,6 @@
 #import "TwitterModule.h"
 #import "VideosModule.h"
 #import "ConnectModule.h"
-#import "NotesModule.h"
 
 @implementation KGOModule (Factory)
 
@@ -36,7 +35,6 @@
                                    @"NewsModule", @"news",
                                    @"PeopleModule", @"people",
                                    @"SettingsModule", @"customize",
-                                   @"NotesModule", @"notes",
                                    nil];
         
         NSString *serverID = [args objectForKey:@"id"];
@@ -91,10 +89,7 @@
         module = [[[VideosModule alloc] initWithDictionary:args] autorelease];    
     
     else if ([className isEqualToString:@"ConnectModule"])
-        module = [[[ConnectModule alloc] initWithDictionary:args] autorelease];  
-    
-    else if ([className isEqualToString:@"NotesModule"])
-        module = [[[NotesModule alloc] initWithDictionary:args] autorelease]; 
+        module = [[[ConnectModule alloc] initWithDictionary:args] autorelease];    
     
     return module;
 }
