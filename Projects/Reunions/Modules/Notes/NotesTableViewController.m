@@ -87,12 +87,20 @@
     //[tempVC becomeFirstResponder];
                                        
     UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:tempVC] autorelease];
+    
+    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                           target:self
+                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+    
+    tempVC.navigationItem.rightBarButtonItem = item;
  
     //categoryVC.navigationItem.rightBarButtonItem = item;
     navC.modalPresentationStyle =  UIModalPresentationFormSheet;
     [self presentModalViewController:navC animated:YES];
-    navC.navigationBar.hidden = YES;
+    navC.navigationBar.tintColor = [UIColor blackColor];
     navC.view.userInteractionEnabled = YES;
+
+    
     //[navC.view becomeFirstResponder];
     navC.view.superview.frame = CGRectMake(xOffset, yOffset, width, height);//it's important to do this after presentModalViewController
     //navC.view.superview.center = self.view.center;
@@ -105,6 +113,7 @@
 
 - (void) dismissModalViewControllerAnimated:(BOOL)animated {
     
+    [super dismissModalViewControllerAnimated:YES];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event

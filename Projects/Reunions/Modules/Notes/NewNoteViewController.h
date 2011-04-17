@@ -10,7 +10,7 @@
 #import "NotesTableViewController.h"
 
 
-@interface NewNoteViewController : UIViewController {
+@interface NewNoteViewController : UIViewController <UIActionSheetDelegate>{
     
     UIView * titleView;
     UITextView * textView;

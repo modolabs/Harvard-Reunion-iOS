@@ -74,7 +74,7 @@
     
     UIFont *fontTitle = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
     CGSize titleSize = [self.titleText sizeWithFont:fontTitle];
-    UILabel * titleTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 5,  self.width- 10, titleSize.height + 5.0)];
+    UILabel * titleTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 5,  self.width- 130, titleSize.height + 5.0)];
     titleTextLabel.text = self.titleText;
     titleTextLabel.font = fontTitle;
     titleTextLabel.textColor = [UIColor blackColor];
@@ -82,14 +82,37 @@
     
     UIFont *fontDetail = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentSubtitle];
     CGSize detailSize = [self.dateText sizeWithFont:fontTitle];
-    UILabel * detailTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, titleTextLabel.frame.size.height + 10, self.width - 10, detailSize.height + 5.0)];
+    UILabel * detailTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, titleTextLabel.frame.size.height + 10, self.width - 130, detailSize.height + 5.0)];
     detailTextLabel.text = self.dateText;
     detailTextLabel.font = fontDetail;
     detailTextLabel.textColor = [UIColor blackColor];
     detailTextLabel.backgroundColor = [UIColor clearColor];
     
+    UIImage *shareButtonImage = [UIImage imageWithPathName:@"common/share.png"];
+    CGFloat buttonX = self.width - 120;
+    CGFloat buttonY = 5;
+    
+    UIButton * shareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+    shareButton.frame = CGRectMake(buttonX, buttonY, shareButtonImage.size.width, shareButtonImage.size.height);
+    [shareButton setImage:shareButtonImage forState:UIControlStateNormal];
+    [shareButton setImage:[UIImage imageWithPathName:@"common/share_pressed.png"] forState:UIControlStateHighlighted];
+    
+    [shareButton addTarget:self action:@selector(shareButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/subheadbar_button.png"];
+    buttonX += shareButtonImage.size.width + 5;
+    
+    UIButton * deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+    deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
+    [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
+    [deleteButton setImage:[UIImage imageWithPathName:@"common/subheadbar_button.png"] forState:UIControlStateHighlighted];
+    [deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
     [self.view addSubview:titleTextLabel];
     [self.view addSubview:detailTextLabel];
+    [self.view addSubview:shareButton];
+    [self.view addSubview:deleteButton];
     
     UIImage * image = [UIImage imageWithPathName:@"modules/schedule/faketop-above-selection.png"];
     UIImageView * sectionDivider;
@@ -97,7 +120,7 @@
         sectionDivider = [[UIImageView alloc] initWithImage:[image stretchableImageWithLeftCapWidth:0 topCapHeight:0]];
         sectionDivider.frame = CGRectMake(15, 
                                           titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 15, 
-                                          self.width - 10, 
+                                          self.width, 
                                           4);
         
         [self.view addSubview:sectionDivider];
@@ -124,6 +147,25 @@
 }
 
 
+-(void) shareButtonPressed: (id) sender {
+    
+}
+
+- (void) deleteButtonPressed: (id) sender {
+    
+    UIActionSheet * deleteActionSheet = [[UIActionSheet alloc] initWithTitle:@"Are you sure you want to delete the note?" 
+                                                                    delegate:self 
+                                                           cancelButtonTitle:@"Cancel" 
+                                                      destructiveButtonTitle:@"Delete" 
+                                                           otherButtonTitles:nil];
+    
+    //deleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    [deleteActionSheet showInView:self.view];
+    [deleteActionSheet release];
+}
+
+
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
@@ -142,6 +184,16 @@
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+#pragma mark
+#pragma mark UIActionSheetDelegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    
+    if (buttonIndex == 0) {// destructive button pressed
+        NSLog(@"delete button");
+    }
 }
 
 @end

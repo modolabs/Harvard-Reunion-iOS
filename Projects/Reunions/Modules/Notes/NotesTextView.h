@@ -11,7 +11,7 @@
 #define MIN_HEIGHT = 250
 #define MAX_HEIGHT = 350;
 
-@interface NotesTextView : UIView {
+@interface NotesTextView : UIView <UIActionSheetDelegate>{
     
     UIView * titleView;
     UITextView * detailsView;
