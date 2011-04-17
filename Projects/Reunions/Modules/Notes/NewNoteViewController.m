@@ -15,11 +15,13 @@
 @synthesize textViewString;
 @synthesize titleText;
 @synthesize dateText;
+@synthesize date;
+@synthesize eventIdentifier;
 @synthesize width;
 @synthesize height;
 @synthesize viewControllerBackground;
 
--(id) initWithTitleText: (NSString *) title andDateText: (NSString *) dateString  viewWidth: (double) viewWidth viewHeight: (double) viewHeight{
+-(id) initWithTitleText: (NSString *) title date: (NSDate *) date andDateText: (NSString *) dateString  viewWidth: (double) viewWidth viewHeight: (double) viewHeight{
     
     self = [super init];
     
@@ -28,6 +30,7 @@
         self.dateText = dateString;
         self.width = viewWidth;
         self.height = viewHeight;
+        self.date = date;
     }
     
     return self;
@@ -144,6 +147,10 @@
     //[self.view addSubview:noteView];
      self.view.backgroundColor = [UIColor yellowColor];
     
+}
+
+-(NSString *) textViewString {
+    return textView.text;
 }
 
 

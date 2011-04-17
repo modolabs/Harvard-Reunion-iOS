@@ -13,7 +13,8 @@
 #import "NotesUnselectedTableViewCell.h"
 #import "NotesTextView.h"
 #import "NewNoteViewController.h"
-
+#import "Note.h"
+#import "CoreDataManager.h"
 
 @implementation NotesTableViewController
 
@@ -82,7 +83,15 @@
     double yOffset = 75;
     double width = 600;
     double height = 675;
-    NewNoteViewController * tempVC = [[[NewNoteViewController alloc] initWithTitleText:@"Temp New Note Title..." andDateText:@"Created Thursday, Apr 2, 2011" viewWidth:width viewHeight:height] autorelease];
+    
+    if (nil != tempVC)
+        [tempVC release];
+    
+    tempVC = [[[NewNoteViewController alloc] initWithTitleText:@"Temp New Note Title..." 
+                                                                                  date:[NSDate date]                 
+                                                                           andDateText:@"Created Thursday, Apr 2, 2011" 
+                                                                             viewWidth:width 
+                                                                            viewHeight:height] retain];
     tempVC.viewControllerBackground = self;
     //[tempVC becomeFirstResponder];
                                        
@@ -112,6 +121,24 @@
 }
 
 - (void) dismissModalViewControllerAnimated:(BOOL)animated {
+    
+    if (nil != tempVC) {
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", tempVC.titleText];
+        Note *note = nil; //[[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
+        
+        if (nil == note) {
+            note = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:NotesEntityName];
+        }
+        
+        note.title = tempVC.titleText;
+        note.date = tempVC.date;
+        note.details = tempVC.textViewString;
+        
+        if (nil != tempVC.eventIdentifier)
+            note.eventIdentifier = tempVC.eventIdentifier;
+        
+        [[CoreDataManager sharedManager] saveData];
+    }
     
     [super dismissModalViewControllerAnimated:YES];
 }
