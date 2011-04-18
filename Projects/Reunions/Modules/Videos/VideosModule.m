@@ -32,6 +32,9 @@
                 [(FacebookVideoDetailViewController *)vc setPosts:videos];
             }
         }
+        
+        UIView *curtainView = [params objectForKey:@"curtainView"];
+        [(FacebookVideoDetailViewController *)vc setCurtainView:curtainView];
     }
     return vc;
 }

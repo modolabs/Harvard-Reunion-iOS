@@ -5,10 +5,41 @@
 #import "MediaPlayer/MediaPlayer.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 
+static const NSInteger kBlackCurtainViewTag = 0x937;
+
+#pragma mark Private methods
+
+@interface FacebookVideoDetailViewController (Private)
+
+- (void)fadeOutBlackCurtainView;
+
+@end
+
+@implementation FacebookVideoDetailViewController (Private)
+
+- (void)fadeOutBlackCurtainView {
+    //UIView *blackCurtainView = [self.webView viewWithTag:kBlackCurtainViewTag];
+    if (self.curtainView) {
+        [UIView 
+         animateWithDuration:0.2f 
+         delay:0.1f
+         options:UIViewAnimationOptionTransitionNone
+         animations:
+         ^{
+             self.curtainView.alpha = 0.0f;
+         }
+         completion:nil];
+    }    
+}
+
+@end
+
+
 @implementation FacebookVideoDetailViewController
 
 @synthesize video;
 @synthesize webView;
+@synthesize curtainView;
 
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -21,6 +52,7 @@
 */
 
 - (void)dealloc {
+    [curtainView release];
     [webView release];
     [video release];
     [super dealloc];
@@ -72,6 +104,7 @@
         }
                 
         self.webView = [[[UIWebView alloc] init] autorelease];
+        self.webView.delegate = self;
         [self.mediaView setPreviewView:self.webView];
         [self.mediaView setPreviewSize:aspectRatio];
         NSURL *url = [NSURL URLWithString:urlString];
@@ -134,7 +167,27 @@
     button.frame = CGRectMake(120, 80, 80, 60);
     [button addTarget:self action:@selector(playVideo:) forControlEvents:UIControlEventTouchUpInside];
     [self.mediaView addSubview:button];    
-    */          
+    */      
+    
+    // Place a black view over the web view until the web view loading completes.
+    if (self.curtainView) {
+        CGRect blackCurtainFrame = self.webView.frame;
+        blackCurtainFrame.origin = CGPointZero;    
+        self.curtainView.frame = blackCurtainFrame;
+        self.curtainView.autoresizingMask = 
+        [self.mediaView previewView].autoresizingMask;
+        [self.webView addSubview:self.curtainView];
+    }
+//    CGRect blackCurtainFrame = self.webView.frame;
+//    blackCurtainFrame.origin = CGPointZero;    
+//    UIView *blackCurtainView = 
+//    [[UIView alloc] initWithFrame:blackCurtainFrame];
+//    blackCurtainView.tag = kBlackCurtainViewTag;
+//    blackCurtainView.backgroundColor = [UIColor blackColor];
+//    blackCurtainView.autoresizingMask = 
+//    [self.mediaView previewView].autoresizingMask;
+//    [self.webView addSubview:blackCurtainView];
+//    [blackCurtainView release];
 }
 
 - (void)viewDidUnload
@@ -171,9 +224,13 @@
                            forModuleTag:VideoModuleTag params:nil];    
 }
 
-#pragma mark UIPopoverControllerDelegate
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
-    // Make any post-comment changes to buttons here if necessary.
+#pragma mark UIWebViewDelegate
+- (void)webViewDidFinishLoad:(UIWebView *)theWebView {
+    [self fadeOutBlackCurtainView];
+}
+
+- (void)webView:(UIWebView *)theWebView didFailLoadWithError:(NSError *)error {
+    [self fadeOutBlackCurtainView];    
 }
 
 @end
