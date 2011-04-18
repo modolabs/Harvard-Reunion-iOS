@@ -107,6 +107,10 @@
     
     self.organizers = organizers;
     
+    if ([dictionary boolForKey:@"attending"]) {
+        [userInfo setObject:[NSNumber numberWithBool:YES] forKey:@"registered"];
+    }
+    
     // registration info
     NSDictionary *registrationInfo = [dictionary dictionaryForKey:@"registration"];
     if (registrationInfo) {

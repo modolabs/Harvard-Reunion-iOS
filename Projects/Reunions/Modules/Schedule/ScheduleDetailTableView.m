@@ -198,7 +198,15 @@
     if (style == KGONavigationStyleTabletSidebar) {
         return nil;
     }
-    return [super viewForTableHeader];
+    
+    if (!_headerView) {
+        _headerView = [[ReunionDetailPageHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 1)];
+        _headerView.delegate = self;
+        _headerView.showsBookmarkButton = YES;
+    }
+    _headerView.detailItem = self.event;
+    
+    return _headerView;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section

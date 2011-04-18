@@ -39,6 +39,7 @@
 {
     self.dataManager.delegate = nil;
     [_myEvents release];
+    _myEvents = nil;
     [super dealloc];
 }
 
@@ -340,6 +341,14 @@
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.imageView.image = image;
     } copy] autorelease];
+}
+
+- (void)clearEvents
+{
+    [super clearEvents];
+    
+    [_myEvents release];
+    _myEvents = nil;
 }
 
 #pragma mark - Scrolling tabstrip
