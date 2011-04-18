@@ -61,15 +61,15 @@
 {
     [super eventDetailsDidChange];
     
-    if (self.mapView && ![self.mapView annotations].count && _event.coordinate.latitude) {
-        [self.mapView addAnnotation:_event];
-        [self.mapView setRegion:MKCoordinateRegionMake(_event.coordinate, MKCoordinateSpanMake(0.01, 0.01))];
+    if (self.mapView && ![self.mapView annotations].count && self.event.coordinate.latitude) {
+        [self.mapView addAnnotation:self.event];
+        [self.mapView setRegion:MKCoordinateRegionMake(self.event.coordinate, MKCoordinateSpanMake(0.01, 0.01))];
     }
     
     NSString *foursquareVenue = nil;
     
-    if ([_event isKindOfClass:[ScheduleEventWrapper class]]) {
-        foursquareVenue = [(ScheduleEventWrapper *)_event foursquareID];
+    if ([self.event isKindOfClass:[ScheduleEventWrapper class]]) {
+        foursquareVenue = [(ScheduleEventWrapper *)self.event foursquareID];
     } else {
         foursquareVenue = nil;
     }
@@ -109,7 +109,7 @@
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, size.width, size.height)];
             label.text = checkInString;
             label.font = font;
-            label.textColor = [UIColor whiteColor];
+            label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentSubtitle];
             label.backgroundColor = [UIColor clearColor];
             
             foursquareButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -123,6 +123,7 @@
                                  action:@selector(foursquareButtonPressed:)
                        forControlEvents:UIControlEventTouchUpInside];
             foursquareButton.titleLabel.font = font;
+            foursquareButton.titleLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentSubtitle];
             foursquareButton.titleEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 0);
             
             CGFloat width = [foursquareButton.titleLabel.text sizeWithFont:foursquareButton.titleLabel.font].width + 5;
@@ -157,7 +158,7 @@
 {
     NSMutableArray *attendeeInfo = [NSMutableArray array];
 
-    ScheduleEventWrapper *eventWrapper = (ScheduleEventWrapper *)_event;
+    ScheduleEventWrapper *eventWrapper = (ScheduleEventWrapper *)self.event;
     if ([eventWrapper registrationFee]) {
         if ([eventWrapper isRegistered]) {
             UIImage *image = [UIImage imageWithPathName:@"modules/schedule/badge-confirmed"];
@@ -180,9 +181,9 @@
         }
     }
     
-    if (_event.attendees.count) {
+    if (self.event.attendees.count) {
         [attendeeInfo addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                 [NSString stringWithFormat:@"%d others attending", _event.attendees.count], @"title",
+                                 [NSString stringWithFormat:@"%d others attending", self.event.attendees.count], @"title",
                                  KGOAccessoryTypeChevron, @"accessory",
                                  nil]];
     }
@@ -199,14 +200,14 @@
         return nil;
     }
     
-    if (!_headerView) {
-        _headerView = [[ReunionDetailPageHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 1)];
-        _headerView.delegate = self;
-        _headerView.showsBookmarkButton = YES;
+    if (!self.headerView) {
+        self.headerView = [[[ReunionDetailPageHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 1)] autorelease];
+        self.headerView.delegate = self;
+        self.headerView.showsBookmarkButton = YES;
     }
-    _headerView.detailItem = self.event;
+    self.headerView.detailItem = self.event;
     
-    return _headerView;
+    return self.headerView;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -228,17 +229,17 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    id cellData = [[self.sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     if ([cellData isKindOfClass:[NSDictionary class]]) {    
         NSString *accessory = [cellData objectForKey:@"accessory"];
         if ([accessory isEqualToString:KGOAccessoryTypeChevron]) {
-            NSMutableArray *attendees = [NSMutableArray arrayWithCapacity:_event.attendees.count];
-            [_event.attendees enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+            NSMutableArray *attendees = [NSMutableArray arrayWithCapacity:self.event.attendees.count];
+            [self.event.attendees enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
                 KGOAttendeeWrapper *attendee = (KGOAttendeeWrapper *)obj;
                 [attendees addObject:[NSDictionary dictionaryWithObjectsAndKeys:attendee.name, @"display_name", nil]];
             }];
             NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    _event.title, @"title",
+                                    self.event.title, @"title",
                                     attendees, @"attendees",
                                     nil];
             [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameItemList forModuleTag:@"schedule" params:params];
