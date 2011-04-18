@@ -109,7 +109,7 @@
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, size.width, size.height)];
             label.text = checkInString;
             label.font = font;
-            label.textColor = [UIColor whiteColor];
+            label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentSubtitle];
             label.backgroundColor = [UIColor clearColor];
             
             foursquareButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -123,6 +123,7 @@
                                  action:@selector(foursquareButtonPressed:)
                        forControlEvents:UIControlEventTouchUpInside];
             foursquareButton.titleLabel.font = font;
+            foursquareButton.titleLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentSubtitle];
             foursquareButton.titleEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 0);
             
             CGFloat width = [foursquareButton.titleLabel.text sizeWithFont:foursquareButton.titleLabel.font].width + 5;

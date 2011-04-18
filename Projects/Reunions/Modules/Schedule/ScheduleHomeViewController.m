@@ -59,6 +59,8 @@
 
 - (void)loadTableViewWithStyle:(UITableViewStyle)style
 {
+    NSLog(@"loading tableview over %@", self.view.subviews);
+
     CGRect frame = self.view.frame;
     if (!_datePager.hidden && [_datePager isDescendantOfView:self.view]) {
         frame.origin.y += _datePager.frame.size.height;
@@ -70,8 +72,6 @@
     }
     
     if (_isTablet) {
-        [self.tableView removeFromSuperview];
-        
         frame.origin.x += 8;
         frame.origin.y += 8;
         frame.size.width -= 16;
@@ -83,7 +83,7 @@
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         self.tableView.dataSource = self;
         self.tableView.delegate = self;
-        [self.view addSubview:self.tableView];
+        [self addTableView:self.tableView withDataSource:self];
     } else {
         self.tableView = [self addTableViewWithFrame:frame style:style];
     }
