@@ -30,15 +30,6 @@
 			<key>size</key>
 			<integer>0</integer>
 		</dict>
-		<key>ContentTitle</key>
-		<dict>
-			<key>color</key>
-			<string>#1A1611</string>
-			<key>font</key>
-			<string>Georgia</string>
-			<key>size</key>
-			<integer>7</integer>
-		</dict>
 		<key>ContentSubtitle</key>
 		<dict>
 			<key>color</key>
@@ -47,6 +38,15 @@
 			<string>Helvetica</string>
 			<key>size</key>
 			<integer>0</integer>
+		</dict>
+		<key>ContentTitle</key>
+		<dict>
+			<key>color</key>
+			<string>#1A1611</string>
+			<key>font</key>
+			<string>Georgia</string>
+			<key>size</key>
+			<integer>7</integer>
 		</dict>
 		<key>DefaultFont</key>
 		<string>Helvetica</string>
@@ -61,6 +61,8 @@
 		<dict>
 			<key>bold</key>
 			<true/>
+			<key>font</key>
+			<string>Georgia</string>
 			<key>color</key>
 			<string>#1A1611</string>
 			<key>size</key>

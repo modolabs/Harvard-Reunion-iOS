@@ -1,21 +1,56 @@
 #import "ScheduleTabletTableViewCell.h"
 #import "UIKit+KGOAdditions.h"
+#import "ScheduleDetailTableView.h"
+#import "ScheduleEventWrapper.h"
 #import <QuartzCore/QuartzCore.h>
+
+#define TABLE_TAG 1
 
 @implementation ScheduleTabletTableViewCell
 
 @synthesize isFirstInSection, tableView;
 
-/*
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
+        CGRect frame = CGRectMake(self.frame.size.width - 60, -2, 30, 40);
+        _bookmarkView = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+        _bookmarkView.frame = frame;
+        _bookmarkView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+        [self.contentView addSubview:_bookmarkView];
+        
     }
     return self;
 }
-*/
+
+- (void)addBookmark:(id)sender
+{
+    ScheduleDetailTableView *detailTV = (ScheduleDetailTableView *)[self.contentView viewWithTag:TABLE_TAG];
+    if (detailTV) {
+        [detailTV.event addBookmark];
+        [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-on"] forState:UIControlStateNormal];
+    }
+}
+
+- (void)removeBookmark:(id)sender
+{
+    ScheduleDetailTableView *detailTV = (ScheduleDetailTableView *)[self.contentView viewWithTag:TABLE_TAG];
+    if (detailTV) {
+        [detailTV.event removeBookmark];
+        [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-off"] forState:UIControlStateNormal];
+    }
+}
+
+- (void)refuseToRemoveBookmark:(id)sender
+{
+    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
+                                                         message:@"Events you have registered for cannot be removed from your schedule."
+                                                        delegate:nil
+                                               cancelButtonTitle:@"OK"
+                                               otherButtonTitles:nil] autorelease];
+    [alertView show];
+}
 
 - (void)layoutSubviews
 {
@@ -39,6 +74,17 @@
         
         _fakeTopOfNextCell.hidden = YES;
         
+        ScheduleDetailTableView *detailTV = (ScheduleDetailTableView *)[self.contentView viewWithTag:TABLE_TAG];
+        if (detailTV && [detailTV.event isKindOfClass:[ScheduleEventWrapper class]]) {
+            if ([(ScheduleEventWrapper *)detailTV.event isRegistered]) {
+                [_bookmarkView addTarget:self action:@selector(refuseToRemoveBookmark:) forControlEvents:UIControlEventTouchUpInside];
+            } else if ([detailTV.event isBookmarked]) {
+                [_bookmarkView addTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
+            } else {
+                [_bookmarkView addTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
+            }
+        }
+        
     } else {
         self.backgroundColor = [UIColor colorWithHexString:@"DBD9D8"];
         self.textLabel.backgroundColor = [UIColor clearColor];
@@ -50,6 +96,8 @@
             _fakeCardBorder = nil;
         }
         _fakeTopOfNextCell.hidden = NO;
+        
+        [_bookmarkView removeTarget:NULL action:NULL forControlEvents:UIControlEventTouchUpInside];
     }
     
     if (self.scheduleCellType == ScheduleCellLastInTable || self.scheduleCellType == ScheduleCellSelected) {
@@ -84,6 +132,11 @@
     }
 }
 
+- (UIButton *)bookmarkView
+{
+    return _bookmarkView;
+}
+
 - (ScheduleCellType)scheduleCellType
 {
     return _scheduleCellType;
@@ -102,6 +155,7 @@
 {
     [_fakeCardBorder release];
     [_fakeTopOfNextCell release];
+    [_bookmarkView release];
     [super dealloc];
 }
 

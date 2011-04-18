@@ -192,7 +192,6 @@
 
 #define TABLE_TAG 1
 #define MAP_TAG 2
-#define BOOKMARK_TAG 888
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -235,22 +234,22 @@
         
         [[cell.contentView viewWithTag:TABLE_TAG] removeFromSuperview];
         [[cell.contentView viewWithTag:MAP_TAG] removeFromSuperview];
-        
-        UIImageView *bookmarkView = (UIImageView *)[cell.contentView viewWithTag:BOOKMARK_TAG];
+
+        UIImage *image = nil;
         if ([event isRegistered] || [event isBookmarked]) {
-            if (!bookmarkView) {
-                UIImage *ribbon = [UIImage imageWithPathName:@"modules/schedule/list-bookmark"];
-                bookmarkView = [[[UIImageView alloc] initWithImage:ribbon] autorelease];
-                bookmarkView.tag = BOOKMARK_TAG;
-                CGRect frame = bookmarkView.frame;
-                frame.origin.y = -4;
-                frame.size.height = 30; // TODO: change this when we get the right asset
-                frame.origin.x = tableView.frame.size.width - 40;
-                bookmarkView.frame = frame;
-                [cell.contentView addSubview:bookmarkView];
-            }
-        } else if (bookmarkView) {
-            [bookmarkView removeFromSuperview];
+            cell.bookmarkView.hidden = NO;
+            image = [UIImage imageWithPathName:@"common/bookmark-ribbon-on"];
+            
+        } else if (cellType == ScheduleCellSelected) {
+            cell.bookmarkView.hidden = NO;
+            image = [UIImage imageWithPathName:@"common/bookmark-ribbon-off"];
+            
+        } else {
+            cell.bookmarkView.hidden = YES;
+        }
+
+        if (image) {
+            [cell.bookmarkView setImage:image forState:UIControlStateNormal];
         }
         
         switch (cellType) {
