@@ -7,20 +7,31 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Note.h"
 
-#define MIN_HEIGHT = 250
-#define MAX_HEIGHT = 350;
 
-@interface NotesTextView : UIView <UIActionSheetDelegate>{
+@class NotesTextView;
+
+@protocol NotesTextViewDelegate <NSObject>
+
+@required
+/* notifies the parenttableviewcontroller to delete the Note and reload
+ */
+- (void)deleteNoteAndReload:(Note*)note;
+
+@end
+
+@interface NotesTextView : UIView <UIActionSheetDelegate, UITextViewDelegate>{
     
     UIView * titleView;
     UITextView * detailsView;
+    Note * note;
+    
+    id<NotesTextViewDelegate> delegate;
 }
 
-@property (nonatomic, retain) NSString * cellTextLabel;
-@property (nonatomic, retain) NSString * cellDetailText;
-@property (nonatomic, retain) NSString * details;
+@property(nonatomic, assign) id<NotesTextViewDelegate> delegate;
 
-- (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) detailText;
+- (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) dateText noteText: (NSString *) noteText note:(Note *) savedNote;
 
 @end

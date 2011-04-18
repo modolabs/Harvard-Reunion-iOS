@@ -21,7 +21,7 @@
 @synthesize height;
 @synthesize viewControllerBackground;
 
--(id) initWithTitleText: (NSString *) title date: (NSDate *) date andDateText: (NSString *) dateString  viewWidth: (double) viewWidth viewHeight: (double) viewHeight{
+-(id) initWithTitleText: (NSString *) title date: (NSDate *) dateCreated andDateText: (NSString *) dateString  viewWidth: (double) viewWidth viewHeight: (double) viewHeight{
     
     self = [super init];
     
@@ -30,7 +30,7 @@
         self.dateText = dateString;
         self.width = viewWidth;
         self.height = viewHeight;
-        self.date = date;
+        self.date = dateCreated;
     }
     
     return self;
@@ -95,7 +95,7 @@
     CGFloat buttonX = self.width - 120;
     CGFloat buttonY = 5;
     
-    UIButton * shareButton = [[UIButton buttonWithType:UIButtonTypeCustom] autorelease];
+    UIButton * shareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
     shareButton.frame = CGRectMake(buttonX, buttonY, shareButtonImage.size.width, shareButtonImage.size.height);
     [shareButton setImage:shareButtonImage forState:UIControlStateNormal];
     [shareButton setImage:[UIImage imageWithPathName:@"common/share_pressed.png"] forState:UIControlStateHighlighted];
@@ -105,7 +105,7 @@
     UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/subheadbar_button.png"];
     buttonX += shareButtonImage.size.width + 5;
     
-    UIButton * deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] autorelease];
+    UIButton * deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
     deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
     [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
     [deleteButton setImage:[UIImage imageWithPathName:@"common/subheadbar_button.png"] forState:UIControlStateHighlighted];
@@ -199,7 +199,10 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     if (buttonIndex == 0) {// destructive button pressed
-        NSLog(@"delete button");
+        NSLog(@"note delete button pressed");
+        
+        if (nil != viewControllerBackground)
+            [viewControllerBackground deleteNoteWithoutSaving];
     }
 }
 

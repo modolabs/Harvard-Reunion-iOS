@@ -9,11 +9,16 @@
 #import "NotesTextView.h"
 #import "UIKit+KGOAdditions.h"
 #import "KGOTheme.h"
+#import "CoreDataManager.h"
+
+#define MIN_HEIGHT = 250
+#define MAX_HEIGHT = 350;
 
 
 @implementation NotesTextView
+@synthesize delegate;
 
-- (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) detailText
+- (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) dateText noteText: (NSString *) noteText note:(Note *) savedNote
 {
     if (frame.size.height < 500)
         frame.size.height = 500;
@@ -34,9 +39,9 @@
         titleTextLabel.backgroundColor = [UIColor clearColor];
         
         UIFont *fontDetail = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentSubtitle];
-        CGSize detailSize = [detailText sizeWithFont:fontTitle];
+        CGSize detailSize = [dateText sizeWithFont:fontTitle];
         UILabel * detailTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, titleTextLabel.frame.size.height + 10, self.frame.size.width - 130, detailSize.height + 5.0)];
-        detailTextLabel.text = detailText;
+        detailTextLabel.text = dateText;
         detailTextLabel.font = fontDetail;
         detailTextLabel.numberOfLines = 1;
         detailTextLabel.lineBreakMode = UILineBreakModeTailTruncation;
@@ -92,15 +97,22 @@
                                                                        titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 25, 
                                                                        self.frame.size.width, 
                                                                        self.frame.size.height - titleTextLabel.frame.size.height - detailTextLabel.frame.size.height - 25)];
+            detailsView.delegate = self;
             detailsView.backgroundColor = [UIColor clearColor];
             
             [self addSubview:detailsView];
-            [detailsView becomeFirstResponder];
+            
             detailsView.font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyByline];
+            detailsView.text = noteText;
+            [detailsView becomeFirstResponder];
         }
         
         self.backgroundColor = [UIColor clearColor];
-
+        
+        if (nil != note)
+            [note release];
+        
+        note = [savedNote retain];
     }
     return self;
 }
@@ -117,23 +129,36 @@
                                                       destructiveButtonTitle:@"Delete" 
                                                            otherButtonTitles:nil];
     
-    //deleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     [deleteActionSheet showInView:self];
     [deleteActionSheet release];
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 - (void)dealloc
 {
     [super dealloc];
+}
+
+#pragma mark
+#pragma mark UITextViewDelegate
+
+- (void)textViewDidEndEditing:(UITextView *)textView {
+    
+    if (nil == note) {
+        
+    }
+    
+    NSString * noteString = detailsView.text;
+    NSArray * splitArray = [noteString componentsSeparatedByString:@"."];
+    
+    if (splitArray.count <= 1)
+        splitArray = [noteString componentsSeparatedByString:@"\n"];
+    
+    note.title = [splitArray objectAtIndex:0];
+    note.details = noteString;
+    
+    [[CoreDataManager sharedManager] saveData];
+    
 }
 
 
@@ -143,7 +168,19 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     if (buttonIndex == 0) {// destructive button pressed
-        NSLog(@"delete button");
+        NSLog(@"delete button pressed from notes-listview");
+    }
+}
+
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    
+    if (buttonIndex == 0) {// destructive button pressed
+        NSLog(@"action sheet dismissed from view");
+        
+        [self removeFromSuperview];
+        [self.delegate deleteNoteAndReload:note];
+
     }
 }
 

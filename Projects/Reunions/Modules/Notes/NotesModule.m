@@ -13,4 +13,10 @@
     return vc;
 }
 
+#pragma mark Data
+
+- (NSArray *)objectModelNames {
+    return [NSArray arrayWithObject:@"Notes"];
+}
+
 @end

@@ -18,11 +18,18 @@
 
 @implementation NotesTableViewController
 
+- (void) reloadNotes {
+    if (nil != notesArray)
+        [notesArray release];
+    
+    notesArray = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:nil] retain];
+}
+
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
     self.view.backgroundColor = [UIColor clearColor];
-    //self.tableView.backgroundColor = [UIColor clearColor];
+
     if (self) {
         
         NSString * newNoteText = NSLocalizedString(@"New Note", nil);
@@ -45,7 +52,6 @@
         [self.tableView removeFromSuperview];
         self.tableView = [self addTableViewWithFrame:frame style:style];
         self.tableView.backgroundColor = [UIColor yellowColor];
-
         
     }
     return self;
@@ -87,13 +93,12 @@
     if (nil != tempVC)
         [tempVC release];
     
-    tempVC = [[[NewNoteViewController alloc] initWithTitleText:@"Temp New Note Title..." 
-                                                                                  date:[NSDate date]                 
-                                                                           andDateText:@"Created Thursday, Apr 2, 2011" 
-                                                                             viewWidth:width 
-                                                                            viewHeight:height] retain];
+    tempVC = [[[NewNoteViewController alloc] initWithTitleText:@"<Empty Note>" 
+                                                          date:[NSDate date]                 
+                                                   andDateText:@"Created Thursday, Apr 2, 2011" 
+                                                    viewWidth:width 
+                                                    viewHeight:height] retain];
     tempVC.viewControllerBackground = self;
-    //[tempVC becomeFirstResponder];
                                        
     UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:tempVC] autorelease];
     
@@ -103,20 +108,14 @@
     
     tempVC.navigationItem.rightBarButtonItem = item;
  
-    //categoryVC.navigationItem.rightBarButtonItem = item;
     navC.modalPresentationStyle =  UIModalPresentationFormSheet;
     [self presentModalViewController:navC animated:YES];
     navC.navigationBar.tintColor = [UIColor blackColor];
     navC.view.userInteractionEnabled = YES;
 
-    
-    //[navC.view becomeFirstResponder];
-    navC.view.superview.frame = CGRectMake(xOffset, yOffset, width, height);//it's important to do this after presentModalViewController
-    //navC.view.superview.center = self.view.center;
 
-    
-    
-    //[self.view addSubview:modalView];
+    navC.view.superview.frame = CGRectMake(xOffset, yOffset, width, height);//it's important to do this after presentModalViewController
+
 
 }
 
@@ -124,13 +123,19 @@
     
     if (nil != tempVC) {
         NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", tempVC.titleText];
-        Note *note = nil; //[[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
+        Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
         
         if (nil == note) {
             note = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:NotesEntityName];
         }
         
-        note.title = tempVC.titleText;
+        NSString * noteString = tempVC.textViewString;
+        NSArray * splitArray = [noteString componentsSeparatedByString:@"."];
+        
+        if (splitArray.count <= 1)
+            splitArray = [noteString componentsSeparatedByString:@"\n"];
+        
+        note.title = [splitArray objectAtIndex:0];
         note.date = tempVC.date;
         note.details = tempVC.textViewString;
         
@@ -139,6 +144,23 @@
         
         [[CoreDataManager sharedManager] saveData];
     }
+    [self reloadNotes];
+    
+    if (nil != selectedRowIndexPath)
+        [selectedRowIndexPath release];
+    
+    if (nil != selectedNote)
+        [selectedNote release];
+    
+    selectedRowIndexPath = [[NSIndexPath indexPathForRow:notesArray.count -1 inSection:0] retain];
+    selectedNote = [[notesArray objectAtIndex:notesArray.count -1] retain];
+    
+    [self.tableView reloadData];
+    [super dismissModalViewControllerAnimated:YES];
+}
+
+// called from the modal view (new note), upon delete
+-(void) deleteNoteWithoutSaving {
     
     [super dismissModalViewControllerAnimated:YES];
 }
@@ -166,12 +188,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)viewDidUnload
@@ -184,6 +200,14 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self reloadNotes];
+    selectedNote = nil;
+    selectedRowIndexPath = nil;
+                    
+    selectedRowIndexPath = [[NSIndexPath indexPathForRow:notesArray.count -1 inSection:0] retain];
+    selectedNote = [[notesArray objectAtIndex:notesArray.count -1] retain];
+    
+    [self.tableView reloadData];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -201,7 +225,16 @@
     [super viewDidDisappear:animated];
 }
 
+#pragma mark
+#pragma mark NotesTextViewDelegate
 
+- (void)deleteNoteAndReload:(Note*)note{
+    [[CoreDataManager sharedManager] deleteObject:note];
+     [[CoreDataManager sharedManager] saveData];
+    
+    [self reloadNotes];
+    [self.tableView reloadData];
+}
 
 #pragma mark Table view methods
 
@@ -210,7 +243,13 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 20;
+    
+    int rows = 0;
+    
+    if (nil != notesArray)
+        rows = notesArray.count;
+    
+    return rows;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -219,14 +258,18 @@
 }
 
 - (KGOTableCellStyle)tableView:(UITableView *)tableView styleForCellAtIndexPath:(NSIndexPath *)indexPath {
-   // if (_currentCategories) {
-     //   return KGOTableCellStyleDefault;
-    //}
+
     return KGOTableCellStyleSubtitle;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    Note * note = [notesArray objectAtIndex:indexPath.row];
+    
+    NSString * noteTitle = note.title;
+    NSString * noteText = note.details;
+    NSDate * noteDate = note.date;
+    
     if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)) {
         static NSString *CellIdentifier = @"CellNotesSelected";
         
@@ -238,11 +281,13 @@
         
         cell.tableView = self.tableView;
         cell.notesCellType = NotesCellSelected;
-        //cell.textLabel.text = @"Testing Notes blah blah blah";
-        //cell.detailTextLabel.text = @"Date  xx-yy-zzzz";
+
         NotesTextView * notesTextView = [[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 500) 
-                                                          titleText:@"Testing Notes blah blah blah"
-                                                         detailText:@"Date  xx-yy-zzzz"];
+                                                          titleText:noteTitle
+                                                         detailText:[noteDate description]
+                                                                    noteText:noteText
+                                                                   note: note];
+        notesTextView.delegate = self;
         cell.detailsView = notesTextView;
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         
@@ -260,8 +305,8 @@
         
         cell.tableView = self.tableView;
         cell.notesCellType = NotesCellTypeOther;
-        cell.textLabel.text = @"Testing Notes";
-        cell.detailTextLabel.text = @"Date  xx-yy-zzzz";
+        cell.textLabel.text = noteTitle;
+        cell.detailTextLabel.text = [noteDate description];
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         
         
@@ -273,11 +318,19 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
+    Note * note = [notesArray objectAtIndex:indexPath.row];
+    
+    NSString * noteTitle = note.title;
+    NSString * noteText = note.details;
+    NSDate * noteDate = note.date;
+    
     if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)) {
         
-       NotesTextView * temp = [[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 500) 
-                                                         titleText:@"Testing Notes blah blah blah"
-                                                        detailText:@"Date  xx-yy-zzzz"];
+        NotesTextView * temp = [[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 500) 
+                                                          titleText:noteTitle
+                                                         detailText:[noteDate description]
+                                                           noteText:noteText
+                                                          note: note];
         
         return temp.frame.size.height;
     }
@@ -292,68 +345,18 @@
         return;
     }
     
-    NSIndexPath * prevSelectedRowIndexPath = selectedRowIndexPath;
+    if (nil != notesArray) {
+        selectedNote = [[notesArray objectAtIndex:indexPath.row] retain];
+    }
+    
     selectedRowIndexPath = indexPath;
+
+    
     [self.tableView reloadData];
     
     [self.tableView scrollToRowAtIndexPath:selectedRowIndexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
-    
-    /*if (nil != prevSelectedRowIndexPath)   {
-        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:prevSelectedRowIndexPath] withRowAnimation:UITableViewRowAnimationNone];
-        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:selectedRowIndexPath] withRowAnimation:UITableViewRowAnimationNone];
-    }
-    
-    else
-        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:selectedRowIndexPath] withRowAnimation:UITableViewRowAnimationNone];
-    
-    
-     */
+
 }
-/*
-- (CellManipulator)tableView:(UITableView *)tableView manipulatorForCellAtIndexPath:(NSIndexPath *)indexPath {
-    if (_currentCategories) {
-        KGOCalendar *category = [_currentCategories objectAtIndex:indexPath.row];
-        NSString *title = category.title;
-        
-        return [[^(UITableViewCell *cell) {
-            cell.selectionStyle = UITableViewCellSelectionStyleGray;
-            cell.textLabel.text = title;
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        } copy] autorelease];
-        
-    } else if (_currentSections && _currentEventsBySection) {
-        NSArray *eventsForSection = [_currentEventsBySection objectForKey:[_currentSections objectAtIndex:indexPath.section]];
-        KGOEventWrapper *event = [eventsForSection objectAtIndex:indexPath.row];
-        
-        NSString *title = event.title;
-        NSString *subtitle = [self.dataManager shortDateTimeStringFromDate:event.startDate];
-        
-        return [[^(UITableViewCell *cell) {
-            cell.selectionStyle = UITableViewCellSelectionStyleGray;
-            cell.textLabel.text = title;
-            cell.detailTextLabel.text = subtitle;
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        } copy] autorelease];
-    }
-    return nil;
-}*/
-/*
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (_currentCategories) {
-        KGOCalendar *calendar = [_currentCategories objectAtIndex:indexPath.row];
-        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:calendar, @"calendar", nil];
-        [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameCategoryList forModuleTag:self.moduleTag params:params];
-        
-    } else if (_currentSections && _currentEventsBySection) {
-        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                                _currentEventsBySection, @"eventsBySection",
-                                _currentSections, @"sections",
-                                indexPath, @"currentIndexPath",
-                                nil];
-        
-        [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail forModuleTag:self.moduleTag params:params];
-    }
-}*/
 
 
 

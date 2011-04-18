@@ -25,6 +25,7 @@
 		5661D3821359A5B200ACB0BB /* NotesTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5661D37C1359A5B200ACB0BB /* NotesTextView.m */; };
 		5661D3831359A5B200ACB0BB /* NotesUnselectedTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5661D37E1359A5B200ACB0BB /* NotesUnselectedTableViewCell.m */; };
 		5661D40F135AA90300ACB0BB /* Note.m in Sources */ = {isa = PBXBuildFile; fileRef = 5661D40E135AA90300ACB0BB /* Note.m */; };
+		5661D43D135BF50E00ACB0BB /* Notes.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5661D43B135BF50E00ACB0BB /* Notes.xcdatamodeld */; };
 		A62A26831357B36900870DC1 /* FacebookThumbnail.m in Sources */ = {isa = PBXBuildFile; fileRef = A62A26821357B36900870DC1 /* FacebookThumbnail.m */; };
 		A63DE7A7134F9F98001C52BF /* AddressBookUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A63DE7A6134F9F98001C52BF /* AddressBookUtils.m */; };
 		A6F2099D134E61CC009F597D /* ConnectModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F20998134E61CC009F597D /* ConnectModule.m */; };
@@ -300,6 +301,7 @@
 		5661D37E1359A5B200ACB0BB /* NotesUnselectedTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotesUnselectedTableViewCell.m; path = Notes/NotesUnselectedTableViewCell.m; sourceTree = "<group>"; };
 		5661D40D135AA90300ACB0BB /* Note.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Note.h; path = Notes/Note.h; sourceTree = "<group>"; };
 		5661D40E135AA90300ACB0BB /* Note.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Note.m; path = Notes/Note.m; sourceTree = "<group>"; };
+		5661D43C135BF50E00ACB0BB /* Notes.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Notes.xcdatamodel; sourceTree = "<group>"; };
 		A62A26811357B36900870DC1 /* FacebookThumbnail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookThumbnail.h; sourceTree = "<group>"; };
 		A62A26821357B36900870DC1 /* FacebookThumbnail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookThumbnail.m; sourceTree = "<group>"; };
 		A63DE7A5134F9F98001C52BF /* AddressBookUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddressBookUtils.h; sourceTree = "<group>"; };
@@ -795,6 +797,7 @@
 			children = (
 				5661D40D135AA90300ACB0BB /* Note.h */,
 				5661D40E135AA90300ACB0BB /* Note.m */,
+				5661D43B135BF50E00ACB0BB /* Notes.xcdatamodeld */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -1926,6 +1929,7 @@
 				5661D3821359A5B200ACB0BB /* NotesTextView.m in Sources */,
 				5661D3831359A5B200ACB0BB /* NotesUnselectedTableViewCell.m in Sources */,
 				5661D40F135AA90300ACB0BB /* Note.m in Sources */,
+				5661D43D135BF50E00ACB0BB /* Notes.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2135,6 +2139,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
+		5661D43B135BF50E00ACB0BB /* Notes.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				5661D43C135BF50E00ACB0BB /* Notes.xcdatamodel */,
+			);
+			currentVersion = 5661D43C135BF50E00ACB0BB /* Notes.xcdatamodel */;
+			name = Notes.xcdatamodeld;
+			path = Notes/Notes.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
 		EB0339181340E47C00ACF2BB /* Calendar.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
