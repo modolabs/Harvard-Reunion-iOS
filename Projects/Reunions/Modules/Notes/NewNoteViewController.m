@@ -95,7 +95,7 @@
     CGFloat buttonX = self.width - 120;
     CGFloat buttonY = 5;
     
-    UIButton * shareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+    UIButton * shareButton = [[UIButton buttonWithType:UIButtonTypeCustom] autorelease];
     shareButton.frame = CGRectMake(buttonX, buttonY, shareButtonImage.size.width, shareButtonImage.size.height);
     [shareButton setImage:shareButtonImage forState:UIControlStateNormal];
     [shareButton setImage:[UIImage imageWithPathName:@"common/share_pressed.png"] forState:UIControlStateHighlighted];
@@ -105,7 +105,7 @@
     UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/subheadbar_button.png"];
     buttonX += shareButtonImage.size.width + 5;
     
-    UIButton * deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+    UIButton * deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] autorelease];
     deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
     [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
     [deleteButton setImage:[UIImage imageWithPathName:@"common/subheadbar_button.png"] forState:UIControlStateHighlighted];
