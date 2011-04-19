@@ -6,6 +6,7 @@
 #import "BumpAPI.h"
 #import "AddressBookUtils.h"
 #import "KGOTheme.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
 
 typedef enum
 {
@@ -33,6 +34,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 
 #pragma mark Address book
 - (void)showPicker;
+- (UIViewController *)peoplePickerOwner;
 - (void)addAddressBookRecordForDict:(NSDictionary *)serializedRecord;
 - (void)promptAboutAddingIncomingRecord;
 + (NSString *)nameFromAddressBookDict:(NSDictionary *)serializedRecord;
@@ -67,9 +69,21 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     [[ABPeoplePickerNavigationController alloc] init];    
     picker.peoplePickerDelegate = self;
     
-    [self presentModalViewController:picker animated:YES];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {    
+        picker.modalPresentationStyle = UIModalPresentationFormSheet;        
+    }    
+    [[self peoplePickerOwner] presentModalViewController:picker animated:YES];
     picker.navigationBar.topItem.prompt = @"Select a contact to share";
     [picker release];    
+}
+
+- (UIViewController *)peoplePickerOwner {
+    UIViewController *peoplePickerOwner = self;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        peoplePickerOwner = 
+        ((KGOAppDelegate *)KGO_SHARED_APP_DELEGATE()).visibleViewController;
+    }
+    return peoplePickerOwner;
 }
 
 - (void)addAddressBookRecordForDict:(NSDictionary *)serializedRecord {
@@ -375,14 +389,14 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 #pragma mark ABPeoplePickerNavigationControllerDelegate
 - (void)peoplePickerNavigationControllerDidCancel:
 (ABPeoplePickerNavigationController *)peoplePicker {
-    [self dismissModalViewControllerAnimated:YES];
+    [[self peoplePickerOwner] dismissModalViewControllerAnimated:YES];
 }
 
 - (BOOL)peoplePickerNavigationController:
 (ABPeoplePickerNavigationController *)peoplePicker
       shouldContinueAfterSelectingPerson:(ABRecordRef)person {
         
-    [self dismissModalViewControllerAnimated:YES];
+    [[self peoplePickerOwner] dismissModalViewControllerAnimated:YES];
     addressBookPickerShowing = NO;
     
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
