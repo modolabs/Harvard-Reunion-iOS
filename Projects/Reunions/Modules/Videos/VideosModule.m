@@ -33,8 +33,9 @@
             }
         }
         
-        UIView *curtainView = [params objectForKey:@"curtainView"];
-        [(FacebookVideoDetailViewController *)vc setCurtainView:curtainView];
+        UIImage *curtainImage = [params objectForKey:@"loadingCurtainImage"];
+        [(FacebookVideoDetailViewController *)vc 
+         setLoadingCurtainImage:curtainImage];
     }
     return vc;
 }

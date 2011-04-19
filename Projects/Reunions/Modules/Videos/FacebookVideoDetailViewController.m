@@ -5,28 +5,28 @@
 #import "MediaPlayer/MediaPlayer.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 
-static const NSInteger kBlackCurtainViewTag = 0x937;
+static const NSInteger kLoadingCurtainViewTag = 0x937;
 
 #pragma mark Private methods
 
 @interface FacebookVideoDetailViewController (Private)
 
-- (void)fadeOutBlackCurtainView;
+- (void)fadeOutLoadingCurtainView;
 
 @end
 
 @implementation FacebookVideoDetailViewController (Private)
 
-- (void)fadeOutBlackCurtainView {
-    //UIView *blackCurtainView = [self.webView viewWithTag:kBlackCurtainViewTag];
-    if (self.curtainView) {
+- (void)fadeOutLoadingCurtainView {
+    UIView *loadingCurtainView = [self.webView viewWithTag:kLoadingCurtainViewTag];
+    if (loadingCurtainView) {
         [UIView 
-         animateWithDuration:0.2f 
+         animateWithDuration:0.4f 
          delay:0.1f
          options:UIViewAnimationOptionTransitionNone
          animations:
          ^{
-             self.curtainView.alpha = 0.0f;
+             loadingCurtainView.alpha = 0.0f;
          }
          completion:nil];
     }    
@@ -39,7 +39,8 @@ static const NSInteger kBlackCurtainViewTag = 0x937;
 
 @synthesize video;
 @synthesize webView;
-@synthesize curtainView;
+//@synthesize curtainView;
+@synthesize loadingCurtainImage;
 
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -52,7 +53,8 @@ static const NSInteger kBlackCurtainViewTag = 0x937;
 */
 
 - (void)dealloc {
-    [curtainView release];
+//    [curtainView release];
+    [loadingCurtainImage release];
     [webView release];
     [video release];
     [super dealloc];
@@ -167,27 +169,23 @@ static const NSInteger kBlackCurtainViewTag = 0x937;
     button.frame = CGRectMake(120, 80, 80, 60);
     [button addTarget:self action:@selector(playVideo:) forControlEvents:UIControlEventTouchUpInside];
     [self.mediaView addSubview:button];    
-    */      
+    */     
     
-    // Place a black view over the web view until the web view loading completes.
-    if (self.curtainView) {
-        CGRect blackCurtainFrame = self.webView.frame;
-        blackCurtainFrame.origin = CGPointZero;    
-        self.curtainView.frame = blackCurtainFrame;
-        self.curtainView.autoresizingMask = 
+    // Show curtain image in view over the web view until the web view finishes 
+    // loading.
+    if (self.loadingCurtainImage) {
+        CGRect loadingCurtainFrame = self.webView.frame;
+        loadingCurtainFrame.origin = CGPointZero;    
+        UIImageView *loadingCurtainView = 
+        [[UIImageView alloc] initWithFrame:loadingCurtainFrame];
+        loadingCurtainView.image = self.loadingCurtainImage;
+        loadingCurtainView.tag = kLoadingCurtainViewTag;
+        loadingCurtainView.backgroundColor = [UIColor blackColor];
+        loadingCurtainView.autoresizingMask = 
         [self.mediaView previewView].autoresizingMask;
-        [self.webView addSubview:self.curtainView];
+        [self.webView addSubview:loadingCurtainView];
+        [loadingCurtainView release];
     }
-//    CGRect blackCurtainFrame = self.webView.frame;
-//    blackCurtainFrame.origin = CGPointZero;    
-//    UIView *blackCurtainView = 
-//    [[UIView alloc] initWithFrame:blackCurtainFrame];
-//    blackCurtainView.tag = kBlackCurtainViewTag;
-//    blackCurtainView.backgroundColor = [UIColor blackColor];
-//    blackCurtainView.autoresizingMask = 
-//    [self.mediaView previewView].autoresizingMask;
-//    [self.webView addSubview:blackCurtainView];
-//    [blackCurtainView release];
 }
 
 - (void)viewDidUnload
@@ -226,11 +224,11 @@ static const NSInteger kBlackCurtainViewTag = 0x937;
 
 #pragma mark UIWebViewDelegate
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
-    [self fadeOutBlackCurtainView];
+    [self fadeOutLoadingCurtainView];
 }
 
 - (void)webView:(UIWebView *)theWebView didFailLoadWithError:(NSError *)error {
-    [self fadeOutBlackCurtainView];    
+    [self fadeOutLoadingCurtainView];    
 }
 
 @end

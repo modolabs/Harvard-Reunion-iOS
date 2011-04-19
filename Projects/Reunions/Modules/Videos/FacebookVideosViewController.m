@@ -7,7 +7,7 @@
 #import "FacebookUser.h"
 #import "FacebookModule.h"
 #import "CoreDataManager.h"
-
+#import <QuartzCore/QuartzCore.h>
 
 typedef enum {
     kTransitionImageViewTag = 0x701,
@@ -25,6 +25,7 @@ VideosViewTags;
                 inFrame:(CGRect)frame 
              withMargin:(CGFloat)margin;
 - (CGRect)frameForTransitionViewInMainViewForThumbnail:(FacebookThumbnail *)thumbnail;
++ (UIImage *)screenShotOfView:(UIView *)targetView;
 
 @end
 
@@ -252,6 +253,17 @@ VideosViewTags;
 }
 
 
+// http://stackoverflow.com/questions/2214957/how-do-i-take-a-screen-shot-of-a-uiview
++ (UIImage *)screenShotOfView:(UIView *)targetView {
+    UIGraphicsBeginImageContext(targetView.frame.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    [targetView.layer renderInContext:context];
+    UIImage *screenShot = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return screenShot;
+}
+
+
 #pragma mark MITThumbnailDelegate
 - (void)thumbnail:(MITThumbnailView *)thumbnail didLoadData:(NSData *)data {
     [[CoreDataManager sharedManager] saveData];    
@@ -297,6 +309,10 @@ VideosViewTags;
         [[self class] frameForImage:thumbnail.thumbnailView.imageView.image
                             inFrame:predictedDetailViewWebFrame
                          withMargin:44.0f];
+        // YouTube videos are just a little lower and shorter than 
+        // the thumbnail would seem to predict.
+        predictedImageInFutureWebViewFrame.origin.y += 5.0f;
+        predictedImageInFutureWebViewFrame.size.height -= 10.0f;
         
         transitionView.alpha = 1.0f;             
         
@@ -320,15 +336,20 @@ VideosViewTags;
          }
          completion:
          ^(BOOL finished) {
+             // This is the image the detail will display over the web view 
+             // while it is loading.
+             UIImage *curtainImage = 
+             [[self class] screenShotOfView:transitionView];
+             
              // Hide the transition view.
              transitionView.alpha = 0.0f;
-             transitionImageView.alpha = 0.0f;
+             transitionImageView.alpha = 0.0f;             
              transitionImageView.image = nil;
              
              NSDictionary *params = 
              [NSDictionary dictionaryWithObjectsAndKeys:
               _videos, @"videos", video, @"video", 
-              transitionView, @"curtainView", nil];
+              curtainImage, @"loadingCurtainImage", nil];
              
              [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail 
                                     forModuleTag:@"video" 

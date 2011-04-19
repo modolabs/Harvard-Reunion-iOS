@@ -9,9 +9,10 @@
 }
 
 @property (nonatomic, retain) FacebookVideo *video;
-//@property (nonatomic, retain) UIPopoverController *commentPopover;
 @property (nonatomic, retain) UIWebView *webView;
-@property (nonatomic, retain) UIView *curtainView;
+// If this property is set by the time the view loads, it will show the image 
+// on top of the web view, then hide it when the web view finishes loading.
+@property (nonatomic, retain) UIImage *loadingCurtainImage;
 
 - (void)loadVideosFromCache;
 
