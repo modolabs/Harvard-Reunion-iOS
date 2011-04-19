@@ -154,7 +154,9 @@
     if (splitArray.count <= 1)
         splitArray = [noteString componentsSeparatedByString:@"\n"];
     
-    note.title = [splitArray objectAtIndex:0];
+    if (nil == note.eventIdentifier)
+        note.title = [splitArray objectAtIndex:0];
+    
     note.details = noteString;
     
     [[CoreDataManager sharedManager] saveData];

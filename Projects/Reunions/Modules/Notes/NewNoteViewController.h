@@ -29,5 +29,6 @@
 @property (nonatomic, retain) NotesTableViewController * viewControllerBackground;
 
 
--(id) initWithTitleText: (NSString *) title date: (NSDate *) date andDateText: (NSString *) dateString  viewWidth: (double) viewWidth viewHeight: (double) viewHeight;
+-(id) initWithTitleText: (NSString *) title date: (NSDate *) dateCreated andDateText: (NSString *) dateString  eventId: (NSString *) eventId viewWidth: (double) viewWidth viewHeight: (double) viewHeight;
+
 @end

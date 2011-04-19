@@ -95,7 +95,8 @@
     
     tempVC = [[[NewNoteViewController alloc] initWithTitleText:@"<Empty Note>" 
                                                           date:[NSDate date]                 
-                                                   andDateText:@"Created Thursday, Apr 2, 2011" 
+                                                   andDateText:@"Created Thursday, Apr 2, 2011"
+                                                    eventId:nil
                                                     viewWidth:width 
                                                     viewHeight:height] retain];
     tempVC.viewControllerBackground = self;

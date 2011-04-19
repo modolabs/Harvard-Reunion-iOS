@@ -21,7 +21,7 @@
 @synthesize height;
 @synthesize viewControllerBackground;
 
--(id) initWithTitleText: (NSString *) title date: (NSDate *) dateCreated andDateText: (NSString *) dateString  viewWidth: (double) viewWidth viewHeight: (double) viewHeight{
+-(id) initWithTitleText: (NSString *) title date: (NSDate *) dateCreated andDateText: (NSString *) dateString  eventId: (NSString *) eventId viewWidth: (double) viewWidth viewHeight: (double) viewHeight{
     
     self = [super init];
     
@@ -31,6 +31,7 @@
         self.width = viewWidth;
         self.height = viewHeight;
         self.date = dateCreated;
+        self.eventIdentifier = eventId;
     }
     
     return self;
@@ -56,24 +57,6 @@
 - (void)loadView
 {
     [super loadView];
-    
-   /* UIButton * invisibleButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    invisibleButton.frame = CGRectMake(0, 0, 1200, 1200);
-    invisibleButton.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2f];
-    [invisibleButton addTarget:self action:@selector(invisibleButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    invisibleButton.hidden = YES;
-    //.enable = YES;*/
-    
-   // self.view.backgroundColor = [UIColor clearColor];
-    
-    /*UIView * invisible = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 1200, 1200)] autorelease];
-    invisible.opaque = NO;
-    invisible.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5f];
-  
-    //[self.view addSubview:invisible];
-    
-    UIView * noteView = [[[UIView alloc] initWithFrame:CGRectMake(140, 75, 600, 675)] autorelease];
-    noteView.backgroundColor = [UIColor yellowColor];*/
     
     UIFont *fontTitle = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
     CGSize titleSize = [self.titleText sizeWithFont:fontTitle];
