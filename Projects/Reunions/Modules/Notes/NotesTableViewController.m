@@ -85,11 +85,6 @@
 
 - (void)newNoteButtonPressed:(id)sender {
     
-    double xOffset = 140;
-    double yOffset = 75;
-    double width = 600;
-    double height = 675;
-    
     if (nil != tempVC)
         [tempVC release];
     
@@ -97,8 +92,8 @@
                                                           date:[NSDate date]                 
                                                    andDateText:@"Created Thursday, Apr 2, 2011"
                                                     eventId:nil
-                                                    viewWidth:width 
-                                                    viewHeight:height] retain];
+                                                    viewWidth:NEWNOTE_WIDTH 
+                                                    viewHeight:NEWNOTE_HEIGHT] retain];
     tempVC.viewControllerBackground = self;
                                        
     UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:tempVC] autorelease];
@@ -115,7 +110,7 @@
     navC.view.userInteractionEnabled = YES;
 
 
-    navC.view.superview.frame = CGRectMake(xOffset, yOffset, width, height);//it's important to do this after presentModalViewController
+    navC.view.superview.frame = CGRectMake(NEWNOTE_XOFFSET, NEWNOTE_YOFFSET, NEWNOTE_WIDTH, NEWNOTE_HEIGHT);//it's important to do this after presentModalViewController
 
 
 }
@@ -131,10 +126,18 @@
         }
         
         NSString * noteString = tempVC.textViewString;
-        NSArray * splitArray = [noteString componentsSeparatedByString:@"."];
+        NSArray * splitArrayPeriod = [noteString componentsSeparatedByString:@"."];
+        NSArray * splitArrayNewLine = [noteString componentsSeparatedByString:@"\n"];
         
-        if (splitArray.count <= 1)
-            splitArray = [noteString componentsSeparatedByString:@"\n"];
+        NSArray * splitArray;
+        
+        if ([[splitArrayPeriod objectAtIndex:0] length] < [[splitArrayNewLine objectAtIndex:0] length])
+            splitArray = splitArrayPeriod;
+        
+        else
+            splitArray = splitArrayNewLine;
+            
+  
         
         note.title = [splitArray objectAtIndex:0];
         note.date = tempVC.date;
@@ -160,15 +163,13 @@
     [super dismissModalViewControllerAnimated:YES];
 }
 
-// called from the modal view (new note), upon delete
+
+#pragma mark
+#pragma mark NotesModalViewDelegate 
+
 -(void) deleteNoteWithoutSaving {
     
     [super dismissModalViewControllerAnimated:YES];
-}
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    [super touchesBegan:touches withEvent:event];
 }
 
 - (void)dealloc

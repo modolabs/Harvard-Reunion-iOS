@@ -9,6 +9,8 @@
 #import "NewNoteViewController.h"
 #import "UIKit+KGOAdditions.h"
 #import "KGOTheme.h"
+#import "Note.h"
+#import "CoreDataManager.h"
 
 
 @implementation NewNoteViewController
@@ -121,6 +123,13 @@
                                                                 self.width, 
                                                                 self.height - titleTextLabel.frame.size.height - detailTextLabel.frame.size.height - 25)];
         textView.backgroundColor = [UIColor clearColor];
+        
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", self.titleText];
+        Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
+        
+        if (nil != note)
+            if (nil != note.details)
+                textView.text = note.details;
         
         [self.view addSubview:textView];
         [textView becomeFirstResponder];

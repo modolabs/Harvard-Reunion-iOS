@@ -7,10 +7,24 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "NotesTableViewController.h"
 
+#define NEWNOTE_XOFFSET 140
+#define NEWNOTE_YOFFSET 75
+#define NEWNOTE_WIDTH 600
+#define NEWNOTE_HEIGHT 675
 
-@class NotesTableViewController;
+#ifndef __NOTESMODALVIEW__
+#define __NOTESMODALVIEW__
+@protocol NotesModalViewDelegate <NSObject>
+
+@required
+/* notifies the notesmodalviewdeletgate to delete the Note and not save
+ */
+- (void)deleteNoteWithoutSaving;
+
+@end
+#endif
+
 
 @interface NewNoteViewController : UIViewController <UIActionSheetDelegate>{
     
@@ -26,7 +40,7 @@
 @property (nonatomic, assign) double width;
 @property (nonatomic, assign) double  height;
 @property (nonatomic, retain) NSString * textViewString;
-@property (nonatomic, retain) NotesTableViewController * viewControllerBackground;
+@property (nonatomic, assign) UIViewController<NotesModalViewDelegate> * viewControllerBackground;
 
 
 -(id) initWithTitleText: (NSString *) title date: (NSDate *) dateCreated andDateText: (NSString *) dateString  eventId: (NSString *) eventId viewWidth: (double) viewWidth viewHeight: (double) viewHeight;

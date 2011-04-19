@@ -1,13 +1,12 @@
 #import <UIKit/UIKit.h>
 #import "KGOTableViewController.h"
-#import "NewNoteViewController.h"
 #import "Note.h"
 #import "NotesTextView.h"
+#import "NewNoteViewController.h"
 
+//@class NewNoteViewController;
 
-@class NewNoteViewController;
-
-@interface NotesTableViewController : KGOTableViewController <NotesTextViewDelegate>{
+@interface NotesTableViewController : KGOTableViewController <NotesTextViewDelegate, NotesModalViewDelegate>{
 
     NSIndexPath * selectedRowIndexPath;
     NewNoteViewController * tempVC;

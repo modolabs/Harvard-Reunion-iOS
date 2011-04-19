@@ -149,10 +149,16 @@
     }
     
     NSString * noteString = detailsView.text;
-    NSArray * splitArray = [noteString componentsSeparatedByString:@"."];
+    NSArray * splitArrayPeriod = [noteString componentsSeparatedByString:@"."];
+    NSArray * splitArrayNewLine = [noteString componentsSeparatedByString:@"\n"];
     
-    if (splitArray.count <= 1)
-        splitArray = [noteString componentsSeparatedByString:@"\n"];
+    NSArray * splitArray;
+    
+    if ([[splitArrayPeriod objectAtIndex:0] length] < [[splitArrayNewLine objectAtIndex:0] length])
+        splitArray = splitArrayPeriod;
+    
+    else
+        splitArray = splitArrayNewLine;
     
     if (nil == note.eventIdentifier)
         note.title = [splitArray objectAtIndex:0];
