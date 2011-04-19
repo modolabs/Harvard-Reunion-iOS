@@ -175,6 +175,8 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 - (void)loadView {
     [super loadView];
     //self.view.backgroundColor = [UIColor greenColor];
+    self.view.autoresizingMask = 
+    UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     CGFloat viewWidth = self.view.frame.size.width;
             
     self.statusLabel = 
@@ -185,11 +187,14 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
                  80)] 
      autorelease];
     self.statusLabel.tag = kBumpStatusLabel;
+    self.statusLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     self.statusLabel.backgroundColor = [UIColor clearColor];
+    
     NSString *fontName = [[KGOTheme sharedTheme] defaultFontName];
     CGFloat fontSize = [[KGOTheme sharedTheme] defaultFontSize];
-    UIFont *font = [UIFont fontWithName:
-                    [NSString stringWithFormat:@"%@-Bold", fontName] size:fontSize];
+    UIFont *font = 
+    [UIFont fontWithName:
+     [NSString stringWithFormat:@"%@-Bold", fontName] size:fontSize];
     if (!font) {
         font = [UIFont fontWithName:fontName size:fontSize];
     }
@@ -205,6 +210,8 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     spinnerFrame.origin.x = viewWidth/2;
     spinnerFrame.origin.y = 210; 
     self.spinner.frame = spinnerFrame;
+    self.spinner.autoresizingMask = 
+    UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;    
     [self.view addSubview:self.spinner];
     
     self.messageLabel = 
@@ -214,6 +221,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
                  viewWidth - 2 * kConnectViewSubviewMargin, 
                  80)] autorelease];    
     self.messageLabel.tag = kBumpMessageLabel;
+    self.messageLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     self.messageLabel.backgroundColor = [UIColor clearColor];
     font = [UIFont fontWithName:fontName size:fontSize];
     self.messageLabel.font = font;
