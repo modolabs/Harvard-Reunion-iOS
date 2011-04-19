@@ -15,4 +15,7 @@
 + (FacebookVideo *)videoWithDictionary:(NSDictionary *)dictionary;
 + (FacebookVideo *)videoWithID:(NSString *)identifier;
 
+// Right now, it will return either "YouTube" or "Vimeo".
+- (NSString *)videoSourceName;
+
 @end

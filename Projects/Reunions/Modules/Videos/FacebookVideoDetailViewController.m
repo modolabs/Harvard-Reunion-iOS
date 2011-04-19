@@ -96,10 +96,11 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
         CGSize aspectRatio = CGSizeMake(16, 9); // default aspect ratio 
         NSString *urlString;
         
-        if([self.video.src rangeOfString:@"youtube.com"].location != NSNotFound) {
+        NSString *videoSourceName = [self.video videoSourceName];
+        if ([videoSourceName isEqualToString:@"YouTube"]) {
             aspectRatio = CGSizeMake(10, 10);
             urlString =  [NSString stringWithFormat:@"http://www.youtube.com/embed/%@", [self youtubeId:src]];
-        } else if([src rangeOfString:@"vimeo.com"].location != NSNotFound) {
+        } else if ([videoSourceName isEqualToString:@"Vimeo"]) {
             urlString = [NSString stringWithFormat:@"http://player.vimeo.com/video/%@", [self vimeoId:src]];
         } else {
             urlString = src;
@@ -175,7 +176,7 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     // loading.
     if (self.loadingCurtainImage) {
         CGRect loadingCurtainFrame = self.webView.frame;
-        loadingCurtainFrame.origin = CGPointZero;    
+        loadingCurtainFrame.origin = CGPointZero;
         UIImageView *loadingCurtainView = 
         [[UIImageView alloc] initWithFrame:loadingCurtainFrame];
         loadingCurtainView.image = self.loadingCurtainImage;
@@ -190,6 +191,8 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
 
 - (void)viewDidUnload
 {
+    self.loadingCurtainImage = nil;
+    
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;

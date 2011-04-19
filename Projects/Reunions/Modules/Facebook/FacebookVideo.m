@@ -77,6 +77,16 @@ NSString * const FacebookVideoEntityName = @"FacebookVideo";
     return aVideo;
 }
 
+- (NSString *)videoSourceName {
+    NSString *sourceName = nil;
+    if ([self.src rangeOfString:@"youtube.com"].location != NSNotFound) {
+        sourceName = @"YouTube";
+    } else if([self.src rangeOfString:@"vimeo.com"].location != NSNotFound) {
+        sourceName = @"Vimeo";
+    }
+    return sourceName;
+}
+
 #pragma mark FacebookThumbSource
 - (NSString *)thumbnailSourceURLString {
     return self.thumbSrc;

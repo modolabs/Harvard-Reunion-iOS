@@ -283,6 +283,7 @@ VideosViewTags;
     }
     else {
         // Animate the navigation transition on the iPad.
+        NSString *videoSourceName = [video videoSourceName];
         
         // Set up transition animation views.   
         UIView *transitionView = [self.view viewWithTag:kTransitionViewTag];
@@ -305,15 +306,28 @@ VideosViewTags;
         
         // Calculate the frames for these views, post-animation.
         CGRect predictedDetailViewWebFrame = CGRectMake(5, 60, 598, 500);
+        CGFloat predictedImageMargin = 0.0f;
+        if ([videoSourceName isEqualToString:@"YouTube"]) {
+            predictedImageMargin = 44.0f;
+        }
         CGRect predictedImageInFutureWebViewFrame = 
         [[self class] frameForImage:thumbnail.thumbnailView.imageView.image
                             inFrame:predictedDetailViewWebFrame
-                         withMargin:44.0f];
-        // YouTube videos are just a little lower and shorter than 
-        // the thumbnail would seem to predict.
-        predictedImageInFutureWebViewFrame.origin.y += 5.0f;
-        predictedImageInFutureWebViewFrame.size.height -= 10.0f;
+                         withMargin:predictedImageMargin];
         
+        if ([videoSourceName isEqualToString:@"YouTube"]) {
+            // YouTube videos are just a little lower and shorter than 
+            // the thumbnail would seem to predict.
+            predictedImageInFutureWebViewFrame.origin.y += 10.0f;
+            predictedImageInFutureWebViewFrame.size.height -= 30.0f;
+        }
+        else if ([videoSourceName isEqualToString:@"Vimeo"]) {
+            // Vimeo videos end up taller than the thumbnail, in a proportional 
+            // sense.
+            predictedImageInFutureWebViewFrame.origin.y -= 25.0f;
+            predictedImageInFutureWebViewFrame.size.height += 50.0f;
+        }
+            
         transitionView.alpha = 1.0f;             
         
         [UIView 
