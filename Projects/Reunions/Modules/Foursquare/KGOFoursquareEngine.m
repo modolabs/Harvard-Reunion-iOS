@@ -302,20 +302,24 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
                                self.clientID,
                                self.redirectURI];
         
-        KGOWebViewController *webVC = [[[KGOWebViewController alloc] init] autorelease];
-        webVC.requestURL = [NSURL URLWithString:urlString];
-        webVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        webVC.delegate = self;
+        [_webVC release];
+        _webVC = [[KGOWebViewController alloc] init];
+        _webVC.requestURL = [NSURL URLWithString:urlString];
+        _webVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        _webVC.delegate = self;
         
         UIViewController *visibleVC = [KGO_SHARED_APP_DELEGATE() visibleViewController];
         if (visibleVC.modalViewController) {
             visibleVC = visibleVC.modalViewController;
+            if ([visibleVC isKindOfClass:[UINavigationController class]]) {
+                visibleVC = [(UINavigationController *)visibleVC topViewController];
+            }
         }
         [[NSNotificationCenter defaultCenter] addObserver:visibleVC
                                                  selector:@selector(dismissModalViewControllerAnimated:)
                                                      name:FoursquareDidLoginNotification
                                                    object:nil];
-        [visibleVC presentModalViewController:webVC animated:YES];
+        [visibleVC presentModalViewController:_webVC animated:YES];
     }
 }
 
@@ -511,10 +515,14 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     }
 }
 
-- (void)alertView:(UIAlertView *)alertView idDismissWithButtonIndex:(NSInteger)buttonIndex
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    UIViewController *visibleVC = [KGO_SHARED_APP_DELEGATE() visibleViewController];
-    [visibleVC dismissModalViewControllerAnimated:YES];
+    [_webVC.parentViewController dismissModalViewControllerAnimated:YES];
+}
+
+- (void)webViewControllerFrameLoadInterrupted:(KGOWebViewController *)webVC
+{
+    [_webVC.parentViewController dismissModalViewControllerAnimated:YES];
 }
 
 - (void)disconnectRequestsForDelegate:(id<KGOFoursquareCheckinDelegate>)delegate
@@ -531,17 +539,13 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     }
 }
 
-- (void)webViewControllerFrameLoadInterrupted:(KGOWebViewController *)webVC
-{
-    [webVC.parentViewController dismissModalViewControllerAnimated:YES];
-}
-
 - (void)dealloc
 {
     if (_oauthRequest) {
         _oauthRequest.delegate = nil;
     }
     
+    [_webVC release];
     self.clientID = nil;
     self.clientSecret = nil;
     self.authCode = nil;

@@ -69,8 +69,7 @@ KGOWebViewControllerDelegate, UIAlertViewDelegate> {
     
     NSMutableArray *_checkinQueue;
     
-    UIViewController *_modalVC;
-    
+    KGOWebViewController *_webVC;
 }
 
 @property(nonatomic, retain) NSString *clientID;

@@ -20,6 +20,21 @@
 
 - (void)foursquareButtonPressed:(id)sender
 {
+    if (![[KGOSocialMediaController sharedController] isFoursquareLoggedIn]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(presentFoursquareCheckinController)
+                                                     name:FoursquareDidLoginNotification
+                                                   object:nil];
+        
+        [[KGOSocialMediaController sharedController] loginFoursquare];
+        
+    } else {
+        [self presentFoursquareCheckinController];
+    }
+}
+
+- (void)presentFoursquareCheckinController
+{
     FoursquareCheckinViewController *checkinVC = [[[FoursquareCheckinViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
     UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:checkinVC] autorelease];
     UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
@@ -34,7 +49,6 @@
     checkinVC.parentTableView = self;
     navC.modalPresentationStyle = UIModalPresentationFormSheet;
     [self.viewController presentModalViewController:navC animated:YES];
-
 }
 
 - (void)refreshFoursquareCell

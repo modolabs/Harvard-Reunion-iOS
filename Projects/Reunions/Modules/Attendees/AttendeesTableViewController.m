@@ -6,7 +6,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 
 @implementation AttendeesTableViewController
 
-@synthesize attendees, eventTitle, request;
+@synthesize attendees, eventTitle, request, tableView = _tableView;
 
 - (void)dealloc
 {
@@ -32,9 +32,6 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     [super viewDidLoad];
 
     self.title = @"Attendees";
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.tableView.backgroundColor = [UIColor clearColor];
-    self.tableView.backgroundView = nil;
     
     if (!self.attendees) {
         self.attendees = [[NSUserDefaults standardUserDefaults] objectForKey:AllReunionAttendeesPrefKey];
@@ -47,6 +44,58 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
             [self.request connect];
         }
     }
+    
+    if (!_sectionTitles) {
+        NSMutableArray *titles = [NSMutableArray array];
+        _sections = [[NSMutableDictionary alloc] init];
+        
+        for (NSDictionary *attendeeDict in self.attendees) {
+            NSString *name = [attendeeDict objectForKey:@"display_name"];
+            if (name.length) {
+                NSString *firstLetter = [[name substringWithRange:NSMakeRange(0, 1)] capitalizedString];
+                NSMutableArray *names = [_sections objectForKey:firstLetter];
+                if (!names) {
+                    names = [NSMutableArray array];
+                    [_sections setObject:names forKey:firstLetter];
+                    [titles addObject:firstLetter];
+                }
+                [names addObject:name];
+            }
+        }
+        
+        _sectionTitles = [[titles sortedArrayUsingSelector:@selector(compare:)] copy];
+    }
+
+    CGRect frame = CGRectMake(0, 44, self.view.frame.size.width, self.view.frame.size.height - 44);
+    self.tableView = [[[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain] autorelease];
+    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    self.tableView.separatorColor = [UIColor whiteColor];
+
+    UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySectionHeaderGrouped];
+    CGFloat hPadding = 20.0f;
+    CGFloat viewHeight = font.pointSize + 24;
+    
+    CGSize size = [self.eventTitle sizeWithFont:font];
+    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(hPadding,
+                                                                floor((viewHeight - size.height) / 2),
+                                                                self.tableView.bounds.size.width - hPadding * 2,
+                                                                size.height)] autorelease];
+    
+    label.text = self.eventTitle;
+    label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySectionHeaderGrouped];
+    label.font = font;
+    label.backgroundColor = [UIColor clearColor];
+    
+    UIView *labelContainer = [[[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0,
+                                                                       self.tableView.bounds.size.width,
+                                                                       viewHeight)] autorelease];
+    labelContainer.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
+    [labelContainer addSubview:label];
+    
+    [self.view addSubview:labelContainer];
+    [self.view addSubview:self.tableView];
 }
 
 - (void)viewDidUnload
@@ -54,26 +103,6 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -102,49 +131,24 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 
 #pragma mark - Table view data source
 
-#define GROUPED_SECTION_HEADER_VPADDING 24
-
-// from KGOTableController.  we won't subclass KGOTableViewController because of very long lists
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
-    if (self.eventTitle) {
-        UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySectionHeaderGrouped];
-        CGFloat hPadding = 20.0f;
-        CGFloat viewHeight = font.pointSize + GROUPED_SECTION_HEADER_VPADDING;
-        
-        CGSize size = [self.eventTitle sizeWithFont:font];
-        UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(hPadding, floor((viewHeight - size.height) / 2), tableView.bounds.size.width - hPadding * 2, size.height)] autorelease];
-        
-        label.text = self.eventTitle;
-        label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySectionHeaderGrouped];
-        label.font = font;
-        label.backgroundColor = [UIColor clearColor];
-        
-        UIView *labelContainer = [[[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, tableView.bounds.size.width, viewHeight)] autorelease];
-        labelContainer.backgroundColor =  [UIColor clearColor];
-        [labelContainer addSubview:label];	
-        
-        return labelContainer;
-    }
-    return nil;
+    return _sectionTitles;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
 {
-    if (self.eventTitle) {
-        return [[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySectionHeaderGrouped] lineHeight] + GROUPED_SECTION_HEADER_VPADDING;
-    }
-    return 0;
+    return index;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return _sections.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.attendees.count;
+    return [[_sections objectForKey:[_sectionTitles objectAtIndex:section]] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -156,8 +160,9 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
     }
     
-    NSDictionary *attendeeDict = [self.attendees objectAtIndex:indexPath.row];
-    cell.textLabel.text = [attendeeDict objectForKey:@"display_name"];
+    NSArray *names = [_sections objectForKey:[_sectionTitles objectAtIndex:indexPath.section]];
+    NSString *name = [names objectAtIndex:indexPath.row];
+    cell.textLabel.text = name;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;

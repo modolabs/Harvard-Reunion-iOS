@@ -43,10 +43,6 @@
     label.backgroundColor = [UIColor clearColor];
     [view addSubview:label];
     self.tableView.tableHeaderView = view;
-    
-    if (![[KGOSocialMediaController sharedController] isFoursquareLoggedIn]) {
-        [[KGOSocialMediaController sharedController] loginFoursquare];
-    }
 }
 
 - (void)viewDidUnload

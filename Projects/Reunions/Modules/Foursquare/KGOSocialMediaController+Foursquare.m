@@ -2,6 +2,7 @@
 #import "KGOFoursquareEngine.h"
 #import "KGOWebViewController.h"
 #import "KGOAppDelegate.h"
+#import "Foundation+KGOAdditions.h"
 
 @implementation KGOSocialMediaController (foursquare)
 
@@ -9,8 +10,9 @@
     _foursquareStartupCount++;
     if (!_foursquareEngine) {
         _foursquareEngine = [[KGOFoursquareEngine alloc] init];
-        _foursquareEngine.clientID = [[_appConfig objectForKey:KGOSocialMediaTypeFoursquare] objectForKey:@"ClientID"];
-        _foursquareEngine.clientSecret = [[_appConfig objectForKey:KGOSocialMediaTypeFoursquare] objectForKey:@"ClientSecret"];
+        NSDictionary *foursquareConfig = [_appConfig objectForKey:KGOSocialMediaTypeFoursquare];
+        _foursquareEngine.clientID = [foursquareConfig stringForKey:@"ClientID" nilIfEmpty:YES];
+        _foursquareEngine.clientSecret = [foursquareConfig stringForKey:@"ClientSecret" nilIfEmpty:YES];
     }
 }
 
@@ -31,6 +33,7 @@
 
 - (void)loginFoursquare
 {
+    NSLog(@"%@ %@", _foursquareEngine.clientSecret, _foursquareEngine.clientID);
     [_foursquareEngine authorize];
 }
 

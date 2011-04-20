@@ -16,6 +16,7 @@
 }
 
 - (void)foursquareButtonPressed:(id)sender;
+- (void)presentFoursquareCheckinController;
 //- (void)checkinFoursquarePlace;
 //- (void)setupFoursquareButton;
 
