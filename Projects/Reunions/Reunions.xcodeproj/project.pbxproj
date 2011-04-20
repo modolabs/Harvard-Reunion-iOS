@@ -1941,6 +1941,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B801347CC7F00D2EEF6 /* kurogo_debug.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
 			};
 			name = "Debug - Development";
@@ -1951,6 +1952,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
 				PROVISIONING_PROFILE = "";
 			};
@@ -1960,6 +1962,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B801347CC7F00D2EEF6 /* kurogo_debug.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
 			};
 			name = "Debug - Staging";
@@ -1980,6 +1983,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B801347CC7F00D2EEF6 /* kurogo_debug.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
 			};
 			name = "Debug - Production";
@@ -1999,6 +2003,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B7F1347CC7F00D2EEF6 /* kurogo.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
 			};
 			name = "Release - Staging";
@@ -2019,6 +2024,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B801347CC7F00D2EEF6 /* kurogo_debug.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
 			};
 			name = "Debug - Testing";
@@ -2039,6 +2045,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B7F1347CC7F00D2EEF6 /* kurogo.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
 			};
 			name = "Release - Testing";

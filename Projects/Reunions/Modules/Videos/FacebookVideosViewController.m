@@ -7,9 +7,13 @@
 #import "FacebookUser.h"
 #import "FacebookModule.h"
 #import "CoreDataManager.h"
+#import <QuartzCore/QuartzCore.h>
 
-
-static const NSInteger kTransitionImageViewTag = 0x701;
+typedef enum {
+    kTransitionImageViewTag = 0x701,
+    kTransitionViewTag
+}
+VideosViewTags;
 
 #pragma mark Private methods
 
@@ -17,7 +21,11 @@ static const NSInteger kTransitionImageViewTag = 0x701;
 
 - (void)addVideoThumbnailsToGrid;
 - (CGRect)thumbnailFrame;
-+ (CGRect)frameForImageInImageView:(UIImageView *)imageView;
++ (CGRect)frameForImage:(UIImage *)image 
+                inFrame:(CGRect)frame 
+             withMargin:(CGFloat)margin;
+- (CGRect)frameForTransitionViewInMainViewForThumbnail:(FacebookThumbnail *)thumbnail;
++ (UIImage *)screenShotOfView:(UIView *)targetView;
 
 @end
 
@@ -94,13 +102,23 @@ static const NSInteger kTransitionImageViewTag = 0x701;
     
     [self.scrollView addSubview:self.iconGrid];
     
-    // Add the image view used to animated transitions to the detail view.
-    UIImageView *transitionImageView = 
-    [[UIImageView alloc] initWithFrame:[self thumbnailFrame]];
-    transitionImageView.tag = kTransitionImageViewTag;
-    transitionImageView.alpha = 0.0f;
-    [self.view addSubview:transitionImageView];
-    [transitionImageView release];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {    
+        // Add the view used to animated transitions to the detail view.
+        UIView *transitionView = [[UIView alloc] initWithFrame:CGRectZero];
+        transitionView.tag = kTransitionViewTag;
+        transitionView.backgroundColor = [UIColor blackColor];
+        transitionView.alpha = 0.0f;
+        [self.view addSubview:transitionView];
+        
+        UIImageView *transitionImageView = 
+        [[UIImageView alloc] initWithFrame:CGRectZero];
+        transitionImageView.tag = kTransitionImageViewTag;
+        transitionImageView.alpha = 0.0f;
+        [transitionView addSubview:transitionImageView];
+        
+        [transitionImageView release];
+        [transitionView release];
+    }
     
     _videos = [[NSMutableArray alloc] init];
     _videoIDs = [[NSMutableSet alloc] init];
@@ -191,35 +209,60 @@ static const NSInteger kTransitionImageViewTag = 0x701;
     return CGRectMake(0, 0, 90 * resizeFactor, 90 * resizeFactor + 40);
 }
 
-// Predicts what the size of the image in the imageView will be after 
-// it is scaled to fit.
-+ (CGRect)frameForImageInImageView:(UIImageView *)imageView {
-    UIImage *image = imageView.image;
-    CGFloat heightDiff = image.size.height - imageView.frame.size.height;
-    CGFloat widthDiff = image.size.width - imageView.frame.size.width;
+// Predicts what the size of the image will be after it is scaled to fit the 
+// given frame.
++ (CGRect)frameForImage:(UIImage *)image 
+                inFrame:(CGRect)frame 
+             withMargin:(CGFloat)margin {
     
-    CGRect frame = CGRectZero;
+    CGRect innerFrame =
+    CGRectMake(frame.origin.x + margin, frame.origin.y + margin, 
+               frame.size.width - 2 * margin, frame.size.height - 2 * margin);        
+    
+    CGFloat heightDiff = image.size.height - innerFrame.size.height;
+    CGFloat widthDiff = image.size.width - innerFrame.size.width;
     
     CGFloat imageScale = 1.0f;
-    if ((imageView.frame.size.width > 0.01f) && 
-        (imageView.frame.size.height > 0.01f) && 
-        (imageView.image.size.width > 0.01f) && 
-        (imageView.image.size.height > 0.01f)) {
+    if ((innerFrame.size.width > 0.01f) && 
+        (innerFrame.size.height > 0.01f) && 
+        (innerFrame.size.width > 0.01f) && 
+        (innerFrame.size.height > 0.01f)) {
         
-        if (heightDiff > widthDiff) {
-            imageScale = imageView.frame.size.height / image.size.height;
+        if (abs(heightDiff) > abs(widthDiff)) {
+            imageScale = innerFrame.size.height / image.size.height;
         }
         else {
-            imageScale = imageView.frame.size.width / image.size.width;
+            imageScale = innerFrame.size.width / image.size.width;
         }
     }
     
     CGFloat width = round(image.size.width * imageScale);
     CGFloat height = round(image.size.height * imageScale);
-    CGFloat x = round((imageView.frame.size.width - width) / 2);
-    CGFloat y = round((imageView.frame.size.height - height) / 2);
-    return CGRectMake(x, y, width, height);
+    CGFloat x = round((innerFrame.size.width - width) / 2);
+    CGFloat y = round((innerFrame.size.height - height) / 2);
+    
+    return CGRectMake(x + margin, y + margin, width, height);
 }
+
+- (CGRect)frameForTransitionViewInMainViewForThumbnail:(FacebookThumbnail *)thumbnail {
+    // The thumbnail is inside of the icon grid, which is inside of the main view.
+    CGRect frame = thumbnail.frame;
+    frame.origin.x += self.iconGrid.frame.origin.x;
+    frame.origin.y += self.iconGrid.frame.origin.y;
+    return frame;
+}
+
+
+// http://stackoverflow.com/questions/2214957/how-do-i-take-a-screen-shot-of-a-uiview
++ (UIImage *)screenShotOfView:(UIView *)targetView {
+    UIGraphicsBeginImageContext(targetView.frame.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    [targetView.layer renderInContext:context];
+    UIImage *screenShot = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return screenShot;
+}
+
 
 #pragma mark MITThumbnailDelegate
 - (void)thumbnail:(MITThumbnailView *)thumbnail didLoadData:(NSData *)data {
@@ -230,51 +273,103 @@ static const NSInteger kTransitionImageViewTag = 0x701;
 - (void)thumbnailTapped:(FacebookThumbnail *)thumbnail {
     FacebookVideo *video = (FacebookVideo *)thumbnail.thumbSource;
         
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            _videos, @"videos", video, @"video", nil];
     
-    UIImageView *transitionImageView = 
-    (UIImageView *)[self.view viewWithTag:kTransitionImageViewTag];
-    transitionImageView.image = thumbnail.thumbnailView.imageView.image;
-//    transitionImageView.backgroundColor = [UIColor greenColor];
-    CGRect transitionFrame = CGRectZero;
-    CGRect frameForImage = 
-    [[self class] frameForImageInImageView:thumbnail.thumbnailView.imageView];
-    transitionFrame.size = frameForImage.size;
-    
-    transitionFrame.origin = self.iconGrid.frame.origin;
-    
-    transitionFrame.origin.x += thumbnail.frame.origin.x;
-    transitionFrame.origin.x += thumbnail.thumbnailView.imageView.frame.origin.x;
-    transitionFrame.origin.x += frameForImage.origin.x;
-    
-    transitionFrame.origin.y += thumbnail.frame.origin.y;
-    transitionFrame.origin.y += thumbnail.thumbnailView.imageView.frame.origin.y;
-    // TODO: Get rid of this fudge factor.
-    transitionFrame.origin.y += (3 * frameForImage.origin.y);
-    transitionImageView.frame = transitionFrame;
-    transitionImageView.alpha = 1.0f;
-
-    [UIView 
-     animateWithDuration:0.2f 
-     animations:
-     ^{
-         // Expand the transition view.
-         // TODO: Proportion this size to match frameForImage.
-         CGRect futureThumbnailFrame = CGRectMake(0, 60, 588, 500);
-         transitionImageView.frame = futureThumbnailFrame;
-         
-     }
-     completion:
-     ^(BOOL finished) {
-         // Hide the transition view.
-         transitionImageView.alpha = 0.0f;
-         transitionImageView.image = nil;
-         
-         [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail 
-                                forModuleTag:@"video" 
-                                      params:params];         
-     }];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                _videos, @"videos", video, @"video", nil];
+        [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail 
+                               forModuleTag:@"video" 
+                                     params:params]; 
+    }
+    else {
+        // Animate the navigation transition on the iPad.
+        NSString *videoSourceName = [video videoSourceName];
+        
+        // Set up transition animation views.   
+        UIView *transitionView = [self.view viewWithTag:kTransitionViewTag];
+        transitionView.frame = 
+        [self frameForTransitionViewInMainViewForThumbnail:thumbnail];
+        
+        UIImageView *transitionImageView = 
+        (UIImageView *)[transitionView viewWithTag:kTransitionImageViewTag];
+        transitionImageView.image = thumbnail.thumbnailView.imageView.image;
+        
+        // Set up inner image view frame.
+        CGRect frameForImage = 
+        [[self class] frameForImage:thumbnail.thumbnailView.imageView.image
+                            inFrame:thumbnail.thumbnailView.imageView.frame
+                         withMargin:0];
+        // Move it over a bit so that it doesn't look like it's jutting out 
+        // of the parent frame when it starts animating.
+        frameForImage.origin.x += 20; 
+        transitionImageView.frame = frameForImage;
+        
+        // Calculate the frames for these views, post-animation.
+        CGRect predictedDetailViewWebFrame = CGRectMake(5, 60, 598, 500);
+        CGFloat predictedImageMargin = 0.0f;
+        if ([videoSourceName isEqualToString:@"YouTube"]) {
+            predictedImageMargin = 44.0f;
+        }
+        CGRect predictedImageInFutureWebViewFrame = 
+        [[self class] frameForImage:thumbnail.thumbnailView.imageView.image
+                            inFrame:predictedDetailViewWebFrame
+                         withMargin:predictedImageMargin];
+        
+        if ([videoSourceName isEqualToString:@"YouTube"]) {
+            // YouTube videos are just a little lower and shorter than 
+            // the thumbnail would seem to predict.
+            predictedImageInFutureWebViewFrame.origin.y += 10.0f;
+            predictedImageInFutureWebViewFrame.size.height -= 30.0f;
+        }
+        else if ([videoSourceName isEqualToString:@"Vimeo"]) {
+            // Vimeo videos end up taller than the thumbnail, in a proportional 
+            // sense.
+            predictedImageInFutureWebViewFrame.origin.y -= 25.0f;
+            predictedImageInFutureWebViewFrame.size.height += 50.0f;
+        }
+            
+        transitionView.alpha = 1.0f;             
+        
+        [UIView 
+         animateWithDuration:0.75f
+         animations:
+         ^{         
+             transitionView.frame = predictedDetailViewWebFrame;
+             
+             [UIView 
+              animateWithDuration:0.5f
+              delay:0.25f
+              options:UIViewAnimationOptionTransitionNone
+              animations:
+              ^{                  
+                  transitionImageView.alpha = 1.0f;
+                  transitionImageView.frame = 
+                  predictedImageInFutureWebViewFrame;
+              }
+              completion:nil];
+         }
+         completion:
+         ^(BOOL finished) {
+             // This is the image the detail will display over the web view 
+             // while it is loading.
+             UIImage *curtainImage = 
+             [[self class] screenShotOfView:transitionView];
+             
+             // Hide the transition view.
+             transitionView.alpha = 0.0f;
+             transitionImageView.alpha = 0.0f;             
+             transitionImageView.image = nil;
+             
+             NSDictionary *params = 
+             [NSDictionary dictionaryWithObjectsAndKeys:
+              _videos, @"videos", video, @"video", 
+              curtainImage, @"loadingCurtainImage", nil];
+             
+             [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail 
+                                    forModuleTag:@"video" 
+                                          params:params];         
+         }];
+    }
 }
 
 @end

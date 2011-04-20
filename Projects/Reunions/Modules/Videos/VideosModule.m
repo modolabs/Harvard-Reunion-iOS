@@ -32,6 +32,10 @@
                 [(FacebookVideoDetailViewController *)vc setPosts:videos];
             }
         }
+        
+        UIImage *curtainImage = [params objectForKey:@"loadingCurtainImage"];
+        [(FacebookVideoDetailViewController *)vc 
+         setLoadingCurtainImage:curtainImage];
     }
     return vc;
 }

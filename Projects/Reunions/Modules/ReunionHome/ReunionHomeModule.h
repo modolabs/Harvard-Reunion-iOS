@@ -19,4 +19,6 @@ extern NSString * const HomeScreenConfigPrefKey;
 - (NSDictionary *)homeScreenConfig;
 - (NSArray *)moduleOrder;
 
+- (void)logout;
+
 @end
