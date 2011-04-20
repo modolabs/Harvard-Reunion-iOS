@@ -52,7 +52,7 @@ VideosViewTags;
                     }
                 }
             }
-            //[_tableView reloadData];
+            [self addVideoThumbnailsToGrid];
             
         } else {
             [fbModule requestStatusUpdates:nil];
