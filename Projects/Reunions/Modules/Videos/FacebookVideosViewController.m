@@ -19,6 +19,7 @@ VideosViewTags;
 
 @interface FacebookVideosViewController (Private)
 
+- (void)requestVideosFromFeed;
 - (void)addVideoThumbnailsToGrid;
 - (CGRect)thumbnailFrame;
 + (CGRect)frameForImage:(UIImage *)image 
@@ -52,22 +53,29 @@ VideosViewTags;
                     }
                 }
             }
-            [self addVideoThumbnailsToGrid];
-            
-        } else {
-            [fbModule requestStatusUpdates:nil];
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(getGroupVideos)
-                                                         name:FacebookFeedDidUpdateNotification
-                                                       object:nil];
-        }
-        
-    } else {
+            [self addVideoThumbnailsToGrid];            
+        } 
+        else {
+            [self requestVideosFromFeed];                     
+        }        
+    } 
+    else {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(getGroupVideos)
                                                      name:FacebookGroupReceivedNotification
                                                    object:nil];
     }
+}
+
+- (void)requestVideosFromFeed {    
+    FacebookModule *fbModule = 
+    (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+    [fbModule requestStatusUpdates:nil];
+    [[NSNotificationCenter defaultCenter] 
+     addObserver:self
+     selector:@selector(getGroupVideos)
+     name:FacebookFeedDidUpdateNotification
+     object:nil];                     
 }
 
 // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
@@ -370,6 +378,13 @@ VideosViewTags;
                                           params:params];         
          }];
     }
+}
+
+#pragma mark FacebookMediaViewController
+- (void)facebookDidLogin:(NSNotification *)aNotification
+{
+    [super facebookDidLogin:aNotification];
+    [self requestVideosFromFeed];
 }
 
 @end
