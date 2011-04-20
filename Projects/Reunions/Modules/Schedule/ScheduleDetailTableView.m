@@ -165,6 +165,21 @@
     }
     self.headerView.detailItem = self.event;
     
+    // time
+    NSString *dateString = [self.dataManager mediumDateStringFromDate:_event.startDate];
+    NSString *timeString = nil;
+    if (self.event.endDate) {
+        timeString = [NSString stringWithFormat:@"%@\n%@-%@",
+                      dateString,
+                      [self.dataManager shortTimeStringFromDate:self.event.startDate],
+                      [self.dataManager shortTimeStringFromDate:self.event.endDate]];
+    } else {
+        timeString = [NSString stringWithFormat:@"%@\n%@",
+                      dateString,
+                      [self.dataManager shortTimeStringFromDate:self.event.startDate]];
+    }
+    self.headerView.subtitleLabel.text = timeString;
+    
     CGRect frame = self.headerView.frame;
     frame.size.height = 123; // make all headers the same height so it doesn't move when we page between events
     self.headerView.frame = frame;
