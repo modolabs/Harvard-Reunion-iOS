@@ -59,8 +59,6 @@
 
 - (void)loadTableViewWithStyle:(UITableViewStyle)style
 {
-    NSLog(@"loading tableview over %@", self.view.subviews);
-
     CGRect frame = self.view.frame;
     if (!_datePager.hidden && [_datePager isDescendantOfView:self.view]) {
         frame.origin.y += _datePager.frame.size.height;
@@ -155,14 +153,21 @@
         }
         
         NSIndexPath *oldIndexPath = _selectedIndexPath;
-        
+
         [_selectedIndexPath release];
         _selectedIndexPath = [indexPath retain];
         
-        NSMutableArray *needsRefresh = [NSMutableArray array];
-        
-        if (oldIndexPath) {
-            [needsRefresh addObject:oldIndexPath];
+        NSIndexPath *scrollToIndexPath;
+        if (_selectedIndexPath.row == 0) {
+            if (_selectedIndexPath.section == 0) {
+                scrollToIndexPath = _selectedIndexPath;
+            } else {
+                NSInteger section = _selectedIndexPath.section-1;
+                NSInteger row = [self tableView:tableView numberOfRowsInSection:section] - 1;
+                scrollToIndexPath = [NSIndexPath indexPathForRow:row inSection:section];
+            }
+        } else {
+            scrollToIndexPath = [NSIndexPath indexPathForRow:_selectedIndexPath.row-1 inSection:_selectedIndexPath.section];
         }
         
         if (_selectedIndexPath.row == 0) {
@@ -177,13 +182,17 @@
                 if (aboveIndexPath.row != oldIndexPath.row || aboveIndexPath.section != oldIndexPath.section) {
                     [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
                                      withRowAnimation:UITableViewRowAnimationNone];
+                } else {
+                    // previously selected indexPath was one above the present
+                    [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
+                                     withRowAnimation:UITableViewRowAnimationMiddle];
                 }
-                [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
-                                 withRowAnimation:UITableViewRowAnimationMiddle];
             }
         }
         
+        NSLog(@"1 above: %@ current: %@", scrollToIndexPath, _selectedIndexPath);
         [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:_selectedIndexPath] withRowAnimation:UITableViewRowAnimationNone];
+        [tableView scrollToRowAtIndexPath:scrollToIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
         
     } else {
         [super tableView:tableView didSelectRowAtIndexPath:indexPath];
@@ -265,6 +274,7 @@
                     tableView.backgroundView = nil;
                     tableView.tag = TABLE_TAG;
                     tableView.dataManager = self.dataManager;
+                    tableView.viewController = self;
                     [cell.contentView addSubview:tableView];
                 }
                 tableView.event = event;
@@ -282,6 +292,11 @@
                         [mapView centerAndZoomToDefaultRegion];
                     }
                     [cell.contentView addSubview:mapView];
+                    
+                    UIControl *control = [[[UIControl alloc] initWithFrame:mapView.frame] autorelease];
+                    control.backgroundColor = [UIColor clearColor];
+                    [cell.contentView addSubview:control];
+                    [control addTarget:self action:@selector(mapViewTapped:) forControlEvents:UIControlEventTouchUpInside];
                 }
                 tableView.mapView = mapView;
                 mapView.delegate = tableView;
@@ -300,6 +315,13 @@
     }
     
     return [super tableView:tableView cellForRowAtIndexPath:indexPath];
+}
+
+- (void)mapViewTapped:(id)sender
+{
+    if ([sender isKindOfClass:[UIControl class]]) {
+        
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

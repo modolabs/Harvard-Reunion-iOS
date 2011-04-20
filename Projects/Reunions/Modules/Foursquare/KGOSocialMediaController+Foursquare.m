@@ -34,6 +34,11 @@
     [_foursquareEngine authorize];
 }
 
+- (void)logoutFoursquare
+{
+    [_foursquareEngine logout];
+}
+
 - (void)didReceiveFoursquareAuthCode:(NSString *)code
 {
     _foursquareEngine.authCode = code;

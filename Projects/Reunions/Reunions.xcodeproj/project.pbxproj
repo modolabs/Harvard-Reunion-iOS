@@ -173,6 +173,7 @@
 		EB48913A1331173C0036AEBF /* MicroblogModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB4891391331173C0036AEBF /* MicroblogModule.m */; };
 		EB48913D1331699F0036AEBF /* TwitterSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = EB48913C1331699E0036AEBF /* TwitterSearch.m */; };
 		EB4891971333AA660036AEBF /* secret in Resources */ = {isa = PBXBuildFile; fileRef = EB4891961333AA660036AEBF /* secret */; };
+		EB4A66F2135E0046002C22F9 /* FoursquareCheckinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB4A66F1135E0046002C22F9 /* FoursquareCheckinViewController.m */; };
 		EB4C2CDF127F138100058748 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EB4C2CDE127F138100058748 /* libsqlite3.dylib */; };
 		EB4C2CE1127F138900058748 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB4C2CE0127F138900058748 /* CFNetwork.framework */; };
 		EB5773C212FDF91200BAF5F5 /* Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB5773C112FDF91200BAF5F5 /* Config.plist */; };
@@ -585,6 +586,8 @@
 		EB48913B1331699D0036AEBF /* TwitterSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterSearch.h; sourceTree = "<group>"; };
 		EB48913C1331699E0036AEBF /* TwitterSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterSearch.m; sourceTree = "<group>"; };
 		EB4891961333AA660036AEBF /* secret */ = {isa = PBXFileReference; lastKnownFileType = folder; path = secret; sourceTree = "<group>"; };
+		EB4A66F0135E0046002C22F9 /* FoursquareCheckinViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoursquareCheckinViewController.h; sourceTree = "<group>"; };
+		EB4A66F1135E0046002C22F9 /* FoursquareCheckinViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoursquareCheckinViewController.m; sourceTree = "<group>"; };
 		EB4C2CDE127F138100058748 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		EB4C2CE0127F138900058748 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		EB5773C112FDF91200BAF5F5 /* Config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Config.plist; path = ../Config.plist; sourceTree = "<group>"; };
@@ -1500,6 +1503,8 @@
 				EB469A89134952D3005796E4 /* ReunionDetailPageHeaderView.m */,
 				EB46A2C0134D44D3005796E4 /* ScheduleTabletTableViewCell.h */,
 				EB46A2C1134D44D4005796E4 /* ScheduleTabletTableViewCell.m */,
+				EB4A66F0135E0046002C22F9 /* FoursquareCheckinViewController.h */,
+				EB4A66F1135E0046002C22F9 /* FoursquareCheckinViewController.m */,
 			);
 			path = Schedule;
 			sourceTree = "<group>";
@@ -1874,6 +1879,7 @@
 				EB7C98841353F78500FBFAAB /* ReunionSidebarFrameViewController.m in Sources */,
 				EB85A55A13551E96002E966E /* FacebookFeedViewController.m in Sources */,
 				A62A26831357B36900870DC1 /* FacebookThumbnail.m in Sources */,
+				EB4A66F2135E0046002C22F9 /* FoursquareCheckinViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
