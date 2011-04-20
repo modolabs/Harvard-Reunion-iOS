@@ -103,7 +103,7 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2";
         DLog(@"%@", [result description]);
         id errorInfo = [result objectForKey:@"error"];
         if (errorInfo) {
-            NSError *error = [NSError errorWithDomain:@"com.modolabs.foursquareEngine" code:1 userInfo:errorInfo];
+            NSError *error = [NSError errorWithDomain:@"com.modolabs.foursquareEngine" code:1 userInfo:result];
             [self.delegate foursquareRequest:self didFailWithError:error];
             
         } else {
