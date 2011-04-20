@@ -496,10 +496,25 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
 
 - (void)foursquareRequest:(KGOFoursquareRequest *)request didFailWithError:(NSError *)error
 {
-    [_oauthRequest release];
-    _oauthRequest = nil;
-    
     NSLog(@"request failed with error: %@", [error description]);
+
+    if (request == _oauthRequest) {
+        [_oauthRequest release];
+        _oauthRequest = nil;
+        
+        UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
+                                                             message:@"Failed to authenticate with foursquare"
+                                                            delegate:self
+                                                   cancelButtonTitle:@"OK"
+                                                   otherButtonTitles:nil] autorelease];
+        [alertView show];
+    }
+}
+
+- (void)alertView:(UIAlertView *)alertView idDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    UIViewController *visibleVC = [KGO_SHARED_APP_DELEGATE() visibleViewController];
+    [visibleVC dismissModalViewControllerAnimated:YES];
 }
 
 - (void)disconnectRequestsForDelegate:(id<KGOFoursquareCheckinDelegate>)delegate

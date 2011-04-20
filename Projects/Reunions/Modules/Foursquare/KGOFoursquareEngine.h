@@ -61,7 +61,8 @@ typedef enum {
 
 
 
-@interface KGOFoursquareEngine : NSObject <KGOFoursquareRequestDelegate, KGOWebViewControllerDelegate> {
+@interface KGOFoursquareEngine : NSObject <KGOFoursquareRequestDelegate,
+KGOWebViewControllerDelegate, UIAlertViewDelegate> {
     
     NSString *_oauthToken;
     KGOFoursquareRequest *_oauthRequest;
