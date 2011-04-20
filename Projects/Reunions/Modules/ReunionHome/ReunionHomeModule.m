@@ -9,21 +9,6 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
 
 @implementation ReunionHomeModule
 
-/*
-{
-    "title":"Harvard Class of 2001",
-    "number":"10",
-    "startDate":"2011-05-26",
-    "endDate":"2011-05-29",
-    "classWebsite":"http:\/\/classes.harvard.edu\/college\/2001",
-    "calendarURL":"http:\/\/www.trumba.com\/calendars\/2011-reunions-test-2001.ics",
-    "facebookGroupName":"Harvard Class of '01",
-    "facebookGroupId":"151803971548613",
-    "facebookGroupIsOld":"0",
-    "twitterHashtag":"#testhvd01"
-}
-*/
-
 #pragma mark Navigation
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
@@ -66,6 +51,15 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
 }
 
 #pragma mark - KGORequest
+
+- (void)logout
+{
+    [_homeScreenConfig release];
+    _homeScreenConfig = nil;
+    
+    //[[NSUserDefaults standardUserDefaults] removeObjectForKey:HomeScreenConfigPrefKey];
+    //[[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 - (void)requestWillTerminate:(KGORequest *)request
 {
