@@ -515,6 +515,12 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     }
 }
 
+- (BOOL)webViewController:(KGOWebViewController *)webVC shouldLoadExternallyForURL:(NSURL *)url
+{
+    return [[url absoluteString] rangeOfString:@"login"].location == NSNotFound
+        && [[url absoluteString] rangeOfString:@"oauth2"].location == NSNotFound;
+}
+
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     [_webVC.parentViewController dismissModalViewControllerAnimated:YES];

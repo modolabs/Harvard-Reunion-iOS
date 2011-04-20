@@ -35,6 +35,11 @@
 
 - (void)presentFoursquareCheckinController
 {
+    if ([(UIViewController *)self.viewController modalViewController]) {
+        [self performSelector:@selector(presentFoursquareCheckinController) withObject:nil afterDelay:0.1];
+        return;
+    }
+    
     FoursquareCheckinViewController *checkinVC = [[[FoursquareCheckinViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
     UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:checkinVC] autorelease];
     UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
@@ -47,6 +52,7 @@
     checkinVC.eventTitle = self.event.title;
     checkinVC.isCheckedIn = (_checkinStatus == CHECKIN_STATUS_CHECKED_IN);
     checkinVC.parentTableView = self;
+    
     navC.modalPresentationStyle = UIModalPresentationFormSheet;
     [self.viewController presentModalViewController:navC animated:YES];
 }

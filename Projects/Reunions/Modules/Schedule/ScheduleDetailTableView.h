@@ -17,8 +17,6 @@
 
 - (void)foursquareButtonPressed:(id)sender;
 - (void)presentFoursquareCheckinController;
-//- (void)checkinFoursquarePlace;
-//- (void)setupFoursquareButton;
 
 // associated map view in expanded ipad cell.
 @property(nonatomic, retain) MKMapView *mapView;
