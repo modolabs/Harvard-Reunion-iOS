@@ -8,6 +8,7 @@
 @implementation FacebookMediaViewController
 
 @synthesize scrollView = _scrollView;
+@synthesize photoPickerPopover;
 
 #pragma mark -
 
@@ -20,6 +21,11 @@
 - (IBAction)loginButtonPressed:(UIButton *)sender {
     [[KGOSocialMediaController sharedController] loginFacebook];
 }
+
+- (IBAction)uploadButtonPressed:(id)sender {
+    DLog(@"uplaodButtonPressed should be overridden in a subclass.");
+}
+
 
 - (void)showLoginViewAnimated:(BOOL)animated {
     if (_loginView.alpha == 0) {
@@ -65,6 +71,7 @@
 
 - (void)dealloc
 {
+    [photoPickerPopover release];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_scrollView release];
     [super dealloc];
@@ -133,6 +140,55 @@
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+#pragma mark Photo upload
+
+- (void)showUploadPhotoController:(id)sender
+{
+    UIImagePickerController *picker = 
+    [[[UIImagePickerController alloc] init] autorelease];
+    picker.delegate = self;
+    
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    } else {
+        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    }
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        // Show the popover if it is not already there.
+        if (!self.photoPickerPopover) {            
+            // Assumes that the sender is a bar button item.
+            if ([sender isKindOfClass:[UIBarButtonItem class]]) {
+                self.photoPickerPopover = 
+                [[[UIPopoverController alloc] initWithContentViewController:picker] 
+                 autorelease];
+                self.photoPickerPopover.delegate = self;
+                [self.photoPickerPopover 
+                 presentPopoverFromBarButtonItem:sender 
+                 permittedArrowDirections:UIPopoverArrowDirectionAny 
+                 animated:YES];
+            }
+        }
+    }
+    else {
+        [self presentModalViewController:picker animated:YES];
+    }
+}
+
+#pragma mark UIImagePickerControllerDelegate
+
+- (void)imagePickerController:(UIImagePickerController *)picker 
+didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    [self.photoPickerPopover dismissPopoverAnimated:YES];
+    // The subclass implementation should do something with info.
+}
+
+#pragma mark UIPopoverControllerDelegate
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
+    self.photoPickerPopover = nil;
 }
 
 @end
