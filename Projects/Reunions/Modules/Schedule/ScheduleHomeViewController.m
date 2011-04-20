@@ -59,8 +59,6 @@
 
 - (void)loadTableViewWithStyle:(UITableViewStyle)style
 {
-    NSLog(@"loading tableview over %@", self.view.subviews);
-
     CGRect frame = self.view.frame;
     if (!_datePager.hidden && [_datePager isDescendantOfView:self.view]) {
         frame.origin.y += _datePager.frame.size.height;
@@ -155,14 +153,21 @@
         }
         
         NSIndexPath *oldIndexPath = _selectedIndexPath;
-        
+
         [_selectedIndexPath release];
         _selectedIndexPath = [indexPath retain];
         
-        NSMutableArray *needsRefresh = [NSMutableArray array];
-        
-        if (oldIndexPath) {
-            [needsRefresh addObject:oldIndexPath];
+        NSIndexPath *scrollToIndexPath;
+        if (_selectedIndexPath.row == 0) {
+            if (_selectedIndexPath.section == 0) {
+                scrollToIndexPath = _selectedIndexPath;
+            } else {
+                NSInteger section = _selectedIndexPath.section-1;
+                NSInteger row = [self tableView:tableView numberOfRowsInSection:section] - 1;
+                scrollToIndexPath = [NSIndexPath indexPathForRow:row inSection:section];
+            }
+        } else {
+            scrollToIndexPath = [NSIndexPath indexPathForRow:_selectedIndexPath.row-1 inSection:_selectedIndexPath.section];
         }
         
         if (_selectedIndexPath.row == 0) {
@@ -177,13 +182,17 @@
                 if (aboveIndexPath.row != oldIndexPath.row || aboveIndexPath.section != oldIndexPath.section) {
                     [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
                                      withRowAnimation:UITableViewRowAnimationNone];
+                } else {
+                    // previously selected indexPath was one above the present
+                    [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
+                                     withRowAnimation:UITableViewRowAnimationMiddle];
                 }
-                [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
-                                 withRowAnimation:UITableViewRowAnimationMiddle];
             }
         }
         
+        NSLog(@"1 above: %@ current: %@", scrollToIndexPath, _selectedIndexPath);
         [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:_selectedIndexPath] withRowAnimation:UITableViewRowAnimationNone];
+        [tableView scrollToRowAtIndexPath:scrollToIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
         
     } else {
         [super tableView:tableView didSelectRowAtIndexPath:indexPath];
@@ -192,7 +201,6 @@
 
 #define TABLE_TAG 1
 #define MAP_TAG 2
-#define BOOKMARK_TAG 888
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -235,22 +243,22 @@
         
         [[cell.contentView viewWithTag:TABLE_TAG] removeFromSuperview];
         [[cell.contentView viewWithTag:MAP_TAG] removeFromSuperview];
-        
-        UIImageView *bookmarkView = (UIImageView *)[cell.contentView viewWithTag:BOOKMARK_TAG];
+
+        UIImage *image = nil;
         if ([event isRegistered] || [event isBookmarked]) {
-            if (!bookmarkView) {
-                UIImage *ribbon = [UIImage imageWithPathName:@"modules/schedule/list-bookmark"];
-                bookmarkView = [[[UIImageView alloc] initWithImage:ribbon] autorelease];
-                bookmarkView.tag = BOOKMARK_TAG;
-                CGRect frame = bookmarkView.frame;
-                frame.origin.y = -4;
-                frame.size.height = 30; // TODO: change this when we get the right asset
-                frame.origin.x = tableView.frame.size.width - 40;
-                bookmarkView.frame = frame;
-                [cell.contentView addSubview:bookmarkView];
-            }
-        } else if (bookmarkView) {
-            [bookmarkView removeFromSuperview];
+            cell.bookmarkView.hidden = NO;
+            image = [UIImage imageWithPathName:@"common/bookmark-ribbon-on"];
+            
+        } else if (cellType == ScheduleCellSelected) {
+            cell.bookmarkView.hidden = NO;
+            image = [UIImage imageWithPathName:@"common/bookmark-ribbon-off"];
+            
+        } else {
+            cell.bookmarkView.hidden = YES;
+        }
+
+        if (image) {
+            [cell.bookmarkView setImage:image forState:UIControlStateNormal];
         }
         
         switch (cellType) {
@@ -266,6 +274,7 @@
                     tableView.backgroundView = nil;
                     tableView.tag = TABLE_TAG;
                     tableView.dataManager = self.dataManager;
+                    tableView.viewController = self;
                     [cell.contentView addSubview:tableView];
                 }
                 tableView.event = event;
@@ -283,6 +292,11 @@
                         [mapView centerAndZoomToDefaultRegion];
                     }
                     [cell.contentView addSubview:mapView];
+                    
+                    UIControl *control = [[[UIControl alloc] initWithFrame:mapView.frame] autorelease];
+                    control.backgroundColor = [UIColor clearColor];
+                    [cell.contentView addSubview:control];
+                    [control addTarget:self action:@selector(mapViewTapped:) forControlEvents:UIControlEventTouchUpInside];
                 }
                 tableView.mapView = mapView;
                 mapView.delegate = tableView;
@@ -301,6 +315,13 @@
     }
     
     return [super tableView:tableView cellForRowAtIndexPath:indexPath];
+}
+
+- (void)mapViewTapped:(id)sender
+{
+    if ([sender isKindOfClass:[UIControl class]]) {
+        
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

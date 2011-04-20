@@ -12,6 +12,7 @@ typedef enum {
     
     UIView *_fakeCardBorder;
     UIImageView *_fakeTopOfNextCell;
+    UIButton *_bookmarkView;
     
     ScheduleCellType _scheduleCellType;
 }
@@ -19,5 +20,6 @@ typedef enum {
 @property (nonatomic, assign) UITableView *tableView;
 @property ScheduleCellType scheduleCellType;
 @property BOOL isFirstInSection;
+@property (nonatomic, readonly) UIButton *bookmarkView;
 
 @end

@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import "KGOWebViewController.h"
 
 @class KGOFoursquareRequest;
 
@@ -54,17 +55,21 @@ typedef enum {
 - (void)venueCheckinDidFail:(NSString *)venue;
 - (void)venueCheckinStatusReceived:(BOOL)status forVenue:(NSString *)venue;
 
+- (void)didReceiveCheckins:(NSArray *)checkins total:(NSInteger)total forVenue:(NSString *)venue;
+
 @end
 
 
 
-@interface KGOFoursquareEngine : NSObject <KGOFoursquareRequestDelegate> {
+@interface KGOFoursquareEngine : NSObject <KGOFoursquareRequestDelegate,
+KGOWebViewControllerDelegate, UIAlertViewDelegate> {
     
     NSString *_oauthToken;
     KGOFoursquareRequest *_oauthRequest;
     
     NSMutableArray *_checkinQueue;
     
+    KGOWebViewController *_webVC;
 }
 
 @property(nonatomic, retain) NSString *clientID;

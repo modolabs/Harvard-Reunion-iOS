@@ -8,6 +8,7 @@ extern NSString * const FoursquareDidLogoutNotification;
 - (void)startupFoursquare;
 - (void)shutdownFoursquare;
 - (void)loginFoursquare;
+- (void)logoutFoursquare;
 
 - (void)didReceiveFoursquareAuthCode:(NSString *)code;
 
