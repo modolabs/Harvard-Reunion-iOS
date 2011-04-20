@@ -53,7 +53,8 @@
 - (void)checkinButtonPressed:(id)sender
 {
     [[[KGOSocialMediaController sharedController] foursquareEngine] checkinVenue:self.venue
-                                                                        delegate:self];
+                                                                        delegate:self
+                                                                         message:_textField.text];
 }
 
 // here we are relying on the fact that venueCheckinStatusReceived is called
@@ -187,14 +188,16 @@
     NSInteger section = indexPath.section;
     if (!self.isCheckedIn) {
         if (section == 0) {
-            UITextField *textField = [[[UITextField alloc] initWithFrame:CGRectMake(10, 10, tableView.frame.size.width - 40, 22)] autorelease];
-            textField.borderStyle = UITextBorderStyleLine;
-            textField.placeholder = @"Add a shout with this checkin";
+            if (!_textField) {
+                _textField = [[[UITextField alloc] initWithFrame:CGRectMake(10, 10, tableView.frame.size.width - 40, 22)] autorelease];
+                _textField.borderStyle = UITextBorderStyleLine;
+                _textField.placeholder = @"Add a shout with this checkin";
+            }
             UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
             [button setTitle:@"Check in" forState:UIControlStateNormal];
             [button addTarget:self action:@selector(checkinButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-            button.frame = CGRectMake(tableView.frame.size.width - 115, textField.frame.size.height + 15, 75, 30);
-            return [NSArray arrayWithObjects:textField, button, nil];
+            button.frame = CGRectMake(tableView.frame.size.width - 115, _textField.frame.size.height + 15, 75, 30);
+            return [NSArray arrayWithObjects:_textField, button, nil];
         }
         section--;
     }

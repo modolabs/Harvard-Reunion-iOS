@@ -93,7 +93,7 @@ KGOWebViewControllerDelegate, UIAlertViewDelegate> {
 - (KGOFoursquareRequest *)requestWithDelegate:(id<KGOFoursquareRequestDelegate>)delegate;
 
 // no message and broadcast "public"
-- (void)checkinVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate;
+- (void)checkinVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate message:(NSString *)message;
 - (void)checkUserStatusForVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate;
 
 - (void)disconnectRequestsForDelegate:(id<KGOFoursquareCheckinDelegate>)delegate;

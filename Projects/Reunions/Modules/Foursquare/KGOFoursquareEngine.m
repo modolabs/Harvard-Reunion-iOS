@@ -248,12 +248,12 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     return request;
 }
 
-- (void)checkinVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate
+- (void)checkinVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate message:(NSString *)message
 {
     KGOFoursquareRequest *request = [self checkinRequestWithDelegate:self
                                                                venue:venue
                                                       broadcastLevel:FoursquareBroadcastLevelPublic
-                                                             message:nil];
+                                                             message:message];
     
     KGOFoursquareCheckinPair *pair = [[[KGOFoursquareCheckinPair alloc] init] autorelease];
     pair.delegate = delegate;

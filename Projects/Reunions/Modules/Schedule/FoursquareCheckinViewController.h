@@ -7,6 +7,7 @@
     
     NSArray *_checkinData;
     NSArray *_filteredCheckinData;
+    UITextField *_textField;
     
 }
 
