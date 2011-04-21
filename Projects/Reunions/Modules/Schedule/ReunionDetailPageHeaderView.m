@@ -79,6 +79,8 @@
         || ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)self.detailItem isRegistered])
     ) {
         buttonImage = [UIImage imageWithPathName:@"common/bookmark-ribbon-on.png"];
+    } else if ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]]) {
+        buttonImage = [UIImage imageWithPathName:@"common/bookmark-schedule-off.png"];
     } else {
         buttonImage = [UIImage imageWithPathName:@"common/bookmark-ribbon-off.png"];
     }
@@ -96,19 +98,41 @@
 
 - (void)toggleBookmark:(id)sender
 {
-    if ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)self.detailItem isRegistered]) {
-        UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
-                                                             message:@"Events you have registered for cannot be removed from your schedule."
-                                                            delegate:nil
-                                                   cancelButtonTitle:@"OK"
-                                                   otherButtonTitles:nil] autorelease];
-        [alertView show];
-        return;
+    if ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]]) {
+        ScheduleEventWrapper *event = (ScheduleEventWrapper *)self.detailItem;
+        if ([event isRegistered]) {
+            UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
+                                                                 message:@"Events you have registered for cannot be removed from your schedule."
+                                                                delegate:nil
+                                                       cancelButtonTitle:@"OK"
+                                                       otherButtonTitles:nil] autorelease];
+            [alertView show];
+            return;
+        }
+        
+        if ([event registrationURL] && ![event isBookmarked]) {
+            UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
+                                                                 message:@"Bookmarking this event will only add it to your personal schedule.  You will still need to register for it to attend."
+                                                                delegate:self
+                                                       cancelButtonTitle:@"OK"
+                                                       otherButtonTitles:nil] autorelease];
+            [alertView show];
+            return;
+        }
     }
     
     if ([self.detailItem isBookmarked]) {
         [self.detailItem removeBookmark];
     } else {
+        [self.detailItem addBookmark];
+    }
+    
+    [self layoutBookmarkButton];
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (![self.detailItem isBookmarked]) {
         [self.detailItem addBookmark];
     }
     

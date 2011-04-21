@@ -117,21 +117,24 @@
         label.text = title;
         label.font = font;
         
-        UIView *labelContainer = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, viewHeight)] autorelease];
-        labelContainer.backgroundColor = [UIColor clearColor];
-        labelContainer.opaque = NO;
+        //UIView *labelContainer = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, viewHeight)] autorelease];
+        //labelContainer.backgroundColor = [UIColor clearColor];
+        //labelContainer.opaque = NO;
 
         UIImageView *labelBackground = [[[UIImageView alloc] initWithFrame:CGRectMake(0, 0,
                                                                                       tableView.frame.size.width,
                                                                                       viewHeight + 5)] autorelease];
         labelBackground.image = [[UIImage imageWithPathName:@"modules/schedule/fakeheader"] stretchableImageWithLeftCapWidth:5 topCapHeight:0];
         labelBackground.layer.cornerRadius = 5;
-        labelBackground.opaque = NO;
+        labelBackground.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         
-        [labelContainer addSubview:labelBackground];
-        [labelContainer addSubview:label];
+        [labelBackground addSubview:label];
+        return labelBackground;
         
-        return labelContainer;
+        //[labelContainer addSubview:labelBackground];
+        //[labelContainer addSubview:label];
+        
+        //return labelContainer;
     }
 
     return [super tableView:tableView viewForHeaderInSection:section];
@@ -274,7 +277,7 @@
                     tableView.backgroundView = nil;
                     tableView.tag = TABLE_TAG;
                     tableView.dataManager = self.dataManager;
-                    tableView.viewController = self;
+                    tableView.viewController = [KGO_SHARED_APP_DELEGATE() visibleViewController];
                     [cell.contentView addSubview:tableView];
                 }
                 tableView.event = event;

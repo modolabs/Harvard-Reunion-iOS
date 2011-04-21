@@ -265,6 +265,7 @@
     if (_foursquareVenue) {
         if (indexPath.section == 0) {
             [self foursquareButtonPressed:nil];
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
             return;
         }
         indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section - 1];

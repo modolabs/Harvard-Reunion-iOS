@@ -231,7 +231,7 @@
     return widgets;
 }
 
-- (BOOL)webViewController:(KGOWebViewController *)webVC shouldLoadExternallyForURL:(NSURL *)url
+- (BOOL)webViewController:(KGOWebViewController *)webVC shouldOpenSystemBrowserForURL:(NSURL *)url
 {
     return [[url absoluteString] rangeOfString:[[KGORequestManager sharedManager] host]].location == NSNotFound;
 }

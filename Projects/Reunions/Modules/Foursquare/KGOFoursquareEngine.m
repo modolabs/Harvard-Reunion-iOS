@@ -320,6 +320,7 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
                                                      name:FoursquareDidLoginNotification
                                                    object:nil];
         [visibleVC presentModalViewController:_webVC animated:YES];
+        [_webVC performSelector:@selector(fadeInDismissControls) withObject:nil afterDelay:10];
     }
 }
 
@@ -515,7 +516,7 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     }
 }
 
-- (BOOL)webViewController:(KGOWebViewController *)webVC shouldLoadExternallyForURL:(NSURL *)url
+- (BOOL)webViewController:(KGOWebViewController *)webVC shouldOpenSystemBrowserForURL:(NSURL *)url
 {
     return [[url absoluteString] rangeOfString:@"login"].location == NSNotFound
         && [[url absoluteString] rangeOfString:@"oauth2"].location == NSNotFound;
