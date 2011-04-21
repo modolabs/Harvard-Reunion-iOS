@@ -16,6 +16,7 @@
     self.checkinData = nil;
     self.eventTitle = nil;
     self.venue = nil;
+    [_textField release];
     [super dealloc];
 }
 
@@ -189,7 +190,8 @@
     if (!self.isCheckedIn) {
         if (section == 0) {
             if (!_textField) {
-                _textField = [[[UITextField alloc] initWithFrame:CGRectMake(10, 10, tableView.frame.size.width - 40, 22)] autorelease];
+                _textField = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, tableView.frame.size.width - 40, 22)];
+                _textField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
                 _textField.borderStyle = UITextBorderStyleLine;
                 _textField.placeholder = @"Add a shout with this checkin";
             }
