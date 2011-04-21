@@ -36,6 +36,7 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
 - (IBAction)likeButtonPressed:(id)sender;
 - (IBAction)bookmarkButtonPressed:(id)sender;
 - (IBAction)closeButtonPressed:(id)sender;
+- (IBAction)uploadButtonPressed:(id)sender;
 
 - (void)displayPost;
 - (NSString *)postTitle;
