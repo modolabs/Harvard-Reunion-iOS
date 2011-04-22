@@ -8,12 +8,22 @@
 #import "FacebookModule.h"
 #import "CoreDataManager.h"
 #import <QuartzCore/QuartzCore.h>
+#import "KGOSocialMediaController+FacebookAPI.h"
 
 typedef enum {
     kTransitionImageViewTag = 0x701,
     kTransitionViewTag
 }
 VideosViewTags;
+
+typedef enum {
+    kAllVideosSegment = 0,
+    kMyUploadsSegment,
+    kBookmarksSegment
+}
+FacebookVideosSegmentIndexes;
+
+typedef BOOL (^VideoTest)(FacebookVideo *video);
 
 #pragma mark Private methods
 
@@ -34,11 +44,12 @@ VideosViewTags;
 
 @synthesize iconGrid;
 
-- (void)getGroupVideos {
+- (void)getGroupVideosThatPassTest:(VideoTest)predicateBlock {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookGroupReceivedNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookFeedDidUpdateNotification object:nil];
     
-    FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+    FacebookModule *fbModule = 
+    (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
     if (fbModule.groupID) {
         if (fbModule.latestFeedPosts) {
             for (NSDictionary *aPost in fbModule.latestFeedPosts) {
@@ -47,9 +58,13 @@ VideosViewTags;
                     NSLog(@"video data: %@", [aPost description]);
                     FacebookVideo *aVideo = [FacebookVideo videoWithDictionary:aPost];
                     if (aVideo && ![_videoIDs containsObject:aVideo.identifier]) {
-                        NSLog(@"created video %@", [aVideo description]);
-                        [_videos addObject:aVideo];
-                        [_videoIDs addObject:aVideo.identifier];
+                        if (!predicateBlock ||
+                            predicateBlock(aVideo)) {
+                            
+                            NSLog(@"created video %@", [aVideo description]);
+                            [_videos addObject:aVideo];
+                            [_videoIDs addObject:aVideo.identifier];
+                        }
                     }
                 }
             }
@@ -65,6 +80,10 @@ VideosViewTags;
                                                      name:FacebookGroupReceivedNotification
                                                    object:nil];
     }
+}
+
+- (void)getGroupVideos {
+    [self getGroupVideosThatPassTest:nil];
 }
 
 - (void)requestVideosFromFeed {    
@@ -131,7 +150,7 @@ VideosViewTags;
     _videos = [[NSMutableArray alloc] init];
     _videoIDs = [[NSMutableSet alloc] init];
     
-    [self getGroupVideos];
+    [self getGroupVideosThatPassTest:nil];
     [self addVideoThumbnailsToGrid];
 }
 
@@ -206,10 +225,10 @@ VideosViewTags;
             forControlEvents:UIControlEventTouchUpInside];
         [thumbnails addObject:thumbnail];
     }
-    if (thumbnails.count > 0) {
-        self.iconGrid.icons = thumbnails;
-        [self.iconGrid setNeedsLayout];
-    }
+    
+    self.iconGrid.icons = thumbnails;
+    [self.iconGrid setNeedsLayout];
+    
     [thumbnailLoadingPool release];
 }
 
@@ -386,5 +405,57 @@ VideosViewTags;
     [super facebookDidLogin:aNotification];
     [self requestVideosFromFeed];
 }
+
+#pragma mark FacebookMediaViewController
+- (IBAction)uploadButtonPressed:(id)sender {
+    //[self showUploadPhotoController:sender];
+}
+
+- (IBAction)filterValueChanged:(UISegmentedControl *)sender {
+    switch (sender.selectedSegmentIndex) {
+        case kAllVideosSegment:
+        {
+            // Reload photos.
+            [self getGroupVideos];
+            break;
+        }
+        case kMyUploadsSegment:
+        {
+            [_videos removeAllObjects];
+            [_videoIDs removeAllObjects];
+            
+            NSString *uploaderName = 
+            [[KGOSocialMediaController sharedController] 
+             currentFacebookUser].name;            
+            
+            [self getGroupVideosThatPassTest:^(FacebookVideo *video) {
+                if ([uploaderName isEqualToString:[[video owner] name]]) {
+                    return YES;
+                }
+                return NO;
+            }];            
+            break;
+        }
+        case kBookmarksSegment:
+        {
+            NSDictionary *bookmarks = 
+            [FacebookModule bookmarksForMediaObjectsOfType:@"photo"];
+            
+            [_videos removeAllObjects];
+            [_videoIDs removeAllObjects];
+            
+            [self getGroupVideosThatPassTest:^(FacebookVideo *video) {
+                if ([bookmarks objectForKey:video.identifier]) {
+                    return YES;
+                }
+                return NO;
+            }];            
+            break;
+        }            
+        default:
+            break;
+    } 
+}
+
 
 @end
