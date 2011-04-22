@@ -25,9 +25,11 @@
 }
 
 - (void)applicationDidFinishLaunching {
+    [[KGOSocialMediaController sharedController] startupFoursquare];
 }
 
 - (void)applicationWillTerminate {
+    [[KGOSocialMediaController sharedController] shutdownFoursquare];
 }
 
 - (void)applicationDidEnterBackground {

@@ -84,7 +84,10 @@
 - (IBAction)closeButtonPressed:(id)sender {
     [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome forModuleTag:moduleTag params:nil];
 }
-     
+
+- (IBAction)uploadButtonPressed:(id)sender {
+}
+
 - (void)getCommentsForPost {
     NSString *objectID = self.post.postIdentifier.length ? self.post.postIdentifier : self.post.identifier;
     NSString *path = [NSString stringWithFormat:@"%@/comments", objectID];

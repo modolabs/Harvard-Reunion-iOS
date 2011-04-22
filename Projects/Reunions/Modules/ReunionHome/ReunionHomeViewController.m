@@ -15,6 +15,13 @@
     [super loginDidComplete:aNotification];
 }
 
+- (void)logoutDidComplete:(NSNotification *)aNotification
+{
+    [self.homeModule logout];
+    
+    [super logoutDidComplete:aNotification];
+}
+
 - (void)loadModules {
     // from superclass
     NSArray *modules = [KGO_SHARED_APP_DELEGATE() modules];

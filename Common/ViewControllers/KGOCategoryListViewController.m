@@ -30,10 +30,10 @@
 		self.tableView = [self addTableViewWithFrame:frame style:style];
 	}
     
-    if (!self.categories && self.categoriesRequest) {
+    if (!self.categories.count && self.categoriesRequest) {
         [self.categoriesRequest connect];
         
-    } else if (!self.leafItems && self.leafItemsRequest) {
+    } else if (!self.leafItems.count && self.leafItemsRequest) {
         [self.leafItemsRequest connect];
     }
     
@@ -84,7 +84,7 @@
 	self.tableView.tableHeaderView = _headerView;
 }
 
-#pragma KGORequestDelegate
+#pragma mark KGORequestDelegate
 
 - (void)request:(KGORequest *)request didHandleResult:(NSInteger)returnValue {
     if (request == self.categoriesRequest) {    
@@ -103,8 +103,8 @@
 
     } else if (request == self.leafItemsRequest) {
         self.leafItems = self.parentCategory.items;
-        NSLog(@"%@", self.parentCategory);
-        NSLog(@"%@", self.leafItems);
+        DLog(@"parent category: %@", self.parentCategory);
+        DLog(@"leaf items: %@", self.leafItems);
     }
 
     [self reloadDataForTableView:self.tableView];

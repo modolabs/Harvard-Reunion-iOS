@@ -14,10 +14,12 @@
 - (UIView *)currentUserWidget
 {
     NSDictionary *userDict = [[[KGORequestManager sharedManager] sessionInfo] dictionaryForKey:@"user"];
-    
     self.username = [userDict stringForKey:@"name" nilIfEmpty:YES];
-    
+
     KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
+    ReunionHomeModule *homeModule = (ReunionHomeModule *)[appDelegate moduleForTag:@"home"];
+    self.userDescription = [homeModule reunionName];
+
     KGONavigationStyle navStyle = [appDelegate navigationStyle];
     CGRect frame = CGRectZero;
     if (navStyle == KGONavigationStylePortlet) {
@@ -214,11 +216,6 @@
 
 - (NSArray *)widgetViews {
     
-    if (!self.userDescription) {
-        ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
-        self.userDescription = [homeModule reunionName];
-    }
-    
     NSMutableArray *widgets = [NSMutableArray array];
     UIView *currentUserWidget = [self currentUserWidget];
     if (currentUserWidget) {
@@ -229,6 +226,11 @@
         [widgets addObject:ribbonWidget];
     }
     return widgets;
+}
+
+- (BOOL)webViewController:(KGOWebViewController *)webVC shouldOpenSystemBrowserForURL:(NSURL *)url
+{
+    return [[url absoluteString] rangeOfString:[[KGORequestManager sharedManager] host]].location == NSNotFound;
 }
 
 

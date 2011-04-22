@@ -1,13 +1,12 @@
 #import "KGOFoursquareEngine.h"
 #import "JSON.h"
-#import "KGOWebViewController.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "Foundation+KGOAdditions.h"
 
 NSString * const FoursquareDidLoginNotification = @"foursquareDidLogin";
 NSString * const FoursquareDidLogoutNotification = @"foursquareDidLogout";
 
-static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
+static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2";
 
 @implementation KGOFoursquareRequest
 
@@ -19,7 +18,9 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
     if (self.resourceID) {
         [pathComponents addObject:self.resourceID];
     }
-    [pathComponents addObject:self.command];
+    if (self.command) {
+        [pathComponents addObject:self.command];
+    }
     
     NSString *baseURL = [pathComponents componentsJoinedByString:@"/"];
     NSString *query = [NSURL queryStringWithParameters:self.params];
@@ -38,7 +39,7 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
         return;
     }
     
-    NSLog(@"foursquare: requesting from %@", urlString);
+    DLog(@"foursquare: requesting from %@", urlString);
     
     NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:urlString]
                                                                  cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
@@ -102,7 +103,7 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2/";
         DLog(@"%@", [result description]);
         id errorInfo = [result objectForKey:@"error"];
         if (errorInfo) {
-            NSError *error = [NSError errorWithDomain:@"com.modolabs.foursquareEngine" code:1 userInfo:errorInfo];
+            NSError *error = [NSError errorWithDomain:@"com.modolabs.foursquareEngine" code:1 userInfo:result];
             [self.delegate foursquareRequest:self didFailWithError:error];
             
         } else {
@@ -232,7 +233,7 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     
     request.resourceName = @"venues";
     request.resourceID = venue;
-    request.command = @"herenow";
+    //request.command = @"herenow";
     
     return request;
 }
@@ -247,12 +248,12 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     return request;
 }
 
-- (void)checkinVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate
+- (void)checkinVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate message:(NSString *)message
 {
     KGOFoursquareRequest *request = [self checkinRequestWithDelegate:self
                                                                venue:venue
                                                       broadcastLevel:FoursquareBroadcastLevelPublic
-                                                             message:nil];
+                                                             message:message];
     
     KGOFoursquareCheckinPair *pair = [[[KGOFoursquareCheckinPair alloc] init] autorelease];
     pair.delegate = delegate;
@@ -269,11 +270,12 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
 
 - (void)checkUserStatusForVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate
 {
-    KGOFoursquareRequest *request = [self queryCheckinsRequestWithDelegate:self];
+    //KGOFoursquareRequest *request = [self queryCheckinsRequestWithDelegate:self];
+    KGOFoursquareRequest *request = [self herenowRequestWithDelegate:self venue:venue];
     KGOFoursquareCheckinPair *pair = [[[KGOFoursquareCheckinPair alloc] init] autorelease];
     pair.delegate = delegate;
     pair.request = request;
-    pair.userData = [NSDictionary dictionaryWithObjectsAndKeys:venue, @"venue", nil];
+    //pair.userData = [NSDictionary dictionaryWithObjectsAndKeys:venue, @"venue", nil];
     
     if (!_checkinQueue) {
         _checkinQueue = [[NSMutableArray alloc] init];
@@ -286,9 +288,7 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
 
 - (void)authorize
 {
-    if (!self.clientID) {
-        NSLog(@"foursquare client ID not set");
-    }
+    NSAssert(self.clientID != nil, @"foursquare client ID not set, check Config.plist");
     
     NSString *internalScheme = [KGO_SHARED_APP_DELEGATE() defaultURLScheme];
     
@@ -302,18 +302,31 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
                                self.clientID,
                                self.redirectURI];
         
-        KGOWebViewController *webVC = [[[KGOWebViewController alloc] init] autorelease];
-        webVC.requestURL = [NSURL URLWithString:urlString];
-        webVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        [[KGO_SHARED_APP_DELEGATE() visibleViewController] presentModalViewController:webVC animated:YES];
+        [_webVC release];
+        _webVC = [[KGOWebViewController alloc] init];
+        _webVC.requestURL = [NSURL URLWithString:urlString];
+        _webVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        _webVC.delegate = self;
+        
+        UIViewController *visibleVC = [KGO_SHARED_APP_DELEGATE() visibleViewController];
+        if (visibleVC.modalViewController) {
+            visibleVC = visibleVC.modalViewController;
+            if ([visibleVC isKindOfClass:[UINavigationController class]]) {
+                visibleVC = [(UINavigationController *)visibleVC topViewController];
+            }
+        }
+        [[NSNotificationCenter defaultCenter] addObserver:visibleVC
+                                                 selector:@selector(dismissModalViewControllerAnimated:)
+                                                     name:FoursquareDidLoginNotification
+                                                   object:nil];
+        [visibleVC presentModalViewController:_webVC animated:YES];
+        [_webVC performSelector:@selector(fadeInDismissControls) withObject:nil afterDelay:10];
     }
 }
 
 - (void)requestOAuthToken
 {
-    if (!self.clientSecret) {
-        NSLog(@"foursquare client secret not set");
-    }
+    NSAssert(self.clientSecret != nil, @"foursquare client not set, check Config.plist");
     
     NSString *urlString = [NSString stringWithFormat:@"https://foursquare.com/oauth2/access_token"
                            "?client_id=%@"
@@ -335,8 +348,21 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     [_oauthToken release];
     _oauthToken = nil;
     
+    NSMutableArray *badCookies = [NSMutableArray array];
+    for (NSHTTPCookie *aCookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]) {
+        if ([[aCookie domain] rangeOfString:@"foursquare"].location != NSNotFound) {
+            [badCookies addObject:aCookie];
+        }
+    }
+    
+    for (NSHTTPCookie *aCookie in badCookies) {
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:aCookie];
+    }
+    
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FoursquareOAuthTokenKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:FoursquareDidLogoutNotification object:nil];
 }
 
 - (BOOL)isLoggedIn
@@ -379,10 +405,8 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
             
             [[NSNotificationCenter defaultCenter] postNotificationName:FoursquareDidLoginNotification object:self];
             
-            NSLog(@"received oauth token %@", _oauthToken);
+            DLog(@"received oauth token %@", _oauthToken);
         }
-        
-        [[KGO_SHARED_APP_DELEGATE() visibleViewController] dismissModalViewControllerAnimated:YES];
 
     } else {
         
@@ -395,21 +419,51 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
         }
 
         if (currentPair) {
-            if ([request.resourceName isEqualToString:@"venues"] && [request.command isEqualToString:@"herenow"]) {
-                NSDictionary *hereNowDict = [response dictionaryForKey:@"hereNow"];
-                NSNumber *count = [hereNowDict numberForKey:@"count"];
-                NSArray *items = [hereNowDict arrayForKey:@"items"];
-                for (NSDictionary *itemDict in items) {
-                    NSDictionary *user = [itemDict dictionaryForKey:@"user"];
+            if ([request.resourceName isEqualToString:@"venues"]) {
+                NSDictionary *venueDict = [response dictionaryForKey:@"venue"];
+                
+                DLog(@"%@", venueDict);
+
+                BOOL foundSelf = NO;
+                // only attempt to search for self below if beenHere count is > 0
+                NSDictionary *beenHereDict = [venueDict dictionaryForKey:@"beenHere"];
+                id count = [beenHereDict objectForKey:@"count"];
+                if ([count isKindOfClass:[NSNumber class]] || [count isKindOfClass:[NSString class]]) {
+                    if ([count integerValue]) {
+                        foundSelf = YES;
+                    }
+                }
+
+                NSDictionary *hereNowDict = [venueDict dictionaryForKey:@"hereNow"];
+                NSInteger total = [hereNowDict integerForKey:@"count"];
+                NSArray *groups = [hereNowDict arrayForKey:@"groups"];
+
+                if (foundSelf && groups.count) {
+                    foundSelf = NO;
+                    NSDictionary *firstGroup = [groups dictionaryAtIndex:0];
+                    for (NSDictionary *itemInfo in [firstGroup arrayForKey:@"items"]) {
+                        NSDictionary *userInfo = [itemInfo dictionaryForKey:@"user"];
+                        if ([[userInfo stringForKey:@"relationship" nilIfEmpty:YES] isEqualToString:@"self"]) {
+                            foundSelf = YES;
+                            break;
+                        }
+                    }
                 }
                 
-            } else if ([request.resourceName isEqualToString:@"users"] && [request.command isEqualToString:@"checkins"]) {
+                if ([currentPair.delegate respondsToSelector:@selector(venueCheckinStatusReceived:forVenue:)]) {
+                    [currentPair.delegate venueCheckinStatusReceived:foundSelf forVenue:request.resourceID];
+                }
+                
+                if ([currentPair.delegate respondsToSelector:@selector(didReceiveCheckins:total:forVenue:)]) {
+                    [currentPair.delegate didReceiveCheckins:groups total:total forVenue:request.resourceID];
+                }
+                
+            /*} else if ([request.resourceName isEqualToString:@"users"] && [request.command isEqualToString:@"checkins"]) {
                 NSDictionary *checkinDict = [response dictionaryForKey:@"checkins"];
                 NSArray *items = [checkinDict arrayForKey:@"items"];
                 NSString *checkedInVenueID = nil;
                 NSString *targetVenue = [currentPair.userData objectForKey:@"venue"];
                 
-                // TODO:
                 if (!targetVenue) return;
                 NSLog(@"%@", currentPair.userData);
                 
@@ -431,9 +485,11 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
                         [currentPair.delegate venueCheckinStatusReceived:NO forVenue:request.resourceID];
                     }
                 }
-                
+                */
             } else if ([request.resourceName isEqualToString:@"checkins"] && [request.command isEqualToString:@"add"]) {
-                [currentPair.delegate venueCheckinDidSucceed:request.resourceID];
+                if ([currentPair.delegate respondsToSelector:@selector(venueCheckinDidSucceed:)]) {
+                    [currentPair.delegate venueCheckinDidSucceed:request.resourceID];
+                }
                 
             }
             
@@ -445,10 +501,35 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
 
 - (void)foursquareRequest:(KGOFoursquareRequest *)request didFailWithError:(NSError *)error
 {
-    [_oauthRequest release];
-    _oauthRequest = nil;
-    
     NSLog(@"request failed with error: %@", [error description]);
+
+    if (request == _oauthRequest) {
+        [_oauthRequest release];
+        _oauthRequest = nil;
+        
+        UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
+                                                             message:@"Failed to authenticate with foursquare"
+                                                            delegate:self
+                                                   cancelButtonTitle:@"OK"
+                                                   otherButtonTitles:nil] autorelease];
+        [alertView show];
+    }
+}
+
+- (BOOL)webViewController:(KGOWebViewController *)webVC shouldOpenSystemBrowserForURL:(NSURL *)url
+{
+    return [[url absoluteString] rangeOfString:@"login"].location == NSNotFound
+        && [[url absoluteString] rangeOfString:@"oauth2"].location == NSNotFound;
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    [_webVC.parentViewController dismissModalViewControllerAnimated:YES];
+}
+
+- (void)webViewControllerFrameLoadInterrupted:(KGOWebViewController *)webVC
+{
+    [_webVC.parentViewController dismissModalViewControllerAnimated:YES];
 }
 
 - (void)disconnectRequestsForDelegate:(id<KGOFoursquareCheckinDelegate>)delegate
@@ -471,6 +552,7 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
         _oauthRequest.delegate = nil;
     }
     
+    [_webVC release];
     self.clientID = nil;
     self.clientSecret = nil;
     self.authCode = nil;

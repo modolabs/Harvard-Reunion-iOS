@@ -39,6 +39,7 @@
 {
     self.dataManager.delegate = nil;
     [_myEvents release];
+    _myEvents = nil;
     [super dealloc];
 }
 
@@ -69,8 +70,6 @@
     }
     
     if (_isTablet) {
-        [self.tableView removeFromSuperview];
-        
         frame.origin.x += 8;
         frame.origin.y += 8;
         frame.size.width -= 16;
@@ -82,7 +81,7 @@
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         self.tableView.dataSource = self;
         self.tableView.delegate = self;
-        [self.view addSubview:self.tableView];
+        [self addTableView:self.tableView withDataSource:self];
     } else {
         self.tableView = [self addTableViewWithFrame:frame style:style];
     }
@@ -118,21 +117,24 @@
         label.text = title;
         label.font = font;
         
-        UIView *labelContainer = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, viewHeight)] autorelease];
-        labelContainer.backgroundColor = [UIColor clearColor];
-        labelContainer.opaque = NO;
+        //UIView *labelContainer = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, viewHeight)] autorelease];
+        //labelContainer.backgroundColor = [UIColor clearColor];
+        //labelContainer.opaque = NO;
 
         UIImageView *labelBackground = [[[UIImageView alloc] initWithFrame:CGRectMake(0, 0,
                                                                                       tableView.frame.size.width,
                                                                                       viewHeight + 5)] autorelease];
         labelBackground.image = [[UIImage imageWithPathName:@"modules/schedule/fakeheader"] stretchableImageWithLeftCapWidth:5 topCapHeight:0];
         labelBackground.layer.cornerRadius = 5;
-        labelBackground.opaque = NO;
+        labelBackground.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         
-        [labelContainer addSubview:labelBackground];
-        [labelContainer addSubview:label];
+        [labelBackground addSubview:label];
+        return labelBackground;
         
-        return labelContainer;
+        //[labelContainer addSubview:labelBackground];
+        //[labelContainer addSubview:label];
+        
+        //return labelContainer;
     }
 
     return [super tableView:tableView viewForHeaderInSection:section];
@@ -154,14 +156,21 @@
         }
         
         NSIndexPath *oldIndexPath = _selectedIndexPath;
-        
+
         [_selectedIndexPath release];
         _selectedIndexPath = [indexPath retain];
         
-        NSMutableArray *needsRefresh = [NSMutableArray array];
-        
-        if (oldIndexPath) {
-            [needsRefresh addObject:oldIndexPath];
+        NSIndexPath *scrollToIndexPath;
+        if (_selectedIndexPath.row == 0) {
+            if (_selectedIndexPath.section == 0) {
+                scrollToIndexPath = _selectedIndexPath;
+            } else {
+                NSInteger section = _selectedIndexPath.section-1;
+                NSInteger row = [self tableView:tableView numberOfRowsInSection:section] - 1;
+                scrollToIndexPath = [NSIndexPath indexPathForRow:row inSection:section];
+            }
+        } else {
+            scrollToIndexPath = [NSIndexPath indexPathForRow:_selectedIndexPath.row-1 inSection:_selectedIndexPath.section];
         }
         
         if (_selectedIndexPath.row == 0) {
@@ -176,13 +185,17 @@
                 if (aboveIndexPath.row != oldIndexPath.row || aboveIndexPath.section != oldIndexPath.section) {
                     [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
                                      withRowAnimation:UITableViewRowAnimationNone];
+                } else {
+                    // previously selected indexPath was one above the present
+                    [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
+                                     withRowAnimation:UITableViewRowAnimationMiddle];
                 }
-                [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
-                                 withRowAnimation:UITableViewRowAnimationMiddle];
             }
         }
         
+        NSLog(@"1 above: %@ current: %@", scrollToIndexPath, _selectedIndexPath);
         [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:_selectedIndexPath] withRowAnimation:UITableViewRowAnimationNone];
+        [tableView scrollToRowAtIndexPath:scrollToIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
         
     } else {
         [super tableView:tableView didSelectRowAtIndexPath:indexPath];
@@ -191,7 +204,6 @@
 
 #define TABLE_TAG 1
 #define MAP_TAG 2
-#define BOOKMARK_TAG 888
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -204,9 +216,6 @@
         if (_selectedIndexPath && indexPath.section == _selectedIndexPath.section) {
             if (indexPath.row == _selectedIndexPath.row) {
                 cellType = ScheduleCellSelected;
-            
-            } else if (indexPath.row == _selectedIndexPath.row - 1) {
-                cellType = ScheduleCellAboveSelectedRow;
             }
             
         } else if (indexPath.row == eventsForSection.count - 1) {
@@ -237,22 +246,22 @@
         
         [[cell.contentView viewWithTag:TABLE_TAG] removeFromSuperview];
         [[cell.contentView viewWithTag:MAP_TAG] removeFromSuperview];
-        
-        UIImageView *bookmarkView = (UIImageView *)[cell.contentView viewWithTag:BOOKMARK_TAG];
+
+        UIImage *image = nil;
         if ([event isRegistered] || [event isBookmarked]) {
-            if (!bookmarkView) {
-                UIImage *ribbon = [UIImage imageWithPathName:@"modules/schedule/list-bookmark"];
-                bookmarkView = [[[UIImageView alloc] initWithImage:ribbon] autorelease];
-                bookmarkView.tag = BOOKMARK_TAG;
-                CGRect frame = bookmarkView.frame;
-                frame.origin.y = -4;
-                frame.size.height = 30; // TODO: change this when we get the right asset
-                frame.origin.x = tableView.frame.size.width - 40;
-                bookmarkView.frame = frame;
-                [cell.contentView addSubview:bookmarkView];
-            }
-        } else if (bookmarkView) {
-            [bookmarkView removeFromSuperview];
+            cell.bookmarkView.hidden = NO;
+            image = [UIImage imageWithPathName:@"common/bookmark-ribbon-on"];
+            
+        } else if (cellType == ScheduleCellSelected) {
+            cell.bookmarkView.hidden = NO;
+            image = [UIImage imageWithPathName:@"common/bookmark-ribbon-off"];
+            
+        } else {
+            cell.bookmarkView.hidden = YES;
+        }
+
+        if (image) {
+            [cell.bookmarkView setImage:image forState:UIControlStateNormal];
         }
         
         switch (cellType) {
@@ -268,6 +277,7 @@
                     tableView.backgroundView = nil;
                     tableView.tag = TABLE_TAG;
                     tableView.dataManager = self.dataManager;
+                    tableView.viewController = [KGO_SHARED_APP_DELEGATE() visibleViewController];
                     [cell.contentView addSubview:tableView];
                 }
                 tableView.event = event;
@@ -285,7 +295,14 @@
                         [mapView centerAndZoomToDefaultRegion];
                     }
                     [cell.contentView addSubview:mapView];
+                    
+                    UIControl *control = [[[UIControl alloc] initWithFrame:mapView.frame] autorelease];
+                    control.backgroundColor = [UIColor clearColor];
+                    [cell.contentView addSubview:control];
+                    [control addTarget:self action:@selector(mapViewTapped:) forControlEvents:UIControlEventTouchUpInside];
                 }
+                tableView.mapView = mapView;
+                mapView.delegate = tableView;
                 
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 
@@ -301,6 +318,13 @@
     }
     
     return [super tableView:tableView cellForRowAtIndexPath:indexPath];
+}
+
+- (void)mapViewTapped:(id)sender
+{
+    if ([sender isKindOfClass:[UIControl class]]) {
+        
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -341,6 +365,14 @@
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.imageView.image = image;
     } copy] autorelease];
+}
+
+- (void)clearEvents
+{
+    [super clearEvents];
+    
+    [_myEvents release];
+    _myEvents = nil;
 }
 
 #pragma mark - Scrolling tabstrip

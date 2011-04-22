@@ -39,6 +39,15 @@
 			<key>size</key>
 			<integer>7</integer>
 		</dict>
+		<key>ContentSubtitle</key>
+		<dict>
+			<key>color</key>
+			<string>#FFFFFF</string>
+			<key>font</key>
+			<string>Helvetica</string>
+			<key>size</key>
+			<integer>0</integer>
+		</dict>
 		<key>DefaultFont</key>
 		<string>Helvetica</string>
 		<key>NavListSubtitle</key>
@@ -56,6 +65,24 @@
 			<string>#1A1611</string>
 			<key>size</key>
 			<integer>2</integer>
+		</dict>
+		<key>ScrollTab</key>
+		<dict>
+			<key>bold</key>
+			<true/>
+			<key>color</key>
+			<string>#f2e2e3</string>
+			<key>size</key>
+			<integer>-1</integer>
+		</dict>
+		<key>ScrollTabSelected</key>
+		<dict>
+			<key>bold</key>
+			<true/>
+			<key>color</key>
+			<string>#FFFFFF</string>
+			<key>size</key>
+			<integer>-1</integer>
 		</dict>
 		<key>SectionHeader</key>
 		<dict>
@@ -81,24 +108,6 @@
 			<string>#FFFFFF</string>
 			<key>size</key>
 			<integer>-2</integer>
-		</dict>
-		<key>ScrollTab</key>
-		<dict>
-			<key>color</key>
-			<string>#f2e2e3</string>
-			<key>bold</key>
-			<true/>
-			<key>size</key>
-			<integer>-1</integer>
-		</dict>
-		<key>ScrollTabSelected</key>
-		<dict>
-			<key>color</key>
-			<string>#FFFFFF</string>
-			<key>size</key>
-			<integer>-1</integer>
-			<key>bold</key>
-			<true/>
 		</dict>
 	</dict>
 	<key>HomeScreen</key>

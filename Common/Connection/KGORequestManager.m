@@ -174,6 +174,11 @@ NSString * const KGODidLogoutNotification = @"LogoutComplete";
 
 - (void)dealloc {
 	self.host = nil;
+    
+    [_helloRequest cancel];
+    [_sessionRequest cancel];
+    [_logoutRequest cancel];
+    
     [_extendedHost release];
     [_reachability release];
 	[_uriScheme release];
@@ -198,12 +203,17 @@ NSString * const KGODidLogoutNotification = @"LogoutComplete";
         [[NSNotificationCenter defaultCenter] postNotificationName:KGODidLoginNotification object:self];
         
     } else {
-        DLog(@"showing modal login screen");
+        DLog(@"attempting to show modal login screen");
+        UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
+        if (homescreen.modalViewController) {
+            DLog(@"already showing modal login screen");
+            return;
+        }
         KGOModule *loginModule = [KGO_SHARED_APP_DELEGATE() moduleForTag:self.loginPath];
         UIViewController *loginController = [loginModule modulePage:LocalPathPageNameHome params:nil];
         loginController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
         loginController.modalPresentationStyle = UIModalPresentationFullScreen;
-        [[KGO_SHARED_APP_DELEGATE() homescreen] presentModalViewController:loginController animated:YES];
+        [homescreen presentModalViewController:loginController animated:YES];
     }
 }
 
@@ -219,10 +229,16 @@ NSString * const KGODidLogoutNotification = @"LogoutComplete";
     [_sessionInfo release];
     _sessionInfo = nil;
     
+    if ([[CoreDataManager sharedManager] deleteStore]) {
+        DLog(@"deleted store");
+    }
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:KGODidLogoutNotification object:self];
     
-    // TODO: clean up this request, even though we don't really care if it fails
-    [self requestWithDelegate:self module:self.loginPath path:@"logout" params:nil];
+    // this clears up cached session data on the server.
+    // the server will see us as being logged out from the lack of cookies, so
+    // if this request fails the server will just have some expired session data.
+    _logoutRequest = [self requestWithDelegate:self module:self.loginPath path:@"logout" params:nil];
 }
 
 - (BOOL)isUserLoggedIn
@@ -271,6 +287,8 @@ NSString * const KGODidLogoutNotification = @"LogoutComplete";
         _helloRequest = nil;
     } else if (request == _sessionRequest) {
         _sessionRequest = nil;
+    } else if (request == _logoutRequest) {
+        _logoutRequest = nil;
     }
 }
 

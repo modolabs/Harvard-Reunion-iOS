@@ -12,6 +12,7 @@
         _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _tableView.backgroundColor = [UIColor clearColor];
         _tableView.dataManager = self.dataManager;
+        _tableView.viewController = self;
         
         [self.view addSubview:_tableView];
     }
@@ -25,6 +26,11 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
+}
+
+- (void)dealloc
+{
+    [super dealloc];
 }
 
 @end

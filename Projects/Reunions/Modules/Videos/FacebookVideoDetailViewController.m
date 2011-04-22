@@ -3,11 +3,44 @@
 #import "UIKit+KGOAdditions.h"
 #import "CoreDataManager.h"
 #import "MediaPlayer/MediaPlayer.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
+
+static const NSInteger kLoadingCurtainViewTag = 0x937;
+
+#pragma mark Private methods
+
+@interface FacebookVideoDetailViewController (Private)
+
+- (void)fadeOutLoadingCurtainView;
+
+@end
+
+@implementation FacebookVideoDetailViewController (Private)
+
+- (void)fadeOutLoadingCurtainView {
+    UIView *loadingCurtainView = [self.webView viewWithTag:kLoadingCurtainViewTag];
+    if (loadingCurtainView) {
+        [UIView 
+         animateWithDuration:0.4f 
+         delay:0.1f
+         options:UIViewAnimationOptionTransitionNone
+         animations:
+         ^{
+             loadingCurtainView.alpha = 0.0f;
+         }
+         completion:nil];
+    }    
+}
+
+@end
+
 
 @implementation FacebookVideoDetailViewController
 
 @synthesize video;
 @synthesize webView;
+//@synthesize curtainView;
+@synthesize loadingCurtainImage;
 
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -20,6 +53,8 @@
 */
 
 - (void)dealloc {
+//    [curtainView release];
+    [loadingCurtainImage release];
     [webView release];
     [video release];
     [super dealloc];
@@ -61,16 +96,18 @@
         CGSize aspectRatio = CGSizeMake(16, 9); // default aspect ratio 
         NSString *urlString;
         
-        if([self.video.src rangeOfString:@"youtube.com"].location != NSNotFound) {
+        NSString *videoSourceName = [self.video videoSourceName];
+        if ([videoSourceName isEqualToString:@"YouTube"]) {
             aspectRatio = CGSizeMake(10, 10);
             urlString =  [NSString stringWithFormat:@"http://www.youtube.com/embed/%@", [self youtubeId:src]];
-        } else if([src rangeOfString:@"vimeo.com"].location != NSNotFound) {
+        } else if ([videoSourceName isEqualToString:@"Vimeo"]) {
             urlString = [NSString stringWithFormat:@"http://player.vimeo.com/video/%@", [self vimeoId:src]];
         } else {
             urlString = src;
         }
                 
         self.webView = [[[UIWebView alloc] init] autorelease];
+        self.webView.delegate = self;
         [self.mediaView setPreviewView:self.webView];
         [self.mediaView setPreviewSize:aspectRatio];
         NSURL *url = [NSURL URLWithString:urlString];
@@ -133,11 +170,29 @@
     button.frame = CGRectMake(120, 80, 80, 60);
     [button addTarget:self action:@selector(playVideo:) forControlEvents:UIControlEventTouchUpInside];
     [self.mediaView addSubview:button];    
-    */          
+    */     
+    
+    // Show curtain image in view over the web view until the web view finishes 
+    // loading.
+    if (self.loadingCurtainImage) {
+        CGRect loadingCurtainFrame = self.webView.frame;
+        loadingCurtainFrame.origin = CGPointZero;
+        UIImageView *loadingCurtainView = 
+        [[UIImageView alloc] initWithFrame:loadingCurtainFrame];
+        loadingCurtainView.image = self.loadingCurtainImage;
+        loadingCurtainView.tag = kLoadingCurtainViewTag;
+        loadingCurtainView.backgroundColor = [UIColor blackColor];
+        loadingCurtainView.autoresizingMask = 
+        [self.mediaView previewView].autoresizingMask;
+        [self.webView addSubview:loadingCurtainView];
+        [loadingCurtainView release];
+    }
 }
 
 - (void)viewDidUnload
 {
+    self.loadingCurtainImage = nil;
+    
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -165,9 +220,18 @@
     }        
 }
 
-#pragma mark UIPopoverControllerDelegate
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
-    // Make any post-comment changes to buttons here if necessary.
+- (IBAction)closeButtonPressed:(id)sender {    
+    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome 
+                           forModuleTag:VideoModuleTag params:nil];    
+}
+
+#pragma mark UIWebViewDelegate
+- (void)webViewDidFinishLoad:(UIWebView *)theWebView {
+    [self fadeOutLoadingCurtainView];
+}
+
+- (void)webView:(UIWebView *)theWebView didFailLoadWithError:(NSError *)error {
+    [self fadeOutLoadingCurtainView];    
 }
 
 @end

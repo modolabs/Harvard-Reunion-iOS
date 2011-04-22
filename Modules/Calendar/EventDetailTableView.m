@@ -12,7 +12,7 @@
 
 @implementation EventDetailTableView
 
-@synthesize dataManager, viewController;
+@synthesize dataManager, viewController, headerView = _headerView;
 
 - (id)initWithFrame:(CGRect)frame style:(UITableViewStyle)style
 {
@@ -53,6 +53,7 @@
     self.event = nil;
     self.delegate = nil;
     self.dataSource = nil;
+    self.headerView = nil;
     [super dealloc];
 }
 
@@ -216,7 +217,7 @@
     if (_event.summary) {
         UILabel *label = [UILabel multilineLabelWithText:_event.summary
                                                     font:[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText]
-                                                   width:self.frame.size.width - 20];
+                                                   width:self.frame.size.width - 40];
         label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyNavListSubtitle];
         label.tag = DESCRIPTION_LABEL_TAG;
         CGRect frame = label.frame;
@@ -226,6 +227,11 @@
         extendedInfo = [NSArray arrayWithObject:label];
     }
     return extendedInfo;
+}
+
+- (NSArray *)sections
+{
+    return _sections;
 }
 
 #pragma mark - UITableViewDataSource
@@ -320,10 +326,13 @@
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
         } else if ([accessory isEqualToString:KGOAccessoryTypeEmail]) {
-            [self.viewController presentMailControllerWithEmail:[cellData objectForKey:@"subtitle"]
-                                                        subject:nil
-                                                           body:nil
-                                                       delegate:self];
+            if ([self.viewController isKindOfClass:[CalendarDetailViewController class]]) {
+                CalendarDetailViewController *detailVC = (CalendarDetailViewController *)self.viewController;
+                [detailVC presentMailControllerWithEmail:[cellData objectForKey:@"subtitle"]
+                                                 subject:nil
+                                                    body:nil
+                                                delegate:self];
+            }
             
         } else if ([accessory isEqualToString:KGOAccessoryTypeMap]) {
             NSArray *annotations = [NSArray arrayWithObject:_event];
@@ -344,21 +353,21 @@
 
 - (void)headerViewFrameDidChange:(KGODetailPageHeaderView *)headerView
 {
-    if (_headerView.frame.size.height != self.tableHeaderView.frame.size.height) {
-        self.tableHeaderView.frame = _headerView.frame;
+    if (self.headerView.frame.size.height != self.tableHeaderView.frame.size.height) {
+        self.tableHeaderView.frame = self.headerView.frame;
     }
     self.tableHeaderView = self.tableHeaderView;
 }
 
 - (UIView *)viewForTableHeader
 {
-    if (!_headerView) {
-        _headerView = [[KGODetailPageHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 1)];
-        _headerView.delegate = self;
-        _headerView.showsBookmarkButton = YES;
+    if (!self.headerView) {
+        self.headerView = [[[KGODetailPageHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 1)] autorelease];
+        self.headerView.delegate = self;
+        self.headerView.showsBookmarkButton = YES;
     }
-    _headerView.detailItem = self.event;
-    _headerView.showsShareButton = YES;
+    self.headerView.detailItem = self.event;
+    self.headerView.showsShareButton = YES;
     
     // time
     NSString *dateString = [self.dataManager mediumDateStringFromDate:_event.startDate];
@@ -373,14 +382,16 @@
                       dateString,
                       [self.dataManager shortTimeStringFromDate:_event.startDate]];
     }
-    _headerView.subtitleLabel.text = timeString;
+    self.headerView.subtitleLabel.text = timeString;
     
-    return _headerView;
+    return self.headerView;
 }
 
 - (void)headerView:(KGODetailPageHeaderView *)headerView shareButtonPressed:(id)sender
 {
-    [self.viewController shareButtonPressed:sender];
+    if ([self.viewController isKindOfClass:[CalendarDetailViewController class]]) {
+        [(CalendarDetailViewController *)self.viewController shareButtonPressed:sender];
+    }
 }
 
 #pragma mark detail

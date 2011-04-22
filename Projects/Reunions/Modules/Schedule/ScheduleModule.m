@@ -61,7 +61,7 @@
         
     } else if ([pageName isEqualToString:LocalPathPageNameItemList]) {
         
-        AttendeesTableViewController *attendeesVC = [[[AttendeesTableViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+        AttendeesTableViewController *attendeesVC = [[[AttendeesTableViewController alloc] init] autorelease];
         attendeesVC.eventTitle = [params objectForKey:@"title"];
         attendeesVC.attendees = [params objectForKey:@"attendees"];
         vc = attendeesVC;

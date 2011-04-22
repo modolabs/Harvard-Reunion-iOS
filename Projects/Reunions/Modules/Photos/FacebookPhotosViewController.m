@@ -11,6 +11,13 @@
 #import "KGOTheme.h"
 #import "FacebookThumbnail.h"
 
+typedef enum {
+    kAllPhotosSegment = 0,
+    kMyUploadsSegment,
+    kBookmarksSegment
+}
+FacebookPhotosSegmentIndexes;
+
 @interface FacebookPhotosViewController (Private)
 
 - (FacebookPhotoSize)thumbSize;
@@ -113,9 +120,11 @@
     [self loadThumbnailsFromCache];
     [self getGroupPhotos];
     
-    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
-                                                                                            target:self
-                                                                                            action:@selector(showUploadPhotoController:)] autorelease];
+    self.navigationItem.rightBarButtonItem = 
+    [[[UIBarButtonItem alloc] 
+      initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
+      target:self
+      action:@selector(showUploadPhotoController:)] autorelease];
 }
 
 /*
@@ -243,34 +252,6 @@
 
 #pragma mark Photo uploads
 
-- (void)showUploadPhotoController:(id)sender
-{
-    UIImagePickerController *picker = [[[UIImagePickerController alloc] init] autorelease];
-    picker.delegate = self;
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
-    } else {
-        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    }
-    [self presentModalViewController:picker animated:YES];
-}
-
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
-    UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
-    
-    FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            image, @"photo",
-                            fbModule.groupID, @"profile",
-                            self, @"parentVC",
-                            nil];
-    
-    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNamePhotoUpload
-                           forModuleTag:PhotosTag
-                                 params:params];
-}
-
 - (void)uploadDidComplete:(FacebookPost *)result {
     [self dismissModalViewControllerAnimated:YES];    
     
@@ -347,6 +328,73 @@
     } else {
         return MEDIUM;
     }
+}
+
+#pragma mark FacebookMediaViewController
+- (IBAction)uploadButtonPressed:(id)sender {
+    [self showUploadPhotoController:sender];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker 
+didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    [super imagePickerController:picker didFinishPickingMediaWithInfo:info];
+    
+    UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];    
+    FacebookModule *fbModule = 
+    (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            image, @"photo",
+                            fbModule.groupID, @"profile",
+                            self, @"parentVC",
+                            nil];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        PhotosModule *photosModule = 
+        (PhotosModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:PhotosTag];
+        UIViewController *vc = 
+        [photosModule modulePage:LocalPathPageNamePhotoUpload params:params];
+        vc.modalPresentationStyle = UIModalPresentationFormSheet;
+        [self presentModalViewController:vc animated:YES];
+    }
+    else {
+        [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNamePhotoUpload
+                               forModuleTag:PhotosTag
+                                     params:params];
+    }
+
+    self.photoPickerPopover = nil;
+}
+
+- (IBAction)filterValueChanged:(UISegmentedControl *)sender {
+    switch (sender.selectedSegmentIndex) {
+        case kAllPhotosSegment:
+            [self getGroupPhotos];
+            break;
+        case kMyUploadsSegment:
+        {
+            NSString *uploaderName = 
+            [[KGOSocialMediaController sharedController] currentFacebookUser].name;
+            [_icons removeAllObjects];
+            
+            NSSet *displayedPhotosCopy = [_displayedPhotos copy];
+            [_displayedPhotos removeAllObjects];
+            
+            [displayedPhotosCopy enumerateObjectsUsingBlock:
+             ^(id obj, BOOL *stop) {       
+                 FacebookPhoto *photo = [_photosByID objectForKey:obj];
+                 NSString *photoOwner = [[photo owner] name];
+                 if ([photoOwner isEqualToString:uploaderName]) {
+                     [self displayPhoto:photo];
+                 }
+             }];
+            [displayedPhotosCopy release];
+            
+            break;
+        }
+        case kBookmarksSegment:
+            break;
+        default:
+            break;
+    } 
 }
 
 @end

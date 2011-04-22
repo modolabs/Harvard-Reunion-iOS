@@ -1,6 +1,8 @@
 #import <UIKit/UIKit.h>
 
-@interface FacebookMediaViewController : UIViewController {
+@interface FacebookMediaViewController : UIViewController 
+<UIImagePickerControllerDelegate, UINavigationControllerDelegate,
+UIPopoverControllerDelegate> {
     
     IBOutlet UISegmentedControl *_filterControl;
     IBOutlet UIScrollView *_scrollView;
@@ -17,6 +19,7 @@
 
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender;
 - (IBAction)loginButtonPressed:(UIButton *)sender;
+- (IBAction)uploadButtonPressed:(id)sender;
 
 - (void)showLoginViewAnimated:(BOOL)animated;
 - (void)hideLoginViewAnimated:(BOOL)animated;
@@ -24,6 +27,9 @@
 - (void)facebookDidLogout:(NSNotification *)aNotification;
 - (void)facebookDidLogin:(NSNotification *)aNotification;
 
+- (void)showUploadPhotoController:(id)sender;
+
 @property (nonatomic, retain) UIScrollView *scrollView;
+@property (nonatomic, retain) UIPopoverController *photoPickerPopover;
 
 @end

@@ -30,6 +30,15 @@
 			<key>size</key>
 			<integer>0</integer>
 		</dict>
+		<key>ContentSubtitle</key>
+		<dict>
+			<key>color</key>
+			<string>#1A1611</string>
+			<key>font</key>
+			<string>Helvetica</string>
+			<key>size</key>
+			<integer>0</integer>
+		</dict>
 		<key>ContentTitle</key>
 		<dict>
 			<key>color</key>
@@ -52,10 +61,30 @@
 		<dict>
 			<key>bold</key>
 			<true/>
+			<key>font</key>
+			<string>Georgia</string>
 			<key>color</key>
 			<string>#1A1611</string>
 			<key>size</key>
 			<integer>2</integer>
+		</dict>
+		<key>ScrollTab</key>
+		<dict>
+			<key>bold</key>
+			<true/>
+			<key>color</key>
+			<string>#FFFFFF</string>
+			<key>size</key>
+			<integer>-1</integer>
+		</dict>
+		<key>ScrollTabSelected</key>
+		<dict>
+			<key>bold</key>
+			<true/>
+			<key>color</key>
+			<string>#FFFFFF</string>
+			<key>size</key>
+			<integer>-1</integer>
 		</dict>
 		<key>SectionHeader</key>
 		<dict>
@@ -81,24 +110,6 @@
 			<string>#EBE7E3</string>
 			<key>size</key>
 			<integer>-3</integer>
-		</dict>
-		<key>ScrollTabSelected</key>
-		<dict>
-			<key>color</key>
-			<string>#FFFFFF</string>
-			<key>size</key>
-			<integer>-1</integer>
-			<key>bold</key>
-			<true/>
-		</dict>
-		<key>ScrollTab</key>
-		<dict>
-			<key>color</key>
-			<string>#FFFFFF</string>
-			<key>bold</key>
-			<true/>
-			<key>size</key>
-			<integer>-1</integer>
 		</dict>
 	</dict>
 	<key>HomeScreen</key>
