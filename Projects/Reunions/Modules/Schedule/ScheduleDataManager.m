@@ -1,6 +1,8 @@
 #import "ScheduleDataManager.h"
 #import "ScheduleEventWrapper.h"
 
+#define EVENT_TIMEOUT -3600
+
 @implementation ScheduleDataManager
 
 /*
@@ -82,22 +84,27 @@
 // override superclass b/c we want to initialize ScheduleEventWrapper
 - (BOOL)requestEventsForCalendar:(KGOCalendar *)calendar params:(NSDictionary *)params
 {
+    
     BOOL success = NO;
     NSArray *events = [calendar.events allObjects];
     if (events.count) {
-        NSPredicate *pred = [NSPredicate predicateWithFormat:@"lastUpdate > %@", [NSDate dateWithTimeIntervalSinceNow:-3600]];
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"lastUpdate < %@", [NSDate dateWithTimeIntervalSinceNow:EVENT_TIMEOUT]];
+        NSArray *oldEvents = [events filteredArrayUsingPredicate:pred];
         
-        NSArray *filteredEvents = [events filteredArrayUsingPredicate:pred];
-        
-        NSMutableArray *wrappers = [NSMutableArray arrayWithCapacity:filteredEvents.count];
-        for (KGOEvent *event in filteredEvents) {
-            [wrappers addObject:[[[ScheduleEventWrapper alloc] initWithKGOEvent:event] autorelease]];
-        }
-        
-        [self.delegate eventsDidChange:wrappers calendar:calendar];
-        
-        if (wrappers.count) {
-            return YES;
+        if (oldEvents.count) {
+            [[CoreDataManager sharedManager] deleteObjects:oldEvents];
+            
+        } else {
+            NSMutableArray *wrappers = [NSMutableArray arrayWithCapacity:events.count];
+            for (KGOEvent *event in events) {
+                [wrappers addObject:[[[ScheduleEventWrapper alloc] initWithKGOEvent:event] autorelease]];
+            }
+            
+            [self.delegate eventsDidChange:wrappers calendar:calendar];
+            
+            if (wrappers.count) {
+                return YES;
+            }
         }
     }
     

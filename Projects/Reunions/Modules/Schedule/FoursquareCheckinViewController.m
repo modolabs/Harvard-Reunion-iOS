@@ -16,6 +16,7 @@
     self.checkinData = nil;
     self.eventTitle = nil;
     self.venue = nil;
+    [_button release];
     [_textField release];
     [super dealloc];
 }
@@ -109,13 +110,11 @@
     return _checkinData;
 }
 
-/*
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
 	return YES;
 }
-*/
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -189,17 +188,27 @@
     NSInteger section = indexPath.section;
     if (!self.isCheckedIn) {
         if (section == 0) {
+            CGFloat hPadding = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? 80 : 40;
             if (!_textField) {
-                _textField = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, tableView.frame.size.width - 40, 22)];
+                _textField = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, tableView.frame.size.width - hPadding, 22)];
                 _textField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
                 _textField.borderStyle = UITextBorderStyleLine;
                 _textField.placeholder = @"Add a shout with this checkin";
+            } else {
+                _textField.frame = CGRectMake(10, 10, tableView.frame.size.width - hPadding, 22);
             }
-            UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-            [button setTitle:@"Check in" forState:UIControlStateNormal];
-            [button addTarget:self action:@selector(checkinButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-            button.frame = CGRectMake(tableView.frame.size.width - 115, _textField.frame.size.height + 15, 75, 30);
-            return [NSArray arrayWithObjects:_textField, button, nil];
+            
+            if (!_button) {
+                _button = [[UIButton buttonWithType:UIButtonTypeRoundedRect] retain];
+                [_button setTitle:@"Check in" forState:UIControlStateNormal];
+                [_button addTarget:self action:@selector(checkinButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+                _button.frame = CGRectMake(tableView.frame.size.width - hPadding - 75, _textField.frame.size.height + 15, 75, 30);
+                _button.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
+            } else {
+                _button.frame = CGRectMake(tableView.frame.size.width - hPadding - 75, _textField.frame.size.height + 15, 75, 30);
+            }
+
+            return [NSArray arrayWithObjects:_textField, _button, nil];
         }
         section--;
     }

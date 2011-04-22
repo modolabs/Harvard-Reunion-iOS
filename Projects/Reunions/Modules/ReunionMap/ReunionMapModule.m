@@ -1,6 +1,8 @@
 #import "ReunionMapModule.h"
 #import "KGOPlacemark.h"
 #import "ReunionMapDetailViewController.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
+#import "MapHomeViewController.h"
 
 @implementation ReunionMapModule
 
@@ -8,6 +10,25 @@
     
     if ([pageName isEqualToString:LocalPathPageNameDetail]) {
         ReunionMapDetailViewController *detailVC = [[[ReunionMapDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+        
+        KGOPlacemark *detailItem = [params objectForKey:@"detailItem"];
+        if (detailItem) {
+            NSArray *annotations = [NSArray arrayWithObject:detailItem];
+            NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:annotations, @"annotations", nil];
+            
+            UIViewController *topVC = [KGO_SHARED_APP_DELEGATE() visibleViewController];
+            if (topVC.modalViewController) {
+                [topVC dismissModalViewControllerAnimated:YES];
+            }
+            
+            if ([topVC isKindOfClass:[MapHomeViewController class]]) {
+                [(MapHomeViewController *)topVC setAnnotations:annotations];
+                return nil;
+                
+            } else {
+                return [self modulePage:LocalPathPageNameHome params:params];
+            }
+        }
         
         KGOPlacemark *place = [params objectForKey:@"place"];
         if (place) {

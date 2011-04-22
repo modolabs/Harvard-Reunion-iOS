@@ -11,6 +11,7 @@ extern NSString * const HomeScreenConfigPrefKey;
 
 - (NSString *)fbGroupID;
 - (NSString *)fbGroupName;
+- (BOOL)fbGroupIsOld;
 - (NSString *)twitterHashTag;
 - (NSString *)reunionName;
 - (NSString *)reunionDateString;

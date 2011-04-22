@@ -19,6 +19,8 @@ extern NSString * const TwitterStatusDidUpdateNotification;
     
     UINavigationController *_modalFeedController;
     UIView *_scrim;
+    
+    NSString *_labelText;
 }
 
 - (void)hideChatBubble:(NSNotification *)aNotification;

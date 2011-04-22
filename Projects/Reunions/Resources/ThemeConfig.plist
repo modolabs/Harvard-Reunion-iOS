@@ -71,7 +71,7 @@
 			<key>bold</key>
 			<true/>
 			<key>color</key>
-			<string>#FFFFFF</string>
+			<string>#f2e2e3</string>
 			<key>size</key>
 			<integer>-1</integer>
 		</dict>

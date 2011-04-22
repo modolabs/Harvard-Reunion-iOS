@@ -24,22 +24,37 @@
     return self;
 }
 
-- (void)addBookmark:(id)sender
+- (void)addBookmark:(id)sender;
 {
     ScheduleDetailTableView *detailTV = (ScheduleDetailTableView *)[self.contentView viewWithTag:TABLE_TAG];
-    if (detailTV) {
-        [detailTV.event addBookmark];
-        [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-on"] forState:UIControlStateNormal];
-    }
+    [detailTV.event addBookmark];
+    [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-on"] forState:UIControlStateNormal];
+    [_bookmarkView removeTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
+    [_bookmarkView addTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)attemptToAddBookmark:(id)sender
+{
+    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
+                                                         message:@"Bookmarking this event will only add it to your personal schedule.  You will still need to register for it to attend."
+                                                        delegate:self
+                                               cancelButtonTitle:@"OK"
+                                               otherButtonTitles:nil] autorelease];
+    [alertView show];
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    [self addBookmark:nil];
 }
 
 - (void)removeBookmark:(id)sender
 {
     ScheduleDetailTableView *detailTV = (ScheduleDetailTableView *)[self.contentView viewWithTag:TABLE_TAG];
-    if (detailTV) {
-        [detailTV.event removeBookmark];
-        [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-off"] forState:UIControlStateNormal];
-    }
+    [detailTV.event removeBookmark];
+    [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-off"] forState:UIControlStateNormal];
+    [_bookmarkView removeTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
+    [_bookmarkView addTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)refuseToRemoveBookmark:(id)sender
@@ -69,21 +84,11 @@
             _fakeCardBorder.layer.shadowOffset = CGSizeMake(1.0, 1.0);
             _fakeCardBorder.layer.borderWidth = 1;
             _fakeCardBorder.layer.borderColor = [[UIColor blackColor] CGColor];
+            _fakeCardBorder.autoresizingMask = UIViewAutoresizingFlexibleWidth;
             [self.contentView insertSubview:_fakeCardBorder atIndex:0];
         }
         
         _fakeTopOfNextCell.hidden = YES;
-        
-        ScheduleDetailTableView *detailTV = (ScheduleDetailTableView *)[self.contentView viewWithTag:TABLE_TAG];
-        if (detailTV && [detailTV.event isKindOfClass:[ScheduleEventWrapper class]]) {
-            if ([(ScheduleEventWrapper *)detailTV.event isRegistered]) {
-                [_bookmarkView addTarget:self action:@selector(refuseToRemoveBookmark:) forControlEvents:UIControlEventTouchUpInside];
-            } else if ([detailTV.event isBookmarked]) {
-                [_bookmarkView addTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
-            } else {
-                [_bookmarkView addTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
-            }
-        }
         
     } else {
         self.backgroundColor = [UIColor colorWithHexString:@"DBD9D8"];
@@ -101,6 +106,8 @@
     }
     
     if (self.scheduleCellType == ScheduleCellLastInTable || self.scheduleCellType == ScheduleCellSelected) {
+        
+        // make sure textLabel and detailTextLabel are still positioned at the top
         CGFloat gap = self.detailTextLabel.frame.origin.y - self.textLabel.frame.origin.y;
         
         CGRect frame = self.textLabel.frame;
@@ -110,6 +117,21 @@
         frame = self.detailTextLabel.frame;
         frame.origin.y = self.textLabel.frame.origin.y + gap;
         self.detailTextLabel.frame = frame;
+        
+        // activate bookmark view
+        ScheduleDetailTableView *detailTV = (ScheduleDetailTableView *)[self.contentView viewWithTag:TABLE_TAG];
+        if (detailTV && [detailTV.event isKindOfClass:[ScheduleEventWrapper class]]) {
+            ScheduleEventWrapper *event = (ScheduleEventWrapper *)detailTV.event;
+            if ([event isRegistered]) {
+                [_bookmarkView addTarget:self action:@selector(refuseToRemoveBookmark:) forControlEvents:UIControlEventTouchUpInside];
+            } else if ([event isBookmarked]) {
+                [_bookmarkView addTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
+            } else if ([event registrationURL]) {
+                [_bookmarkView addTarget:self action:@selector(attemptToAddBookmark:) forControlEvents:UIControlEventTouchUpInside];
+            } else {
+                [_bookmarkView addTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
+            }
+        }
     }
     
     UIImage *image = nil;
@@ -126,6 +148,7 @@
     if (image && !_fakeTopOfNextCell) {
         _fakeTopOfNextCell = [[UIImageView alloc] initWithImage:[image stretchableImageWithLeftCapWidth:5 topCapHeight:0]];
         _fakeTopOfNextCell.frame = CGRectMake(0, self.frame.size.height - 5, self.frame.size.width, 10);
+        _fakeTopOfNextCell.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         [self.contentView insertSubview:_fakeTopOfNextCell atIndex:0];
     } else if (image) {
         _fakeTopOfNextCell.image = [image stretchableImageWithLeftCapWidth:5 topCapHeight:0];

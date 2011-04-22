@@ -9,6 +9,7 @@
 #import "Foundation+KGOAdditions.h"
 #import <QuartzCore/QuartzCore.h>
 
+// dimensions
 #define BUTTON_WIDTH_IPHONE 120
 #define BUTTON_HEIGHT_IPHONE 46
 
@@ -20,18 +21,21 @@
 
 #define BUBBLE_HEIGHT_SIDEBAR 160
 
+// tags
+#define BUTTON_WIDGET_LABEL_TAG 324
+
 NSString * const FacebookStatusDidUpdateNotification = @"FacebookUpdate";
 NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 
 @implementation MicroblogModule
 
-@synthesize buttonImage, labelText, chatBubbleCaratOffset;
+@synthesize buttonImage, chatBubbleCaratOffset;
 
 - (void)didLogin:(NSNotification *)aNotification
 {
 }
 
-#pragma mark View on home screen
+#pragma mark chat bubble widget
 
 - (void)hideChatBubble:(NSNotification *)aNotification {
     self.chatBubble.hidden = YES;
@@ -159,6 +163,23 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
     return _chatBubble;
 }
 
+#pragma mark button widget
+
+- (NSString *)labelText
+{
+    return _labelText;
+}
+
+- (void)setLabelText:(NSString *)labelText
+{
+    [_labelText release];
+    _labelText = [labelText retain];
+    if (_labelText) {
+        UILabel *label = (UILabel *)[self.buttonWidget viewWithTag:BUTTON_WIDGET_LABEL_TAG];
+        label.text = _labelText;
+    }
+}
+
 - (KGOHomeScreenWidget *)buttonWidget {
     if (!self.labelText) {
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -184,6 +205,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         label.numberOfLines = 2;
         label.backgroundColor = [UIColor clearColor];
         label.textColor = [UIColor whiteColor];
+        label.tag = BUTTON_WIDGET_LABEL_TAG;
         [_buttonWidget addSubview:label];
         
         KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
