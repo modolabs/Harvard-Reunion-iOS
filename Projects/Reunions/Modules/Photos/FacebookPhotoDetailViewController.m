@@ -5,6 +5,7 @@
 #import "KGOAppDelegate.h"
 #import "CoreDataManager.h"
 #import "FacebookModel.h"
+#import "FacebookModule.h"
 
 @interface FacebookPhotoDetailViewController (Private)
 
@@ -133,5 +134,11 @@
     [KGO_SHARED_APP_DELEGATE() hideNetworkActivityIndicator];
 }
 
+#pragma mark FacebookMediaDetailViewController
+- (IBAction)bookmarkButtonPressed:(UIBarButtonItem *)sender {
+    [FacebookModule bookmarkMediaObjectWithID:self.photo.identifier 
+                                    mediaType:@"photo"];     
+}
+     
 
 @end

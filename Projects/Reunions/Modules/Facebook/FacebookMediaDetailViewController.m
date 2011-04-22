@@ -78,7 +78,6 @@
 }
 
 - (IBAction)bookmarkButtonPressed:(UIBarButtonItem *)sender {
-
 }
 
 - (IBAction)closeButtonPressed:(id)sender {

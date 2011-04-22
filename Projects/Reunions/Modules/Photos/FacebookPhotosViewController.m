@@ -334,7 +334,7 @@ FacebookPhotosSegmentIndexes;
 - (IBAction)uploadButtonPressed:(id)sender {
     [self showUploadPhotoController:sender];
 }
-
+     
 - (void)imagePickerController:(UIImagePickerController *)picker 
 didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [super imagePickerController:picker didFinishPickingMediaWithInfo:info];
@@ -367,8 +367,14 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender {
     switch (sender.selectedSegmentIndex) {
         case kAllPhotosSegment:
+        {
+            // Reload photos.
+            [_icons removeAllObjects];
+            [_photosByID removeAllObjects];
+            [_displayedPhotos removeAllObjects];            
             [self getGroupPhotos];
             break;
+        }
         case kMyUploadsSegment:
         {
             NSString *uploaderName = 
@@ -391,7 +397,28 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
             break;
         }
         case kBookmarksSegment:
+        {
+            // TODO: Refetch photos from Facebook first.
+            NSDictionary *bookmarks = 
+            [FacebookModule bookmarksForMediaObjectsOfType:@"photo"];
+            
+            [_icons removeAllObjects];
+            
+            NSSet *displayedPhotosCopy = [_displayedPhotos copy];
+            [_displayedPhotos removeAllObjects];
+            
+            [displayedPhotosCopy enumerateObjectsUsingBlock:
+             ^(id obj, BOOL *stop) {       
+                 // obj is the photo ID.
+                 if ([bookmarks objectForKey:obj]) {                     
+                     FacebookPhoto *photo = [_photosByID objectForKey:obj];
+                     [self displayPhoto:photo];
+                 }
+             }];
+            [displayedPhotosCopy release];
+            
             break;
+        }
         default:
             break;
     } 
