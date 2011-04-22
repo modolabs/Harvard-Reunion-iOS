@@ -103,6 +103,15 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
     return [_homeScreenConfig objectForKey:@"title"];
 }
 
+- (BOOL)fbGroupIsOld
+{
+    id isOld = [_homeScreenConfig objectForKey:@"facebookGroupIsOld"];
+    if ([isOld isKindOfClass:[NSString class]] || [isOld isKindOfClass:[NSNumber class]]) {
+        return [isOld boolValue];
+    }
+    return NO;
+}
+
 - (NSString *)reunionDateString
 {
     NSString *dateString = nil;

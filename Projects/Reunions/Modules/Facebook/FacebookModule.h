@@ -11,6 +11,7 @@ extern NSString * const FacebookFeedDidUpdateNotification;
     
     NSDate *_lastMessageDate;
     
+    BOOL _requestingGroups;
 }
 
 // code from http://developer.apple.com/library/ios/#qa/qa2010/qa1480.html
