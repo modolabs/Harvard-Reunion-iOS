@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "Note.h"
+#import <MessageUI/MFMailComposeViewController.h>
 
 
 @class NotesTextView;
@@ -21,17 +22,18 @@
 
 @end
 
-@interface NotesTextView : UIView <UIActionSheetDelegate, UITextViewDelegate>{
+@interface NotesTextView : UIView <UIActionSheetDelegate, UITextViewDelegate, MFMailComposeViewControllerDelegate>{
     
     UIView * titleView;
     UITextView * detailsView;
     Note * note;
+    BOOL becomeFirstResponder;
     
-    id<NotesTextViewDelegate> delegate;
+    UIViewController <NotesTextViewDelegate> *delegate;
 }
 
-@property(nonatomic, assign) id<NotesTextViewDelegate> delegate;
+@property(nonatomic, assign) UIViewController <NotesTextViewDelegate> *delegate;
 
-- (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) dateText noteText: (NSString *) noteText note:(Note *) savedNote;
+- (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) dateText noteText: (NSString *) noteText note:(Note *) savedNote firstResponder:(BOOL) firstResponder;
 
 @end

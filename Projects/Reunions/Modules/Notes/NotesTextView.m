@@ -10,6 +10,8 @@
 #import "UIKit+KGOAdditions.h"
 #import "KGOTheme.h"
 #import "CoreDataManager.h"
+#import "MITMailComposeController.h"
+
 
 #define MIN_HEIGHT = 250
 #define MAX_HEIGHT = 350;
@@ -18,7 +20,7 @@
 @implementation NotesTextView
 @synthesize delegate;
 
-- (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) dateText noteText: (NSString *) noteText note:(Note *) savedNote
+- (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) dateText noteText: (NSString *) noteText note:(Note *) savedNote firstResponder:(BOOL) firstResponder
 {
     if (frame.size.height < 500)
         frame.size.height = 500;
@@ -58,8 +60,6 @@
         [shareButton setImage:[UIImage imageWithPathName:@"common/share_pressed.png"] forState:UIControlStateHighlighted];
 
         [shareButton addTarget:self action:@selector(shareButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        
-        
         
         UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/subheadbar_button.png"];
         buttonX += shareButtonImage.size.width + 5;
@@ -104,7 +104,11 @@
             
             detailsView.font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyByline];
             detailsView.text = noteText;
-            [detailsView becomeFirstResponder];
+            
+            if (firstResponder == YES) {
+                [detailsView becomeFirstResponder];
+            }
+
         }
         
         self.backgroundColor = [UIColor clearColor];
@@ -118,6 +122,28 @@
 }
 
 -(void) shareButtonPressed: (id) sender {
+    
+    NSString * noteString = detailsView.text;
+    NSArray * splitArrayPeriod = [noteString componentsSeparatedByString:@"."];
+    NSArray * splitArrayNewLine = [noteString componentsSeparatedByString:@"\n"];
+    
+    NSArray * splitArray;
+    
+    if ([[splitArrayPeriod objectAtIndex:0] length] < [[splitArrayNewLine objectAtIndex:0] length])
+        splitArray = splitArrayPeriod;
+    
+    else
+        splitArray = splitArrayNewLine;
+    
+    NSString * emailSubject = note.title;
+    
+    if (nil == note.eventIdentifier)
+        emailSubject = [NSString stringWithFormat:@"Note: %@",[splitArray objectAtIndex:0]];
+    
+    [self.delegate presentMailControllerWithEmail: nil
+                                          subject: emailSubject
+                                             body: noteString                                        
+                                         delegate:self];
     
 }
 
@@ -169,6 +195,13 @@
     
 }
 
+#pragma mark
+#pragma mark MFMailComposeViewControllerDelegate
+
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+    
+    [self.delegate dismissModalViewControllerAnimated:YES];
+}
 
 #pragma mark
 #pragma mark UIActionSheetDelegate

@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MessageUI/MFMailComposeViewController.h>
 
 #define NEWNOTE_XOFFSET 140
 #define NEWNOTE_YOFFSET 75
@@ -26,7 +27,7 @@
 #endif
 
 
-@interface NewNoteViewController : UIViewController <UIActionSheetDelegate>{
+@interface NewNoteViewController : UIViewController <UIActionSheetDelegate, MFMailComposeViewControllerDelegate>{
     
     UIView * titleView;
     UITextView * textView;

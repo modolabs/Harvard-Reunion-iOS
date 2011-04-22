@@ -15,6 +15,8 @@
 #import "NewNoteViewController.h"
 #import "Note.h"
 #import "CoreDataManager.h"
+#import "MITMailComposeController.h"
+
 
 @implementation NotesTableViewController
 
@@ -39,7 +41,7 @@
         UIButton * emailAllButton = [self customButtonWithText:emailAllText xOffset:newNoteButton.frame.size.width + 15 yOffset: 5];
         
         [newNoteButton addTarget:self action:@selector(newNoteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        //[aButton addTarget:self action:@selector(emailAllButtonPressed:) forControlEvents]:
+        [emailAllButton addTarget:self action:@selector(emailAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         
         [self.view addSubview:newNoteButton];
         [self.view addSubview:emailAllButton];
@@ -83,14 +85,37 @@
     return aButton;
 }
 
+- (void) emailAllButtonPressed: (id) sender {
+    
+    [self saveNotesState];
+    [self reloadNotes];
+    
+    NSString * emailSubject = @"Harvard Reunion Notes";
+    NSString * emailBody = @"";
+    
+    for(Note * noteItem in notesArray) {
+        
+        NSString * noteText = [NSString stringWithFormat:@"<b>%@</b><i>(%@)</i><b>:</b> <br> %@<br><br>", noteItem.title, [NSString stringWithFormat:@"created on: %@", [noteItem.date description]], noteItem.details];
+        emailBody = [emailBody stringByAppendingString:noteText];
+    }
+    
+    [self presentMailControllerWithEmail:nil
+                                 HTMLsubject:emailSubject
+                                    body:emailBody 
+                                delegate:self];
+    
+    
+}
+
 - (void)newNoteButtonPressed:(id)sender {
     
     if (nil != tempVC)
         [tempVC release];
     
+    NSDate * noteDate = [NSDate date];
     tempVC = [[[NewNoteViewController alloc] initWithTitleText:@"<Empty Note>" 
-                                                          date:[NSDate date]                 
-                                                   andDateText:@"Created Thursday, Apr 2, 2011"
+                                                          date: noteDate               
+                                                   andDateText:[NSString stringWithFormat:@"Created on: %@", [noteDate description]]
                                                     eventId:nil
                                                     viewWidth:NEWNOTE_WIDTH 
                                                     viewHeight:NEWNOTE_HEIGHT] retain];
@@ -115,7 +140,7 @@
 
 }
 
-- (void) dismissModalViewControllerAnimated:(BOOL)animated {
+-(void) saveNotesState {
     
     if (nil != tempVC) {
         NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", tempVC.titleText];
@@ -136,8 +161,7 @@
         
         else
             splitArray = splitArrayNewLine;
-            
-  
+        
         
         note.title = [splitArray objectAtIndex:0];
         note.date = tempVC.date;
@@ -148,6 +172,12 @@
         
         [[CoreDataManager sharedManager] saveData];
     }
+}
+
+- (void) dismissModalViewControllerAnimated:(BOOL)animated {
+    
+    [self saveNotesState];
+
     [self reloadNotes];
     
     if (nil != selectedRowIndexPath)
@@ -161,6 +191,43 @@
     
     [self.tableView reloadData];
     [super dismissModalViewControllerAnimated:YES];
+}
+
+#pragma mark
+#pragma mark MFMailComposeViewControllerDelegate
+
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+    
+    [super dismissModalViewControllerAnimated:YES];
+}
+
+- (void) printContent {
+    UIPrintInteractionController *pic = [UIPrintInteractionController sharedPrintController];
+    pic.delegate = self;
+    
+    UIPrintInfo *printInfo = [UIPrintInfo printInfo];
+    printInfo.outputType = UIPrintInfoOutputGeneral;
+    printInfo.jobName = @"SampleTitle";
+    pic.printInfo = printInfo;
+    
+    UISimpleTextPrintFormatter *textFormatter = [[UISimpleTextPrintFormatter alloc]
+                                                 initWithText:@"SampleText"];
+    textFormatter.startPage = 0;
+    textFormatter.contentInsets = UIEdgeInsetsMake(72.0, 72.0, 72.0, 72.0); // 1 inch margins
+    textFormatter.maximumContentWidth = 6 * 72.0;
+    pic.printFormatter = textFormatter;
+    [textFormatter release];
+    pic.showsPageRange = YES;
+    
+    void (^completionHandler)(UIPrintInteractionController *, BOOL, NSError *) =
+    ^(UIPrintInteractionController *printController, BOOL completed, NSError *error) {
+        if (!completed && error) {
+            NSLog(@"Printing could not complete because of error: %@", error);
+        }
+    };
+
+    
+    [pic presentFromRect:self.view.frame inView:self.view animated:YES completionHandler:completionHandler];
 }
 
 
@@ -209,7 +276,9 @@
     selectedRowIndexPath = [[NSIndexPath indexPathForRow:notesArray.count -1 inSection:0] retain];
     selectedNote = [[notesArray objectAtIndex:notesArray.count -1] retain];
     
+    firstView = YES;
     [self.tableView reloadData];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -236,7 +305,9 @@
     
     [self reloadNotes];
     [self.tableView reloadData];
+    
 }
+
 
 #pragma mark Table view methods
 
@@ -284,12 +355,15 @@
         cell.tableView = self.tableView;
         cell.notesCellType = NotesCellSelected;
 
-        NotesTextView * notesTextView = [[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 500) 
+        NotesTextView * notesTextView = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 500) 
                                                           titleText:noteTitle
-                                                         detailText:[noteDate description]
+                                                         detailText:[NSString stringWithFormat:@"Created on: %@", [noteDate description]]
                                                                     noteText:noteText
-                                                                   note: note];
+                                                                   note: note
+                                                               firstResponder: !firstView] autorelease];
         notesTextView.delegate = self;
+
+        
         cell.detailsView = notesTextView;
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         
@@ -308,7 +382,7 @@
         cell.tableView = self.tableView;
         cell.notesCellType = NotesCellTypeOther;
         cell.textLabel.text = noteTitle;
-        cell.detailTextLabel.text = [noteDate description];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"Created on: %@", [noteDate description]];
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         
         
@@ -328,11 +402,12 @@
     
     if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)) {
         
-        NotesTextView * temp = [[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 500) 
-                                                          titleText:noteTitle
-                                                         detailText:[noteDate description]
-                                                           noteText:noteText
-                                                          note: note];
+        NotesTextView * temp = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 500) 
+                                                                    titleText:noteTitle
+                                                                   detailText:[noteDate description]
+                                                                     noteText:noteText
+                                                                         note: note
+                                                               firstResponder: !firstView] autorelease];
         
         return temp.frame.size.height;
     }
@@ -346,6 +421,8 @@
     if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)){
         return;
     }
+    
+    firstView = NO;
     
     if (nil != notesArray) {
         selectedNote = [[notesArray objectAtIndex:indexPath.row] retain];

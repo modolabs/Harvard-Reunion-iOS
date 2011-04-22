@@ -11,6 +11,7 @@
 #import "KGOTheme.h"
 #import "Note.h"
 #import "CoreDataManager.h"
+#import "MITMailComposeController.h"
 
 
 @implementation NewNoteViewController
@@ -148,6 +149,28 @@
 
 -(void) shareButtonPressed: (id) sender {
     
+    NSString * noteString = self.textViewString;
+    NSArray * splitArrayPeriod = [noteString componentsSeparatedByString:@"."];
+    NSArray * splitArrayNewLine = [noteString componentsSeparatedByString:@"\n"];
+    
+    NSArray * splitArray;
+    
+    if ([[splitArrayPeriod objectAtIndex:0] length] < [[splitArrayNewLine objectAtIndex:0] length])
+        splitArray = splitArrayPeriod;
+    
+    else
+        splitArray = splitArrayNewLine;
+    
+    NSString * emailSubject = self.titleText;
+    
+    if (nil == self.eventIdentifier)
+        emailSubject = [NSString stringWithFormat:@"Note: %@", [splitArray objectAtIndex:0]];
+    
+    [self presentMailControllerWithEmail: nil
+                                          subject: emailSubject
+                                             body: noteString                                        
+                                         delegate:self];
+    
 }
 
 - (void) deleteButtonPressed: (id) sender {
@@ -186,6 +209,14 @@
 }
 
 #pragma mark
+#pragma mark MFMailComposeViewControllerDelegate
+
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+    
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+#pragma mark
 #pragma mark UIActionSheetDelegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -193,8 +224,8 @@
     if (buttonIndex == 0) {// destructive button pressed
         NSLog(@"note delete button pressed");
         
-        if (nil != viewControllerBackground)
-            [viewControllerBackground deleteNoteWithoutSaving];
+        if (nil != self.viewControllerBackground)
+            [self.viewControllerBackground deleteNoteWithoutSaving];
     }
 }
 

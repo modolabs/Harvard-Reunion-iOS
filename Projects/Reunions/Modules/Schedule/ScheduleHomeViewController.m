@@ -109,7 +109,7 @@
     
     tempVC = [[[NewNoteViewController alloc] initWithTitleText:noteTitle
                                                           date:dateForNote              
-                                                   andDateText:@"Created Thursday, Apr 2, 2011"
+                                                   andDateText:[NSString stringWithFormat:@"Created on %@", [dateForNote description]]
                                                        eventId:event.identifier
                                                      viewWidth:NEWNOTE_WIDTH 
                                                     viewHeight:NEWNOTE_HEIGHT] retain];
@@ -145,25 +145,28 @@
     [self newNoteForSection:_currentSections.count - 1 andRow:eventsForSection.count - 1];
 }
 
+-(void) saveNotesState {
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", tempVC.titleText];
+    Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
+    
+    if (nil == note) {
+        note = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:NotesEntityName];
+    }
+    
+    note.title = tempVC.titleText;
+    note.date = tempVC.date;
+    note.details = tempVC.textViewString;
+    
+    if (nil != tempVC.eventIdentifier)
+        note.eventIdentifier = tempVC.eventIdentifier;
+    
+    [[CoreDataManager sharedManager] saveData];
+}
 
 - (void) dismissModalViewControllerAnimated:(BOOL)animated {
     
     if (nil != tempVC) {
-        NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", tempVC.titleText];
-        Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
-        
-        if (nil == note) {
-            note = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:NotesEntityName];
-        }
-        
-        note.title = tempVC.titleText;
-        note.date = tempVC.date;
-        note.details = tempVC.textViewString;
-        
-        if (nil != tempVC.eventIdentifier)
-            note.eventIdentifier = tempVC.eventIdentifier;
-        
-        [[CoreDataManager sharedManager] saveData];
+        [self saveNotesState];
     }
     
     [super dismissModalViewControllerAnimated:YES];
