@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MFMailComposeViewController.h>
+#import <UIKit/UIPrintInteractionController.h>
 
 #define NEWNOTE_XOFFSET 140
 #define NEWNOTE_YOFFSET 75
@@ -27,10 +28,12 @@
 #endif
 
 
-@interface NewNoteViewController : UIViewController <UIActionSheetDelegate, MFMailComposeViewControllerDelegate>{
+@interface NewNoteViewController : UIViewController <UIActionSheetDelegate, MFMailComposeViewControllerDelegate, UIPrintInteractionControllerDelegate>{
     
     UIView * titleView;
     UITextView * textView;
+    
+    UIButton * printButton;
     
 }
 

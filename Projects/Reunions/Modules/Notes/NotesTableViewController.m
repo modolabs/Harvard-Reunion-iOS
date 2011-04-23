@@ -103,7 +103,7 @@
         notesBody = [notesBody stringByAppendingString:noteText];
     }
     
-    [self printContent:notesBody jobTitle:@"Harvard Reunion: All Notes"];  // send for print
+    [Note printContent:notesBody jobTitle:@"Harvard Reunion: All notes" fromButton:printAllButton parentView:self.view delegate:self];
 }
 
 - (void) emailAllButtonPressed: (id) sender {
@@ -171,20 +171,7 @@
             note = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:NotesEntityName];
         }
         
-        NSString * noteString = tempVC.textViewString;
-        NSArray * splitArrayPeriod = [noteString componentsSeparatedByString:@"."];
-        NSArray * splitArrayNewLine = [noteString componentsSeparatedByString:@"\n"];
-        
-        NSArray * splitArray;
-        
-        if ([[splitArrayPeriod objectAtIndex:0] length] < [[splitArrayNewLine objectAtIndex:0] length])
-            splitArray = splitArrayPeriod;
-        
-        else
-            splitArray = splitArrayNewLine;
-        
-        
-        note.title = [splitArray objectAtIndex:0];
+        note.title = [Note noteTitleFromDetails:tempVC.textViewString];
         note.date = tempVC.date;
         note.details = tempVC.textViewString;
         
@@ -197,20 +184,28 @@
 
 - (void) dismissModalViewControllerAnimated:(BOOL)animated {
     
-    [self saveNotesState];
+    [self dismissModalViewControllerAnimated:animated andReload:YES];
+    
+}
 
+- (void) dismissModalViewControllerAnimated:(BOOL)animated andReload:(BOOL) reload {
+    
+    [self saveNotesState];
     [self reloadNotes];
     
-    if (nil != selectedRowIndexPath)
-        [selectedRowIndexPath release];
+    if (reload == YES) {
+        if (nil != selectedRowIndexPath)
+            [selectedRowIndexPath release];
     
-    if (nil != selectedNote)
-        [selectedNote release];
+        if (nil != selectedNote)
+            [selectedNote release];
     
-    selectedRowIndexPath = [[NSIndexPath indexPathForRow:notesArray.count -1 inSection:0] retain];
-    selectedNote = [[notesArray objectAtIndex:notesArray.count -1] retain];
+        selectedRowIndexPath = [[NSIndexPath indexPathForRow:notesArray.count -1 inSection:0] retain];
+        selectedNote = [[notesArray objectAtIndex:notesArray.count -1] retain];
+        [self.tableView reloadData];
+    }
     
-    [self.tableView reloadData];
+    
     [super dismissModalViewControllerAnimated:YES];
 }
 
@@ -220,39 +215,6 @@
 - (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     
     [super dismissModalViewControllerAnimated:YES];
-}
-
-- (void) printContent: (NSString *) textToPrint jobTitle:(NSString *) jobTitle {
-    
-    UIPrintInteractionController *pic = [UIPrintInteractionController sharedPrintController];
-    pic.delegate = self;
-    
-    UIPrintInfo *printInfo = [UIPrintInfo printInfo];
-    printInfo.outputType = UIPrintInfoOutputGeneral;
-    printInfo.jobName = jobTitle;
-    pic.printInfo = printInfo;
-    
-    UISimpleTextPrintFormatter *textFormatter = [[UISimpleTextPrintFormatter alloc]
-                                                 initWithText:textToPrint];
-    textFormatter.startPage = 0;
-    textFormatter.contentInsets = UIEdgeInsetsMake(72.0, 72.0, 72.0, 72.0); // 1 inch margins
-    textFormatter.maximumContentWidth = 6 * 72.0;
-    pic.printFormatter = textFormatter;
-    [textFormatter release];
-    pic.showsPageRange = YES;
-    
-    void (^completionHandler)(UIPrintInteractionController *, BOOL, NSError *) =
-    ^(UIPrintInteractionController *printController, BOOL completed, NSError *error) {
-        if (!completed && error) {
-            NSLog(@"Printing could not complete because of error: %@", error);
-        }
-    };
-
-    if (nil != printAllButton)
-        [pic presentFromRect:printAllButton.frame inView:self.tableView animated:YES completionHandler:completionHandler];
-    
-    else
-        [pic presentFromRect:self.view.frame inView:self.view animated:YES completionHandler:completionHandler];
 }
 
 
@@ -282,6 +244,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self reloadNotes];
+    selectedNote = nil;
+    selectedRowIndexPath = nil;
+    
+    selectedRowIndexPath = [[NSIndexPath indexPathForRow:notesArray.count -1 inSection:0] retain];
+    selectedNote = [[notesArray objectAtIndex:notesArray.count -1] retain];
+    
+    firstView = YES;
+    [self.tableView reloadData];
 }
 
 - (void)viewDidUnload
@@ -294,15 +265,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self reloadNotes];
-    selectedNote = nil;
-    selectedRowIndexPath = nil;
-                    
-    selectedRowIndexPath = [[NSIndexPath indexPathForRow:notesArray.count -1 inSection:0] retain];
-    selectedNote = [[notesArray objectAtIndex:notesArray.count -1] retain];
-    
-    firstView = YES;
-    [self.tableView reloadData];
     
 }
 

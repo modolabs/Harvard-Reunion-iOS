@@ -9,4 +9,9 @@
 @property (nonatomic, retain) NSString * details;
 @property (nonatomic, retain) NSString * eventIdentifier;
 
++ (NSString *) noteTitleFromDetails: (NSString *) noteDetails;
+
++ (void) printContent: (NSString *) textToPrint jobTitle:(NSString *) jobTitle 
+           fromButton:(UIButton *) button parentView: (UIView *) parentView delegate:(id <UIPrintInteractionControllerDelegate>) delegate;
+
 @end

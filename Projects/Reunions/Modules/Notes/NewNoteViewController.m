@@ -77,9 +77,21 @@
     detailTextLabel.textColor = [UIColor blackColor];
     detailTextLabel.backgroundColor = [UIColor clearColor];
     
+    UIImage *printButtonImage = [UIImage imageWithPathName:@"common/unread-message.png"];
     UIImage *shareButtonImage = [UIImage imageWithPathName:@"common/share.png"];
-    CGFloat buttonX = self.width - 120;
+    UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/subheadbar_button.png"];
+    
+    CGFloat buttonX = self.width - deleteButtonImage.size.width - shareButtonImage.size.width - printButtonImage.size.width - 20;
     CGFloat buttonY = 5;
+    
+    printButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+    printButton.frame = CGRectMake(buttonX, buttonY, printButtonImage.size.width, printButtonImage.size.height);
+    [printButton setImage:printButtonImage forState:UIControlStateNormal];
+    [printButton setImage:[UIImage imageWithPathName:@"common/unread-message.png"] forState:UIControlStateHighlighted];
+    
+    [printButton addTarget:self action:@selector(printButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
+    buttonX += printButtonImage.size.width + 5;
     
     UIButton * shareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
     shareButton.frame = CGRectMake(buttonX, buttonY, shareButtonImage.size.width, shareButtonImage.size.height);
@@ -88,18 +100,20 @@
     
     [shareButton addTarget:self action:@selector(shareButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
-    UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/subheadbar_button.png"];
+    
     buttonX += shareButtonImage.size.width + 5;
     
     UIButton * deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
     deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
     [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
     [deleteButton setImage:[UIImage imageWithPathName:@"common/subheadbar_button.png"] forState:UIControlStateHighlighted];
+    
     [deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
     
     [self.view addSubview:titleTextLabel];
     [self.view addSubview:detailTextLabel];
+    [self.view addSubview:printButton];
     [self.view addSubview:shareButton];
     [self.view addSubview:deleteButton];
     
@@ -146,29 +160,29 @@
     return textView.text;
 }
 
+-(void) printButtonPressed: (id) sender {
+    
+    NSString * noteTitle = self.titleText;
+    
+    if (nil == self.eventIdentifier)
+        noteTitle = [NSString stringWithFormat:@"Note: %@", [Note noteTitleFromDetails:self.textViewString]];
+    
+    NSString * textToPrint = [NSString stringWithFormat:@"%@:\n\n%@", titleText, self.textViewString];
+    
+    [Note printContent:textToPrint jobTitle:noteTitle fromButton:printButton parentView:self.view delegate:self];
+}
+
 
 -(void) shareButtonPressed: (id) sender {
-    
-    NSString * noteString = self.textViewString;
-    NSArray * splitArrayPeriod = [noteString componentsSeparatedByString:@"."];
-    NSArray * splitArrayNewLine = [noteString componentsSeparatedByString:@"\n"];
-    
-    NSArray * splitArray;
-    
-    if ([[splitArrayPeriod objectAtIndex:0] length] < [[splitArrayNewLine objectAtIndex:0] length])
-        splitArray = splitArrayPeriod;
-    
-    else
-        splitArray = splitArrayNewLine;
     
     NSString * emailSubject = self.titleText;
     
     if (nil == self.eventIdentifier)
-        emailSubject = [NSString stringWithFormat:@"Note: %@", [splitArray objectAtIndex:0]];
+        emailSubject = [NSString stringWithFormat:@"Note: %@", [Note noteTitleFromDetails:self.textViewString]];
     
     [self presentMailControllerWithEmail: nil
                                           subject: emailSubject
-                                             body: noteString                                        
+                                             body: self.textViewString                                        
                                          delegate:self];
     
 }

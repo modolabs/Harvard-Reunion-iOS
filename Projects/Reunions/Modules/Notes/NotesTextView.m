@@ -136,45 +136,26 @@
 
 -(void) printButtonPressed: (id) sender {
     
-    NSString * noteString = detailsView.text;
-    NSArray * splitArrayPeriod = [noteString componentsSeparatedByString:@"."];
-    NSArray * splitArrayNewLine = [noteString componentsSeparatedByString:@"\n"];
+    NSString * titleText = [Note noteTitleFromDetails:detailsView.text];
     
-    NSArray * splitArray;
+    if (nil != note.eventIdentifier)
+        titleText = note.title;
     
-    if ([[splitArrayPeriod objectAtIndex:0] length] < [[splitArrayNewLine objectAtIndex:0] length])
-        splitArray = splitArrayPeriod;
+    NSString * textToPrint = [NSString stringWithFormat:@"%@:\n\n%@", titleText, detailsView.text];
     
-    else
-        splitArray = splitArrayNewLine;
-    
-    NSString * textToPrint = [NSString stringWithFormat:@"%@:\n\n%@", [splitArray objectAtIndex:0], detailsView.text];
-    
-    [self printContent:textToPrint jobTitle:[splitArray objectAtIndex:0] fromButton:printButton];
+    [Note printContent:textToPrint jobTitle:titleText fromButton:printButton parentView:self delegate:self];
 }
 
 -(void) shareButtonPressed: (id) sender {
     
-    NSString * noteString = detailsView.text;
-    NSArray * splitArrayPeriod = [noteString componentsSeparatedByString:@"."];
-    NSArray * splitArrayNewLine = [noteString componentsSeparatedByString:@"\n"];
-    
-    NSArray * splitArray;
-    
-    if ([[splitArrayPeriod objectAtIndex:0] length] < [[splitArrayNewLine objectAtIndex:0] length])
-        splitArray = splitArrayPeriod;
-    
-    else
-        splitArray = splitArrayNewLine;
-    
     NSString * emailSubject = note.title;
     
     if (nil == note.eventIdentifier)
-        emailSubject = [NSString stringWithFormat:@"Note: %@",[splitArray objectAtIndex:0]];
+        emailSubject = [NSString stringWithFormat:@"Note: %@",[Note noteTitleFromDetails:detailsView.text]];
     
     [self.delegate presentMailControllerWithEmail: nil
                                           subject: emailSubject
-                                             body: noteString                                        
+                                             body: detailsView.text
                                          delegate:self];
     
 }
@@ -197,38 +178,7 @@
     [super dealloc];
 }
 
-- (void) printContent: (NSString *) textToPrint jobTitle:(NSString *) jobTitle fromButton:(UIButton *) button{
-    
-    UIPrintInteractionController *pic = [UIPrintInteractionController sharedPrintController];
-    pic.delegate = self;
-    
-    UIPrintInfo *printInfo = [UIPrintInfo printInfo];
-    printInfo.outputType = UIPrintInfoOutputGeneral;
-    printInfo.jobName = jobTitle;
-    pic.printInfo = printInfo;
-    
-    UISimpleTextPrintFormatter *textFormatter = [[UISimpleTextPrintFormatter alloc]
-                                                 initWithText:textToPrint];
-    textFormatter.startPage = 0;
-    textFormatter.contentInsets = UIEdgeInsetsMake(72.0, 72.0, 72.0, 72.0); // 1 inch margins
-    textFormatter.maximumContentWidth = 6 * 72.0;
-    pic.printFormatter = textFormatter;
-    [textFormatter release];
-    pic.showsPageRange = YES;
-    
-    void (^completionHandler)(UIPrintInteractionController *, BOOL, NSError *) =
-    ^(UIPrintInteractionController *printController, BOOL completed, NSError *error) {
-        if (!completed && error) {
-            NSLog(@"Printing could not complete because of error: %@", error);
-        }
-    };
-    
-    if (nil != button)
-        [pic presentFromRect:button.frame inView:button animated:YES completionHandler:completionHandler];
-    
-    else
-        [pic presentFromRect:self.frame inView:self animated:YES completionHandler:completionHandler];
-}
+
         
 
 #pragma mark
@@ -236,28 +186,15 @@
 
 - (void)textViewDidEndEditing:(UITextView *)textView {
     
-    if (nil == note) {
+    if (nil != note) {
         
+        if (nil == note.eventIdentifier)
+            note.title = [Note noteTitleFromDetails:detailsView.text];
+        
+        note.details = detailsView.text;
+        
+        [[CoreDataManager sharedManager] saveData];
     }
-    
-    NSString * noteString = detailsView.text;
-    NSArray * splitArrayPeriod = [noteString componentsSeparatedByString:@"."];
-    NSArray * splitArrayNewLine = [noteString componentsSeparatedByString:@"\n"];
-    
-    NSArray * splitArray;
-    
-    if ([[splitArrayPeriod objectAtIndex:0] length] < [[splitArrayNewLine objectAtIndex:0] length])
-        splitArray = splitArrayPeriod;
-    
-    else
-        splitArray = splitArrayNewLine;
-    
-    if (nil == note.eventIdentifier)
-        note.title = [splitArray objectAtIndex:0];
-    
-    note.details = noteString;
-    
-    [[CoreDataManager sharedManager] saveData];
     
 }
 
@@ -266,7 +203,11 @@
 
 - (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     
-    [self.delegate dismissModalViewControllerAnimated:YES];
+    if ([self.delegate respondsToSelector:@selector(dismissModalViewControllerAnimated:andReload:)])
+        [self.delegate dismissModalViewControllerAnimated:YES andReload:NO];
+    
+    else
+        [self.delegate dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark

@@ -39,6 +39,4 @@
 
 - (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) dateText noteText: (NSString *) noteText note:(Note *) savedNote firstResponder:(BOOL) firstResponder;
 
-- (void) printContent: (NSString *) textToPrint jobTitle:(NSString *) jobTitle fromButton:(UIButton *) button;
-
 @end

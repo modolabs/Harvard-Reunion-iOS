@@ -28,7 +28,8 @@
 
 - (void) reloadNotes;
 - (void) saveNotesState;
-- (void) printContent: (NSString *) textToPrint jobTitle:(NSString *) jobTitle;
+
+- (void) dismissModalViewControllerAnimated:(BOOL)animated andReload:(BOOL) reload;
 
 // called from the modal view (new note), upon delete
 -(void) deleteNoteWithoutSaving;
