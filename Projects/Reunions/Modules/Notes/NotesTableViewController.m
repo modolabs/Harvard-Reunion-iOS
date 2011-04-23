@@ -36,15 +36,21 @@
         
         NSString * newNoteText = NSLocalizedString(@"New Note", nil);
         NSString * emailAllText = NSLocalizedString(@"Email All Notes", nil);
+        NSString * printAllText = NSLocalizedString(@"Print All Notes", nil);
         
         UIButton * newNoteButton = [self customButtonWithText:newNoteText xOffset:0 yOffset:5];
         UIButton * emailAllButton = [self customButtonWithText:emailAllText xOffset:newNoteButton.frame.size.width + 15 yOffset: 5];
+        printAllButton = [self customButtonWithText:printAllText 
+                                                       xOffset:newNoteButton.frame.size.width + emailAllButton.frame.size.width + 30 
+                                                       yOffset: 5];
         
         [newNoteButton addTarget:self action:@selector(newNoteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [emailAllButton addTarget:self action:@selector(emailAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        [printAllButton addTarget:self action:@selector(printAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         
         [self.view addSubview:newNoteButton];
         [self.view addSubview:emailAllButton];
+        [self.view addSubview:printAllButton];
         
         CGRect frame = self.view.frame;
         
@@ -83,6 +89,21 @@
     aButton.frame = CGRectMake(x, y, size.width +15, stretchableButtonImage.size.height);
     
     return aButton;
+}
+
+- (void) printAllButtonPressed: (id) sender {
+    [self saveNotesState];
+    [self reloadNotes];
+    
+    NSString * notesBody = @"";
+    
+    for(Note * noteItem in notesArray) {
+        
+        NSString * noteText = [NSString stringWithFormat:@"<b>%@</b><i>(%@)</i><b>:</b> <br> %@<br><br>", noteItem.title, [NSString stringWithFormat:@"created on: %@", [noteItem.date description]], noteItem.details];
+        notesBody = [notesBody stringByAppendingString:noteText];
+    }
+    
+    [self printContent:notesBody jobTitle:@"Harvard Reunion: All Notes"];  // send for print
 }
 
 - (void) emailAllButtonPressed: (id) sender {
@@ -201,17 +222,18 @@
     [super dismissModalViewControllerAnimated:YES];
 }
 
-- (void) printContent {
+- (void) printContent: (NSString *) textToPrint jobTitle:(NSString *) jobTitle {
+    
     UIPrintInteractionController *pic = [UIPrintInteractionController sharedPrintController];
     pic.delegate = self;
     
     UIPrintInfo *printInfo = [UIPrintInfo printInfo];
     printInfo.outputType = UIPrintInfoOutputGeneral;
-    printInfo.jobName = @"SampleTitle";
+    printInfo.jobName = jobTitle;
     pic.printInfo = printInfo;
     
     UISimpleTextPrintFormatter *textFormatter = [[UISimpleTextPrintFormatter alloc]
-                                                 initWithText:@"SampleText"];
+                                                 initWithText:textToPrint];
     textFormatter.startPage = 0;
     textFormatter.contentInsets = UIEdgeInsetsMake(72.0, 72.0, 72.0, 72.0); // 1 inch margins
     textFormatter.maximumContentWidth = 6 * 72.0;
@@ -226,8 +248,11 @@
         }
     };
 
+    if (nil != printAllButton)
+        [pic presentFromRect:printAllButton.frame inView:self.tableView animated:YES completionHandler:completionHandler];
     
-    [pic presentFromRect:self.view.frame inView:self.view animated:YES completionHandler:completionHandler];
+    else
+        [pic presentFromRect:self.view.frame inView:self.view animated:YES completionHandler:completionHandler];
 }
 
 

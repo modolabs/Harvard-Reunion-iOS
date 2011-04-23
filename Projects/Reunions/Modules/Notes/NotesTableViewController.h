@@ -18,6 +18,8 @@
     Note * selectedNote;
     
     BOOL firstView;
+    
+    UIButton *printAllButton;
 }
 
 
@@ -26,6 +28,7 @@
 
 - (void) reloadNotes;
 - (void) saveNotesState;
+- (void) printContent: (NSString *) textToPrint jobTitle:(NSString *) jobTitle;
 
 // called from the modal view (new note), upon delete
 -(void) deleteNoteWithoutSaving;

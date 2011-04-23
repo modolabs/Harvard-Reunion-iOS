@@ -50,9 +50,21 @@
         detailTextLabel.textColor = [UIColor blackColor];
         detailTextLabel.backgroundColor = [UIColor clearColor];
         
+        UIImage *printButtonImage = [UIImage imageWithPathName:@"common/unread-message.png"];
         UIImage *shareButtonImage = [UIImage imageWithPathName:@"common/share.png"];
-        CGFloat buttonX = self.frame.size.width - 120;
+         UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/subheadbar_button.png"];
+        
+        CGFloat buttonX = self.frame.size.width - deleteButtonImage.size.width - shareButtonImage.size.width - printButtonImage.size.width - 20;
         CGFloat buttonY = 5;
+        
+        printButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+        printButton.frame = CGRectMake(buttonX, buttonY, printButtonImage.size.width, printButtonImage.size.height);
+        [printButton setImage:printButtonImage forState:UIControlStateNormal];
+        [printButton setImage:[UIImage imageWithPathName:@"common/unread-message.png"] forState:UIControlStateHighlighted];
+        
+        [printButton addTarget:self action:@selector(printButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        
+        buttonX += printButtonImage.size.width + 5;
         
         UIButton * shareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
         shareButton.frame = CGRectMake(buttonX, buttonY, shareButtonImage.size.width, shareButtonImage.size.height);
@@ -61,7 +73,7 @@
 
         [shareButton addTarget:self action:@selector(shareButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         
-        UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/subheadbar_button.png"];
+       
         buttonX += shareButtonImage.size.width + 5;
         
         UIButton * deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
@@ -70,9 +82,10 @@
         [deleteButton setImage:[UIImage imageWithPathName:@"common/subheadbar_button.png"] forState:UIControlStateHighlighted];
         
         [deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-               
+        
         [self addSubview:titleTextLabel];
         [self addSubview:detailTextLabel];
+        [self addSubview:printButton];
         [self addSubview:shareButton];
         [self addSubview:deleteButton];
 
@@ -121,6 +134,25 @@
     return self;
 }
 
+-(void) printButtonPressed: (id) sender {
+    
+    NSString * noteString = detailsView.text;
+    NSArray * splitArrayPeriod = [noteString componentsSeparatedByString:@"."];
+    NSArray * splitArrayNewLine = [noteString componentsSeparatedByString:@"\n"];
+    
+    NSArray * splitArray;
+    
+    if ([[splitArrayPeriod objectAtIndex:0] length] < [[splitArrayNewLine objectAtIndex:0] length])
+        splitArray = splitArrayPeriod;
+    
+    else
+        splitArray = splitArrayNewLine;
+    
+    NSString * textToPrint = [NSString stringWithFormat:@"%@:\n\n%@", [splitArray objectAtIndex:0], detailsView.text];
+    
+    [self printContent:textToPrint jobTitle:[splitArray objectAtIndex:0] fromButton:printButton];
+}
+
 -(void) shareButtonPressed: (id) sender {
     
     NSString * noteString = detailsView.text;
@@ -164,6 +196,40 @@
 {
     [super dealloc];
 }
+
+- (void) printContent: (NSString *) textToPrint jobTitle:(NSString *) jobTitle fromButton:(UIButton *) button{
+    
+    UIPrintInteractionController *pic = [UIPrintInteractionController sharedPrintController];
+    pic.delegate = self;
+    
+    UIPrintInfo *printInfo = [UIPrintInfo printInfo];
+    printInfo.outputType = UIPrintInfoOutputGeneral;
+    printInfo.jobName = jobTitle;
+    pic.printInfo = printInfo;
+    
+    UISimpleTextPrintFormatter *textFormatter = [[UISimpleTextPrintFormatter alloc]
+                                                 initWithText:textToPrint];
+    textFormatter.startPage = 0;
+    textFormatter.contentInsets = UIEdgeInsetsMake(72.0, 72.0, 72.0, 72.0); // 1 inch margins
+    textFormatter.maximumContentWidth = 6 * 72.0;
+    pic.printFormatter = textFormatter;
+    [textFormatter release];
+    pic.showsPageRange = YES;
+    
+    void (^completionHandler)(UIPrintInteractionController *, BOOL, NSError *) =
+    ^(UIPrintInteractionController *printController, BOOL completed, NSError *error) {
+        if (!completed && error) {
+            NSLog(@"Printing could not complete because of error: %@", error);
+        }
+    };
+    
+    if (nil != button)
+        [pic presentFromRect:button.frame inView:button animated:YES completionHandler:completionHandler];
+    
+    else
+        [pic presentFromRect:self.frame inView:self animated:YES completionHandler:completionHandler];
+}
+        
 
 #pragma mark
 #pragma mark UITextViewDelegate
