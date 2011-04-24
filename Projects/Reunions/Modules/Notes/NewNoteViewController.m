@@ -151,7 +151,6 @@
         textView.font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyByline];
     }
     
-    //[self.view addSubview:noteView];
      self.view.backgroundColor = [UIColor yellowColor];
     
 }
@@ -195,7 +194,6 @@
                                                       destructiveButtonTitle:@"Delete" 
                                                            otherButtonTitles:nil];
     
-    //deleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     [deleteActionSheet showInView:self.view];
     [deleteActionSheet release];
 }

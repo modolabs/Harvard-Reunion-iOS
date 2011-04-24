@@ -41,41 +41,6 @@
     CGRect frame = self.frame;
     frame.size.width = self.tableView.frame.size.width - 8;
     
-    /*if (self.scheduleCellType == ScheduleCellSelected) {
-        self.backgroundColor = [UIColor clearColor];
-        
-        if (!_fakeCardBorder) {
-            _fakeCardBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width - 8, 500)];
-            _fakeCardBorder.tag = 3;
-            _fakeCardBorder.layer.cornerRadius = 5;
-            _fakeCardBorder.backgroundColor = [UIColor whiteColor];
-            _fakeCardBorder.layer.shadowColor = [[UIColor blackColor] CGColor];
-            _fakeCardBorder.layer.shadowOpacity = 0.5;
-            _fakeCardBorder.layer.shadowOffset = CGSizeMake(1.0, 1.0);
-            _fakeCardBorder.layer.borderWidth = 1;
-            _fakeCardBorder.layer.borderColor = [[UIColor blackColor] CGColor];
-            [self.contentView insertSubview:_fakeCardBorder atIndex:0];
-        }
-        
-        frame.origin.x = 0;
-        
-        if (!_fakeBehindCardBorder) {
-            _fakeBehindCardBorder = [[UIView alloc] initWithFrame:CGRectMake(self.frame.size.width - 16, -10, 16, 440)];
-            _fakeBehindCardBorder.layer.cornerRadius = 8;
-            _fakeBehindCardBorder.tag = 4;
-            _fakeBehindCardBorder.hidden = NO;
-            [self.contentView insertSubview:_fakeBehindCardBorder atIndex:0];
-        }
-        
-        if (self.isFirstInSection) {
-            _fakeBehindCardBorder.backgroundColor = [UIColor colorWithHexString:@"030100"];
-        } else {
-            _fakeBehindCardBorder.backgroundColor = [UIColor colorWithHexString:@"DBD9D8"];
-        }
-        
-        _fakeTopOfNextCell.hidden = YES;
-        
-    } else */
     
     if (notesCellType == NotesCellTypeOther){
         //self.backgroundColor = [UIColor colorWithHexString:@"DBD9D8"];
@@ -126,7 +91,7 @@
         
         self.frame = frame;
         
-        UIImage *image = nil;
+        //UIImage *image = nil;
         
         if (nil != detailsView) {
             frame = detailsView.frame;
