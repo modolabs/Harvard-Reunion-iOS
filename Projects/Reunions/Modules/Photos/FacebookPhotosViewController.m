@@ -432,14 +432,10 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         {            
             self.currentFilterBlock =
             [[
-              ^(FacebookPhoto *photo) {                 
-                  NSDictionary *bookmarks = 
-                  [FacebookModule bookmarksForMediaObjectsOfType:@"photo"];
-                  
-                  if ([[bookmarks objectForKey:photo.identifier] boolValue]) {
-                      return YES;
-                  }
-                  return NO;
+              ^(FacebookPhoto *photo) {
+                  return [FacebookModule 
+                          isMediaObjectWithIDBookmarked:photo.identifier 
+                          mediaType:@"photo"];
               } 
               copy] autorelease];
             

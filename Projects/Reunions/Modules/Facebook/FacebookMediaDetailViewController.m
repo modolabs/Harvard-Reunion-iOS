@@ -256,7 +256,9 @@ ToolbarButtonTags;
     
     _tableView.rowHeight = 100;
     
-    [self setupToolbarButtons];
+    if (self.actionsToolbar) {
+        [self setupToolbarButtons];
+    }
     
     NSSortDescriptor *sort = 
     [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:YES];

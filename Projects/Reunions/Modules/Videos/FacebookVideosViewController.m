@@ -439,13 +439,9 @@ FacebookVideosSegmentIndexes;
             self.currentFilterBlock = 
             [[
               ^(FacebookVideo *video) {
-                  NSDictionary *bookmarks = 
-                  [FacebookModule bookmarksForMediaObjectsOfType:@"video"];
-                  
-                  if ([[bookmarks objectForKey:video.identifier] boolValue]) {
-                      return YES;
-                  }
-                  return NO;
+                  return [FacebookModule 
+                          isMediaObjectWithIDBookmarked:video.identifier 
+                          mediaType:@"video"];
               }
               copy] autorelease];
             break;
