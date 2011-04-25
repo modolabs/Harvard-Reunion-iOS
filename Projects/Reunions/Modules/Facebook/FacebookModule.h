@@ -37,8 +37,8 @@ extern NSString * const FacebookFeedDidUpdateNotification;
 
 #pragma mark Bookmarking support
 + (NSString *)bookmarkKeyForMediaType:(NSString *)mediaType;
-+ (void)bookmarkMediaObjectWithID:(NSString *)mediaObjectID 
-                        mediaType:(NSString *)mediaType;
++ (void)toggleBookmarkForMediaObjectWithID:(NSString *)mediaObjectID 
+                                 mediaType:(NSString *)mediaType;
 + (NSDictionary *)bookmarksForMediaObjectsOfType:(NSString *)mediaType;
 
 @end

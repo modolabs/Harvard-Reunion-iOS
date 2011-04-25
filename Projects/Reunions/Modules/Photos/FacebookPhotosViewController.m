@@ -169,6 +169,10 @@ FacebookPhotosSegmentIndexes;
     // e.g. self.myOutlet = nil;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self refreshPhotos];
+}
 
 - (void)dealloc {
     [[KGOSocialMediaController sharedController] disconnectFacebookRequests:self];
@@ -425,14 +429,14 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
             break;
         }
         case kBookmarksSegment:
-        {
-            NSDictionary *bookmarks = 
-            [FacebookModule bookmarksForMediaObjectsOfType:@"photo"];
-            
+        {            
             self.currentFilterBlock =
             [[
               ^(FacebookPhoto *photo) {                 
-                  if ([bookmarks objectForKey:photo.identifier]) {
+                  NSDictionary *bookmarks = 
+                  [FacebookModule bookmarksForMediaObjectsOfType:@"photo"];
+                  
+                  if ([[bookmarks objectForKey:photo.identifier] boolValue]) {
                       return YES;
                   }
                   return NO;
