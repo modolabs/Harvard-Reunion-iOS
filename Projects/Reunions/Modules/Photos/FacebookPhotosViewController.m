@@ -125,6 +125,7 @@ FacebookPhotosSegmentIndexes;
     CGFloat spacing = 10. * resizeFactor;
     
     _iconGrid = [[IconGrid alloc] initWithFrame:frame];
+    _iconGrid.topPadding = 0;
     _iconGrid.delegate = self;
     _iconGrid.spacing = GridSpacingMake(spacing, spacing);
     _iconGrid.padding = GridPaddingMake(spacing, spacing, spacing, spacing);
