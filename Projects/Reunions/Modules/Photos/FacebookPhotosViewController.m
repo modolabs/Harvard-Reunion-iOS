@@ -115,6 +115,7 @@ FacebookPhotosSegmentIndexes;
     self.title = @"Photos";
     
     CGRect frame = _scrollView.frame;
+    frame.origin.x += 6.0f; // This will make the iconGrid appear centered.
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         resizeFactor = 1.;
@@ -220,9 +221,10 @@ FacebookPhotosSegmentIndexes;
     }
     
     if (photo.thumbSrc || photo.thumbData || photo.data) { // omitting photo.src so we don't download full image until detail view
-        CGRect frame = CGRectMake(0, 0, 90 * resizeFactor, 90 * resizeFactor + 40);
+        CGRect frame = CGRectMake(0, 0, 90 * resizeFactor, 90 * resizeFactor + 20);
         
-        FacebookThumbnail *thumbnail = [[[FacebookThumbnail alloc] initWithFrame:frame] autorelease];
+        FacebookThumbnail *thumbnail = 
+        [[[FacebookThumbnail alloc] initWithFrame:frame displayLabels:NO] autorelease];
         thumbnail.thumbSource = photo;
         thumbnail.rotationAngle = (_icons.count % 2 == 0) ? M_PI/30 : -M_PI/30;
         [thumbnail addTarget:self action:@selector(thumbnailTapped:) forControlEvents:UIControlEventTouchUpInside];

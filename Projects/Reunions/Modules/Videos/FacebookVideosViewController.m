@@ -216,8 +216,8 @@ FacebookVideosSegmentIndexes;
     for (FacebookVideo *video in _videos) {
         if (!self.currentFilterBlock || self.currentFilterBlock(video)) {
             FacebookThumbnail *thumbnail = 
-            [[[FacebookThumbnail alloc] initWithFrame:[self thumbnailFrame]] 
-             autorelease];
+            [[[FacebookThumbnail alloc] initWithFrame:[self thumbnailFrame] 
+                                        displayLabels:YES] autorelease];
             thumbnail.thumbSource = video;
             [thumbnail addTarget:self action:@selector(thumbnailTapped:) 
                 forControlEvents:UIControlEventTouchUpInside];

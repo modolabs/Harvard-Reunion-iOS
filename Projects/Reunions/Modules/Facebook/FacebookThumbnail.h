@@ -31,7 +31,9 @@
 @property (nonatomic) CGFloat rotationAngle;
 @property (nonatomic, retain) NSObject<FacebookThumbSource> *thumbSource;
 @property (nonatomic, retain) MITThumbnailView *thumbnailView;
+@property (assign) BOOL shouldDisplayLabels;
 
+- (id)initWithFrame:(CGRect)frame displayLabels:(BOOL)displayLabels;
 - (void)highlightIntoFrame:(CGRect)frame;
 - (void)hide;
 
