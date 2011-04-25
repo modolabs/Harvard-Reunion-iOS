@@ -9,6 +9,9 @@
 @property (nonatomic, retain) NSString * details;
 @property (nonatomic, retain) NSString * eventIdentifier;
 
+
++ (NSString * ) dateToDisplay: (NSDate *) date;
+
 + (NSString *) noteTitleFromDetails: (NSString *) noteDetails;
 
 + (void) printContent: (NSString *) textToPrint jobTitle:(NSString *) jobTitle 

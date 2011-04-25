@@ -99,7 +99,7 @@
     
     for(Note * noteItem in notesArray) {
         
-        NSString * noteText = [NSString stringWithFormat:@"<b>%@</b><i>(%@)</i><b>:</b> <br> %@<br><br>", noteItem.title, [NSString stringWithFormat:@"created on: %@", [noteItem.date description]], noteItem.details];
+        NSString * noteText = [NSString stringWithFormat:@"<b>%@</b><i>(%@)</i><b>:</b> <br> %@<br><br>", noteItem.title, [Note dateToDisplay:noteItem.date], noteItem.details];
         notesBody = [notesBody stringByAppendingString:noteText];
     }
     
@@ -116,7 +116,7 @@
     
     for(Note * noteItem in notesArray) {
         
-        NSString * noteText = [NSString stringWithFormat:@"<b>%@</b><i>(%@)</i><b>:</b> <br> %@<br><br>", noteItem.title, [NSString stringWithFormat:@"created on: %@", [noteItem.date description]], noteItem.details];
+        NSString * noteText = [NSString stringWithFormat:@"<b>%@</b><i>(%@)</i><b>:</b> <br> %@<br><br>", noteItem.title, [Note dateToDisplay:noteItem.date], noteItem.details];
         emailBody = [emailBody stringByAppendingString:noteText];
     }
     
@@ -136,7 +136,7 @@
     NSDate * noteDate = [NSDate date];
     tempVC = [[[NewNoteViewController alloc] initWithTitleText:@"<Empty Note>" 
                                                           date: noteDate               
-                                                   andDateText:[NSString stringWithFormat:@"Created on: %@", [noteDate description]]
+                                                   andDateText:[Note dateToDisplay:noteDate]
                                                     eventId:nil
                                                     viewWidth:NEWNOTE_WIDTH 
                                                     viewHeight:NEWNOTE_HEIGHT] retain];
@@ -164,7 +164,7 @@
 -(void) saveNotesState {
     
     if (nil != tempVC) {
-        NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", tempVC.titleText];
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND date = %@", tempVC.titleText, tempVC.date];
         Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
         
         if (nil == note) {
@@ -266,6 +266,8 @@
 {
     [super viewWillAppear:animated];
     
+    [self.tableView scrollToRowAtIndexPath:selectedRowIndexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -328,7 +330,6 @@
     
     NSString * noteTitle = note.title;
     NSString * noteText = note.details;
-    NSDate * noteDate = note.date;
     
     if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)) {
         static NSString *CellIdentifier = @"CellNotesSelected";
@@ -344,7 +345,7 @@
 
         NotesTextView * notesTextView = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 500) 
                                                           titleText:noteTitle
-                                                         detailText:[NSString stringWithFormat:@"Created on: %@", [noteDate description]]
+                                                                   detailText:[Note dateToDisplay:note.date]
                                                                     noteText:noteText
                                                                    note: note
                                                                firstResponder: !firstView] autorelease];
@@ -369,7 +370,7 @@
         cell.tableView = self.tableView;
         cell.notesCellType = NotesCellTypeOther;
         cell.textLabel.text = noteTitle;
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"Created on: %@", [noteDate description]];
+        cell.detailTextLabel.text = [Note dateToDisplay:note.date];
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         
         
@@ -385,13 +386,12 @@
     
     NSString * noteTitle = note.title;
     NSString * noteText = note.details;
-    NSDate * noteDate = note.date;
     
     if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)) {
         
         NotesTextView * temp = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 500) 
                                                                     titleText:noteTitle
-                                                                   detailText:[noteDate description]
+                                                                   detailText:[Note dateToDisplay:note.date]
                                                                      noteText:noteText
                                                                          note: note
                                                                firstResponder: !firstView] autorelease];

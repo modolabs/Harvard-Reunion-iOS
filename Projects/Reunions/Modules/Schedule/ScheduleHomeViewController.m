@@ -95,7 +95,7 @@
     
     NSString * noteTitle = [NSString stringWithFormat:@"Note for: %@", event.title];
     
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", noteTitle];
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND eventIdentifier = %@", noteTitle, event.identifier];
     Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
     
     NSDate * dateForNote = [NSDate date];
@@ -109,7 +109,7 @@
     
     tempVC = [[[NewNoteViewController alloc] initWithTitleText:noteTitle
                                                           date:dateForNote              
-                                                   andDateText:[NSString stringWithFormat:@"Created on %@", [dateForNote description]]
+                                                   andDateText:[Note dateToDisplay:dateForNote]
                                                        eventId:event.identifier
                                                      viewWidth:NEWNOTE_WIDTH 
                                                     viewHeight:NEWNOTE_HEIGHT] retain];
@@ -146,7 +146,7 @@
 }
 
 -(void) saveNotesState {
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", tempVC.titleText];
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND date = %@", tempVC.titleText, tempVC.date];
     Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
     
     if (nil == note) {
@@ -178,7 +178,7 @@
 
 -(void) deleteNoteWithoutSaving {
     if (nil != tempVC) {
-        NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", tempVC.titleText];
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND date = %@", tempVC.titleText, tempVC.date];
         Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
         
         if (nil != note) {

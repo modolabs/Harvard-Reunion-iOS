@@ -18,6 +18,20 @@
 @dynamic eventIdentifier;
 
 
++ (NSString * ) dateToDisplay: (NSDate *) date {
+    
+    NSDateFormatter *format = [[NSDateFormatter alloc] init];
+    [format setDateFormat:@"MM/dd/yyyy"];
+    
+    NSString * dayMonthYearString = [format stringFromDate:date];
+    
+    [format setDateFormat:@"hh:mm a"];
+    NSString * hoursMins = [format stringFromDate:date];
+    
+    return [NSString stringWithFormat:@"Created %@ at %@", dayMonthYearString, hoursMins];
+    
+}
+
 + (NSString *) noteTitleFromDetails: (NSString *) noteDetails {
     
     NSString * noteString = noteDetails;
