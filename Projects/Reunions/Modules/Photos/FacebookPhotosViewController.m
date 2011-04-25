@@ -18,16 +18,36 @@ typedef enum {
 }
 FacebookPhotosSegmentIndexes;
 
+
 @interface FacebookPhotosViewController (Private)
 
 - (FacebookPhotoSize)thumbSize;
 
 - (NSDictionary *)paramsForPhotoDetails:(FacebookPhoto *)photo;
 - (void)focusThumbnail:(FacebookThumbnail *)thumbnail animated:(BOOL)animated completion:(void (^)(BOOL finished))completion;
+- (void)updateIconGrid;
 
 @end
 
 @implementation FacebookPhotosViewController
+
+@synthesize currentFilterBlock;
+
+// This method does not hit the API to get new photos. It expects _photosByID 
+// to have the unfiltered collection of photos and applies filters locally 
+// by means of displayPhoto:.
+- (void)refreshPhotos {
+    // Clear loaded photos and icons.
+    [_displayedPhotos removeAllObjects];
+    [_icons removeAllObjects];
+    
+    for (NSString *photoID in _photosByID) {
+        FacebookPhoto *photo = [_photosByID objectForKey:photoID];
+        [self displayPhoto:photo];
+    }
+    
+    [self updateIconGrid];
+}
 
 - (void)getGroupPhotos {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookGroupReceivedNotification object:nil];
@@ -36,6 +56,7 @@ FacebookPhotosSegmentIndexes;
     FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
     if (fbModule.groupID) {
         if (fbModule.latestFeedPosts) {
+
             for (NSDictionary *aPost in fbModule.latestFeedPosts) {
                 NSString *type = [aPost stringForKey:@"type" nilIfEmpty:YES];
                 if ([type isEqualToString:@"photo"]) {
@@ -43,21 +64,20 @@ FacebookPhotosSegmentIndexes;
                     if (pid && ![_photosByID objectForKey:pid]) {
                         FacebookPhoto *aPhoto = [FacebookPhoto photoWithDictionary:aPost size:[self thumbSize]];
                         if (aPhoto) {
-                            aPhoto.postIdentifier = [aPost stringForKey:@"id" nilIfEmpty:YES];
+                            aPhoto.postIdentifier = 
+                            [aPost stringForKey:@"id" nilIfEmpty:YES];
                             NSLog(@"%@", [aPhoto description]);
                             [[CoreDataManager sharedManager] saveData];
                             [_photosByID setObject:aPhoto forKey:pid];
-                            [self displayPhoto:aPhoto];
-                        }
-                        
+                        }                        
                         DLog(@"requesting graph info for photo %@", pid);
                         [[KGOSocialMediaController sharedController] requestFacebookGraphPath:pid
                                                                                      receiver:self
                                                                                      callback:@selector(didReceivePhoto:)];
                     }
                 }
-            }
-
+            }            
+            [self refreshPhotos];
         } else {
             [fbModule requestStatusUpdates:nil];
             [[NSNotificationCenter defaultCenter] addObserver:self
@@ -77,7 +97,6 @@ FacebookPhotosSegmentIndexes;
                                                    object:nil];
     }
 }
-
 
 // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 /*
@@ -154,6 +173,7 @@ FacebookPhotosSegmentIndexes;
 - (void)dealloc {
     [[KGOSocialMediaController sharedController] disconnectFacebookRequests:self];
 
+    [currentFilterBlock release];
     [_iconGrid release];
     [_icons release];
     [_displayedPhotos release];
@@ -179,11 +199,18 @@ FacebookPhotosSegmentIndexes;
         NSLog(@"found cached photo %@", aPhoto.identifier);
         [self displayPhoto:aPhoto];
     }
+    [self updateIconGrid];
+
     //[[CoreDataManager sharedManager] deleteObjects:photos];
 }
 
 - (void)displayPhoto:(FacebookPhoto *)photo
-{
+{    
+    // If there's a filter set, and this photos doesn't pass it, don't add it.
+    if (self.currentFilterBlock && (!self.currentFilterBlock(photo))) {
+        return;
+    }
+    
     if ([_displayedPhotos containsObject:photo.identifier]) {
         return;
     }
@@ -197,7 +224,6 @@ FacebookPhotosSegmentIndexes;
         [thumbnail addTarget:self action:@selector(thumbnailTapped:) forControlEvents:UIControlEventTouchUpInside];
         [_icons addObject:thumbnail];
         _iconGrid.icons = _icons;
-        [_iconGrid setNeedsLayout];
         
         [_displayedPhotos addObject:photo.identifier];
     }
@@ -238,6 +264,11 @@ FacebookPhotosSegmentIndexes;
     } completion:completion];
 }
 
+- (void)updateIconGrid {
+    _iconGrid.icons = _icons;
+    [_iconGrid setNeedsLayout];
+}
+
 - (NSDictionary *)paramsForPhotoDetails:(FacebookPhoto *)photo {
     NSMutableArray *photos = [NSMutableArray array];
     [_icons enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -260,9 +291,9 @@ FacebookPhotosSegmentIndexes;
     
     [[KGOSocialMediaController sharedController] requestFacebookGraphPath:photo.identifier
                                                                  receiver:self
-                                                                 callback:@selector(didReceivePhoto:)];
-    
+                                                                 callback:@selector(didReceivePhoto:)];    
     [self displayPhoto:photo];
+    [self updateIconGrid];
 }
 
 #pragma mark Facebook request callbacks
@@ -312,12 +343,14 @@ FacebookPhotosSegmentIndexes;
     if (photo) {
         [photo updateWithDictionary:photoInfo size:[self thumbSize]];
         [self displayPhoto:photo];
+        [self updateIconGrid];
         
     } else {
         photo = [FacebookPhoto photoWithDictionary:photoInfo size:[self thumbSize]];
         if (photo) {
             [_photosByID setObject:photo forKey:photo.identifier];
             [self displayPhoto:photo];
+            [self updateIconGrid];
         }
     }
 }
@@ -365,58 +398,48 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 }
 
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender {
+
     switch (sender.selectedSegmentIndex) {
         case kAllPhotosSegment:
         {
             // Reload photos.
-            [_icons removeAllObjects];
-            [_photosByID removeAllObjects];
-            [_displayedPhotos removeAllObjects];            
-            [self getGroupPhotos];
+            self.currentFilterBlock = nil;
+            [self refreshPhotos];
             break;
         }
         case kMyUploadsSegment:
         {
-            NSString *uploaderName = 
-            [[KGOSocialMediaController sharedController] currentFacebookUser].name;
-            [_icons removeAllObjects];
+            NSString *uploaderIdentifier = 
+            [[[KGOSocialMediaController sharedController] currentFacebookUser]
+             identifier];
             
-            NSSet *displayedPhotosCopy = [_displayedPhotos copy];
-            [_displayedPhotos removeAllObjects];
+            self.currentFilterBlock =
+            [[
+              ^(FacebookPhoto *photo) {
+                  NSString *photoOwner = [[photo owner] identifier];
+                  return [photoOwner isEqualToString:uploaderIdentifier];
+              } 
+              copy] autorelease];
             
-            [displayedPhotosCopy enumerateObjectsUsingBlock:
-             ^(id obj, BOOL *stop) {       
-                 FacebookPhoto *photo = [_photosByID objectForKey:obj];
-                 NSString *photoOwner = [[photo owner] name];
-                 if ([photoOwner isEqualToString:uploaderName]) {
-                     [self displayPhoto:photo];
-                 }
-             }];
-            [displayedPhotosCopy release];
-            
+            [self refreshPhotos];
             break;
         }
         case kBookmarksSegment:
         {
-            // TODO: Refetch photos from Facebook first.
             NSDictionary *bookmarks = 
             [FacebookModule bookmarksForMediaObjectsOfType:@"photo"];
             
-            [_icons removeAllObjects];
+            self.currentFilterBlock =
+            [[
+              ^(FacebookPhoto *photo) {                 
+                  if ([bookmarks objectForKey:photo.identifier]) {
+                      return YES;
+                  }
+                  return NO;
+              } 
+              copy] autorelease];
             
-            NSSet *displayedPhotosCopy = [_displayedPhotos copy];
-            [_displayedPhotos removeAllObjects];
-            
-            [displayedPhotosCopy enumerateObjectsUsingBlock:
-             ^(id obj, BOOL *stop) {       
-                 // obj is the photo ID.
-                 if ([bookmarks objectForKey:obj]) {                     
-                     FacebookPhoto *photo = [_photosByID objectForKey:obj];
-                     [self displayPhoto:photo];
-                 }
-             }];
-            [displayedPhotosCopy release];
-            
+            [self refreshPhotos];            
             break;
         }
         default:

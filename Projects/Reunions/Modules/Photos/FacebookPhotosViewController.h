@@ -5,13 +5,16 @@
 
 @class FacebookPhoto;
 
+typedef BOOL (^PhotoTest)(FacebookPhoto *photo);
+
 @interface FacebookPhotosViewController : FacebookMediaViewController <IconGridDelegate,
 UINavigationControllerDelegate, UIImagePickerControllerDelegate, FacebookUploadDelegate> {
     
     IconGrid *_iconGrid;
     NSMutableArray *_icons;
     NSMutableSet *_displayedPhotos;
-    NSMutableDictionary *_photosByID;
+    // This is the unfiltered collection of photos.
+    NSMutableDictionary *_photosByID; 
     CGFloat resizeFactor;
     
     UIViewController *_detailViewController;
@@ -21,5 +24,7 @@ UINavigationControllerDelegate, UIImagePickerControllerDelegate, FacebookUploadD
 - (void)didReceivePhotoList:(id)result;
 - (void)displayPhoto:(FacebookPhoto *)photo;
 - (void)loadThumbnailsFromCache;
+
+@property (nonatomic, retain) PhotoTest currentFilterBlock;
 
 @end
