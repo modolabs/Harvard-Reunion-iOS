@@ -6,16 +6,21 @@
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "FacebookModel.h"
 #import <QuartzCore/QuartzCore.h>
+#import "FacebookModule.h"
 
-#define LIKE_TAG 1
-#define UNLIKE_TAG 2
+typedef enum {
+    kToolbarLikeButtonTag = 0x419,
+    kToolbarCommentButtonTag,
+    kToolbarBookmarkButtonTag
+}
+ToolbarButtonTags;
 
 @implementation FacebookMediaDetailViewController
 
 @synthesize post, posts, tableView = _tableView;
 @synthesize mediaView = _mediaView;
 @synthesize moduleTag;
-@synthesize actionsBar;
+@synthesize actionsToolbar;
 
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -30,7 +35,7 @@
 
 - (void)dealloc
 {
-    [actionsBar release];
+    [actionsToolbar release];
     [_comments release];
     self.moduleTag = nil;
     [super dealloc];
@@ -46,6 +51,91 @@
 
 #pragma mark -
 
+- (void)setupToolbarButtons {
+    NSAutoreleasePool *setupPool = [[NSAutoreleasePool alloc] init];
+    
+    // Set up the buttons that go in the toolbar items.
+    UIButton *likeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    likeButton.tag = kToolbarLikeButtonTag;
+    [likeButton 
+     setImage:[UIImage imageWithPathName:@"modules/facebook/button-icon-like"] 
+     forState:UIControlStateNormal];
+    [likeButton 
+     setImage:[UIImage imageWithPathName:@"modules/facebook/button-icon-unlike"] 
+     forState:UIControlStateSelected];
+    [likeButton 
+     addTarget:self action:@selector(likeButtonPressed:) 
+     forControlEvents:UIControlEventTouchUpInside];
+
+    UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    commentButton.tag = kToolbarCommentButtonTag;
+    [commentButton 
+     setImage:[UIImage imageWithPathName:@"modules/facebook/button-icon-comment"] 
+     forState:UIControlStateNormal];
+    [commentButton  
+     addTarget:self action:@selector(commentButtonPressed:) 
+     forControlEvents:UIControlEventTouchUpInside];
+    
+    UIButton *bookmarkButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    bookmarkButton.tag = kToolbarBookmarkButtonTag;
+    [bookmarkButton 
+     setImage:
+     [UIImage imageWithPathName:@"common/button-icon-favorites-star"] 
+     forState:UIControlStateNormal];
+    [bookmarkButton 
+     setImage:
+     [UIImage imageWithPathName:@"common/button-bookmark-on"] 
+     forState:UIControlStateSelected];
+    [bookmarkButton 
+     addTarget:self action:@selector(bookmarkButtonPressed:) 
+     forControlEvents:UIControlEventTouchUpInside];
+    // Set up initial state of bookmark button.
+    bookmarkButton.selected = 
+    [FacebookModule isMediaObjectWithIDBookmarked:[self identifierForBookmark]
+                                        mediaType:[self mediaTypeForBookmark]];
+    
+    // Add state-specific images for the buttons.
+    UIImage *normalImage = 
+    [UIImage imageWithPathName:@"common/secondary-toolbar-button"];
+    UIImage *pressedImage = 
+    [UIImage imageWithPathName:@"common/secondary-toolbar-button-pressed"];
+    CGRect frame = CGRectZero;
+    if (normalImage) {
+        frame.size = normalImage.size;
+    } else {
+        frame.size = CGSizeMake(42, 31);
+    }
+    
+    NSArray *buttons = 
+    [NSArray arrayWithObjects:likeButton, commentButton, bookmarkButton, nil];
+    for (UIButton *aButton in buttons) {
+        aButton.frame = frame;
+        [aButton setBackgroundImage:normalImage 
+                           forState:UIControlStateNormal];
+        [aButton setBackgroundImage:pressedImage 
+                           forState:UIControlStateHighlighted];
+    }
+    
+    // Set up the toolbar items.
+	UIBarButtonItem *spacer = 
+    [[[UIBarButtonItem alloc] 
+      initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace 
+      target:nil 
+      action:nil] 
+     autorelease];
+    
+    self.actionsToolbar.items = 
+    [NSArray arrayWithObjects:
+     [[[UIBarButtonItem alloc] initWithCustomView:likeButton] autorelease], 
+     spacer,
+     [[[UIBarButtonItem alloc] initWithCustomView:commentButton] autorelease], 
+     spacer,
+     [[[UIBarButtonItem alloc] initWithCustomView:bookmarkButton] autorelease], 
+     nil];
+    
+    [setupPool release];
+}
+
 - (IBAction)commentButtonPressed:(UIBarButtonItem *)sender {
     FacebookCommentViewController *vc = [[[FacebookCommentViewController alloc] initWithNibName:@"FacebookCommentViewController" bundle:nil] autorelease];
     vc.delegate = self;
@@ -54,33 +144,63 @@
 }
 
 - (IBAction)likeButtonPressed:(UIBarButtonItem *)sender {
-    _likeButton.enabled = NO;
-    if (_likeButton.tag == LIKE_TAG) {
-        [[KGOSocialMediaController sharedController] likeFacebookPost:self.post receiver:self callback:@selector(didLikePost:)];
-    } else if (_likeButton.tag == UNLIKE_TAG) {
-        [[KGOSocialMediaController sharedController] unlikeFacebookPost:self.post receiver:self callback:@selector(didUnlikePost:)];
+    UIButton *button = 
+    (UIButton *)[self.actionsToolbar viewWithTag:kToolbarLikeButtonTag];    
+    
+    if (button.state & UIControlStateSelected) {
+        [[KGOSocialMediaController sharedController] 
+         unlikeFacebookPost:self.post receiver:self 
+         callback:@selector(didUnlikePost:)];
+    }
+    else {
+        [[KGOSocialMediaController sharedController] 
+         likeFacebookPost:self.post receiver:self 
+         callback:@selector(didLikePost:)];
     }
 }
 
 - (void)didLikePost:(id)result {
     DLog(@"%@", [result description]);
-    if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
-        _likeButton.enabled = YES;
-        _likeButton.tag = UNLIKE_TAG;
-        [_likeButton setImage:[UIImage imageWithPathName:@"modules/facebook/unlike.png"] forState:UIControlStateNormal];
+    if ([result isKindOfClass:[NSDictionary class]] && 
+        [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
+        // Set the button to the "unlike" state.
+        UIButton *button = 
+        (UIButton *)[self.actionsToolbar viewWithTag:kToolbarLikeButtonTag];
+        button.selected = YES;
     }
 }
 
 - (void)didUnlikePost:(id)result {
     NSLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
-        _likeButton.enabled = YES;
-        _likeButton.tag = LIKE_TAG;
-        [_likeButton setImage:[UIImage imageWithPathName:@"modules/facebook/like.png"] forState:UIControlStateNormal];
+        // Set the button to the "like" state.
+        UIButton *button = 
+        (UIButton *)[self.actionsToolbar viewWithTag:kToolbarLikeButtonTag];
+        button.selected = NO;
     }
 }
 
+- (NSString *)identifierForBookmark {
+    // Override if implementing bookmarking.
+    return nil;
+}
+
+- (NSString *)mediaTypeForBookmark {
+    // Override if implementing bookmarking.
+    return nil;
+}
+
 - (IBAction)bookmarkButtonPressed:(UIBarButtonItem *)sender {
+    BOOL bookmarked = 
+    [FacebookModule 
+     toggleBookmarkForMediaObjectWithID:[self identifierForBookmark] 
+     mediaType:[self mediaTypeForBookmark]];
+    // Update toolbar button to reflect bookmarked state.
+    UIButton *button = 
+    (UIButton *)[self.actionsToolbar viewWithTag:kToolbarBookmarkButtonTag];
+    // When the button is in the selected state, it shows an image indicating 
+    // that the current media object is bookmarked.
+    button.selected = bookmarked;
 }
 
 - (IBAction)closeButtonPressed:(id)sender {
@@ -136,7 +256,10 @@
     
     _tableView.rowHeight = 100;
     
-    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:YES];
+    [self setupToolbarButtons];
+    
+    NSSortDescriptor *sort = 
+    [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:YES];
     [_comments release];
     _comments = [[self.post.comments sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] retain];
     
@@ -144,10 +267,7 @@
         KGODetailPager *pager = [[[KGODetailPager alloc] initWithPagerController:self delegate:self] autorelease];
         self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:pager] autorelease];
     }
-    
-    _likeButton.tag = LIKE_TAG;
-    [_likeButton setImage:[UIImage imageWithPathName:@"modules/facebook/like.png"] forState:UIControlStateNormal];
-    
+        
     if (!_mediaView) {
         CGRect frame = self.view.bounds;
         frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio

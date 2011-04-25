@@ -348,7 +348,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 #pragma mark Bookmarking support
 
-+ (void)toggleBookmarkForMediaObjectWithID:(NSString *)mediaObjectID 
++ (BOOL)toggleBookmarkForMediaObjectWithID:(NSString *)mediaObjectID 
                                  mediaType:(NSString *)mediaType {
     NSMutableDictionary *bookmarks = 
     [[[self class] bookmarksForMediaObjectsOfType:mediaType] mutableCopy];
@@ -356,11 +356,13 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:bookmarksKey];    
     BOOL bookmarked = [[bookmarks objectForKey:mediaObjectID] boolValue];
-    [bookmarks setObject:[NSNumber numberWithBool:!bookmarked] 
+    bookmarked = !bookmarked;
+    [bookmarks setObject:[NSNumber numberWithBool:bookmarked] 
                   forKey:mediaObjectID];
     
     [[NSUserDefaults standardUserDefaults] 
      setObject:bookmarks forKey:bookmarksKey];
+    return bookmarked;
 }
 
 + (NSDictionary *)bookmarksForMediaObjectsOfType:(NSString *)mediaType {
@@ -376,6 +378,13 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 + (NSString *)bookmarkKeyForMediaType:(NSString *)mediaType {
     return [NSString stringWithFormat:@"%@_bookmarks", mediaType];
+}
+
++ (BOOL)isMediaObjectWithIDBookmarked:(NSString *)mediaObjectID
+                            mediaType:(NSString *)mediaType {
+    NSDictionary *bookmarks = 
+    [[self class] bookmarksForMediaObjectsOfType:mediaType];
+    return [[bookmarks objectForKey:mediaObjectID] boolValue];
 }
 
 @end
