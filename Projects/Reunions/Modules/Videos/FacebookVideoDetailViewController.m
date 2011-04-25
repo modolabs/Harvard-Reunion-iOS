@@ -4,6 +4,7 @@
 #import "CoreDataManager.h"
 #import "MediaPlayer/MediaPlayer.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
+#import "FacebookModule.h"
 
 static const NSInteger kLoadingCurtainViewTag = 0x937;
 
@@ -224,6 +225,13 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome 
                            forModuleTag:VideoModuleTag params:nil];    
 }
+
+#pragma mark FacebookMediaDetailViewController
+- (IBAction)bookmarkButtonPressed:(UIBarButtonItem *)sender {
+    [FacebookModule bookmarkMediaObjectWithID:self.video.identifier 
+                                    mediaType:@"video"];     
+}
+
 
 #pragma mark UIWebViewDelegate
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {

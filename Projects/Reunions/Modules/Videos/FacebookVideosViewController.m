@@ -3,7 +3,6 @@
 #import "Foundation+KGOAdditions.h"
 #import "UIKit+KGOAdditions.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
-#import "FacebookVideo.h"
 #import "FacebookUser.h"
 #import "FacebookModule.h"
 #import "CoreDataManager.h"
@@ -23,8 +22,6 @@ typedef enum {
 }
 FacebookVideosSegmentIndexes;
 
-typedef BOOL (^VideoTest)(FacebookVideo *video);
-
 #pragma mark Private methods
 
 @interface FacebookVideosViewController (Private)
@@ -43,8 +40,9 @@ typedef BOOL (^VideoTest)(FacebookVideo *video);
 @implementation FacebookVideosViewController
 
 @synthesize iconGrid;
+@synthesize currentFilterBlock;
 
-- (void)getGroupVideosThatPassTest:(VideoTest)predicateBlock {
+- (void)getGroupVideos {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookGroupReceivedNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookFeedDidUpdateNotification object:nil];
     
@@ -58,13 +56,9 @@ typedef BOOL (^VideoTest)(FacebookVideo *video);
                     NSLog(@"video data: %@", [aPost description]);
                     FacebookVideo *aVideo = [FacebookVideo videoWithDictionary:aPost];
                     if (aVideo && ![_videoIDs containsObject:aVideo.identifier]) {
-                        if (!predicateBlock ||
-                            predicateBlock(aVideo)) {
-                            
-                            NSLog(@"created video %@", [aVideo description]);
-                            [_videos addObject:aVideo];
-                            [_videoIDs addObject:aVideo.identifier];
-                        }
+                        NSLog(@"created video %@", [aVideo description]);
+                        [_videos addObject:aVideo];
+                        [_videoIDs addObject:aVideo.identifier];
                     }
                 }
             }
@@ -80,10 +74,6 @@ typedef BOOL (^VideoTest)(FacebookVideo *video);
                                                      name:FacebookGroupReceivedNotification
                                                    object:nil];
     }
-}
-
-- (void)getGroupVideos {
-    [self getGroupVideosThatPassTest:nil];
 }
 
 - (void)requestVideosFromFeed {    
@@ -150,7 +140,7 @@ typedef BOOL (^VideoTest)(FacebookVideo *video);
     _videos = [[NSMutableArray alloc] init];
     _videoIDs = [[NSMutableSet alloc] init];
     
-    [self getGroupVideosThatPassTest:nil];
+    [self getGroupVideos];
     [self addVideoThumbnailsToGrid];
 }
 
@@ -177,7 +167,7 @@ typedef BOOL (^VideoTest)(FacebookVideo *video);
 
 
 - (void)dealloc {
-//    [_tableView release];
+    [currentFilterBlock release];
     [iconGrid release];
     [_videos release];
     [_videoIDs release];
@@ -213,19 +203,23 @@ typedef BOOL (^VideoTest)(FacebookVideo *video);
 }
 
 #pragma mark Icon grid helpers
+
+// Will only add thumbnails for videos that pass the current filter, if there 
+// is one.
 - (void)addVideoThumbnailsToGrid {
     NSAutoreleasePool *thumbnailLoadingPool = [[NSAutoreleasePool alloc] init];
     NSMutableArray *thumbnails = [NSMutableArray arrayWithCapacity:_videos.count];
     for (FacebookVideo *video in _videos) {
-        FacebookThumbnail *thumbnail = 
-        [[[FacebookThumbnail alloc] initWithFrame:[self thumbnailFrame]] 
-         autorelease];
-        thumbnail.thumbSource = video;
-        [thumbnail addTarget:self action:@selector(thumbnailTapped:) 
-            forControlEvents:UIControlEventTouchUpInside];
-        [thumbnails addObject:thumbnail];
-    }
-    
+        if (!self.currentFilterBlock || self.currentFilterBlock(video)) {
+            FacebookThumbnail *thumbnail = 
+            [[[FacebookThumbnail alloc] initWithFrame:[self thumbnailFrame]] 
+             autorelease];
+            thumbnail.thumbSource = video;
+            [thumbnail addTarget:self action:@selector(thumbnailTapped:) 
+                forControlEvents:UIControlEventTouchUpInside];
+            [thumbnails addObject:thumbnail];
+        }
+    }    
     self.iconGrid.icons = thumbnails;
     [self.iconGrid setNeedsLayout];
     
@@ -415,46 +409,48 @@ typedef BOOL (^VideoTest)(FacebookVideo *video);
     switch (sender.selectedSegmentIndex) {
         case kAllVideosSegment:
         {
-            // Reload photos.
-            [self getGroupVideos];
+            self.currentFilterBlock = nil;
             break;
         }
         case kMyUploadsSegment:
         {
-            [_videos removeAllObjects];
-            [_videoIDs removeAllObjects];
-            
-            NSString *uploaderName = 
+            NSString *uploaderIdentifier = 
             [[KGOSocialMediaController sharedController] 
-             currentFacebookUser].name;            
+             currentFacebookUser].identifier;
             
-            [self getGroupVideosThatPassTest:^(FacebookVideo *video) {
-                if ([uploaderName isEqualToString:[[video owner] name]]) {
-                    return YES;
-                }
-                return NO;
-            }];            
+            self.currentFilterBlock = 
+            [[
+              ^(FacebookVideo *video) {
+                  NSString *ownerIdentifier = [[video owner] identifier];
+                  if ([uploaderIdentifier isEqualToString:ownerIdentifier]) {
+                      return YES;
+                  }
+                  return NO;
+              } 
+              copy] autorelease];
             break;
         }
         case kBookmarksSegment:
         {
             NSDictionary *bookmarks = 
-            [FacebookModule bookmarksForMediaObjectsOfType:@"photo"];
+            [FacebookModule bookmarksForMediaObjectsOfType:@"video"];
             
-            [_videos removeAllObjects];
-            [_videoIDs removeAllObjects];
-            
-            [self getGroupVideosThatPassTest:^(FacebookVideo *video) {
-                if ([bookmarks objectForKey:video.identifier]) {
-                    return YES;
-                }
-                return NO;
-            }];            
+            self.currentFilterBlock = 
+            [[
+              ^(FacebookVideo *video) {
+                  if ([bookmarks objectForKey:video.identifier]) {
+                      return YES;
+                  }
+                  return NO;
+              }
+              copy] autorelease];
             break;
         }            
         default:
             break;
     } 
+    
+    [self addVideoThumbnailsToGrid];
 }
 
 

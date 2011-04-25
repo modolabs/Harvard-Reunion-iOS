@@ -4,6 +4,9 @@
 #import "Facebook.h"
 #import "MITThumbnailView.h"
 #import "IconGrid.h"
+#import "FacebookVideo.h"
+
+typedef BOOL (^VideoTest)(FacebookVideo *video);
 
 // still deciding how FB wrapper work should be allocated
 // between KGOSocialMediaController and this class.
@@ -19,6 +22,6 @@
 }
 
 @property (nonatomic, retain) IconGrid *iconGrid;
-
+@property (nonatomic, retain) VideoTest currentFilterBlock;
 
 @end
