@@ -15,6 +15,8 @@
 @synthesize post, posts, tableView = _tableView;
 @synthesize mediaView = _mediaView;
 @synthesize moduleTag;
+@synthesize actionsBar;
+
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -28,6 +30,7 @@
 
 - (void)dealloc
 {
+    [actionsBar release];
     [_comments release];
     self.moduleTag = nil;
     [super dealloc];

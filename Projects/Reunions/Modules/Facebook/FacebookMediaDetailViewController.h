@@ -4,6 +4,7 @@
 #import "MediaContainerView.h"
 #import "FacebookCommentViewController.h"
 #import "KGOSocialMediaController+FacebookAPI.h"
+#import "KGOToolbar.h"
 
 #define MAXIMUM_IMAGE_HEIGHT 500
 
@@ -21,15 +22,17 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
     IBOutlet UIView *_mediaPreviewView;
     IBOutlet UIView *_mediaImageBackgroundView;
     
+    IBOutlet KGOToolbar *actionsBar;
+    
     NSArray *_comments;
 }
 
-@property(nonatomic, retain) NSArray *posts;
-@property(nonatomic, retain) FacebookParentPost *post;
-@property(nonatomic, retain) UITableView *tableView;
-@property(nonatomic, retain) NSString *moduleTag;
-@property(readonly) MediaContainerView *mediaView;
-
+@property (nonatomic, retain) NSArray *posts;
+@property (nonatomic, retain) FacebookParentPost *post;
+@property (nonatomic, retain) UITableView *tableView;
+@property (nonatomic, retain) NSString *moduleTag;
+@property (readonly) MediaContainerView *mediaView;
+@property (nonatomic, retain) KGOToolbar *actionsBar;
 
 
 - (IBAction)commentButtonPressed:(id)sender;
