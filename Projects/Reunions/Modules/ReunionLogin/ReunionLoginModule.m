@@ -159,8 +159,6 @@
     UILabel *yearLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 4, size.width, size.height)] autorelease];
     yearLabel.text = text;
     yearLabel.font = font;
-    yearLabel.textColor = [UIColor whiteColor];
-    yearLabel.backgroundColor = [UIColor clearColor];
     y = size.height + 4;
     
     // reunion number superscript
@@ -170,8 +168,6 @@
     UILabel *yearSupLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 9, size.width, size.height)] autorelease];
     yearSupLabel.text = text;
     yearSupLabel.font = font;
-    yearSupLabel.textColor = [UIColor whiteColor];
-    yearSupLabel.backgroundColor = [UIColor clearColor];
     
     // position above two elements
     CGFloat x = floor((imageView.frame.size.width - yearLabel.frame.size.width - yearSupLabel.frame.size.width) / 2);
@@ -187,9 +183,7 @@
     UILabel *reunionLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, y, image.size.width, font.lineHeight)] autorelease];
     reunionLabel.text = @"Reunion";
     reunionLabel.font = font;
-    reunionLabel.backgroundColor = [UIColor clearColor];
     reunionLabel.textAlignment = UITextAlignmentCenter;
-    reunionLabel.textColor = [UIColor whiteColor];
     y += reunionLabel.frame.size.height;
     
     // reunion date
@@ -197,8 +191,6 @@
     UILabel *dateLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, y, image.size.width, font.lineHeight)] autorelease];
     dateLabel.text = [homeModule reunionDateString];
     dateLabel.font = font;
-    dateLabel.backgroundColor = [UIColor clearColor];
-    dateLabel.textColor = [UIColor whiteColor];
     dateLabel.textAlignment = UITextAlignmentCenter;
     
     CGRect frame = imageView.frame;
@@ -209,6 +201,15 @@
         frame.origin.x = 36;
     }
     KGOHomeScreenWidget *widget = [[[KGOHomeScreenWidget alloc] initWithFrame:frame] autorelease];
+    
+    for (UILabel *label in [NSArray arrayWithObjects:yearLabel, yearSupLabel, reunionLabel, dateLabel, nil]) {
+        label.backgroundColor = [UIColor clearColor];
+        label.textColor = [UIColor whiteColor];
+        label.layer.shadowColor = [[UIColor blackColor] CGColor];
+        label.layer.shadowOffset = CGSizeMake(0, 1);
+        label.layer.shadowOpacity = 0.67;
+        label.layer.shadowRadius = 1;
+    }
     
     [widget addSubview:imageView];
     [widget addSubview:yearLabel];

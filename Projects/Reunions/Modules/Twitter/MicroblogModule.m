@@ -10,7 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 // dimensions
-#define BUTTON_WIDTH_IPHONE 120
+#define BUTTON_WIDTH_IPHONE 122
 #define BUTTON_HEIGHT_IPHONE 46
 
 #define BUTTON_WIDTH_IPAD 80
@@ -109,8 +109,6 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         [_chatBubble addSubview:bubbleView];
         [_chatBubble addSubview:caratView];
         
-        NSLog(@"%@ %@", [caratView description], [bubbleView description]);
-        
         CGFloat bubbleHPadding = 10;
         CGFloat bubbleVPadding = isTablet ? 8 : 6;
         frame = CGRectMake(bubbleHPadding + bubbleView.frame.origin.x,
@@ -175,8 +173,8 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
     [_labelText release];
     _labelText = [labelText retain];
     if (_labelText) {
-        UILabel *label = (UILabel *)[self.buttonWidget viewWithTag:BUTTON_WIDGET_LABEL_TAG];
-        label.text = _labelText;
+        UIButton *button = (UIButton *)[self.buttonWidget viewWithTag:BUTTON_WIDGET_LABEL_TAG];
+        [button setTitle:_labelText forState:UIControlStateNormal];
     }
 }
 
@@ -190,50 +188,61 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
     }
     
     if (!_buttonWidget) {
-        CGRect frame = CGRectZero; // all frames are set at the end
+        UIImage *backgroundImage = [UIImage imageWithPathName:@"modules/home/social-button"];
+        CGRect frame = CGRectMake(0, 0, backgroundImage.size.width + 6, backgroundImage.size.height + 7);
         _buttonWidget = [[KGOHomeScreenWidget alloc] initWithFrame:frame];
         _buttonWidget.gravity = KGOLayoutGravityBottomLeft;
         _buttonWidget.behavesAsIcon = YES;
         _buttonWidget.module = self;
-        
-        UIImageView *imageView = [[[UIImageView alloc] initWithImage:self.buttonImage] autorelease];
-        [_buttonWidget addSubview:imageView];
-        
-        UILabel *label = [[[UILabel alloc] initWithFrame:frame] autorelease];
-        label.font = [UIFont systemFontOfSize:12];
-        label.text = self.labelText;
-        label.numberOfLines = 2;
-        label.backgroundColor = [UIColor clearColor];
-        label.textColor = [UIColor whiteColor];
-        label.tag = BUTTON_WIDGET_LABEL_TAG;
-        [_buttonWidget addSubview:label];
-        
-        KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
-        KGONavigationStyle navStyle = [appDelegate navigationStyle];
-        
-        if (navStyle == KGONavigationStyleTabletSidebar) {
-            frame.size.width = BUTTON_WIDTH_IPAD;
-            frame.size.height = BUTTON_HEIGHT_IPAD;
-            _buttonWidget.frame = frame;
-            
-            // TODO: stop using magic numbers
-            imageView.frame = CGRectMake(22, 5, 31, 31);
-            label.frame = CGRectMake(5, 40, 65, 40);
-            label.textAlignment = UITextAlignmentCenter;
-        } else {
-            frame.size.width = BUTTON_WIDTH_IPHONE;
-            frame.size.height = BUTTON_HEIGHT_IPHONE;
-            _buttonWidget.frame = frame;
-            
-            // TODO: when we have an image of the right size, don't specify width/height
-            frame = CGRectMake(5, 5, 31, 31);
-            imageView.frame = frame;
-            
-            CGFloat x = frame.origin.x + frame.size.width + 5;
-            frame = CGRectMake(x, 5, BUTTON_WIDTH_IPHONE - x - 5, 31);
-            label.frame = frame;
-        }
     }
+    
+    UIButton *button = (UIButton *)[_buttonWidget viewWithTag:BUTTON_WIDGET_LABEL_TAG];
+    if (!button) {
+        UIImage *backgroundImage = [UIImage imageWithPathName:@"modules/home/social-button"];
+        UIImage *pressedBackground = [UIImage imageWithPathName:@"modules/home/social-button-pressed"];
+        button = [UIButton buttonWithType:UIButtonTypeCustom];
+        button.frame = CGRectMake(4, 2, backgroundImage.size.width, backgroundImage.size.height);
+        [button setBackgroundImage:backgroundImage forState:UIControlStateNormal];
+        [button setBackgroundImage:pressedBackground forState:UIControlStateHighlighted];
+        [button setImage:self.buttonImage forState:UIControlStateNormal];
+        [button setTitle:self.labelText forState:UIControlStateNormal];
+        button.titleLabel.font = [UIFont systemFontOfSize:12.5];
+        button.titleLabel.numberOfLines = 2;
+        button.titleLabel.lineBreakMode = UILineBreakModeWordWrap;
+        button.titleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+        button.titleLabel.layer.shadowOffset = CGSizeMake(0, 1);
+        button.titleLabel.layer.shadowOpacity = 0.5;
+        button.titleLabel.layer.shadowRadius = 1;
+        button.tag = BUTTON_WIDGET_LABEL_TAG;
+        if (_buttonWidget.behavesAsIcon) {
+            [button addTarget:_buttonWidget action:@selector(defaultTapAction:) forControlEvents:UIControlEventTouchUpInside];
+        } else {
+            [button addTarget:_buttonWidget action:@selector(customTapAction:) forControlEvents:UIControlEventTouchUpInside];
+        }
+        [_buttonWidget addSubview:button];
+    }
+    
+    KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
+    KGONavigationStyle navStyle = [appDelegate navigationStyle];
+    
+    if (navStyle == KGONavigationStyleTabletSidebar) {
+        CGFloat sidePadding = floor((button.frame.size.width - self.buttonImage.size.width) / 2);
+        button.titleLabel.textAlignment = UITextAlignmentCenter;
+        button.imageEdgeInsets = UIEdgeInsetsMake(0, sidePadding, self.buttonImage.size.height, sidePadding);
+        button.titleEdgeInsets = UIEdgeInsetsMake(self.buttonImage.size.height + 10, -self.buttonImage.size.width, 0, 0);
+        
+    } else {
+        CGSize maxSize = CGSizeMake(button.frame.size.width - self.buttonImage.size.width - 15, button.frame.size.height);
+        CGSize textSize = [self.labelText sizeWithFont:button.titleLabel.font
+                                     constrainedToSize:maxSize];
+        
+        CGFloat rightInset = maxSize.width - textSize.width + 5;
+        button.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, rightInset);
+        button.imageEdgeInsets = UIEdgeInsetsMake(3, 5, 3, rightInset + textSize.width);
+        
+        NSLog(@"%.1f %.1f %.1f %.1f %@ %@", button.titleEdgeInsets.left, button.titleEdgeInsets.right, button.imageEdgeInsets.left, button.imageEdgeInsets.right, button.titleLabel, button.imageView);
+    }
+    
     return _buttonWidget;
 }
 
