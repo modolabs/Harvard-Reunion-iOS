@@ -11,14 +11,6 @@
 #import "KGOTheme.h"
 #import "FacebookThumbnail.h"
 
-typedef enum {
-    kAllPhotosSegment = 0,
-    kMyUploadsSegment,
-    kBookmarksSegment
-}
-FacebookPhotosSegmentIndexes;
-
-
 @interface FacebookPhotosViewController (Private)
 
 - (FacebookPhotoSize)thumbSize;
@@ -432,7 +424,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender {
 
     switch (sender.selectedSegmentIndex) {
-        case kAllPhotosSegment:
+        case kAllMediaObjectsSegment:
         {
             // Reload photos.
             self.currentFilterBlock = nil;

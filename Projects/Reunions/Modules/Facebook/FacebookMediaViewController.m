@@ -9,6 +9,7 @@
 
 @synthesize scrollView = _scrollView;
 @synthesize photoPickerPopover;
+@synthesize subheadToolbar;
 
 #pragma mark -
 
@@ -71,6 +72,7 @@
 
 - (void)dealloc
 {
+    [subheadToolbar release];
     [photoPickerPopover release];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_scrollView release];
@@ -113,11 +115,34 @@
 {
     [super viewDidLoad];
     
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    // Set up toolbar background.
+    UIImageView *backgroundView = 
+    [[UIImageView alloc] initWithImage:
+     [UIImage imageNamed:@"common/subheadbar_background"]];
+    [self.subheadToolbar addSubview:backgroundView];
+    [self.subheadToolbar sendSubviewToBack:backgroundView];
+    [backgroundView release];
+    
+    // Set up segmented control images.
+//    [_filterControl 
+//     setImage:[UIImage imageNamed:@"common/toolbar-segmented-left"] 
+//     forSegmentAtIndex:kAllMediaObjectsSegment];
+//    [_filterControl 
+//     setImage:[UIImage imageNamed:@"common/toolbar-segmented-middle"] 
+//     forSegmentAtIndex:kMyUploadsSegment];
+//    [_filterControl 
+//     setImage:[UIImage imageNamed:@"common/toolbar-segmented-right"] 
+//     forSegmentAtIndex:kBookmarksSegment];
+
     if (facebookUserLoggedIn) {
         [self hideLoginViewAnimated:NO];
     }
     _loginHintLabel.text = NSLocalizedString(@"Reunion photos are posted etc etc etc.", nil);
     [_loginButton setTitle:@"Sign in to Facebook" forState:UIControlStateNormal];
+    
+    [pool release];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

@@ -15,13 +15,6 @@ typedef enum {
 }
 VideosViewTags;
 
-typedef enum {
-    kAllVideosSegment = 0,
-    kMyUploadsSegment,
-    kBookmarksSegment
-}
-FacebookVideosSegmentIndexes;
-
 #pragma mark Private methods
 
 @interface FacebookVideosViewController (Private)
@@ -411,7 +404,7 @@ FacebookVideosSegmentIndexes;
 
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender {
     switch (sender.selectedSegmentIndex) {
-        case kAllVideosSegment:
+        case kAllMediaObjectsSegment:
         {
             self.currentFilterBlock = nil;
             break;
