@@ -118,13 +118,14 @@
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     // Set up toolbar background.
-    UIImageView *backgroundView = 
-    [[UIImageView alloc] initWithImage:
-     [UIImage imageNamed:@"common/subheadbar_background"]];
-    [self.subheadToolbar addSubview:backgroundView];
-    [self.subheadToolbar sendSubviewToBack:backgroundView];
-    [backgroundView release];
-    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        UIImageView *backgroundView = 
+        [[UIImageView alloc] initWithImage:
+         [UIImage imageNamed:@"common/subheadbar_background"]];
+        [self.subheadToolbar addSubview:backgroundView];
+        [self.subheadToolbar sendSubviewToBack:backgroundView];
+        [backgroundView release];
+        
     // Set up segmented control images.
 //    [_filterControl 
 //     setImage:[UIImage imageNamed:@"common/toolbar-segmented-left"] 
@@ -135,7 +136,8 @@
 //    [_filterControl 
 //     setImage:[UIImage imageNamed:@"common/toolbar-segmented-right"] 
 //     forSegmentAtIndex:kBookmarksSegment];
-
+    }
+    
     if (facebookUserLoggedIn) {
         [self hideLoginViewAnimated:NO];
     }
