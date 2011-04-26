@@ -135,10 +135,12 @@
 }
 
 #pragma mark FacebookMediaDetailViewController
-- (IBAction)bookmarkButtonPressed:(UIBarButtonItem *)sender {
-    [FacebookModule bookmarkMediaObjectWithID:self.photo.identifier 
-                                    mediaType:@"photo"];     
+- (NSString *)identifierForBookmark {
+    return self.photo.identifier;
 }
-     
+
+- (NSString *)mediaTypeForBookmark {
+    return @"photo";
+}
 
 @end

@@ -27,7 +27,7 @@ FacebookVideosSegmentIndexes;
 @interface FacebookVideosViewController (Private)
 
 - (void)requestVideosFromFeed;
-- (void)addVideoThumbnailsToGrid;
+- (void)syncVideoThumbnailsToGrid;
 - (CGRect)thumbnailFrame;
 + (CGRect)frameForImage:(UIImage *)image 
                 inFrame:(CGRect)frame 
@@ -62,7 +62,7 @@ FacebookVideosSegmentIndexes;
                     }
                 }
             }
-            [self addVideoThumbnailsToGrid];            
+            [self syncVideoThumbnailsToGrid];            
         } 
         else {
             [self requestVideosFromFeed];                     
@@ -141,7 +141,7 @@ FacebookVideosSegmentIndexes;
     _videoIDs = [[NSMutableSet alloc] init];
     
     [self getGroupVideos];
-    [self addVideoThumbnailsToGrid];
+    [self syncVideoThumbnailsToGrid];
 }
 
 /*
@@ -165,6 +165,10 @@ FacebookVideosSegmentIndexes;
     // e.g. self.myOutlet = nil;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self syncVideoThumbnailsToGrid];
+}
 
 - (void)dealloc {
     [currentFilterBlock release];
@@ -206,14 +210,14 @@ FacebookVideosSegmentIndexes;
 
 // Will only add thumbnails for videos that pass the current filter, if there 
 // is one.
-- (void)addVideoThumbnailsToGrid {
+- (void)syncVideoThumbnailsToGrid {
     NSAutoreleasePool *thumbnailLoadingPool = [[NSAutoreleasePool alloc] init];
     NSMutableArray *thumbnails = [NSMutableArray arrayWithCapacity:_videos.count];
     for (FacebookVideo *video in _videos) {
         if (!self.currentFilterBlock || self.currentFilterBlock(video)) {
             FacebookThumbnail *thumbnail = 
-            [[[FacebookThumbnail alloc] initWithFrame:[self thumbnailFrame]] 
-             autorelease];
+            [[[FacebookThumbnail alloc] initWithFrame:[self thumbnailFrame] 
+                                        displayLabels:YES] autorelease];
             thumbnail.thumbSource = video;
             [thumbnail addTarget:self action:@selector(thumbnailTapped:) 
                 forControlEvents:UIControlEventTouchUpInside];
@@ -431,17 +435,13 @@ FacebookVideosSegmentIndexes;
             break;
         }
         case kBookmarksSegment:
-        {
-            NSDictionary *bookmarks = 
-            [FacebookModule bookmarksForMediaObjectsOfType:@"video"];
-            
+        {            
             self.currentFilterBlock = 
             [[
               ^(FacebookVideo *video) {
-                  if ([bookmarks objectForKey:video.identifier]) {
-                      return YES;
-                  }
-                  return NO;
+                  return [FacebookModule 
+                          isMediaObjectWithIDBookmarked:video.identifier 
+                          mediaType:@"video"];
               }
               copy] autorelease];
             break;
@@ -450,7 +450,7 @@ FacebookVideosSegmentIndexes;
             break;
     } 
     
-    [self addVideoThumbnailsToGrid];
+    [self syncVideoThumbnailsToGrid];
 }
 
 

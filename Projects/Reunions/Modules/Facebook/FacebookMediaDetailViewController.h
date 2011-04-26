@@ -22,7 +22,7 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
     IBOutlet UIView *_mediaPreviewView;
     IBOutlet UIView *_mediaImageBackgroundView;
     
-    IBOutlet KGOToolbar *actionsBar;
+    IBOutlet KGOToolbar *actionsToolbar;
     
     NSArray *_comments;
 }
@@ -32,7 +32,7 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
 @property (nonatomic, retain) UITableView *tableView;
 @property (nonatomic, retain) NSString *moduleTag;
 @property (readonly) MediaContainerView *mediaView;
-@property (nonatomic, retain) KGOToolbar *actionsBar;
+@property (nonatomic, retain) KGOToolbar *actionsToolbar;
 
 
 - (IBAction)commentButtonPressed:(id)sender;
@@ -40,6 +40,8 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
 - (IBAction)bookmarkButtonPressed:(id)sender;
 - (IBAction)closeButtonPressed:(id)sender;
 - (IBAction)uploadButtonPressed:(id)sender;
+- (NSString *)identifierForBookmark;
+- (NSString *)mediaTypeForBookmark;
 
 - (void)displayPost;
 - (NSString *)postTitle;

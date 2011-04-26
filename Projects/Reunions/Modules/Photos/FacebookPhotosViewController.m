@@ -115,6 +115,7 @@ FacebookPhotosSegmentIndexes;
     self.title = @"Photos";
     
     CGRect frame = _scrollView.frame;
+    frame.origin.x += 6.0f; // This will make the iconGrid appear centered.
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         resizeFactor = 1.;
@@ -124,6 +125,7 @@ FacebookPhotosSegmentIndexes;
     CGFloat spacing = 10. * resizeFactor;
     
     _iconGrid = [[IconGrid alloc] initWithFrame:frame];
+    _iconGrid.topPadding = 0;
     _iconGrid.delegate = self;
     _iconGrid.spacing = GridSpacingMake(spacing, spacing);
     _iconGrid.padding = GridPaddingMake(spacing, spacing, spacing, spacing);
@@ -169,6 +171,10 @@ FacebookPhotosSegmentIndexes;
     // e.g. self.myOutlet = nil;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self refreshPhotos];
+}
 
 - (void)dealloc {
     [[KGOSocialMediaController sharedController] disconnectFacebookRequests:self];
@@ -216,9 +222,10 @@ FacebookPhotosSegmentIndexes;
     }
     
     if (photo.thumbSrc || photo.thumbData || photo.data) { // omitting photo.src so we don't download full image until detail view
-        CGRect frame = CGRectMake(0, 0, 90 * resizeFactor, 90 * resizeFactor + 40);
+        CGRect frame = CGRectMake(0, 0, 90 * resizeFactor, 90 * resizeFactor + 20);
         
-        FacebookThumbnail *thumbnail = [[[FacebookThumbnail alloc] initWithFrame:frame] autorelease];
+        FacebookThumbnail *thumbnail = 
+        [[[FacebookThumbnail alloc] initWithFrame:frame displayLabels:NO] autorelease];
         thumbnail.thumbSource = photo;
         thumbnail.rotationAngle = (_icons.count % 2 == 0) ? M_PI/30 : -M_PI/30;
         [thumbnail addTarget:self action:@selector(thumbnailTapped:) forControlEvents:UIControlEventTouchUpInside];
@@ -425,17 +432,13 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
             break;
         }
         case kBookmarksSegment:
-        {
-            NSDictionary *bookmarks = 
-            [FacebookModule bookmarksForMediaObjectsOfType:@"photo"];
-            
+        {            
             self.currentFilterBlock =
             [[
-              ^(FacebookPhoto *photo) {                 
-                  if ([bookmarks objectForKey:photo.identifier]) {
-                      return YES;
-                  }
-                  return NO;
+              ^(FacebookPhoto *photo) {
+                  return [FacebookModule 
+                          isMediaObjectWithIDBookmarked:photo.identifier 
+                          mediaType:@"photo"];
               } 
               copy] autorelease];
             

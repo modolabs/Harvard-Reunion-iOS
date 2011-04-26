@@ -54,7 +54,7 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
 */
 
 - (void)dealloc {
-//    [curtainView release];
+    self.webView.delegate = nil;
     [loadingCurtainImage release];
     [webView release];
     [video release];
@@ -227,11 +227,13 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
 }
 
 #pragma mark FacebookMediaDetailViewController
-- (IBAction)bookmarkButtonPressed:(UIBarButtonItem *)sender {
-    [FacebookModule bookmarkMediaObjectWithID:self.video.identifier 
-                                    mediaType:@"video"];     
+- (NSString *)identifierForBookmark {
+    return self.video.identifier;
 }
 
+- (NSString *)mediaTypeForBookmark {
+    return @"video";
+}
 
 #pragma mark UIWebViewDelegate
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {

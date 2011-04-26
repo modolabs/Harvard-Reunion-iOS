@@ -14,22 +14,38 @@
 
 @synthesize thumbSource;
 @synthesize thumbnailView = _thumbnail;
+@synthesize shouldDisplayLabels;
 
-- (id)initWithFrame:(CGRect)frame {
+static const CGFloat kThumbnailLabelHeight = 40.0f;
+
+- (id)initWithFrame:(CGRect)frame displayLabels:(BOOL)displayLabels {
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor clearColor];
+        self.shouldDisplayLabels = displayLabels;
         
-        CGRect labelFrame = CGRectMake(0, frame.size.height-40, frame.size.width, 40);
-        _label = [[UILabel alloc] initWithFrame:labelFrame];
-        _label.backgroundColor = [UIColor clearColor];
-        _label.textColor = [UIColor whiteColor];
-        _label.numberOfLines = 3;
-        _label.font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySmallPrint];
-        _label.userInteractionEnabled = NO;
-        
-        CGRectMake(0, 0, frame.size.width, frame.size.height-40);
-        _thumbnail = [[MITThumbnailView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height-40)];
+        if (self.shouldDisplayLabels) {
+            CGRect labelFrame = 
+            CGRectMake(0, 
+                       frame.size.height - kThumbnailLabelHeight, 
+                       frame.size.width, 
+                       kThumbnailLabelHeight);
+            _label = [[UILabel alloc] initWithFrame:labelFrame];
+            _label.backgroundColor = [UIColor clearColor];
+            _label.textColor = [UIColor whiteColor];
+            _label.numberOfLines = 3;
+            _label.font = [[KGOTheme sharedTheme] 
+                           fontForThemedProperty:KGOThemePropertySmallPrint];
+            _label.userInteractionEnabled = NO;
+        }
+
+        CGFloat thumbnailViewHeight = frame.size.height;
+        if (self.shouldDisplayLabels) {
+            thumbnailViewHeight -= kThumbnailLabelHeight;
+        }
+        _thumbnail = 
+        [[MITThumbnailView alloc] initWithFrame:
+         CGRectMake(0, 0, frame.size.width, thumbnailViewHeight)];
         _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
         _thumbnail.userInteractionEnabled = NO;
         _thumbnail.delegate = self;
@@ -45,7 +61,9 @@
         _thumbnail.layer.shouldRasterize = YES;
         
         [self addSubview:_thumbnail];
-        [self addSubview:_label];
+        if (self.shouldDisplayLabels) {
+            [self addSubview:_label];
+        }
     }
     return self;
 }
@@ -58,7 +76,9 @@
     [thumbSource release];
     thumbSource = [aThumbSource retain];
     
-    _label.text = [thumbSource title];
+    if (self.shouldDisplayLabels) {
+        _label.text = [thumbSource title];
+    }
     if ([thumbSource thumbData]) {
         _thumbnail.imageData = [thumbSource thumbData];
         [_thumbnail displayImage];
