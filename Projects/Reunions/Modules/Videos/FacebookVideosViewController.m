@@ -66,8 +66,8 @@ FacebookVideosSegmentIndexes;
         } 
         else {
             [self requestVideosFromFeed];                     
-        }        
-    } 
+        }
+    }
     else {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(getGroupVideos)
