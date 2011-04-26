@@ -85,6 +85,7 @@
         [self addTableView:self.tableView withDataSource:self];
     } else {
         self.tableView = [self addTableViewWithFrame:frame style:style];
+        self.tableView.rowHeight += 2;
     }
 }
 

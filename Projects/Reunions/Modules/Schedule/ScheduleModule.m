@@ -29,7 +29,7 @@
                                                                                                bundle:nil] autorelease];
         calendarVC.moduleTag = self.tag;
         calendarVC.showsGroups = YES;
-        calendarVC.title = NSLocalizedString(@"Events", nil);
+        calendarVC.title = NSLocalizedString(@"Schedule", nil);
         
         if (!self.dataManager) {
             self.dataManager = [[[ScheduleDataManager alloc] init] autorelease];

@@ -26,7 +26,16 @@
 		<key>BodyText</key>
 		<dict>
 			<key>color</key>
+			<string>#000000</string>
+			<key>size</key>
+			<integer>0</integer>
+		</dict>
+		<key>ContentSubtitle</key>
+		<dict>
+			<key>color</key>
 			<string>#FFFFFF</string>
+			<key>font</key>
+			<string>Helvetica</string>
 			<key>size</key>
 			<integer>0</integer>
 		</dict>
@@ -38,15 +47,6 @@
 			<string>Georgia</string>
 			<key>size</key>
 			<integer>7</integer>
-		</dict>
-		<key>ContentSubtitle</key>
-		<dict>
-			<key>color</key>
-			<string>#FFFFFF</string>
-			<key>font</key>
-			<string>Helvetica</string>
-			<key>size</key>
-			<integer>0</integer>
 		</dict>
 		<key>DefaultFont</key>
 		<string>Helvetica</string>

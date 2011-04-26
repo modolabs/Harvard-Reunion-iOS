@@ -2,10 +2,13 @@
 #import "UIKit+KGOAdditions.h"
 #import "KGOSearchModel.h"
 #import "ScheduleEventWrapper.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation ReunionDetailPageHeaderView
 
-#define LABEL_PADDING 10
+#define LABEL_SPACING 10
+#define LABEL_VMARGIN 17
+#define LABEL_HMARGIN 10
 #define MAX_TITLE_LINES 3
 #define MAX_SUBTITLE_LINES 5
 
@@ -18,39 +21,47 @@
     
     if (_showsBookmarkButton) {
         [self layoutBookmarkButton];
-        buttonHeight = _bookmarkButton.frame.size.height + LABEL_PADDING;
+        buttonHeight = _bookmarkButton.frame.size.height + LABEL_SPACING;
     }
     
-    CGFloat labelWidth = self.bounds.size.width - LABEL_PADDING - _bookmarkButton.frame.size.width;
+    CGFloat labelWidth = self.bounds.size.width - LABEL_SPACING - _bookmarkButton.frame.size.width;
     
     if (_titleLabel) {
         CGSize constraintSize = CGSizeMake(labelWidth, _titleLabel.font.lineHeight * MAX_TITLE_LINES);
         CGSize textSize = [_titleLabel.text sizeWithFont:_titleLabel.font constrainedToSize:constraintSize];
-        _titleLabel.frame = CGRectMake(LABEL_PADDING, LABEL_PADDING, labelWidth, textSize.height);
+        _titleLabel.frame = CGRectMake(LABEL_HMARGIN, LABEL_VMARGIN, labelWidth, textSize.height);
+        _titleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+        _titleLabel.layer.shadowOffset = CGSizeMake(0, 1);
+        _titleLabel.layer.shadowOpacity = 0.5;
+        _titleLabel.layer.shadowRadius = 1;
         
         if (![_titleLabel isDescendantOfView:self]) {
             [self addSubview:_titleLabel];
         }
-        titleHeight = _titleLabel.frame.size.height + LABEL_PADDING;
+        titleHeight = _titleLabel.frame.size.height + LABEL_SPACING;
     }
     
     if (_subtitleLabel) {
         CGSize constraintSize = CGSizeMake(labelWidth, _subtitleLabel.font.lineHeight * MAX_SUBTITLE_LINES);
         CGSize textSize = [_subtitleLabel.text sizeWithFont:_subtitleLabel.font constrainedToSize:constraintSize];
-        CGFloat y = LABEL_PADDING;
+        CGFloat y = LABEL_VMARGIN;
         if (_titleLabel) {
-            y += _titleLabel.frame.size.height + LABEL_PADDING;
+            y += _titleLabel.frame.size.height + LABEL_HMARGIN;
         }
-        _subtitleLabel.frame = CGRectMake(LABEL_PADDING, y, labelWidth, textSize.height);
+        _subtitleLabel.frame = CGRectMake(LABEL_HMARGIN, y, labelWidth, textSize.height);
+        _subtitleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+        _subtitleLabel.layer.shadowOffset = CGSizeMake(0, 1);
+        _subtitleLabel.layer.shadowOpacity = 0.5;
+        _subtitleLabel.layer.shadowRadius = 1;
         
         if (![_subtitleLabel isDescendantOfView:self]) {
             [self addSubview:_subtitleLabel];
         }
-        subtitleHeight = _subtitleLabel.frame.size.height + LABEL_PADDING;
+        subtitleHeight = _subtitleLabel.frame.size.height + LABEL_SPACING;
     }
     
     CGRect frame = self.frame;
-    frame.size.height = fmaxf(titleHeight + subtitleHeight, buttonHeight) + LABEL_PADDING;
+    frame.size.height = fmaxf(titleHeight + subtitleHeight, buttonHeight) + LABEL_SPACING;
     self.frame = frame;
     
     if ((self.frame.size.width != oldFrame.size.width || self.frame.size.height != oldFrame.size.height)
@@ -64,7 +75,7 @@
 {
     if (!_bookmarkButton) {
         UIImage *placeholder = [UIImage imageWithPathName:@"common/bookmark-ribbon-off.png"];
-        CGFloat buttonX = self.bounds.size.width - LABEL_PADDING - placeholder.size.width;
+        CGFloat buttonX = self.bounds.size.width - LABEL_HMARGIN - placeholder.size.width;
         
         _bookmarkButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
         _bookmarkButton.frame = CGRectMake(buttonX, 0, placeholder.size.width, placeholder.size.height);

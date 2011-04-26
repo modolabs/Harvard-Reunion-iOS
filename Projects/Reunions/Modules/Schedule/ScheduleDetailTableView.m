@@ -54,6 +54,7 @@
     checkinVC.parentTableView = self;
     
     navC.modalPresentationStyle = UIModalPresentationFormSheet;
+    navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
     [self.viewController presentModalViewController:navC animated:YES];
 }
 

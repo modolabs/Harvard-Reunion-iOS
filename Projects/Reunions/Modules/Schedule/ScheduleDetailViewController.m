@@ -13,6 +13,7 @@
         _tableView.backgroundColor = [UIColor clearColor];
         _tableView.dataManager = self.dataManager;
         _tableView.viewController = self;
+        _tableView.rowHeight += 2;
         
         [self.view addSubview:_tableView];
     }

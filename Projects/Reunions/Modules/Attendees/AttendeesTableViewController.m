@@ -1,6 +1,7 @@
 #import "AttendeesTableViewController.h"
 #import "KGOTheme.h"
 #import "KGORequestManager.h"
+#import <QuartzCore/QuartzCore.h>
 
 NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 
@@ -66,33 +67,35 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
         _sectionTitles = [[titles sortedArrayUsingSelector:@selector(compare:)] copy];
     }
 
-    CGRect frame = CGRectMake(0, 44, self.view.frame.size.width, self.view.frame.size.height - 44);
+    UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
+    CGFloat viewHeight = font.lineHeight + 24;
+    
+    CGSize size = [self.eventTitle sizeWithFont:font];
+    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 17, self.view.bounds.size.width - 20,
+                                                                size.height)] autorelease];
+    
+    label.text = self.eventTitle;
+    label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
+    label.font = font;
+    label.backgroundColor = [UIColor clearColor];
+    label.layer.shadowColor = [[UIColor blackColor] CGColor];
+    label.layer.shadowOffset = CGSizeMake(0, 1);
+    label.layer.shadowOpacity = 0.75;
+    label.layer.shadowRadius = 1;
+    
+    UIView *labelContainer = [[[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0,
+                                                                       self.view.bounds.size.width,
+                                                                       viewHeight)] autorelease];
+    labelContainer.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
+    [labelContainer addSubview:label];
+    
+    CGRect frame = CGRectMake(0, viewHeight, self.view.frame.size.width, self.view.frame.size.height - 44);
     self.tableView = [[[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain] autorelease];
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.separatorColor = [UIColor whiteColor];
-
-    UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySectionHeaderGrouped];
-    CGFloat hPadding = 20.0f;
-    CGFloat viewHeight = font.pointSize + 24;
-    
-    CGSize size = [self.eventTitle sizeWithFont:font];
-    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(hPadding,
-                                                                floor((viewHeight - size.height) / 2),
-                                                                self.tableView.bounds.size.width - hPadding * 2,
-                                                                size.height)] autorelease];
-    
-    label.text = self.eventTitle;
-    label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySectionHeaderGrouped];
-    label.font = font;
-    label.backgroundColor = [UIColor clearColor];
-    
-    UIView *labelContainer = [[[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0,
-                                                                       self.tableView.bounds.size.width,
-                                                                       viewHeight)] autorelease];
-    labelContainer.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
-    [labelContainer addSubview:label];
+    self.tableView.rowHeight -= 10;
     
     [self.view addSubview:labelContainer];
     [self.view addSubview:self.tableView];
