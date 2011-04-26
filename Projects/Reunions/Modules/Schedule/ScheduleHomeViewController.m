@@ -7,6 +7,7 @@
 #import "ScheduleTabletTableViewCell.h"
 #import <QuartzCore/QuartzCore.h>
 #import "MapKit+KGOAdditions.h"
+#import "Note.h"
 
 @implementation ScheduleHomeViewController
 
@@ -86,6 +87,107 @@
         self.tableView = [self addTableViewWithFrame:frame style:style];
     }
 }
+
+-(void) newNoteForSection: (int) section andRow: (int) row {
+    NSArray *eventsForSection = [_currentEventsBySection objectForKey:[_currentSections objectAtIndex:section]];
+    ScheduleEventWrapper *event = [eventsForSection objectAtIndex:row];
+    
+    NSString * noteTitle = [NSString stringWithFormat:@"Note for: %@", event.title];
+    
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND eventIdentifier = %@", noteTitle, event.identifier];
+    Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
+    
+    NSDate * dateForNote = [NSDate date];
+    
+    if (nil != note)
+        if (nil != note.date)
+            dateForNote = note.date;
+    
+    if (nil != tempVC)
+        [tempVC release];
+    
+    tempVC = [[[NewNoteViewController alloc] initWithTitleText:noteTitle
+                                                          date:dateForNote              
+                                                   andDateText:[Note dateToDisplay:dateForNote]
+                                                       eventId:event.identifier
+                                                     viewWidth:NEWNOTE_WIDTH 
+                                                    viewHeight:NEWNOTE_HEIGHT] retain];
+    tempVC.viewControllerBackground = self;
+    
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:tempVC] autorelease];
+    
+    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                           target:self
+                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+    
+    tempVC.navigationItem.rightBarButtonItem = item;
+    
+    navC.modalPresentationStyle =  UIModalPresentationFormSheet;
+    [self presentModalViewController:navC animated:YES];
+    navC.navigationBar.tintColor = [UIColor blackColor];
+    navC.view.userInteractionEnabled = YES;
+    
+    navC.view.superview.frame = CGRectMake(NEWNOTE_XOFFSET, 
+                                           NEWNOTE_YOFFSET, 
+                                           NEWNOTE_WIDTH, 
+                                           NEWNOTE_HEIGHT);//it's important to do this after presentModalViewController
+}
+
+-(void) newNoteButtonPressedForSelected: (id) sender{
+    
+    [self newNoteForSection:_selectedIndexPath.section andRow:_selectedIndexPath.row];
+}
+
+-(void) newNoteButtonPressedForLast: (id) sender{
+    NSArray *eventsForSection = [_currentEventsBySection objectForKey:[_currentSections objectAtIndex:_currentSections.count - 1]];
+    
+    [self newNoteForSection:_currentSections.count - 1 andRow:eventsForSection.count - 1];
+}
+
+-(void) saveNotesState {
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND date = %@", tempVC.titleText, tempVC.date];
+    Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
+    
+    if (nil == note) {
+        note = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:NotesEntityName];
+    }
+    
+    note.title = tempVC.titleText;
+    note.date = tempVC.date;
+    note.details = tempVC.textViewString;
+    
+    if (nil != tempVC.eventIdentifier)
+        note.eventIdentifier = tempVC.eventIdentifier;
+    
+    [[CoreDataManager sharedManager] saveData];
+}
+
+- (void) dismissModalViewControllerAnimated:(BOOL)animated {
+    
+    if (nil != tempVC) {
+        [self saveNotesState];
+    }
+    
+    [super dismissModalViewControllerAnimated:YES];
+}
+
+
+#pragma mark
+#pragma mark NotesModalViewDelegate 
+
+-(void) deleteNoteWithoutSaving {
+    if (nil != tempVC) {
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND date = %@", tempVC.titleText, tempVC.date];
+        Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
+        
+        if (nil != note) {
+            [[CoreDataManager sharedManager] deleteObject:note];
+            [[CoreDataManager sharedManager] saveData];
+        }
+    }
+    [super dismissModalViewControllerAnimated:YES];
+}
+
 
 #pragma mark - Table view overrides
 
@@ -268,6 +370,29 @@
             case ScheduleCellSelected:
             case ScheduleCellLastInTable:
             {
+                if (_isTablet) {
+                    // adding Notes button
+                    UIImage *notesImage = [UIImage imageWithPathName:@"modules/schedule/fakeheader.png"];
+                    
+                    UIButton * notesButton = [UIButton buttonWithType:UIButtonTypeCustom];
+                    [notesButton setBackgroundImage:notesImage forState:UIControlStateNormal];
+                    
+                    
+                    notesButton.frame = CGRectMake(tableView.frame.size.width - 80,
+                                                   -4, 
+                                                   notesImage.size.width, 
+                                                   notesImage.size.height);
+                    
+                    if (cellType == ScheduleCellSelected)
+                        [notesButton addTarget:self action:@selector(newNoteButtonPressedForSelected:) forControlEvents:UIControlEventTouchUpInside];
+                    
+                    else if (cellType == ScheduleCellLastInTable)
+                        [notesButton addTarget:self action:@selector(newNoteButtonPressedForLast:) forControlEvents:UIControlEventTouchUpInside];
+                    
+                    [cell.contentView addSubview:notesButton];
+                }
+                
+                
                 CGFloat width = floor((tableView.frame.size.width - 30) / 2);
                 ScheduleDetailTableView *tableView = (ScheduleDetailTableView *)[cell.contentView viewWithTag:TABLE_TAG];
                 if (!tableView) {

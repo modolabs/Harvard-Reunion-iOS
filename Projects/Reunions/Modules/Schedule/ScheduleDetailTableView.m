@@ -87,6 +87,8 @@
 
 - (void)eventDetailsDidChange
 {
+    [super eventDetailsDidChange];
+    
     if (self.mapView && ![self.mapView annotations].count && self.event.coordinate.latitude) {
         [self.mapView addAnnotation:self.event];
         [self.mapView setRegion:MKCoordinateRegionMake(self.event.coordinate, MKCoordinateSpanMake(0.01, 0.01))];
@@ -270,7 +272,7 @@
         }
         indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section - 1];
     }
-    
+
     id cellData = [[self.sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     if ([cellData isKindOfClass:[NSDictionary class]]) {    
         NSString *accessory = [cellData objectForKey:@"accessory"];

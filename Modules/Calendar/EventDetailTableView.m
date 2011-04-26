@@ -12,7 +12,7 @@
 
 @implementation EventDetailTableView
 
-@synthesize dataManager, viewController, headerView = _headerView;
+@synthesize dataManager, viewController, headerView = _headerView, sections = _sections;
 
 - (id)initWithFrame:(CGRect)frame style:(UITableViewStyle)style
 {
@@ -62,6 +62,11 @@
 - (KGOEventWrapper *)event
 {
     return _event;
+}
+
+- (NSArray *) sections
+{
+    return _sections;
 }
 
 - (void)setEvent:(KGOEventWrapper *)event
@@ -229,10 +234,6 @@
     return extendedInfo;
 }
 
-- (NSArray *)sections
-{
-    return _sections;
-}
 
 #pragma mark - UITableViewDataSource
 

@@ -70,6 +70,8 @@ extern NSString * const EmergencyNoticeEntityName;
 extern NSString * const EmergencyContactsSectionEntityName;
 extern NSString * const EmergencyContactEntityName;
 
+extern NSString * const NotesEntityName;
+
 
 
 // resource names

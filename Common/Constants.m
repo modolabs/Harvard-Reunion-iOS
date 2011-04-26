@@ -68,6 +68,8 @@ NSString * const EmergencyNoticeEntityName = @"EmergencyNotice";
 NSString * const EmergencyContactsSectionEntityName = @"EmergencyContactsSection";
 NSString * const EmergencyContactEntityName = @"EmergencyContact";
 
+NSString * const NotesEntityName = @"Note";
+
 
 // local paths for handleLocalPath
 NSString * const LocalPathMapsSelectedAnnotation = @"annotation";
