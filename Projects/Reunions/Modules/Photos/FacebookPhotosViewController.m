@@ -140,6 +140,7 @@ FacebookPhotosSegmentIndexes;
     
     CGRect frame = _scrollView.frame;
     frame.origin.x += 6.0f; // This will make the iconGrid appear centered.
+    frame.origin.y = 0;
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         resizeFactor = 1.;
