@@ -12,9 +12,10 @@
                               delegate:(id<MFMailComposeViewControllerDelegate>)delegate;
 
 - (void)presentMailControllerWithEmail:(NSString *)email
-                           HTMLsubject:(NSString *)subject
+                               subject:(NSString *)subject
                                   body:(NSString *)body
-                              delegate:(id<MFMailComposeViewControllerDelegate>)delegate;
+                              delegate:(id<MFMailComposeViewControllerDelegate>)delegate
+                                isHTML:(BOOL)isHTML;
 
 @end
 

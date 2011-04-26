@@ -120,12 +120,7 @@
         emailBody = [emailBody stringByAppendingString:noteText];
     }
     
-    [self presentMailControllerWithEmail:nil
-                                 HTMLsubject:emailSubject
-                                    body:emailBody 
-                                delegate:self];
-    
-    
+    [self presentMailControllerWithEmail:nil subject:emailSubject body:emailBody delegate:self isHTML:YES];
 }
 
 - (void)newNoteButtonPressed:(id)sender {
