@@ -1,4 +1,5 @@
 #import "KGOModule+Factory.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
 #import "KGOModule.h"
 #import "AboutModule.h"
 #import "AttendeesModule.h"
@@ -93,8 +94,12 @@
     else if ([className isEqualToString:@"ConnectModule"])
         module = [[[ConnectModule alloc] initWithDictionary:args] autorelease];   
     
-    else if ([className isEqualToString:@"NotesModule"])
-        module = [[[NotesModule alloc] initWithDictionary:args] autorelease]; 
+    else if ([className isEqualToString:@"NotesModule"]) {
+        
+        KGONavigationStyle navStyle = [KGO_SHARED_APP_DELEGATE() navigationStyle];
+        if (navStyle == KGONavigationStyleTabletSidebar) 
+            module = [[[NotesModule alloc] initWithDictionary:args] autorelease]; 
+    }
     
     return module;
 }
