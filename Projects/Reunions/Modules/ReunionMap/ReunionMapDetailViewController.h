@@ -12,8 +12,10 @@
 UIWebViewDelegate, KGODetailPageHeaderDelegate, MITThumbnailDelegate> {
     
     ReunionDetailPageHeaderView *_headerView;
-    CGFloat _webViewHeight;
-    CGFloat _thumbViewHeight;
+
+    MITThumbnailView *_thumbView;
+    UIWebView *_webView;
+    
     KGOHTMLTemplate *_htmlTemplate;
     
 }

@@ -21,6 +21,9 @@
 
 - (void)dealloc
 {
+    [_webView release];
+    [_thumbView release];
+    
     [super dealloc];
 }
 
@@ -34,16 +37,76 @@
 
 #pragma mark KGODetailPager
 
+- (void)loadAnnotationContent
+{
+    // set up webview
+    
+    CGRect webViewFrame = CGRectMake(10, 10, self.tableView.frame.size.width - 40, 1);
+    if (!_webView) {
+        _webView = [[UIWebView alloc] initWithFrame:webViewFrame];
+        _webView.delegate = self;
+    } else {
+        _webView.frame = webViewFrame;
+    }
+    
+    NSString *info = nil;
+    if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
+        info = [(KGOPlacemark *)self.annotation info];
+        
+    } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]]
+               && [(ScheduleEventWrapper *)self.annotation placemarkID]
+               ) {
+        info = [NSString stringWithFormat:@"Building Number: %@", [(ScheduleEventWrapper *)self.annotation placemarkID]];
+    }
+    
+    NSDictionary *replacements = [NSDictionary dictionaryWithObjectsAndKeys:info, @"BODY", nil];
+    NSString *string = [_htmlTemplate stringWithReplacements:replacements];
+    [_webView loadHTMLString:string baseURL:nil];
+    
+    // set up photo
+    
+    UIImage *image = nil;
+    NSString *imageURL = nil;
+    if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
+        image = [UIImage imageWithData:[(KGOPlacemark *)self.annotation photo]];
+        imageURL = [(KGOPlacemark *)self.annotation photoURL];
+    } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]]) {
+        
+    }
+    
+    if (image || imageURL) {
+        if (!_thumbView) {
+            _thumbView = [[MITThumbnailView alloc] initWithFrame:CGRectMake(10, 10, 1, 1)];
+            _thumbView.delegate = self;
+        }
+        
+        if (image) {
+            CGFloat maxWidth = self.tableView.frame.size.width - 40;
+            CGFloat ratio = maxWidth / image.size.width;
+            CGRect frame = _thumbView.frame;
+            frame.size = CGSizeMake(floor(ratio * image.size.width), floor(ratio * image.size.height));
+            _thumbView.frame = frame;
+            _thumbView.imageData = UIImagePNGRepresentation(image);
+            [_thumbView displayImage];
+            
+        } else {
+            _thumbView.imageURL = imageURL;
+            _thumbView.imageData = nil;
+            [_thumbView loadImage];
+        }
+        
+    } else if (_thumbView) {
+        [_thumbView removeFromSuperview];
+        [_thumbView release];
+        _thumbView = nil;
+    }
+}
+
 - (void)pager:(KGODetailPager*)pager showContentForPage:(id<KGOSearchResult>)content {
     if ([content isKindOfClass:[KGOPlacemark class]]) {
-        //self.placemark = (KGOPlacemark *)content;
         self.annotation = (id<MKAnnotation, KGOSearchResult>)content;
-        
-        _webViewHeight = 0;
-        _thumbViewHeight = 0;
-        
-        //_headerView.detailItem = self.placemark;
         _headerView.detailItem = self.annotation;
+        [self loadAnnotationContent];
         [self.tableView reloadData];
     }
 }
@@ -62,6 +125,12 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor clearColor];
     
+    if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
+        self.title = @"Building Detail";
+    } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]]) {
+        self.title = @"Event Location";
+    }
+    
     if (self.pager) {
         self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:self.pager] autorelease];
     }
@@ -71,12 +140,13 @@
         _headerView.delegate = self;
         _headerView.showsBookmarkButton = YES;
     }
-    //_headerView.detailItem = self.placemark;
     _headerView.detailItem = self.annotation;
     self.tableView.tableHeaderView = _headerView;
     
-    _webViewHeight = 0;
-    _thumbViewHeight = 0;
+    if (!_htmlTemplate) {
+        _htmlTemplate = [[KGOHTMLTemplate templateWithPathName:@"modules/map/detail.html"] retain];
+    }
+    [self loadAnnotationContent];
 }
 
 - (void)viewDidUnload
@@ -128,9 +198,9 @@
 {
     CGFloat height = tableView.rowHeight;
     if (indexPath.section == 1) {
-        height = _webViewHeight + 20;
-        if (_thumbViewHeight) {
-            height += _thumbViewHeight + 10;
+        height = _webView.frame.size.height + 20;
+        if (_thumbView) {
+            height += _thumbView.frame.size.height + 10;
         }
     }
     return height;
@@ -152,71 +222,20 @@
             break;
         case 1:
         {
-            MITThumbnailView *thumbView = (MITThumbnailView *)[cell.contentView viewWithTag:2];
-
-            UIImage *image = nil;
-            NSString *imageURL = nil;
-            if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
-                image = [UIImage imageWithData:[(KGOPlacemark *)self.annotation photo]];
-                imageURL = [(KGOPlacemark *)self.annotation photoURL];
-            } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]]) {
+            if (![_webView isDescendantOfView:cell.contentView]) {
+                [cell.contentView addSubview:_webView];
+            }
+            
+            if (_thumbView) {
+                if (![_thumbView isDescendantOfView:cell.contentView]) {
+                    [cell.contentView addSubview:_thumbView];
+                }
                 
-            }
-            
-            if (image || imageURL) {
-                if (!thumbView) {
-                    thumbView = [[[MITThumbnailView alloc] initWithFrame:CGRectMake(10, 10, 1, 1)] autorelease];
-                    thumbView.tag = 2;
-                    thumbView.delegate = self;
-                    [cell.contentView addSubview:thumbView];
-                }
-
-                if (image) {
-                    CGFloat maxWidth = tableView.frame.size.width - 40;
-                    CGFloat ratio = maxWidth / image.size.width;
-                    CGRect frame = thumbView.frame;
-                    frame.size = CGSizeMake(floor(ratio * image.size.width), floor(ratio * image.size.height));
-                    thumbView.frame = frame;
-                    _thumbViewHeight = frame.size.height;
-                    thumbView.imageData = UIImagePNGRepresentation(image);
-                    [thumbView displayImage];
-                    
-                } else {
-                    thumbView.imageURL = imageURL;
-                    [thumbView loadImage];
+                CGFloat y = _thumbView.frame.origin.y + _thumbView.frame.size.height;
+                if (y > 11) {
+                    _webView.frame = CGRectMake(10, y + 10, _webView.frame.size.width, _webView.frame.size.height);
                 }
             }
-            
-            NSString *info = nil;
-            if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
-                info = [(KGOPlacemark *)self.annotation info];
-
-            } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]]
-                       && [(ScheduleEventWrapper *)self.annotation placemarkID]
-            ) {
-                info = [NSString stringWithFormat:@"Building Number: %@", [(ScheduleEventWrapper *)self.annotation placemarkID]];
-            }
-            
-            UIWebView *webView = (UIWebView *)[cell.contentView viewWithTag:1];
-            if (!webView) {
-                CGRect webViewFrame = CGRectMake(10, 10, tableView.frame.size.width - 40, 1);
-                webView = [[[UIWebView alloc] initWithFrame:webViewFrame] autorelease];
-                webView.tag = 1;
-                webView.delegate = self;
-                [cell.contentView addSubview:webView];
-            }
-            if (!_htmlTemplate) {
-                _htmlTemplate = [[KGOHTMLTemplate templateWithPathName:@"modules/map/detail.html"] retain];
-            }
-            
-            CGFloat y = thumbView.frame.origin.y + thumbView.frame.size.height;
-            if (y > 11) {
-                webView.frame = CGRectMake(10, y + 10, webView.frame.size.width, webView.frame.size.height);
-            }
-            
-            NSDictionary *replacements = [NSDictionary dictionaryWithObjectsAndKeys:info, @"BODY", nil];
-            NSString *string = [_htmlTemplate stringWithReplacements:replacements];
-            [webView loadHTMLString:string baseURL:nil];
             break;
         }
         default:
@@ -255,11 +274,10 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
     CGRect frame = webView.frame;
-    CGSize size = [webView sizeThatFits:frame.size];
+    CGSize size = [webView sizeThatFits:CGSizeMake(1, 1)];
     if (size.height != frame.size.height) {
         frame.size.height = size.height;
         webView.frame = frame;
-        _webViewHeight = frame.size.height;
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1]
                       withRowAnimation:UITableViewRowAnimationNone];
     }
@@ -281,7 +299,6 @@
             CGRect frame = thumbnail.frame;
             frame.size = CGSizeMake(floor(ratio * image.size.width), floor(ratio * image.size.height));
             thumbnail.frame = frame;
-            _thumbViewHeight = frame.size.height;
             [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1]
                           withRowAnimation:UITableViewRowAnimationNone];
         }

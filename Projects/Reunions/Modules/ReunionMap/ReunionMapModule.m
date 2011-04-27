@@ -10,7 +10,6 @@
     
     if ([pageName isEqualToString:LocalPathPageNameDetail]) {
         ReunionMapDetailViewController *detailVC = [[[ReunionMapDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
-        detailVC.title = @"Building Detail";
         
         KGOPlacemark *detailItem = [params objectForKey:@"detailItem"];
         if (detailItem) {
