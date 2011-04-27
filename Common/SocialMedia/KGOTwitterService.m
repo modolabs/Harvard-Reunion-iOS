@@ -72,6 +72,19 @@ static NSString * const TwitterServiceName = @"Twitter";
 	if (!_twitterEngine) {
 		_twitterEngine = [[MGTwitterEngine alloc] initWithDelegate:self];
 		[_twitterEngine setConsumerKey:_oauthKey secret:_oauthSecret];
+        
+        NSString *username = [self twitterUsername];
+        if (username) {
+            NSError *error = nil;
+            NSString *password = [SFHFKeychainUtils getPasswordForUsername:username andServiceName:TwitterServiceName error:&error];
+            if (!password || error) {
+                NSLog(@"something went wrong looking up access token, error=%@", error);
+            } else {
+                //[KGO_SHARED_APP_DELEGATE() showNetworkActivityIndicator];
+                [_twitterEngine getXAuthAccessTokenForUsername:username password:password];
+                return;
+            }
+        }
 	}
 }
 
@@ -93,30 +106,11 @@ static NSString * const TwitterServiceName = @"Twitter";
 }
 
 - (void)signin {
-
-    // TODO: the first half of this method comes from old code and may not be used
-	NSString *username = [self twitterUsername];
-	if (username) {
-        NSError *error = nil;
-        NSString *password = [SFHFKeychainUtils getPasswordForUsername:username andServiceName:TwitterServiceName error:&error];
-        if (!password || error) {
-            NSLog(@"something went wrong looking up access token, error=%@", error);
-        } else {
-            //[KGO_SHARED_APP_DELEGATE() showNetworkActivityIndicator];
-            [_twitterEngine getXAuthAccessTokenForUsername:username password:password];
-            return;
-        }
-	}
-    
     TwitterViewController *twitterVC = [[[TwitterViewController alloc] init] autorelease];
     twitterVC.delegate = self;
     UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:twitterVC] autorelease];
     navC.modalPresentationStyle = UIModalPresentationCurrentContext;
     UIViewController *visibleVC = [KGO_SHARED_APP_DELEGATE() visibleViewController];
-    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                                                                           target:visibleVC
-                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
-    twitterVC.navigationItem.rightBarButtonItem = item;
     [visibleVC presentModalViewController:navC animated:YES];
 }
 
@@ -172,23 +166,26 @@ static NSString * const TwitterServiceName = @"Twitter";
     [_twitterEngine setAccessToken:aToken];
     
 	//[KGO_SHARED_APP_DELEGATE() hideNetworkActivityIndicator];
-    [SFHFKeychainUtils storeUsername:_twitterUsername
-                         andPassword:_twitterPassword
-                      forServiceName:TwitterServiceName
-                      updateExisting:YES
-                               error:&error];
-    
-    [_twitterPassword release];
-    _twitterPassword = nil;
-    
-	if (!error) {
-		[[NSUserDefaults standardUserDefaults] setObject:_twitterUsername forKey:TwitterUsernameKey];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        [[NSNotificationCenter defaultCenter] postNotificationName:TwitterDidLoginNotification object:self];
+    if (_twitterPassword) {
+        [SFHFKeychainUtils storeUsername:_twitterUsername
+                             andPassword:_twitterPassword
+                          forServiceName:TwitterServiceName
+                          updateExisting:YES
+                                   error:&error];
         
-	} else {
-		NSLog(@"error on saving token=%@", [error description]);
-	}
+        [_twitterPassword release];
+        _twitterPassword = nil;
+        
+        if (!error) {
+            [[NSUserDefaults standardUserDefaults] setObject:_twitterUsername forKey:TwitterUsernameKey];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            
+        } else {
+            NSLog(@"error on saving token=%@", [error description]);
+        }
+    }
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:TwitterDidLoginNotification object:self];
 }
 
 - (void)requestSucceeded:(NSString *)connectionIdentifier {

@@ -37,10 +37,7 @@
         [self hideInputView];
 
     } else if (![[KGOSocialMediaController twitterService] isSignedIn]) {
-        TwitterViewController *twitterVC = [[[TwitterViewController alloc] init] autorelease];
-        twitterVC.delegate = self;
-        twitterVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-        [self presentModalViewController:twitterVC animated:YES];
+        [[KGOSocialMediaController twitterService] signin];
 
     } else {
         [self showInputView];
