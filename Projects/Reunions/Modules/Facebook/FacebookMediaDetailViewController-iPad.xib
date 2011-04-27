@@ -80,7 +80,7 @@
 													<object class="IBUIButton" id="792331816">
 														<reference key="NSNextResponder" ref="292828924"/>
 														<int key="NSvFlags">268</int>
-														<string key="NSFrame">{{0, 8}, {55, 46}}</string>
+														<string key="NSFrame">{{-1, 8}, {55, 46}}</string>
 														<reference key="NSSuperview" ref="292828924"/>
 														<reference key="NSNextKeyView" ref="583703705"/>
 														<object class="NSColor" key="IBUIBackgroundColor" id="1022567284">
@@ -106,9 +106,21 @@
 															<int key="NSColorSpace">3</int>
 															<bytes key="NSWhite">MCAwAA</bytes>
 														</object>
-														<object class="NSCustomResource" key="IBUINormalImage" id="763823283">
+														<object class="NSCustomResource" key="IBUISelectedImage">
 															<string key="NSClassName">NSImage</string>
-															<string key="NSResourceName">modules/facebook/like.png</string>
+															<string key="NSResourceName">modules/facebook/button-icon-unlike</string>
+														</object>
+														<object class="NSCustomResource" key="IBUINormalImage">
+															<string key="NSClassName">NSImage</string>
+															<string key="NSResourceName">ipad/common/white-button-icon-like</string>
+														</object>
+														<object class="NSCustomResource" key="IBUIHighlightedBackgroundImage" id="1009003406">
+															<string key="NSClassName">NSImage</string>
+															<string key="NSResourceName">ipad/common/white-button-background-pressed</string>
+														</object>
+														<object class="NSCustomResource" key="IBUINormalBackgroundImage" id="823209926">
+															<string key="NSClassName">NSImage</string>
+															<string key="NSResourceName">ipad/common/white-button-background</string>
 														</object>
 													</object>
 													<object class="IBUIButton" id="583703705">
@@ -133,7 +145,12 @@
 															<int key="NSColorSpace">3</int>
 															<bytes key="NSWhite">MC41AA</bytes>
 														</object>
-														<reference key="IBUINormalImage" ref="763823283"/>
+														<object class="NSCustomResource" key="IBUINormalImage">
+															<string key="NSClassName">NSImage</string>
+															<string key="NSResourceName">ipad/common/white-button-icon-comment</string>
+														</object>
+														<reference key="IBUIHighlightedBackgroundImage" ref="1009003406"/>
+														<reference key="IBUINormalBackgroundImage" ref="823209926"/>
 													</object>
 													<object class="IBUIButton" id="609539570">
 														<reference key="NSNextResponder" ref="292828924"/>
@@ -154,7 +171,16 @@
 															<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
 														</object>
 														<reference key="IBUINormalTitleShadowColor" ref="895117659"/>
-														<reference key="IBUINormalImage" ref="763823283"/>
+														<object class="NSCustomResource" key="IBUISelectedImage">
+															<string key="NSClassName">NSImage</string>
+															<string key="NSResourceName">common/button-bookmark-on</string>
+														</object>
+														<object class="NSCustomResource" key="IBUINormalImage">
+															<string key="NSClassName">NSImage</string>
+															<string key="NSResourceName">common/button-icon-favorites-star</string>
+														</object>
+														<reference key="IBUIHighlightedBackgroundImage" ref="1009003406"/>
+														<reference key="IBUINormalBackgroundImage" ref="823209926"/>
 													</object>
 													<object class="IBUIButton" id="161453940">
 														<reference key="NSNextResponder" ref="292828924"/>
@@ -173,7 +199,12 @@
 															<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
 														</object>
 														<reference key="IBUINormalTitleShadowColor" ref="895117659"/>
-														<reference key="IBUINormalImage" ref="763823283"/>
+														<object class="NSCustomResource" key="IBUINormalImage">
+															<string key="NSClassName">NSImage</string>
+															<string key="NSResourceName">ipad/common/white-button-icon-previous</string>
+														</object>
+														<reference key="IBUIHighlightedBackgroundImage" ref="1009003406"/>
+														<reference key="IBUINormalBackgroundImage" ref="823209926"/>
 													</object>
 												</object>
 												<string key="NSFrame">{{10, 227}, {460, 58}}</string>
@@ -1069,8 +1100,29 @@
 		<string key="IBDocument.LastKnownRelativeProjectPath">../../Reunions.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
-			<string key="NS.key.0">modules/facebook/like.png</string>
-			<string key="NS.object.0">{16, 16}</string>
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<object class="NSArray" key="dict.sortedKeys">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<string>common/button-bookmark-on</string>
+				<string>common/button-icon-favorites-star</string>
+				<string>ipad/common/white-button-background</string>
+				<string>ipad/common/white-button-background-pressed</string>
+				<string>ipad/common/white-button-icon-comment</string>
+				<string>ipad/common/white-button-icon-like</string>
+				<string>ipad/common/white-button-icon-previous</string>
+				<string>modules/facebook/button-icon-unlike</string>
+			</object>
+			<object class="NSMutableArray" key="dict.values">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<string>{16, 16}</string>
+				<string>{16, 16}</string>
+				<string>{16, 16}</string>
+				<string>{16, 16}</string>
+				<string>{16, 16}</string>
+				<string>{16, 16}</string>
+				<string>{16, 16}</string>
+				<string>{16, 16}</string>
+			</object>
 		</object>
 		<string key="IBCocoaTouchPluginVersion">132</string>
 	</data>
