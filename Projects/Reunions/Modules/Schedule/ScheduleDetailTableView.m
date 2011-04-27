@@ -1,6 +1,4 @@
 #import "ScheduleDetailTableView.h"
-#import "KGOSocialMediaController+Foursquare.h"
-#import "KGOFoursquareEngine.h"
 #import "UIKit+KGOAdditions.h"
 #import "ScheduleEventWrapper.h"
 #import "Foundation+KGOAdditions.h"
@@ -8,6 +6,7 @@
 #import "CalendarDataManager.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "FoursquareCheckinViewController.h"
+#import "KGOSocialMediaController.h"
 
 #define CHECKIN_STATUS_CHECKED_IN 438
 #define CHECKIN_STATUS_NOT_CHECKED_IN 41
@@ -20,13 +19,13 @@
 
 - (void)foursquareButtonPressed:(id)sender
 {
-    if (![[KGOSocialMediaController sharedController] isFoursquareLoggedIn]) {
+    if (![[KGOSocialMediaController foursquareService] isSignedIn]) {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(presentFoursquareCheckinController)
                                                      name:FoursquareDidLoginNotification
                                                    object:nil];
         
-        [[KGOSocialMediaController sharedController] loginFoursquare];
+        [[KGOSocialMediaController foursquareService] signin];
         
     } else {
         [self presentFoursquareCheckinController];
@@ -115,9 +114,9 @@
     
     [super eventDetailsDidChange];
     
-    if (_foursquareVenue && [[KGOSocialMediaController sharedController] isFoursquareLoggedIn]) {
-        [[[KGOSocialMediaController sharedController] foursquareEngine] checkUserStatusForVenue:_foursquareVenue
-                                                                                       delegate:self];
+    if (_foursquareVenue && [[KGOSocialMediaController foursquareService] isSignedIn]) {
+        [[[KGOSocialMediaController foursquareService] foursquareEngine] checkUserStatusForVenue:_foursquareVenue
+                                                                                        delegate:self];
     }
 }
 
@@ -296,7 +295,7 @@
 
 - (void)dealloc
 {
-    [[[KGOSocialMediaController sharedController] foursquareEngine] disconnectRequestsForDelegate:self];
+    [[[KGOSocialMediaController foursquareService] foursquareEngine] disconnectRequestsForDelegate:self];
 
     [_foursquareVenue release];
     [_checkinHeader release];

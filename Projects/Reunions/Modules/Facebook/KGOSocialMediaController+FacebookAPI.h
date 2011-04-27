@@ -1,4 +1,5 @@
 #import "KGOSocialMediaController.h"
+#import "KGOFacebookService.h"
 
 extern NSString * const FacebookDidGetSelfInfoNotification;
 
@@ -19,7 +20,7 @@ extern NSString * const FacebookDidGetSelfInfoNotification;
 
 @end
 
-@interface KGOSocialMediaController (FacebookAPI)
+@interface KGOFacebookService (FacebookAPI)
 
 - (BOOL)requestFacebookGraphPath:(NSString *)graphPath receiver:(id)receiver callback:(SEL)callback;
 - (BOOL)requestFacebookFQL:(NSString *)query receiver:(id)receiver callback:(SEL)callback;

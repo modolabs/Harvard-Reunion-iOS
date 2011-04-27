@@ -53,11 +53,16 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     return date;
 }
 
+- (NSArray *)applicationStateNotificationNames
+{
+    return [NSArray arrayWithObjects:FacebookDidLoginNotification, FacebookDidLogoutNotification, nil];
+}
+
 #pragma mark polling
 
 - (void)setupPolling {
     NSLog(@"setting up polling...");
-    if (![[KGOSocialMediaController sharedController] isFacebookLoggedIn]) {
+    if (![[KGOSocialMediaController facebookService] isSignedIn]) {
         NSLog(@"waiting for facebook to log in...");
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(facebookDidLogin:)
@@ -108,9 +113,9 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     DLog(@"requesting facebook status update");
     
     NSString *feedPath = [NSString stringWithFormat:@"%@/feed", _gid];
-    [[KGOSocialMediaController sharedController] requestFacebookGraphPath:feedPath
-                                                                 receiver:self
-                                                                 callback:@selector(didReceiveFeed:)];
+    [[KGOSocialMediaController facebookService] requestFacebookGraphPath:feedPath
+                                                                receiver:self
+                                                                callback:@selector(didReceiveFeed:)];
     
     
 }
@@ -121,7 +126,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     _lastMessageDate = [[NSDate distantPast] retain];
     if (!_gid || ![self isMemberOfFBGroup]) {
         if (!_requestingGroups) {
-            _requestingGroups = [[KGOSocialMediaController sharedController] requestFacebookGraphPath:@"me/groups"
+            _requestingGroups = [[KGOSocialMediaController facebookService] requestFacebookGraphPath:@"me/groups"
                                                                                              receiver:self
                                                                                              callback:@selector(didReceiveGroups:)];
         }
@@ -286,14 +291,14 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 }
 */
 - (void)applicationDidFinishLaunching {
-    [[KGOSocialMediaController sharedController] startupFacebook];
+    [[KGOSocialMediaController facebookService] startup];
     _gid = [[[NSUserDefaults standardUserDefaults] objectForKey:FacebookGroupKey] retain];
     
     [self setupPolling];
 }
 
 - (void)applicationWillTerminate {
-    [[KGOSocialMediaController sharedController] shutdownFacebook];
+    [[KGOSocialMediaController facebookService] shutdown];
     [self shutdownPolling];
 }
 

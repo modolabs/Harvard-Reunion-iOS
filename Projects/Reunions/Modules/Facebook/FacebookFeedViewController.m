@@ -42,11 +42,11 @@
 
 - (void)postButtonPressed:(id)sender
 {
-    if (![[KGOSocialMediaController sharedController] isFacebookLoggedIn]) {
+    if (![[KGOSocialMediaController facebookService] isSignedIn]) {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(postButtonPressed:)
                                                      name:FacebookDidLoginNotification object:nil];
-        [[KGOSocialMediaController sharedController] loginFacebook];
+        [[KGOSocialMediaController facebookService] signin];
         return;
     }
     
@@ -60,9 +60,9 @@
         [_inputView becomeFirstResponder];
         
     } else {
-        [[KGOSocialMediaController sharedController] postStatus:_inputView.text
-                                                      toProfile:_facebookModule.groupID
-                                                       delegate:self];
+        [[KGOSocialMediaController facebookService] postStatus:_inputView.text
+                                                     toProfile:_facebookModule.groupID
+                                                      delegate:self];
         
         [_inputView release];
         _inputView = nil;
@@ -175,7 +175,7 @@
     
     MITThumbnailView *thumbView = [[[MITThumbnailView alloc] initWithFrame:CGRectMake(10, 10, 50, 50)] autorelease];
     if (user.identifier) {
-        thumbView.imageURL = [[KGOSocialMediaController sharedController] imageURLForGraphObject:user.identifier];
+        thumbView.imageURL = [[KGOSocialMediaController facebookService] imageURLForGraphObject:user.identifier];
         [thumbView loadImage];
     }
     

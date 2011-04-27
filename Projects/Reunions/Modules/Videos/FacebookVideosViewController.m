@@ -412,7 +412,7 @@ VideosViewTags;
         case kMyUploadsSegment:
         {
             NSString *uploaderIdentifier = 
-            [[KGOSocialMediaController sharedController] 
+            [[KGOSocialMediaController facebookService] 
              currentFacebookUser].identifier;
             
             self.currentFilterBlock = 

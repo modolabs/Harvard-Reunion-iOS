@@ -36,7 +36,7 @@
 #pragma mark -
 
 - (IBAction)submitButtonPressed:(UIButton *)sender {
-    [[KGOSocialMediaController sharedController] addComment:_textView.text toFacebookPost:self.post delegate:self.delegate];
+    [[KGOSocialMediaController facebookService] addComment:_textView.text toFacebookPost:self.post delegate:self.delegate];
     
     _loadingViewContainer.hidden = NO;
     [_spinner startAnimating];

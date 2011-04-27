@@ -2,9 +2,12 @@
 #import "JSON.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "Foundation+KGOAdditions.h"
+#import "KGOSocialMediaController.h"
+#import "KGOTheme.h"
 
-NSString * const FoursquareDidLoginNotification = @"foursquareDidLogin";
-NSString * const FoursquareDidLogoutNotification = @"foursquareDidLogout";
+// NSUserDefaults
+NSString * const FoursquareUsernameKey = @"FoursquareUsername";
+static NSString * const FoursquareUserIDKey = @"FoursquareUserID";
 
 static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2";
 
@@ -358,9 +361,12 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     for (NSHTTPCookie *aCookie in badCookies) {
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:aCookie];
     }
-    
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:FoursquareOAuthTokenKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults removeObjectForKey:FoursquareOAuthTokenKey];
+    [defaults removeObjectForKey:FoursquareUserIDKey];
+    [defaults removeObjectForKey:FoursquareUsernameKey];
+    [defaults synchronize];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:FoursquareDidLogoutNotification object:nil];
 }
@@ -405,9 +411,51 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
             
             [[NSNotificationCenter defaultCenter] postNotificationName:FoursquareDidLoginNotification object:self];
             
+            [self requestUserDetails];
+            
             DLog(@"received oauth token %@", _oauthToken);
         }
 
+    } else if (request == _currentUserRequest) {
+        _currentUserRequest = nil;
+        
+        NSDictionary *userDict = [response dictionaryForKey:@"user"];
+        
+        NSString *userID = [userDict stringForKey:@"id" nilIfEmpty:YES];
+        NSString *firstName = [userDict stringForKey:@"firstName" nilIfEmpty:YES];
+        NSString *lastName = [userDict stringForKey:@"lastName" nilIfEmpty:YES];
+
+        NSString *username = nil;
+        if (firstName) {
+            if (lastName) {
+                username = [NSString stringWithFormat:@"%@ %@", firstName, lastName];
+            } else {
+                username = firstName;
+            }
+        } else if (lastName) {
+            username = lastName;
+        }
+
+        BOOL didSave = NO;
+        
+        if (username) {
+            [[NSUserDefaults standardUserDefaults] setObject:username forKey:FoursquareUsernameKey];
+            didSave = YES;
+        }
+        
+        if (userID) {
+            [[NSUserDefaults standardUserDefaults] setObject:userID forKey:FoursquareUserIDKey];
+            didSave = YES;
+        }
+        
+        if (didSave) {
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            // this triggers the settings to reload
+            // TODO: use a less destructive notification.  using this for now
+            // since foursquare works fine without us knowing the user's name
+            [[NSNotificationCenter defaultCenter] postNotificationName:KGOUserPreferencesDidChangeNotification object:nil];
+        }
+        
     } else {
         
         KGOFoursquareCheckinPair *currentPair = nil;
@@ -513,6 +561,10 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
                                                    cancelButtonTitle:@"OK"
                                                    otherButtonTitles:nil] autorelease];
         [alertView show];
+        
+    } else if (request == _currentUserRequest) {
+        _currentUserRequest = nil;
+        
     }
 }
 
@@ -546,10 +598,27 @@ static NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     }
 }
 
+- (void)requestUserDetails
+{
+    if (_currentUserRequest) {
+        return;
+    }
+    
+    _currentUserRequest = [self requestWithDelegate:self];
+    _currentUserRequest.resourceName = @"users";
+    _currentUserRequest.resourceID = @"self";
+    
+    [_currentUserRequest connect];
+}
+
 - (void)dealloc
 {
     if (_oauthRequest) {
         _oauthRequest.delegate = nil;
+    }
+    
+    if (_currentUserRequest) {
+        _currentUserRequest.delegate = nil;
     }
     
     [_webVC release];

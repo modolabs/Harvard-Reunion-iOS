@@ -74,6 +74,10 @@
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == [actionSheet cancelButtonIndex]) {
+        return;
+    }
+    
     if (buttonIndex > [actionSheet cancelButtonIndex]) {
         buttonIndex--;
     }
@@ -96,7 +100,7 @@
                                 "\"description\":\"%@\"}",
                                 self.shareTitle, self.shareURL, self.shareBody];
         
-        [[KGOSocialMediaController sharedController] shareOnFacebook:attachment prompt:nil];
+        [[KGOSocialMediaController facebookService] shareOnFacebook:attachment prompt:nil];
 
 	} else if ([method isEqualToString:KGOSocialMediaTypeTwitter]) {
 		TwitterViewController *twitterVC = [[[TwitterViewController alloc] initWithNibName:@"TwitterViewController"

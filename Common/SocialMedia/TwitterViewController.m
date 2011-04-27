@@ -51,7 +51,7 @@
     _messageView.layer.borderWidth = 2.0;
     _messageView.layer.borderColor = [[UIColor grayColor] CGColor];
     
-    if ([[KGOSocialMediaController sharedController] isTwitterLoggedIn]) {
+    if ([[KGOSocialMediaController twitterService] isSignedIn]) {
         [self twitterDidLogin:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(twitterDidLogout:)
@@ -69,19 +69,19 @@
 
 - (IBAction)signInButtonPressed:(UIButton *)sender
 {
-    [[KGOSocialMediaController sharedController] loginTwitterWithUsername:_usernameField.text password:_passwordField.text];
+    [(KGOTwitterService *)[KGOSocialMediaController twitterService] loginTwitterWithUsername:_usernameField.text password:_passwordField.text];
     _loadingView.hidden = NO;
 }
 
 - (IBAction)signOutButtonPressed:(UIButton *)sender
 {
-    [[KGOSocialMediaController sharedController] logoutTwitter];
+    [[KGOSocialMediaController twitterService] signout];
     _loadingView.hidden = NO;
 }
 
 - (IBAction)tweetButtonPressed:(id)sender
 {
-    [[KGOSocialMediaController sharedController] postToTwitter:_messageView.text];
+    [[KGOSocialMediaController twitterService] postToTwitter:_messageView.text];
     _loadingView.hidden = NO;
 }
 

@@ -33,10 +33,10 @@
 - (void)tweetButtonPressed:(id)sender
 {
     if (_inputView) {
-       [[KGOSocialMediaController sharedController] postToTwitter:_inputView.text];
+       [[KGOSocialMediaController twitterService] postToTwitter:_inputView.text];
         [self hideInputView];
 
-    } else if (![[KGOSocialMediaController sharedController] isTwitterLoggedIn]) {
+    } else if (![[KGOSocialMediaController twitterService] isSignedIn]) {
         TwitterViewController *twitterVC = [[[TwitterViewController alloc] init] autorelease];
         twitterVC.delegate = self;
         twitterVC.modalPresentationStyle = UIModalPresentationCurrentContext;
@@ -45,12 +45,6 @@
     } else {
         [self showInputView];
     }
-}
-
-- (void)controllerDidLogin:(TwitterViewController *)controller
-{
-    [self dismissModalViewControllerAnimated:YES];
-    [self showInputView];
 }
 
 - (void)showInputView
@@ -68,6 +62,19 @@
     [_inputView release];
     _inputView = nil;
     [self reloadDataForTableView:self.tableView];
+}
+
+#pragma mark TwitterViewControllerDelegate
+
+- (void)controllerDidLogin:(TwitterViewController *)controller
+{
+    [self dismissModalViewControllerAnimated:YES];
+    [self showInputView];
+}
+
+- (BOOL)controllerShouldContineToMessageScreen:(TwitterViewController *)controller
+{
+    return NO;
 }
 
 #pragma mark - View lifecycle

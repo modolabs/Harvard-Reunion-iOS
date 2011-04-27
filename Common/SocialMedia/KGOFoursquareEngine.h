@@ -1,6 +1,8 @@
 #import <Foundation/Foundation.h>
 #import "KGOWebViewController.h"
 
+extern NSString * const FoursquareUsernameKey;
+
 @class KGOFoursquareRequest;
 
 @protocol KGOFoursquareRequestDelegate <NSObject>
@@ -66,6 +68,7 @@ KGOWebViewControllerDelegate, UIAlertViewDelegate> {
     
     NSString *_oauthToken;
     KGOFoursquareRequest *_oauthRequest;
+    KGOFoursquareRequest *_currentUserRequest;
     
     NSMutableArray *_checkinQueue;
     
@@ -100,6 +103,7 @@ KGOWebViewControllerDelegate, UIAlertViewDelegate> {
 
 - (void)authorize;
 - (void)requestOAuthToken;
+- (void)requestUserDetails;
 - (void)logout;
 - (BOOL)isLoggedIn;
 

@@ -18,7 +18,7 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
 
 @end
 
-@interface KGOSocialMediaController (Private)
+@interface KGOFacebookService (Private)
 
 - (BOOL)queueFacebookRequest:(FBRequest *)request withReceiver:(id)receiver callback:(SEL)callback;
 - (void)photoDidUpload:(id)result;
@@ -27,7 +27,7 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
 
 
 
-@implementation KGOSocialMediaController (FacebookAPI)
+@implementation KGOFacebookService (FacebookAPI)
 
 - (NSString *)imageURLForGraphObject:(NSString *)graphID
 {
@@ -223,7 +223,7 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
         }
         user = nil;
         if (![_facebook isSessionValid]) {
-            [self loginFacebook];
+            [self signin];
         }
     }
     
@@ -306,7 +306,7 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
     NSLog(@"%@", [error description]);
     NSDictionary *userInfo = [error userInfo];
     if ([[userInfo stringForKey:@"type" nilIfEmpty:YES] isEqualToString:@"OAuthException"]) {
-        [self logoutFacebook];
+        [self signout];
     }
     NSInteger index = [_fbRequestQueue indexOfObject:request];
     

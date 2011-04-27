@@ -103,11 +103,16 @@
     [self startPollingStatusUpdates];
 }
 
+- (NSArray *)applicationStateNotificationNames
+{
+    return [NSArray arrayWithObjects:TwitterDidLoginNotification, TwitterDidLogoutNotification, nil];
+}
+
 #pragma mark polling
 
 - (void)startPollingStatusUpdates
 {
-    [[KGOSocialMediaController sharedController] startupTwitter];
+    [[KGOSocialMediaController twitterService] startup];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(hideChatBubble:)
@@ -145,7 +150,7 @@
         _twitterSearch = nil;
     }
 
-    [[KGOSocialMediaController sharedController] shutdownTwitter];
+    [[KGOSocialMediaController twitterService] shutdown];
 }
 
 - (void)requestStatusUpdates:(NSTimer *)aTimer {
