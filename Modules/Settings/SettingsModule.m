@@ -25,6 +25,8 @@
     UIViewController *vc = nil;
     if ([pageName isEqualToString:LocalPathPageNameHome]) {
         SettingsTableViewController *settingsVC = [[[SettingsTableViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+        settingsVC.title = self.longName;
+        
         for (NSString *notificationName in _notificationNames) {
             [[NSNotificationCenter defaultCenter] addObserver:settingsVC
                                                      selector:@selector(settingDidChange:)
