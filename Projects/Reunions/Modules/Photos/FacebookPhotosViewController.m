@@ -11,14 +11,6 @@
 #import "KGOTheme.h"
 #import "FacebookThumbnail.h"
 
-typedef enum {
-    kAllPhotosSegment = 0,
-    kMyUploadsSegment,
-    kBookmarksSegment
-}
-FacebookPhotosSegmentIndexes;
-
-
 @interface FacebookPhotosViewController (Private)
 
 - (FacebookPhotoSize)thumbSize;
@@ -50,12 +42,16 @@ FacebookPhotosSegmentIndexes;
 }
 
 - (void)getGroupPhotos {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookGroupReceivedNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookFeedDidUpdateNotification object:nil];
+    [[NSNotificationCenter defaultCenter] 
+     removeObserver:self name:FacebookGroupReceivedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] 
+     removeObserver:self name:FacebookFeedDidUpdateNotification object:nil];
     
-    FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+    FacebookModule *fbModule = 
+    (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+    
     if (fbModule.groupID) {
-        if (fbModule.latestFeedPosts) {
+        if (fbModule.latestFeedPosts && (fbModule.latestFeedPosts.count > 0)) {
 
             for (NSDictionary *aPost in fbModule.latestFeedPosts) {
                 NSString *type = [aPost stringForKey:@"type" nilIfEmpty:YES];
@@ -69,7 +65,7 @@ FacebookPhotosSegmentIndexes;
                             NSLog(@"%@", [aPhoto description]);
                             [[CoreDataManager sharedManager] saveData];
                             [_photosByID setObject:aPhoto forKey:pid];
-                        }                        
+                        }
                         DLog(@"requesting graph info for photo %@", pid);
                         [[KGOSocialMediaController sharedController] requestFacebookGraphPath:pid
                                                                                      receiver:self
@@ -78,12 +74,32 @@ FacebookPhotosSegmentIndexes;
                 }
             }            
             [self refreshPhotos];
-        } else {
-            [fbModule requestStatusUpdates:nil];
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(getGroupPhotos)
-                                                         name:FacebookFeedDidUpdateNotification
-                                                       object:nil];
+        } 
+        else {
+            // Sometimes the photos FB request will come back right away with no 
+            // photos. We need to make the request a few more times until we get
+            // something back or give up after 5 attempts (with a 3-second delay 
+            // between each).
+            dispatch_block_t photosRequestBlock = 
+            ^{
+                [[NSNotificationCenter defaultCenter] 
+                 addObserver:self 
+                 selector:@selector(getGroupPhotos)
+                 name:FacebookFeedDidUpdateNotification
+                 object:nil];
+                [fbModule requestStatusUpdates:nil];
+            };
+            if (_photosRequestCount > 0) {
+                dispatch_after(NSEC_PER_SEC * 3, dispatch_get_current_queue(),
+                               photosRequestBlock);
+            }
+            else {
+                if (_photosRequestCount < 6) {
+                    photosRequestBlock();
+                    ++_photosRequestCount;
+                }
+            }
+
         }
         
         // fql for photos
@@ -116,6 +132,7 @@ FacebookPhotosSegmentIndexes;
     
     CGRect frame = _scrollView.frame;
     frame.origin.x += 6.0f; // This will make the iconGrid appear centered.
+    frame.origin.y = 0;
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         resizeFactor = 1.;
@@ -407,7 +424,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender {
 
     switch (sender.selectedSegmentIndex) {
-        case kAllPhotosSegment:
+        case kAllMediaObjectsSegment:
         {
             // Reload photos.
             self.currentFilterBlock = nil;

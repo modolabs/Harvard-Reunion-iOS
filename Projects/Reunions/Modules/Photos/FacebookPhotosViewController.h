@@ -18,6 +18,7 @@ UINavigationControllerDelegate, UIImagePickerControllerDelegate, FacebookUploadD
     CGFloat resizeFactor;
     
     UIViewController *_detailViewController;
+    NSUInteger _photosRequestCount;
 }
 
 - (void)didReceivePhoto:(id)result;

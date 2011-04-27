@@ -351,7 +351,8 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 + (BOOL)toggleBookmarkForMediaObjectWithID:(NSString *)mediaObjectID 
                                  mediaType:(NSString *)mediaType {
     NSMutableDictionary *bookmarks = 
-    [[[self class] bookmarksForMediaObjectsOfType:mediaType] mutableCopy];
+    [[[[self class] bookmarksForMediaObjectsOfType:mediaType] 
+      mutableCopy] autorelease];
     NSString *bookmarksKey = [[self class] bookmarkKeyForMediaType:mediaType];
     
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:bookmarksKey];    

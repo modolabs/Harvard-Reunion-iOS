@@ -237,15 +237,33 @@ ToolbarButtonTags;
 }
 
 - (void)uploadDidComplete:(FacebookPost *)result {
-    FacebookComment *aComment = (FacebookComment *)result;
-    aComment.parent = self.post;
-    
-    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:YES];
-    [_comments release];
-    _comments = [[self.post.comments sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] retain];
-    
-    [self dismissModalViewControllerAnimated:YES];
-    [_tableView reloadData];
+    if ([result isKindOfClass:[FacebookComment class]]) {        
+        FacebookComment *aComment = (FacebookComment *)result;
+        aComment.parent = self.post;
+        
+        NSSortDescriptor *sort = 
+        [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:YES];
+        
+        [_comments release];
+        
+        _comments = 
+        [[self.post.comments 
+          sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] retain];
+        
+        [self dismissModalViewControllerAnimated:YES];        
+        
+        [_tableView reloadData];
+        
+        if (self.post.comments.count > 0) {
+            NSIndexPath *newLastRowPath = 
+            [NSIndexPath indexPathForRow:self.post.comments.count - 1 
+                               inSection:0];            
+            
+            [_tableView scrollToRowAtIndexPath:newLastRowPath 
+                              atScrollPosition:UITableViewScrollPositionMiddle 
+                                      animated:YES];
+        }
+    }
 }
 
 #pragma mark - View lifecycle

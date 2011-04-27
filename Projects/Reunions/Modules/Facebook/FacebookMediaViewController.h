@@ -1,11 +1,19 @@
 #import <UIKit/UIKit.h>
 
+typedef enum {
+    kAllMediaObjectsSegment = 0,
+    kMyUploadsSegment,
+    kBookmarksSegment
+}
+FacebookMediaSegmentIndexes;
+
 @interface FacebookMediaViewController : UIViewController 
 <UIImagePickerControllerDelegate, UINavigationControllerDelegate,
 UIPopoverControllerDelegate> {
     
     IBOutlet UISegmentedControl *_filterControl;
     IBOutlet UIScrollView *_scrollView;
+    IBOutlet UIToolbar *subheadToolbar;
     
     // hidden for logged-in users
     IBOutlet UIView *_loginView;
@@ -31,5 +39,6 @@ UIPopoverControllerDelegate> {
 
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) UIPopoverController *photoPickerPopover;
+@property (nonatomic, retain) UIToolbar *subheadToolbar;
 
 @end
