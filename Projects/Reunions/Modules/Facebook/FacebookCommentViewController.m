@@ -42,6 +42,10 @@
     [_spinner startAnimating];
 }
 
+- (IBAction)cancelButtonPressed:(UIButton *)sender {
+    [self dismissModalViewControllerAnimated:YES];
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -51,10 +55,21 @@
     self.view.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
     
     [_submitButton setTitle:NSLocalizedString(@"Comment", nil) forState:UIControlStateNormal];
-    
+    [_cancelButton setTitle:NSLocalizedString(@"Cancel", nil) 
+                   forState:UIControlStateNormal];
     _textView.layer.cornerRadius = 5.0;
     _textView.layer.borderColor = [[UIColor blackColor] CGColor];
     _textView.layer.borderWidth = 1.0;
+    _textView.textColor = [UIColor grayColor];    
+    _textEditBegun = NO;
+}
+
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    if(!_textEditBegun) {
+        _textView.textColor = [UIColor blackColor];
+        _textView.text = @"";
+        _textEditBegun = YES;
+    }
 }
 
 - (void)viewDidUnload
