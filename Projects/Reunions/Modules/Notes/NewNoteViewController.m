@@ -113,7 +113,7 @@
     
     [self.view addSubview:titleTextLabel];
     [self.view addSubview:detailTextLabel];
-    [self.view addSubview:printButton];
+    //[self.view addSubview:printButton];
     [self.view addSubview:shareButton];
     [self.view addSubview:deleteButton];
     
