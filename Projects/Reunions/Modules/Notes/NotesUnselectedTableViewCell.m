@@ -10,7 +10,6 @@
 #import "UIKit+KGOAdditions.h"
 #import <QuartzCore/QuartzCore.h>
 
-
 @implementation NotesUnselectedTableViewCell
 @synthesize tableView;
 @synthesize notesCellType;
@@ -27,14 +26,47 @@
 }
 
 
+- (void)drawRect:(CGRect)rect
+{
+    [super drawRect:rect];
+    
+    CGContextRef currentContext = UIGraphicsGetCurrentContext();
+    CGFloat locations[2] = { 0.0, 1.0 };
+    
+    unsigned int r1, g1, b1, r2, g2, b2; // 1: start color; 2: end color
+    // breaking down hex colors from #eee4b8, #e8d9a3
+    // TODO: cache the gradient object somewhere so we don't have to keep recreating it
+    [[NSScanner scannerWithString:@"ee"] scanHexInt:&r1];
+    [[NSScanner scannerWithString:@"e4"] scanHexInt:&g1];
+    [[NSScanner scannerWithString:@"b8"] scanHexInt:&b1];
+    [[NSScanner scannerWithString:@"e8"] scanHexInt:&r2];
+    [[NSScanner scannerWithString:@"d9"] scanHexInt:&g2];
+    [[NSScanner scannerWithString:@"a3"] scanHexInt:&b2];
+    
+    CGFloat components[8] = {
+        (float)r1/255.0f,
+        (float)g1/255.0f,
+        (float)b1/255.0f,
+        1.0,
+        (float)r2/255.0f,
+        (float)g2/255.0f,
+        (float)b2/255.0f,
+        1.0 };
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGGradientRef gradient = CGGradientCreateWithColorComponents(colorSpace, components, locations, 2);
+    
+    CGPoint startPoint = CGPointMake(CGRectGetMidX(rect), 0);
+    CGPoint endPoint = CGPointMake(CGRectGetMidX(rect), rect.size.height);
+    
+    CGContextDrawLinearGradient(currentContext, gradient, startPoint, endPoint, 0);
+    CGColorSpaceRelease(colorSpace);
+    CGGradientRelease(gradient);
+}
+
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
-    self.layer.cornerRadius = 0;
-    //self.layer.shadowOffset = CGSizeMake(1.0, 0);
-    //self.layer.shadowColor = [[UIColor blackColor] CGColor];
-    //self.layer.shadowOpacity = 0.5;
     
     NSLog(@"%@ %@", self.textLabel.text, self);
     

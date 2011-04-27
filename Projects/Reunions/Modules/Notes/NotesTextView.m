@@ -85,7 +85,7 @@
         
         [self addSubview:titleTextLabel];
         [self addSubview:detailTextLabel];
-        [self addSubview:printButton];
+        //[self addSubview:printButton];
         [self addSubview:shareButton];
         [self addSubview:deleteButton];
 

@@ -50,7 +50,7 @@
         
         [self.view addSubview:newNoteButton];
         [self.view addSubview:emailAllButton];
-        [self.view addSubview:printAllButton];
+        //[self.view addSubview:printAllButton];
         
         CGRect frame = self.view.frame;
         
@@ -59,7 +59,8 @@
         
         [self.tableView removeFromSuperview];
         self.tableView = [self addTableViewWithFrame:frame style:style];
-        self.tableView.backgroundColor = [UIColor yellowColor];
+        self.tableView.backgroundColor = [UIColor clearColor];
+        self.tableView.backgroundView = nil;
         
     }
     return self;
