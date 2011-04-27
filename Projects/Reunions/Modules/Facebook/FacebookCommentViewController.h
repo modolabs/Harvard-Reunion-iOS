@@ -17,7 +17,7 @@
     IBOutlet UIView *_loadingViewContainer;
     IBOutlet UIActivityIndicatorView *_spinner;
     IBOutlet UIButton *_submitButton;
-    
+    IBOutlet UIButton *_cancelButton;
 }
 
 @property(nonatomic, retain) FacebookParentPost *post;
@@ -25,5 +25,6 @@
 @property(nonatomic, assign) id<FacebookUploadDelegate> delegate;
 
 - (IBAction)submitButtonPressed:(UIButton *)sender;
+- (IBAction)cancelButtonPressed:(UIButton *)sender;
 
 @end
