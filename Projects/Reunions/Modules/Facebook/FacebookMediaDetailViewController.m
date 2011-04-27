@@ -15,6 +15,28 @@ typedef enum {
 }
 ToolbarButtonTags;
 
+#pragma mark Private methods
+
+@interface FacebookMediaDetailViewController (Private)
+
+- (UIButton *)buttonForTag:(NSInteger)tag;
+
+@end
+
+@implementation FacebookMediaDetailViewController (Private)
+
+- (UIButton *)buttonForTag:(NSInteger)tag {
+    
+    UIView *buttonParent = self.view;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        buttonParent = self.actionsToolbar;
+    }
+    return (UIButton *)[buttonParent viewWithTag:tag];
+}    
+
+@end
+
+
 @implementation FacebookMediaDetailViewController
 
 @synthesize post, posts, tableView = _tableView;
@@ -144,8 +166,8 @@ ToolbarButtonTags;
 }
 
 - (IBAction)likeButtonPressed:(UIBarButtonItem *)sender {
-    UIButton *button = 
-    (UIButton *)[self.actionsToolbar viewWithTag:kToolbarLikeButtonTag];    
+
+    UIButton *button = [self buttonForTag:kToolbarLikeButtonTag];
     
     if (button.state & UIControlStateSelected) {
         [[KGOSocialMediaController sharedController] 
@@ -164,8 +186,7 @@ ToolbarButtonTags;
     if ([result isKindOfClass:[NSDictionary class]] && 
         [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
         // Set the button to the "unlike" state.
-        UIButton *button = 
-        (UIButton *)[self.actionsToolbar viewWithTag:kToolbarLikeButtonTag];
+        UIButton *button = [self buttonForTag:kToolbarLikeButtonTag];
         button.selected = YES;
     }
 }
@@ -174,8 +195,7 @@ ToolbarButtonTags;
     NSLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
         // Set the button to the "like" state.
-        UIButton *button = 
-        (UIButton *)[self.actionsToolbar viewWithTag:kToolbarLikeButtonTag];
+        UIButton *button = [self buttonForTag:kToolbarLikeButtonTag];
         button.selected = NO;
     }
 }
@@ -196,8 +216,7 @@ ToolbarButtonTags;
      toggleBookmarkForMediaObjectWithID:[self identifierForBookmark] 
      mediaType:[self mediaTypeForBookmark]];
     // Update toolbar button to reflect bookmarked state.
-    UIButton *button = 
-    (UIButton *)[self.actionsToolbar viewWithTag:kToolbarBookmarkButtonTag];
+    UIButton *button = [self buttonForTag:kToolbarBookmarkButtonTag];
     // When the button is in the selected state, it shows an image indicating 
     // that the current media object is bookmarked.
     button.selected = bookmarked;
