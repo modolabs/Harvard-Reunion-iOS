@@ -141,7 +141,7 @@
     if (facebookUserLoggedIn) {
         [self hideLoginViewAnimated:NO];
     }
-    _loginHintLabel.text = NSLocalizedString(@"Reunion photos are posted etc etc etc.", nil);
+    _loginHintLabel.text = NSLocalizedString(@"Photos and videos are posted to the Facebook group page for each class. To view and comment on them, you must sign into Facebook, and you must be a member of the class Facebook group.", nil);
     [_loginButton setTitle:@"Sign in to Facebook" forState:UIControlStateNormal];
     
     [pool release];
