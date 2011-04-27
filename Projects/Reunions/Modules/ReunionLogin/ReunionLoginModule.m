@@ -32,12 +32,24 @@
         frame = CGRectZero;
     }
     KGOHomeScreenWidget *widget = [[[KGOHomeScreenWidget alloc] initWithFrame:frame] autorelease];
-    
-    NSString *title = self.username;
-    NSString *subtitle = self.userDescription;
-    if (!title) {
-        title = self.userDescription;
-        subtitle = nil;
+
+    NSString *title;
+    NSString *subtitle = nil;
+    if (navStyle == KGONavigationStyleTabletSidebar) {
+        if (self.username) {
+            title = [NSString stringWithFormat:@"%@ : %@", self.userDescription, self.username];
+
+        } else {
+            title = self.userDescription;
+        }
+        
+    } else {
+        title = self.username;
+        subtitle = self.userDescription;
+        if (!title) {
+            title = self.userDescription;
+            subtitle = nil;
+        }
     }
     
     UILabel *titleLabel = nil;
@@ -118,12 +130,10 @@
         
         frame = widget.frame;
         CGFloat titleWidth = (titleLabel != nil) ? titleLabel.frame.size.width : 0;
-        CGFloat subtitleWidth = (subtitleLabel != nil) ? subtitleLabel.frame.size.width : 0;
         CGFloat titleHeight = (titleLabel != nil) ? titleLabel.frame.size.height : 0;
-        CGFloat subtitleHeight = (subtitleLabel != nil) ? subtitleLabel.frame.size.height : 0;
         
-        frame.size.width = titleWidth + subtitleWidth;
-        frame.size.height = fmaxf(titleHeight, subtitleHeight);
+        frame.size.width = titleWidth;
+        frame.size.height = titleHeight;
         frame.origin.y = 10;
         frame.origin.x = floorf((outerFrame.size.width - frame.size.width) / 2);
         
