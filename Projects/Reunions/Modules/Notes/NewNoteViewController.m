@@ -151,7 +151,7 @@
         textView.font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyByline];
     }
     
-     self.view.backgroundColor = [UIColor yellowColor];
+     self.view.backgroundColor = [UIColor colorWithHexString:@"eee4b8"];
     
 }
 
