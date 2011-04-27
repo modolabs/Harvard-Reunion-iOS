@@ -18,6 +18,7 @@
     IBOutlet UIActivityIndicatorView *_spinner;
     IBOutlet UIButton *_submitButton;
     
+    BOOL _textEditBegun;    
 }
 
 @property(nonatomic, retain) FacebookParentPost *post;
