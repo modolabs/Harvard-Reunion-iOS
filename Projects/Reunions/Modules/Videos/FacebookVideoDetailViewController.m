@@ -204,22 +204,6 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
 }
 
 #pragma mark FacebookMediaDetailViewController
-- (IBAction)commentButtonPressed:(UIBarButtonItem *)sender {
-    if (UIUserInterfaceIdiomPad == UI_USER_INTERFACE_IDIOM()) {
-        // Present comment view in a non-fullscreen dialog.
-        FacebookCommentViewController *vc = 
-        [[FacebookCommentViewController alloc] initWithNibName:
-          @"FacebookCommentViewController" bundle:nil];
-        vc.delegate = self;
-        vc.post = self.post;
-        vc.modalPresentationStyle = UIModalPresentationFormSheet;
-        [self presentModalViewController:vc animated:YES];
-        [vc release];
-    }
-    else {
-        [super commentButtonPressed:sender];
-    }        
-}
 
 - (IBAction)closeButtonPressed:(id)sender {    
     [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome 
