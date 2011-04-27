@@ -19,14 +19,20 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Tweet"
-                                                                               style:UIBarButtonItemStyleDone
-                                                                              target:self
-                                                                              action:@selector(tweetButtonPressed:)] autorelease];
-    self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                                                                                           target:self
-                                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+    
+    UIBarButtonItem *cancelButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                                                                   target:self
+                                                                                   action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+    if ([self.delegate controllerShouldContineToMessageScreen:self]) {
+        self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Tweet"
+                                                                                   style:UIBarButtonItemStyleDone
+                                                                                  target:self
+                                                                                  action:@selector(tweetButtonPressed:)] autorelease];
+        self.navigationItem.leftBarButtonItem = cancelButton;
+    } else {
+        
+        self.navigationItem.rightBarButtonItem = cancelButton;
+    }
     
     self.title = NSLocalizedString(@"Twitter", nil);
     

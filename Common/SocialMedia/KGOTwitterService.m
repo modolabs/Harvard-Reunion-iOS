@@ -99,7 +99,7 @@ static NSString * const TwitterServiceName = @"Twitter";
 	if (username) {
         NSError *error = nil;
         NSString *password = [SFHFKeychainUtils getPasswordForUsername:username andServiceName:TwitterServiceName error:&error];
-        if (error) {
+        if (!password || error) {
             NSLog(@"something went wrong looking up access token, error=%@", error);
         } else {
             //[KGO_SHARED_APP_DELEGATE() showNetworkActivityIndicator];
@@ -127,11 +127,7 @@ static NSString * const TwitterServiceName = @"Twitter";
     // cleanup
     
 	NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:TwitterUsernameKey];
-
     if (username) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:TwitterUsernameKey];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-
         NSError *error = nil;
         [SFHFKeychainUtils deleteItemForUsername:username andServiceName:TwitterServiceName error:&error];
         
@@ -139,6 +135,7 @@ static NSString * const TwitterServiceName = @"Twitter";
             NSLog(@"failed to log out of Twitter: %@", [error description]);
         }
     }
+    self.twitterUsername = nil;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:TwitterDidLogoutNotification object:nil];
 }
