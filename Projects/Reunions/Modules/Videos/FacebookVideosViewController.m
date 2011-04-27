@@ -305,6 +305,7 @@ VideosViewTags;
         
         // Set up transition animation views.   
         UIView *transitionView = [self.view viewWithTag:kTransitionViewTag];
+//        transitionView.backgroundColor = [UIColor whiteColor];
         transitionView.frame = 
         [self frameForTransitionViewInMainViewForThumbnail:thumbnail];
         

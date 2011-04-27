@@ -10,6 +10,10 @@
 @interface FacebookPhotoDetailViewController (Private)
 
 - (void)requestImage:(FacebookPhoto *)photo;
+- (void)handlePreviewTap:(UIRotationGestureRecognizer *)gestureRecognizer;
+- (void)fadeControlsAppropriately;
+- (void)fadeInControls;
+- (void)fadeOutControls;
 
 @end
 
@@ -17,6 +21,7 @@
 
 @synthesize connection;
 @synthesize currentURL;
+@synthesize tapHandler;
 
 /*
  - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -30,6 +35,10 @@
  */
 - (void)dealloc
 {
+    [tapHandler release];
+    [currentURL release];
+    [connection release];
+    
     [super dealloc];
 }
 
@@ -78,6 +87,7 @@
 {
     [super viewDidLoad];
     self.title = @"Photo";
+    [self fadeControlsAppropriately];
 }
 
 - (void)viewDidUnload
@@ -89,6 +99,57 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+}
+
+- (void)fadeOutControls {
+    UIView *toolbarContainer = [[self.actionsToolbar superview] superview];
+    
+    // Call this to expand the preview view appropriately.
+    [self displayPost];
+    
+    // TODO: Figure out why preview view leaves gaps at the top 
+    // and bottom.
+    [UIView 
+     animateWithDuration:1.0f delay:2.0f options:0 animations:
+     ^() {
+         toolbarContainer.alpha = 0.0f;
+         self.navigationController.navigationBar.alpha = 0.0f;
+     }
+     completion:
+     ^(BOOL finished) {
+         // Add a tap handler so that controls can be brought back.
+         self.tapHandler = 
+         [[UITapGestureRecognizer alloc] 
+          initWithTarget:self action:@selector(handleMediaViewTap:)];
+         [self.mediaView addGestureRecognizer:self.tapHandler];
+     }];
+}
+
+- (void)fadeInControls {
+    UIView *toolbarContainer = [[self.actionsToolbar superview] superview];
+    
+    // Call this to expand the preview view appropriately.
+    [self displayPost];
+    
+    toolbarContainer.alpha = 1.0f;
+    self.navigationController.navigationBar.alpha = 1.0f;    
+}
+
+- (void)fadeControlsAppropriately {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        // Fade out the toolbar in landscape; in on portrait.
+        if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) { 
+            [self fadeOutControls];
+        }
+        else {
+            [self fadeInControls];
+        }
+    }
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+    [self fadeControlsAppropriately];
 }
 
 #pragma mark - Table view methods
@@ -141,6 +202,13 @@
 
 - (NSString *)mediaTypeForBookmark {
     return @"photo";
+}
+
+#pragma mark Tap handlers
+- (void)handleMediaViewTap:(id)sender {
+    [self fadeInControls];
+    // No need for tap handler now.
+    [self.mediaView removeGestureRecognizer:self.tapHandler];    
 }
 
 @end
