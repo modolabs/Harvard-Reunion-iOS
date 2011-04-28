@@ -4,6 +4,7 @@
 #import "ScheduleDataManager.h"
 #import "AttendeesTableViewController.h"
 #import "KGOSocialMediaController.h"
+#import "ScheduleHomeViewController-iPad.h"
 
 @implementation ScheduleModule
 
@@ -24,32 +25,39 @@
     if ([pageName isEqualToString:LocalPathPageNameHome]
         || [pageName isEqualToString:LocalPathPageNameSearch]
         || [pageName isEqualToString:LocalPathPageNameCategoryList]
-        ) {
-        ScheduleHomeViewController *calendarVC = [[[ScheduleHomeViewController alloc] initWithNibName:@"CalendarHomeViewController"
-                                                                                               bundle:nil] autorelease];
-        calendarVC.moduleTag = self.tag;
-        calendarVC.showsGroups = YES;
-        calendarVC.title = NSLocalizedString(@"Schedule", nil);
+    ) {
+        ScheduleHomeViewController *scheduleVC = nil;
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+            scheduleVC = [[[ScheduleHomeViewController alloc] initWithNibName:@"CalendarHomeViewController"
+                                                                       bundle:nil] autorelease];
+        } else {
+            scheduleVC = [[[ScheduleHomeViewController_iPad alloc] initWithNibName:@"CalendarHomeViewController"
+                                                                            bundle:nil] autorelease];
+        }
+        
+        scheduleVC.moduleTag = self.tag;
+        scheduleVC.showsGroups = YES;
+        scheduleVC.title = NSLocalizedString(@"Schedule", nil);
         
         if (!self.dataManager) {
             self.dataManager = [[[ScheduleDataManager alloc] init] autorelease];
             self.dataManager.moduleTag = self.tag;
         }
-        calendarVC.dataManager = self.dataManager;
+        scheduleVC.dataManager = self.dataManager;
         // TODO: we might not need to set the following as long as viewWillAppear is properly invoked
-        self.dataManager.delegate = calendarVC;
+        self.dataManager.delegate = scheduleVC;
         
         // requested search path
         NSString *searchText = [params objectForKey:@"q"];
         if (searchText) {
-            [calendarVC setSearchTerms:searchText];
+            [scheduleVC setSearchTerms:searchText];
         }
         
         // requested category path
         KGOCalendar *calendar = [params objectForKey:@"calendar"];
-        calendarVC.currentCalendar = calendar;
+        scheduleVC.currentCalendar = calendar;
         
-        vc = calendarVC;
+        vc = scheduleVC;
         
     } else if ([pageName isEqualToString:LocalPathPageNameDetail]) {
         ScheduleDetailViewController *detailVC = [[[ScheduleDetailViewController alloc] init] autorelease];

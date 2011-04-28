@@ -2,25 +2,26 @@
 
 typedef enum {
     ScheduleCellTypeOther,
-    ScheduleCellAboveSelectedRow,
     ScheduleCellLastInTable,
-    ScheduleCellLastInSection,
     ScheduleCellSelected
 } ScheduleCellType;
 
+@class ScheduleEventWrapper;
+
 @interface ScheduleTabletTableViewCell : UITableViewCell <UIAlertViewDelegate> {
     
-    UIView *_fakeCardBorder;
     UIImageView *_fakeTopOfNextCell;
+    
     UIButton *_bookmarkView;
+    UIButton *_notesButton;
     
     ScheduleCellType _scheduleCellType;
 }
 
-@property (nonatomic, assign) UITableView *tableView;
+@property (nonatomic, retain) ScheduleEventWrapper *event;
 @property ScheduleCellType scheduleCellType;
-@property BOOL isFirstInSection;
 @property (nonatomic, readonly) UIButton *bookmarkView;
+@property (nonatomic) BOOL isFirstInSection;
 
 - (void)addBookmark:(id)sender;
 - (void)attemptToAddBookmark:(id)sender;
@@ -28,3 +29,14 @@ typedef enum {
 - (void)refuseToRemoveBookmark:(id)sender;
 
 @end
+
+
+@interface ScheduleTabletSectionHeaderCell : UITableViewCell {
+    
+}
+
+@property (nonatomic) BOOL isFirst;
+
+@end
+
+
