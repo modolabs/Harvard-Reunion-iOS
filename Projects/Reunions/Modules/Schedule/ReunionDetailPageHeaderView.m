@@ -19,12 +19,7 @@
     CGFloat subtitleHeight = 0;
     CGFloat buttonHeight = 0;
     
-    if (_showsBookmarkButton) {
-        [self layoutBookmarkButton];
-        buttonHeight = _bookmarkButton.frame.size.height + LABEL_SPACING;
-    }
-    
-    CGFloat labelWidth = self.bounds.size.width - LABEL_SPACING - _bookmarkButton.frame.size.width;
+    CGFloat labelWidth = [self headerWidthWithButtons];
     
     if (_titleLabel) {
         CGSize constraintSize = CGSizeMake(labelWidth, _titleLabel.font.lineHeight * MAX_TITLE_LINES);
@@ -34,10 +29,7 @@
         _titleLabel.layer.shadowOffset = CGSizeMake(0, 1);
         _titleLabel.layer.shadowOpacity = 0.5;
         _titleLabel.layer.shadowRadius = 1;
-        
-        if (![_titleLabel isDescendantOfView:self]) {
-            [self addSubview:_titleLabel];
-        }
+        NSLog(@"%@", _titleLabel);
         titleHeight = _titleLabel.frame.size.height + LABEL_SPACING;
     }
     
@@ -53,11 +45,12 @@
         _subtitleLabel.layer.shadowOffset = CGSizeMake(0, 1);
         _subtitleLabel.layer.shadowOpacity = 0.5;
         _subtitleLabel.layer.shadowRadius = 1;
-        
-        if (![_subtitleLabel isDescendantOfView:self]) {
-            [self addSubview:_subtitleLabel];
-        }
         subtitleHeight = _subtitleLabel.frame.size.height + LABEL_SPACING;
+    }
+    
+    if (_showsBookmarkButton) {
+        [self layoutBookmarkButton];
+        buttonHeight = _bookmarkButton.frame.size.height + LABEL_SPACING;
     }
     
     CGRect frame = self.frame;
@@ -73,29 +66,32 @@
 
 - (void)layoutBookmarkButton
 {
-    if (!_bookmarkButton) {
-        UIImage *placeholder = [UIImage imageWithPathName:@"common/bookmark-ribbon-off.png"];
-        CGFloat buttonX = self.bounds.size.width - LABEL_HMARGIN - placeholder.size.width;
+    if ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]]) {
+        UIImage *buttonImage;
+
+        ScheduleEventWrapper *wrapper = (ScheduleEventWrapper *)self.detailItem;
+        if ([wrapper isBookmarked] || [wrapper isRegistered]) {
+            buttonImage = [UIImage imageWithPathName:@"common/bookmark-ribbon-on.png"];
+        } else {
+            buttonImage = [UIImage imageWithPathName:@"common/bookmark-ribbon-off.png"];
+        }
+
+        if (!_bookmarkButton) {
+            UIImage *placeholder = [UIImage imageWithPathName:@"common/bookmark-ribbon-off.png"];
+            CGFloat buttonX = self.bounds.size.width - LABEL_HMARGIN - placeholder.size.width;
+            
+            _bookmarkButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+            _bookmarkButton.frame = CGRectMake(buttonX, 0, placeholder.size.width, placeholder.size.height);
+            
+            [_bookmarkButton addTarget:self action:@selector(toggleBookmark:) forControlEvents:UIControlEventTouchUpInside];
+            [self addSubview:_bookmarkButton];
+            
+        }
+        [_bookmarkButton setImage:buttonImage forState:UIControlStateNormal];
         
-        _bookmarkButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
-        _bookmarkButton.frame = CGRectMake(buttonX, 0, placeholder.size.width, placeholder.size.height);
-        
-        [_bookmarkButton addTarget:self action:@selector(toggleBookmark:) forControlEvents:UIControlEventTouchUpInside];
-        [self addSubview:_bookmarkButton];
-        
-    }
-    
-    UIImage *buttonImage;
-    if ([self.detailItem isBookmarked]
-        || ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)self.detailItem isRegistered])
-    ) {
-        buttonImage = [UIImage imageWithPathName:@"common/bookmark-ribbon-on.png"];
-    } else if ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]]) {
-        buttonImage = [UIImage imageWithPathName:@"common/bookmark-schedule-off.png"];
     } else {
-        buttonImage = [UIImage imageWithPathName:@"common/bookmark-ribbon-off.png"];
+        [super layoutBookmarkButton];
     }
-    [_bookmarkButton setImage:buttonImage forState:UIControlStateNormal];
 }
 
 - (void)hideBookmarkButton
