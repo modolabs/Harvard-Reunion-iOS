@@ -42,12 +42,12 @@
 
 - (void)launch {
     [super launch];
-    [[KGOSocialMediaController sharedController] startupFacebook];
+    [[KGOSocialMediaController facebookService] startup];
 }
 
 - (void)terminate {
     [super terminate];
-    [[KGOSocialMediaController sharedController] shutdownFacebook];
+    [[KGOSocialMediaController facebookService] shutdown];
 }
 
 #pragma mark Social media controller

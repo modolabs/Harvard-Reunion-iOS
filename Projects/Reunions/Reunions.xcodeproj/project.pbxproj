@@ -125,6 +125,11 @@
 		EB142C9B1300A83E00396753 /* KGOAppDelegate+ModuleAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = EB142C991300A83E00396753 /* KGOAppDelegate+ModuleAdditions.m */; };
 		EB142E6F1300D94E00396753 /* HomeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB142E6D1300D94E00396753 /* HomeModule.m */; };
 		EB1441B01309F59700396753 /* KGOModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1441AE1309F59700396753 /* KGOModule.m */; };
+		EB163778136892D2003C69E2 /* KGOFacebookService.m in Sources */ = {isa = PBXBuildFile; fileRef = EB163777136892D2003C69E2 /* KGOFacebookService.m */; };
+		EB16377B13689EE0003C69E2 /* KGOTwitterService.m in Sources */ = {isa = PBXBuildFile; fileRef = EB16377A13689EE0003C69E2 /* KGOTwitterService.m */; };
+		EB16377E1368A677003C69E2 /* KGOFoursquareService.m in Sources */ = {isa = PBXBuildFile; fileRef = EB16377D1368A677003C69E2 /* KGOFoursquareService.m */; };
+		EB1637811368B45F003C69E2 /* KGOFoursquareEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1637801368B45E003C69E2 /* KGOFoursquareEngine.m */; };
+		EB1637861368EB51003C69E2 /* KGOSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1637851368EB51003C69E2 /* KGOSegmentedControl.m */; };
 		EB1744EA132E8FC40045F961 /* PhotoUploadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1744E8132E8FC20045F961 /* PhotoUploadViewController.m */; };
 		EB1744EB132E8FC40045F961 /* PhotoUploadViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB1744E9132E8FC30045F961 /* PhotoUploadViewController.xib */; };
 		EB1815E0130C524A003728FF /* KGOHomeScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1815DE130C524A003728FF /* KGOHomeScreenViewController.m */; };
@@ -233,8 +238,6 @@
 		EBE2CCBB13441E940037546A /* KGODetailPageHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = EBE2CCBA13441E940037546A /* KGODetailPageHeaderView.m */; };
 		EBE2CCBE13441EB10037546A /* KGOBookmarksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EBE2CCBD13441EB10037546A /* KGOBookmarksViewController.m */; };
 		EBE2CCC41344C8BE0037546A /* FoursquareModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EBE2CCC31344C8BE0037546A /* FoursquareModule.m */; };
-		EBE2CCC71344D50A0037546A /* KGOSocialMediaController+Foursquare.m in Sources */ = {isa = PBXBuildFile; fileRef = EBE2CCC61344D50A0037546A /* KGOSocialMediaController+Foursquare.m */; };
-		EBE2CCD2134539C90037546A /* KGOFoursquareEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = EBE2CCD1134539C80037546A /* KGOFoursquareEngine.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -506,6 +509,19 @@
 		EB142E6D1300D94E00396753 /* HomeModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HomeModule.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB1441AD1309F59700396753 /* KGOModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOModule.h; sourceTree = "<group>"; };
 		EB1441AE1309F59700396753 /* KGOModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOModule.m; sourceTree = "<group>"; };
+		EB16377313688CD2003C69E2 /* KGOSocialMediaService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSocialMediaService.h; sourceTree = "<group>"; };
+		EB163776136892D2003C69E2 /* KGOFacebookService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOFacebookService.h; sourceTree = "<group>"; };
+		EB163777136892D2003C69E2 /* KGOFacebookService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOFacebookService.m; sourceTree = "<group>"; };
+		EB16377913689EDF003C69E2 /* KGOTwitterService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOTwitterService.h; sourceTree = "<group>"; };
+		EB16377A13689EE0003C69E2 /* KGOTwitterService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOTwitterService.m; sourceTree = "<group>"; };
+		EB16377C1368A677003C69E2 /* KGOFoursquareService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOFoursquareService.h; sourceTree = "<group>"; };
+		EB16377D1368A677003C69E2 /* KGOFoursquareService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOFoursquareService.m; sourceTree = "<group>"; };
+		EB16377F1368B45E003C69E2 /* KGOFoursquareEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOFoursquareEngine.h; sourceTree = "<group>"; };
+		EB1637801368B45E003C69E2 /* KGOFoursquareEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOFoursquareEngine.m; sourceTree = "<group>"; };
+		EB1637821368B771003C69E2 /* BitlyWrapperDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitlyWrapperDelegate.h; sourceTree = "<group>"; };
+		EB1637831368B83C003C69E2 /* TwitterViewControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterViewControllerDelegate.h; sourceTree = "<group>"; };
+		EB1637841368EB50003C69E2 /* KGOSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOSegmentedControl.h; sourceTree = "<group>"; };
+		EB1637851368EB51003C69E2 /* KGOSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOSegmentedControl.m; sourceTree = "<group>"; };
 		EB1744E7132E8FC20045F961 /* PhotoUploadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoUploadViewController.h; sourceTree = "<group>"; };
 		EB1744E8132E8FC20045F961 /* PhotoUploadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = PhotoUploadViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB1744E9132E8FC30045F961 /* PhotoUploadViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PhotoUploadViewController.xib; sourceTree = "<group>"; };
@@ -686,10 +702,6 @@
 		EBE2CCBD13441EB10037546A /* KGOBookmarksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOBookmarksViewController.m; sourceTree = "<group>"; };
 		EBE2CCC21344C8BE0037546A /* FoursquareModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoursquareModule.h; sourceTree = "<group>"; };
 		EBE2CCC31344C8BE0037546A /* FoursquareModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoursquareModule.m; sourceTree = "<group>"; };
-		EBE2CCC51344D50A0037546A /* KGOSocialMediaController+Foursquare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KGOSocialMediaController+Foursquare.h"; sourceTree = "<group>"; };
-		EBE2CCC61344D50A0037546A /* KGOSocialMediaController+Foursquare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KGOSocialMediaController+Foursquare.m"; sourceTree = "<group>"; };
-		EBE2CCD0134539C80037546A /* KGOFoursquareEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOFoursquareEngine.h; sourceTree = "<group>"; };
-		EBE2CCD1134539C80037546A /* KGOFoursquareEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOFoursquareEngine.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1106,6 +1118,8 @@
 		EB0CF8E2133FC86E003B8E45 /* SocialMedia */ = {
 			isa = PBXGroup;
 			children = (
+				EB16377F1368B45E003C69E2 /* KGOFoursquareEngine.h */,
+				EB1637801368B45E003C69E2 /* KGOFoursquareEngine.m */,
 				EB0CF8E3133FC86E003B8E45 /* KGOShareButtonController.h */,
 				EB0CF8E4133FC86E003B8E45 /* KGOShareButtonController.m */,
 				EB0CF8E5133FC86E003B8E45 /* KGOSocialMediaController.h */,
@@ -1113,6 +1127,15 @@
 				EB0CF8E7133FC86E003B8E45 /* TwitterViewController.h */,
 				EB0CF8E8133FC86E003B8E45 /* TwitterViewController.m */,
 				EB0CF977134015F2003B8E45 /* TwitterViewController.xib */,
+				EB16377313688CD2003C69E2 /* KGOSocialMediaService.h */,
+				EB163776136892D2003C69E2 /* KGOFacebookService.h */,
+				EB163777136892D2003C69E2 /* KGOFacebookService.m */,
+				EB16377913689EDF003C69E2 /* KGOTwitterService.h */,
+				EB16377A13689EE0003C69E2 /* KGOTwitterService.m */,
+				EB16377C1368A677003C69E2 /* KGOFoursquareService.h */,
+				EB16377D1368A677003C69E2 /* KGOFoursquareService.m */,
+				EB1637821368B771003C69E2 /* BitlyWrapperDelegate.h */,
+				EB1637831368B83C003C69E2 /* TwitterViewControllerDelegate.h */,
 			);
 			path = SocialMedia;
 			sourceTree = "<group>";
@@ -1166,6 +1189,8 @@
 				EB0CF909133FC86E003B8E45 /* MITThumbnailView.m */,
 				EB469BE5134A3B54005796E4 /* KGOSearchResultListTableView.h */,
 				EB469BE6134A3B54005796E4 /* KGOSearchResultListTableView.m */,
+				EB1637841368EB50003C69E2 /* KGOSegmentedControl.h */,
+				EB1637851368EB51003C69E2 /* KGOSegmentedControl.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1561,12 +1586,8 @@
 		EBE2CCC11344C8920037546A /* Foursquare */ = {
 			isa = PBXGroup;
 			children = (
-				EBE2CCD0134539C80037546A /* KGOFoursquareEngine.h */,
-				EBE2CCD1134539C80037546A /* KGOFoursquareEngine.m */,
 				EBE2CCC21344C8BE0037546A /* FoursquareModule.h */,
 				EBE2CCC31344C8BE0037546A /* FoursquareModule.m */,
-				EBE2CCC51344D50A0037546A /* KGOSocialMediaController+Foursquare.h */,
-				EBE2CCC61344D50A0037546A /* KGOSocialMediaController+Foursquare.m */,
 			);
 			path = Foursquare;
 			sourceTree = "<group>";
@@ -1888,8 +1909,6 @@
 				EBE2CCBB13441E940037546A /* KGODetailPageHeaderView.m in Sources */,
 				EBE2CCBE13441EB10037546A /* KGOBookmarksViewController.m in Sources */,
 				EBE2CCC41344C8BE0037546A /* FoursquareModule.m in Sources */,
-				EBE2CCC71344D50A0037546A /* KGOSocialMediaController+Foursquare.m in Sources */,
-				EBE2CCD2134539C90037546A /* KGOFoursquareEngine.m in Sources */,
 				EB469A8A134952D3005796E4 /* ReunionDetailPageHeaderView.m in Sources */,
 				EB469BE7134A3B54005796E4 /* KGOSearchResultListTableView.m in Sources */,
 				EB469E81134B6FA5005796E4 /* ReunionMapModule.m in Sources */,
@@ -1928,6 +1947,11 @@
 				566BEA9213654415008520DF /* NotesTableViewController.m in Sources */,
 				566BEA9313654415008520DF /* NotesTextView.m in Sources */,
 				566BEA9413654415008520DF /* NotesUnselectedTableViewCell.m in Sources */,
+				EB163778136892D2003C69E2 /* KGOFacebookService.m in Sources */,
+				EB16377B13689EE0003C69E2 /* KGOTwitterService.m in Sources */,
+				EB16377E1368A677003C69E2 /* KGOFoursquareService.m in Sources */,
+				EB1637811368B45F003C69E2 /* KGOFoursquareEngine.m in Sources */,
+				EB1637861368EB51003C69E2 /* KGOSegmentedControl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,6 +1,6 @@
 #import "FoursquareModule.h"
-#import "KGOSocialMediaController+Foursquare.h"
 #import "Foundation+KGOAdditions.h"
+#import "KGOSocialMediaController.h"
 
 #define FACEBOOK_STATUS_POLL_FREQUENCY 60
 
@@ -17,7 +17,7 @@
         NSDictionary *queryParts = [NSURL parametersFromQueryString:query];
         NSString *code = [queryParts stringForKey:@"code" nilIfEmpty:YES];
         
-        [[KGOSocialMediaController sharedController] didReceiveFoursquareAuthCode:code];
+        [[KGOSocialMediaController foursquareService] didReceiveFoursquareAuthCode:code];
         
         return YES;
     }
@@ -25,17 +25,22 @@
 }
 
 - (void)applicationDidFinishLaunching {
-    [[KGOSocialMediaController sharedController] startupFoursquare];
+    [[KGOSocialMediaController foursquareService] startup];
 }
 
 - (void)applicationWillTerminate {
-    [[KGOSocialMediaController sharedController] shutdownFoursquare];
+    [[KGOSocialMediaController foursquareService] shutdown];
 }
 
 - (void)applicationDidEnterBackground {
 }
 
 - (void)applicationWillEnterForeground {
+}
+
+- (NSArray *)applicationStateNotificationNames
+{
+    return [NSArray arrayWithObjects:FoursquareDidLoginNotification, FoursquareDidLogoutNotification, nil];
 }
 
 #pragma mark Social media controller

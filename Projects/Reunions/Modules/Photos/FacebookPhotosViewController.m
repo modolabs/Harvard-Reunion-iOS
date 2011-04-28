@@ -67,9 +67,9 @@
                             [_photosByID setObject:aPhoto forKey:pid];
                         }
                         DLog(@"requesting graph info for photo %@", pid);
-                        [[KGOSocialMediaController sharedController] requestFacebookGraphPath:pid
-                                                                                     receiver:self
-                                                                                     callback:@selector(didReceivePhoto:)];
+                        [[KGOSocialMediaController facebookService] requestFacebookGraphPath:pid
+                                                                                    receiver:self
+                                                                                    callback:@selector(didReceivePhoto:)];
                     }
                 }
             }            
@@ -194,7 +194,7 @@
 }
 
 - (void)dealloc {
-    [[KGOSocialMediaController sharedController] disconnectFacebookRequests:self];
+    [[KGOSocialMediaController facebookService] disconnectFacebookRequests:self];
 
     [currentFilterBlock release];
     [_iconGrid release];
@@ -313,9 +313,9 @@
     FacebookPhoto *photo = (FacebookPhoto *)result;
     [_photosByID setObject:photo forKey:photo.identifier];
     
-    [[KGOSocialMediaController sharedController] requestFacebookGraphPath:photo.identifier
-                                                                 receiver:self
-                                                                 callback:@selector(didReceivePhoto:)];    
+    [[KGOSocialMediaController facebookService] requestFacebookGraphPath:photo.identifier
+                                                                receiver:self
+                                                                callback:@selector(didReceivePhoto:)];    
     [self displayPhoto:photo];
     [self updateIconGrid];
 }
@@ -336,7 +336,7 @@
                                    "owner, caption, created, aid "
                                    "FROM photo WHERE pid=%@", pid];
                 
-                [[KGOSocialMediaController sharedController] requestFacebookFQL:query receiver:self callback:@selector(didReceivePhoto:)];
+                [[KGOSocialMediaController facebookService] requestFacebookFQL:query receiver:self callback:@selector(didReceivePhoto:)];
             }
         }
     }
@@ -434,7 +434,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         case kMyUploadsSegment:
         {
             NSString *uploaderIdentifier = 
-            [[[KGOSocialMediaController sharedController] currentFacebookUser]
+            [[[KGOSocialMediaController facebookService] currentFacebookUser]
              identifier];
             
             self.currentFilterBlock =

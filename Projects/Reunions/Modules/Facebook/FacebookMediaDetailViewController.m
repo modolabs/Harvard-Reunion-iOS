@@ -183,12 +183,12 @@ ToolbarButtonTags;
     UIButton *button = [self buttonForTag:kToolbarLikeButtonTag];
     
     if (button.state & UIControlStateSelected) {
-        [[KGOSocialMediaController sharedController] 
+        [[KGOSocialMediaController facebookService] 
          unlikeFacebookPost:self.post receiver:self 
          callback:@selector(didUnlikePost:)];
     }
     else {
-        [[KGOSocialMediaController sharedController] 
+        [[KGOSocialMediaController facebookService] 
          likeFacebookPost:self.post receiver:self 
          callback:@selector(didLikePost:)];
     }
@@ -245,9 +245,9 @@ ToolbarButtonTags;
 - (void)getCommentsForPost {
     NSString *objectID = self.post.postIdentifier.length ? self.post.postIdentifier : self.post.identifier;
     NSString *path = [NSString stringWithFormat:@"%@/comments", objectID];
-    [[KGOSocialMediaController sharedController] requestFacebookGraphPath:path
-                                                                 receiver:self
-                                                                 callback:@selector(didReceiveComments:)];
+    [[KGOSocialMediaController facebookService] requestFacebookGraphPath:path
+                                                                receiver:self
+                                                                callback:@selector(didReceiveComments:)];
 }
 
 - (void)didReceiveComments:(id)result {
@@ -380,7 +380,7 @@ ToolbarButtonTags;
 #pragma mark - KGODetailPager
 
 - (void)pager:(KGODetailPager *)pager showContentForPage:(id<KGOSearchResult>)content {
-    [[KGOSocialMediaController sharedController] disconnectFacebookRequests:self]; // stop getting data for previous post
+    [[KGOSocialMediaController facebookService] disconnectFacebookRequests:self]; // stop getting data for previous post
     
     self.post = (FacebookParentPost *)content;
     [self displayPost];

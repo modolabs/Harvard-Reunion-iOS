@@ -11,10 +11,10 @@
 - (IBAction)submitButtonPressed:(UIButton *)sender {
     _loadingView.hidden = NO;
     
-    [[KGOSocialMediaController sharedController] uploadPhoto:self.photo
-                                           toFacebookProfile:self.profile
-                                                     message:_textView.text
-                                                    delegate:self.parentVC];
+    [[KGOSocialMediaController facebookService] uploadPhoto:self.photo
+                                          toFacebookProfile:self.profile
+                                                    message:_textView.text
+                                                   delegate:self.parentVC];
     [_spinner startAnimating];
 }
 

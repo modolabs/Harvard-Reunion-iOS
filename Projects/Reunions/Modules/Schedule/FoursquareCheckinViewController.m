@@ -3,8 +3,8 @@
 #import "MITThumbnailView.h"
 #import "KGOTheme.h"
 #import "UIKit+KGOAdditions.h"
-#import "KGOSocialMediaController+Foursquare.h"
 #import "ScheduleDetailTableView.h"
+#import "KGOSocialMediaController.h"
 
 @implementation FoursquareCheckinViewController
 
@@ -12,7 +12,7 @@
 
 - (void)dealloc
 {
-    [[[KGOSocialMediaController sharedController] foursquareEngine] disconnectRequestsForDelegate:self];
+    [[[KGOSocialMediaController foursquareService] foursquareEngine] disconnectRequestsForDelegate:self];
     self.checkinData = nil;
     self.eventTitle = nil;
     self.venue = nil;
@@ -54,9 +54,9 @@
 
 - (void)checkinButtonPressed:(id)sender
 {
-    [[[KGOSocialMediaController sharedController] foursquareEngine] checkinVenue:self.venue
-                                                                        delegate:self
-                                                                         message:_textField.text];
+    [[[KGOSocialMediaController foursquareService] foursquareEngine] checkinVenue:self.venue
+                                                                         delegate:self
+                                                                          message:_textField.text];
 }
 
 // here we are relying on the fact that venueCheckinStatusReceived is called
@@ -80,8 +80,8 @@
 
 - (void)venueCheckinDidSucceed:(NSString *)venue
 {
-    [[[KGOSocialMediaController sharedController] foursquareEngine] checkUserStatusForVenue:self.venue
-                                                                                   delegate:self];
+    [[[KGOSocialMediaController foursquareService] foursquareEngine] checkUserStatusForVenue:self.venue
+                                                                                    delegate:self];
 }
 
 - (void)setCheckinData:(NSArray *)checkinData

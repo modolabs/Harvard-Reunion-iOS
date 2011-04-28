@@ -20,7 +20,7 @@
 }
 
 - (IBAction)loginButtonPressed:(UIButton *)sender {
-    [[KGOSocialMediaController sharedController] loginFacebook];
+    [[KGOSocialMediaController facebookService] signin];
 }
 
 - (IBAction)uploadButtonPressed:(id)sender {
@@ -149,7 +149,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     
-    if (![[KGOSocialMediaController sharedController] isFacebookLoggedIn]) {
+    if (![[KGOSocialMediaController facebookService] isSignedIn]) {
         [self facebookDidLogout:nil];
     } else {
         [self facebookDidLogin:nil];

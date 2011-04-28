@@ -4,6 +4,7 @@
 #import "KGOHomeScreenWidget.h"
 #import "TwitterModule.h"
 #import "FacebookModule.h"
+#import "SpringboardIcon.h"
 
 @implementation ReunionSidebarFrameViewController
 
@@ -19,9 +20,15 @@
     
     if (self.primaryModules.count) {
         KGOModule *defaultModule = [self.primaryModules objectAtIndex:0];
-        [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome
-                               forModuleTag:defaultModule.tag
-                                     params:nil];
+        for (UIView *aView in [_sidebar subviews]) {
+            if ([aView isKindOfClass:[SpringboardIcon class]]) {
+                SpringboardIcon *icon = (SpringboardIcon *)aView;
+                if (icon.module == defaultModule) {
+                    [self buttonPressed:icon];
+                    break;
+                }
+            }
+        }
     }
 }
 
