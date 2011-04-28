@@ -143,4 +143,9 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
     return [_homeScreenConfig objectForKey:@"number"];
 }
 
+- (NSString *)reunionYear
+{
+    return [_homeScreenConfig objectForKey:@"year"];
+}
+
 @end

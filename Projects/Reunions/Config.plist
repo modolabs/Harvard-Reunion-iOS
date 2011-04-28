@@ -228,7 +228,7 @@
 				<key>service</key>
 				<string>Facebook</string>
 				<key>subtitle</key>
-				<string>Used for photos, videos, updates, and checkins</string>
+				<string>Used for photos, videos and updates</string>
 				<key>title</key>
 				<string>Facebook</string>
 			</dict>

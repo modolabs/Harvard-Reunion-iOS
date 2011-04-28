@@ -16,6 +16,7 @@ extern NSString * const HomeScreenConfigPrefKey;
 - (NSString *)reunionName;
 - (NSString *)reunionDateString;
 - (NSString *)reunionNumber;
+- (NSString *)reunionYear;
 
 - (NSDictionary *)homeScreenConfig;
 - (NSArray *)moduleOrder;
