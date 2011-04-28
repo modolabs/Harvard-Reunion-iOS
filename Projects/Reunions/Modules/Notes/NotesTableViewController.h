@@ -22,6 +22,8 @@
     UIButton *printAllButton;
     
     NotesTextView * notesTextView;
+    
+    UIInterfaceOrientation orientation;
 }
 
 

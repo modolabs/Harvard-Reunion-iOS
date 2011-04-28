@@ -290,6 +290,24 @@
     [super viewDidDisappear:animated];
 }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    
+    if (interfaceOrientation == UIInterfaceOrientationPortrait)
+        return true;
+    
+    else if (interfaceOrientation == UIInterfaceOrientationLandscapeLeft)
+        return true;
+    
+    else if (interfaceOrientation == UIInterfaceOrientationLandscapeRight)
+        return true;
+    
+    else
+        return false;
+    
+    //return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
 #pragma mark
 #pragma mark NotesTextViewDelegate
 
