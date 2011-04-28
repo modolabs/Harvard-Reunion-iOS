@@ -159,7 +159,7 @@
 
 -(void) saveNotesState {
     
-    if (nil != notesTextView) {
+    if ((nil != notesTextView) && ([notesArray count] > 0)){
         
         [notesTextView saveNote];
     }
