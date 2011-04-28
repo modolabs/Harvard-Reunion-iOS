@@ -11,4 +11,7 @@
 @property (nonatomic, retain) FacebookUser * owner;
 @property (nonatomic, retain) NSSet* likes;
 
+- (void)addLikesObject:(FacebookUser *)user;
+- (void)removeLikesObject:(FacebookUser *)user;
+
 @end

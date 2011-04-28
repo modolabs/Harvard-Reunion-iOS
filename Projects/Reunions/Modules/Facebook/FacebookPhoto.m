@@ -141,6 +141,17 @@ NSInteger widthSort(id imageDict1, id imageDict2, void *context);
             aComment.parent = self;
         }
     }
+    
+    NSDictionary *likes = [dictionary dictionaryForKey:@"likes"];
+    if (likes) {
+        //NSInteger count = [likes integerForKey:@"count"];
+        for (NSDictionary *aLike in [likes arrayForKey:@"data"]) {
+            FacebookUser *user = [FacebookUser userWithDictionary:aLike];
+            NSMutableSet *set = [[self.likes mutableCopy] autorelease];
+            [set addObject:user];
+            self.likes = set;
+        }
+    }
 }
 
 #pragma mark FacebookThumbSource

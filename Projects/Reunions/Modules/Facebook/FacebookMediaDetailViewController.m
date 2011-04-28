@@ -1,6 +1,8 @@
+#import "CoreDataManager.h"
 #import "FacebookMediaDetailViewController.h"
 #import "UIKit+KGOAdditions.h"
 #import "Foundation+KGOAdditions.h"
+#import "KGOSocialMediaController.h"
 #import "KGOSocialMediaController+FacebookAPI.h"
 #import "KGOAppDelegate.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
@@ -21,6 +23,8 @@ ToolbarButtonTags;
 
 - (UIButton *)buttonForTag:(NSInteger)tag;
 
+- (void)updateLikeButtonStatus;
+
 @end
 
 @implementation FacebookMediaDetailViewController (Private)
@@ -32,8 +36,16 @@ ToolbarButtonTags;
         buttonParent = self.actionsToolbar;
     }
     return (UIButton *)[buttonParent viewWithTag:tag];
-}    
+}
 
+- (void)updateLikeButtonStatus {
+    
+    KGOFacebookService *fbService = [[KGOSocialMediaController sharedController] serviceWithType:KGOSocialMediaTypeFacebook];
+    if([self.post.likes member:[fbService currentFacebookUser]]) {
+        UIButton *likeButton = [self buttonForTag:kToolbarLikeButtonTag];
+        likeButton.selected = YES;
+    }
+}
 @end
 
 
@@ -155,6 +167,9 @@ ToolbarButtonTags;
      [[[UIBarButtonItem alloc] initWithCustomView:bookmarkButton] autorelease], 
      nil];
     
+    // this has to be called after button attached to 
+    // to view heirarchy
+    [self updateLikeButtonStatus];
     [setupPool release];
 }
 
@@ -198,6 +213,10 @@ ToolbarButtonTags;
     DLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]] && 
         [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
+        
+        KGOFacebookService *fbService = [[KGOSocialMediaController sharedController] serviceWithType:KGOSocialMediaTypeFacebook];
+        [self.post addLikesObject:[fbService currentFacebookUser]];
+        
         // Set the button to the "unlike" state.
         UIButton *button = [self buttonForTag:kToolbarLikeButtonTag];
         button.selected = YES;
@@ -207,6 +226,10 @@ ToolbarButtonTags;
 - (void)didUnlikePost:(id)result {
     NSLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
+
+        KGOFacebookService *fbService = [[KGOSocialMediaController sharedController] serviceWithType:KGOSocialMediaTypeFacebook];
+        [self.post removeLikesObject:[fbService currentFacebookUser]];
+         
         // Set the button to the "like" state.
         UIButton *button = [self buttonForTag:kToolbarLikeButtonTag];
         button.selected = NO;
@@ -303,6 +326,8 @@ ToolbarButtonTags;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLikeButtonStatus) name:FacebookDidGetSelfInfoNotification object:nil];
     
     _tableView.rowHeight = 100;
     
