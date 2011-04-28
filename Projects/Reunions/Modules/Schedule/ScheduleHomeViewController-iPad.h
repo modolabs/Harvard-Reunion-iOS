@@ -1,16 +1,14 @@
 #import <UIKit/UIKit.h>
 #import "ScheduleHomeViewController.h"
-#import "NewNoteViewController.h"
 
 @class ScheduleDetailTableView;
 
-@interface ScheduleHomeViewController_iPad : ScheduleHomeViewController <NotesModalViewDelegate>  {
+@interface ScheduleHomeViewController_iPad : ScheduleHomeViewController {
     
     NSIndexPath *_selectedIndexPath;
     NSMutableArray *_cellData;
     
     NSInteger _selectedRow;
-    NewNoteViewController *tempVC;
     
     MKMapView *_mapViewForSelectedCell;
     MKMapView *_mapViewForLastCell;
