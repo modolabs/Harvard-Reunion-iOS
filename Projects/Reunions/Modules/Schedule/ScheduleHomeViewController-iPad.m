@@ -6,7 +6,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import "MapKit+KGOAdditions.h"
 #import "UIKit+KGOAdditions.h"
-#import "Note.h"
 
 @interface ScheduleHomeViewController_iPad (Private)
 
@@ -224,7 +223,13 @@
         cellType = ScheduleCellLastInTable;
     }
     
-    NSString *cellIdentifier = [NSString stringWithFormat:@"%d", cellType];
+    BOOL isFirstInSection = NO;
+    if (indexPath.row > 0) {
+        id previousCellData = [_cellData objectAtIndex:indexPath.row - 1];
+        isFirstInSection = [previousCellData isKindOfClass:[NSString class]];
+    }
+    
+    NSString *cellIdentifier = [NSString stringWithFormat:@"%d.%@", cellType, isFirstInSection ? @"1" : @"0"];
     ScheduleTabletTableViewCell *cell = (ScheduleTabletTableViewCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     
     if (!cell) {
@@ -232,10 +237,8 @@
                                                    reuseIdentifier:cellIdentifier] autorelease];
     }
     
-    if (indexPath.row > 0) {
-        id previousCellData = [_cellData objectAtIndex:indexPath.row - 1];
-        cell.isFirstInSection = [previousCellData isKindOfClass:[NSString class]];
-    }
+    cell.isFirstInSection = isFirstInSection;
+    cell.parentViewController = self;
     
     ScheduleEventWrapper *event = [_cellData objectAtIndex:indexPath.row];
     
@@ -327,6 +330,7 @@
     if (needsInitialize) {
         tableView.backgroundColor = [UIColor clearColor];
         tableView.backgroundView = nil;
+        tableView.tag = TABLE_TAG;
         tableView.dataManager = self.dataManager;
         tableView.viewController = [KGO_SHARED_APP_DELEGATE() visibleViewController];
     }
@@ -384,115 +388,6 @@
     }
     
     return tableView.rowHeight;
-}
-
-#pragma mark Notes
-
--(void) newNoteForSection: (int) section andRow: (int) row {
-    NSArray *eventsForSection = [_currentEventsBySection objectForKey:[_currentSections objectAtIndex:section]];
-    ScheduleEventWrapper *event = [eventsForSection objectAtIndex:row];
-    
-    NSString * noteTitle = [NSString stringWithFormat:@"Note for: %@", event.title];
-    
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND eventIdentifier = %@", noteTitle, event.identifier];
-    Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
-    
-    NSDate * dateForNote = [NSDate date];
-    
-    if (nil != note)
-        if (nil != note.date)
-            dateForNote = note.date;
-    
-    if (nil != tempVC)
-        [tempVC release];
-    
-    tempVC = [[[NewNoteViewController alloc] initWithTitleText:noteTitle
-                                                          date:dateForNote              
-                                                   andDateText:[Note dateToDisplay:dateForNote]
-                                                       eventId:event.identifier
-                                                     viewWidth:NEWNOTE_WIDTH 
-                                                    viewHeight:NEWNOTE_HEIGHT] retain];
-    tempVC.viewControllerBackground = self;
-    
-    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:tempVC] autorelease];
-    
-    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                           target:self
-                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
-    
-    tempVC.navigationItem.rightBarButtonItem = item;
-    
-    navC.modalPresentationStyle =  UIModalPresentationFormSheet;
-    [self presentModalViewController:navC animated:YES];
-    navC.navigationBar.tintColor = [UIColor blackColor];
-    navC.view.userInteractionEnabled = YES;
-    
-    CGRect frame = navC.view.superview.frame;
-    
-    frame.size.width = NEWNOTE_WIDTH;
-    
-    navC.view.superview.frame = frame;
-    
-    /* navC.view.superview.frame = CGRectMake(NEWNOTE_XOFFSET, 
-     NEWNOTE_YOFFSET, 
-     NEWNOTE_WIDTH, 
-     NEWNOTE_HEIGHT);//it's important to do this after presentModalViewController
-     */
-}
-
--(void) newNoteButtonPressedForSelected: (id) sender{
-    
-    [self newNoteForSection:_selectedIndexPath.section andRow:_selectedIndexPath.row];
-}
-
--(void) newNoteButtonPressedForLast: (id) sender{
-    NSArray *eventsForSection = [_currentEventsBySection objectForKey:[_currentSections objectAtIndex:_currentSections.count - 1]];
-    
-    [self newNoteForSection:_currentSections.count - 1 andRow:eventsForSection.count - 1];
-}
-
--(void) saveNotesState {
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND date = %@", tempVC.titleText, tempVC.date];
-    Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
-    
-    if (nil == note) {
-        note = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:NotesEntityName];
-    }
-    
-    note.title = tempVC.titleText;
-    note.date = tempVC.date;
-    note.details = tempVC.textViewString;
-    
-    if (nil != tempVC.eventIdentifier)
-        note.eventIdentifier = tempVC.eventIdentifier;
-    
-    [[CoreDataManager sharedManager] saveData];
-}
-
-- (void) dismissModalViewControllerAnimated:(BOOL)animated {
-    
-    if (nil != tempVC) {
-        [self saveNotesState];
-    }
-    
-    [super dismissModalViewControllerAnimated:YES];
-}
-
-
-#pragma mark
-#pragma mark NotesModalViewDelegate 
-
--(void) deleteNoteWithoutSaving {
-    if (nil != tempVC) {
-        NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND date = %@", tempVC.titleText, tempVC.date];
-        Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
-        
-        if (nil != note) {
-            [[CoreDataManager sharedManager] deleteObject:note];
-            [[CoreDataManager sharedManager] saveData];
-        }
-    }
-    [super dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - View lifecycle

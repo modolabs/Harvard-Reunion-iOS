@@ -3,12 +3,14 @@
 #import "ScheduleDetailTableView.h"
 #import "ScheduleEventWrapper.h"
 #import <QuartzCore/QuartzCore.h>
+#import "Note.h"
+#import "CoreDataManager.h"
 
 #define TABLE_TAG 1
 
 @implementation ScheduleTabletTableViewCell
 
-@synthesize event, isFirstInSection;
+@synthesize event, isFirstInSection, parentViewController;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -24,6 +26,7 @@
         _bookmarkView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
         [self.contentView addSubview:_bookmarkView];
         
+        self.textLabel.font = [UIFont fontWithName:@"Georgia" size:18];
         self.textLabel.backgroundColor = [UIColor clearColor];
         self.detailTextLabel.backgroundColor = [UIColor clearColor];
     }
@@ -240,8 +243,89 @@
 
 - (void)dealloc
 {
+    self.event = nil;
+    self.parentViewController = nil;
     [_bookmarkView release];
     [super dealloc];
+}
+
+#pragma mark Notes
+
+- (void)noteButtonPressed:(id)sender
+{
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND eventIdentifier = %@", self.event.title, event.identifier];
+    Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
+    
+    NSDate * dateForNote = [NSDate date];
+    
+    if (nil != note)
+        if (nil != note.date)
+            dateForNote = note.date;
+    
+    _noteViewController = [[[NewNoteViewController alloc] initWithTitleText:self.event.title
+                                                                       date:dateForNote              
+                                                                andDateText:[Note dateToDisplay:dateForNote]
+                                                                    eventId:event.identifier
+                                                                  viewWidth:NEWNOTE_WIDTH 
+                                                                 viewHeight:NEWNOTE_HEIGHT] retain];
+    _noteViewController.viewControllerBackground = self.parentViewController;
+    
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:_noteViewController] autorelease];
+    
+    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                           target:self
+                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+    
+    _noteViewController.navigationItem.rightBarButtonItem = item;
+    
+    navC.modalPresentationStyle =  UIModalPresentationFormSheet;
+    navC.navigationBar.tintColor = [UIColor blackColor];
+    [self.parentViewController presentModalViewController:navC animated:YES];
+    
+}
+
+-(void) saveNotesState {
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND date = %@", _noteViewController.titleText, _noteViewController.date];
+    Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
+    
+    if (nil == note) {
+        note = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:NotesEntityName];
+    }
+    
+    note.title = _noteViewController.titleText;
+    note.date = _noteViewController.date;
+    note.details = _noteViewController.textViewString;
+    
+    if (nil != _noteViewController.eventIdentifier)
+        note.eventIdentifier = _noteViewController.eventIdentifier;
+    
+    [[CoreDataManager sharedManager] saveData];
+}
+
+- (void) dismissModalViewControllerAnimated:(BOOL)animated {
+    
+    if (nil != _noteViewController) {
+        [self saveNotesState];
+        _noteViewController = nil;
+    }
+    
+    [self.parentViewController dismissModalViewControllerAnimated:YES];
+}
+
+#pragma mark NotesModalViewDelegate 
+
+-(void) deleteNoteWithoutSaving {
+    if (nil != _noteViewController) {
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND date = %@", _noteViewController.titleText, _noteViewController.date];
+        Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
+        
+        if (nil != note) {
+            [[CoreDataManager sharedManager] deleteObject:note];
+            [[CoreDataManager sharedManager] saveData];
+        }
+        _noteViewController = nil;
+    }
+    [self.parentViewController dismissModalViewControllerAnimated:YES];
 }
 
 @end
@@ -259,6 +343,15 @@
         self.selectionStyle = UITableViewCellEditingStyleNone;
     }
     return self;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    CGRect frame = self.textLabel.frame;
+    frame.origin.x = -10;
+    self.textLabel.frame = frame;
 }
 
 - (void)drawRect:(CGRect)rect
