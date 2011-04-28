@@ -441,16 +441,27 @@ ToolbarButtonTags;
     
     UILabel *commentLabel = (UILabel *)[cell.contentView viewWithTag:commentTag];
     if (!commentLabel) {
-        UIFont *commentFont = [UIFont systemFontOfSize:15];
-        commentLabel = [UILabel multilineLabelWithText:text font:commentFont width:tableView.frame.size.width - 20];
+        commentLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width - 20, 80)] autorelease];
+        commentLabel.font = [UIFont systemFontOfSize:15];
+        commentLabel.backgroundColor = [UIColor clearColor];
+        commentLabel.numberOfLines = 3;
+        commentLabel.lineBreakMode = UILineBreakModeTailTruncation;
         commentLabel.tag = commentTag;
         CGRect frame = commentLabel.frame;
         frame.origin.x = 10;
         frame.origin.y = 5;
         commentLabel.frame = frame;
-    } else {
-        commentLabel.text = text;
+    } 
+    CGSize singleLine = [text sizeWithFont:commentLabel.font];
+    CGSize multipleLines = [text sizeWithFont:commentLabel.font constrainedToSize:CGSizeMake(commentLabel.frame.size.width, 1000)];
+    CGFloat height = multipleLines.height;
+    if(height > singleLine.height * commentLabel.numberOfLines) {
+        height = singleLine.height * commentLabel.numberOfLines;
     }
+    commentLabel.text = text;
+    CGRect commentFrame = commentLabel.frame;
+    commentFrame.size.height = height;
+    commentLabel.frame = commentFrame;
     [cell.contentView addSubview:commentLabel];
     
     UILabel *authorLabel = (UILabel *)[cell.contentView viewWithTag:authorTag];
