@@ -151,8 +151,10 @@
     navC.navigationBar.tintColor = [UIColor blackColor];
     navC.view.userInteractionEnabled = YES;
 
-
-    navC.view.superview.frame = CGRectMake(NEWNOTE_XOFFSET, NEWNOTE_YOFFSET, NEWNOTE_WIDTH, NEWNOTE_HEIGHT);//it's important to do this after presentModalViewController
+    CGRect frame = navC.view.superview.frame;
+    frame.size.width = NEWNOTE_WIDTH;
+    navC.view.superview.frame = frame;
+    //navC.view.superview.frame = CGRectMake(NEWNOTE_XOFFSET, NEWNOTE_YOFFSET, NEWNOTE_WIDTH, NEWNOTE_HEIGHT);//it's important to do this after presentModalViewController
 
 
 }
