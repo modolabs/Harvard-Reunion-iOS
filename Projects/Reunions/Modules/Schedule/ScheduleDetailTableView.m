@@ -295,13 +295,11 @@
         NSString *accessory = [cellData objectForKey:@"accessory"];
         UIImage *image = [cellData objectForKey:@"image"];
         
-        NSString *cellIdentifier;
-
         UITableViewCellStyle style = UITableViewCellStyleDefault;
-        if ([cellData objectForKey:@"subtitle"]) {
+        if (subtitle && [subtitle length]) {
             style = UITableViewCellStyleSubtitle;
         }
-        cellIdentifier = [NSString stringWithFormat:@"%d", style];
+        NSString *cellIdentifier = [NSString stringWithFormat:@"%d", style];
         
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
         if (!cell) {
@@ -338,10 +336,11 @@
             titleLabel.tag = titleTag;
         } 
         CGSize titleSize = [title sizeWithFont:titleFont
-                             constrainedToSize:CGSizeMake(width, 1000)
+                             constrainedToSize:CGSizeMake(width, titleFont.lineHeight * 10)
                                  lineBreakMode:UILineBreakModeWordWrap];
         CGRect titleFrame = titleLabel.frame;
         titleFrame.size.height = titleSize.height;
+        titleFrame.origin.x = x;
         titleLabel.frame = titleFrame;
         titleLabel.text = title;
         [cell.contentView addSubview:titleLabel];
@@ -359,10 +358,12 @@
                 subtitleLabel.tag = subtitleTag;
             }
             CGSize subtitleSize = [title sizeWithFont:subtitleFont
-                                    constrainedToSize:CGSizeMake(width, 1000)
+                                    constrainedToSize:CGSizeMake(width, subtitleFont.lineHeight * 10)
                                         lineBreakMode:UILineBreakModeWordWrap];
             CGRect subtitleFrame = subtitleLabel.frame;
             subtitleFrame.size.height = subtitleSize.height;
+            subtitleFrame.origin.x = x;
+            subtitleFrame.origin.y = y;
             subtitleLabel.frame = subtitleFrame;
             subtitleLabel.text = subtitle;
             [cell.contentView addSubview:subtitleLabel];
