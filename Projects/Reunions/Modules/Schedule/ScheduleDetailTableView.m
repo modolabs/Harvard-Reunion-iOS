@@ -313,9 +313,7 @@
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
         cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:accessory];
-        if (image) {
-            cell.imageView.image = image;
-        }
+        cell.imageView.image = image;
 
         NSInteger titleTag = 50;
         NSInteger subtitleTag = 51;
