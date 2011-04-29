@@ -7,6 +7,7 @@
 #import "AddressBookUtils.h"
 #import "KGOTheme.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
+#import "UIKit+KGOAdditions.h"
 
 typedef enum
 {
@@ -18,9 +19,9 @@ typedef enum
 }
 CustomBumpUITags;
 
-#define kBumpStatusConnecting @"Preparing Bump session."
-#define kBumpStatusConnectedToNetwork @"Connected to the Bump network. "\
-"You may start Bumping other devices with the Reunion app!"
+#define kBumpStatusConnecting @"Getting ready to share contact info..."
+#define kBumpStatusConnectedToNetwork @"To share contact info with a friend, "\
+"bump your devices gently together."
 #define kBumpStatusDisconnected @"Not connected to the Bump network."
 #define kBumpStatusConnectedToPerson @"Connected to another person."
 
@@ -174,6 +175,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 @synthesize statusLabel;
 @synthesize messageLabel;
 @synthesize spinner;
+@synthesize demoImageView;
 
 // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)init
@@ -188,33 +190,37 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
     [super loadView];
-    //self.view.backgroundColor = [UIColor greenColor];
+    
+    self.view.backgroundColor = [UIColor clearColor];
+    
     self.view.autoresizingMask = 
     UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     CGFloat viewWidth = self.view.frame.size.width;
+    
+    UIView *backgroundView = [[[UIView alloc] initWithFrame:self.view.bounds] autorelease];
+    backgroundView.backgroundColor = [UIColor whiteColor];
+    backgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        backgroundView.frame = CGRectMake(0, 49, self.view.bounds.size.width, self.view.bounds.size.height - 51);
+    }
+    [self.view addSubview:backgroundView];
             
     self.statusLabel = 
     [[[UILabel alloc] initWithFrame:
       CGRectMake(kConnectViewSubviewMargin, 
-                 100, 
+                 12, 
                  viewWidth - 2 * kConnectViewSubviewMargin, 
                  80)] 
      autorelease];
+    self.statusLabel.textAlignment = UITextAlignmentCenter;
     self.statusLabel.tag = kBumpStatusLabel;
-    self.statusLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    self.statusLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
     self.statusLabel.backgroundColor = [UIColor clearColor];
     
-    NSString *fontName = [[KGOTheme sharedTheme] defaultFontName];
-    CGFloat fontSize = [[KGOTheme sharedTheme] defaultFontSize];
-    UIFont *font = 
-    [UIFont fontWithName:
-     [NSString stringWithFormat:@"%@-Bold", fontName] size:fontSize];
-    if (!font) {
-        font = [UIFont fontWithName:fontName size:fontSize];
-    }
+    UIFont *font = [[KGOTheme sharedTheme] defaultFont];
     self.statusLabel.font = font;
     self.statusLabel.numberOfLines = 0;
-    [self.view addSubview:self.statusLabel];
+    [backgroundView addSubview:self.statusLabel];
 
     self.spinner = 
     [[[UIActivityIndicatorView alloc] 
@@ -226,21 +232,46 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     self.spinner.frame = spinnerFrame;
     self.spinner.autoresizingMask = 
     UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;    
-    [self.view addSubview:self.spinner];
+    [backgroundView addSubview:self.spinner];
+    
+    self.demoImageView = [[[UIImageView alloc] initWithImage:[UIImage imageWithPathName:@"modules/bump/bumping"]] autorelease];
+    [backgroundView addSubview:self.demoImageView];
+    self.demoImageView.center = backgroundView.center;
+    self.demoImageView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+    self.demoImageView.hidden = YES;
     
     self.messageLabel = 
     [[[UILabel alloc] initWithFrame:
       CGRectMake(kConnectViewSubviewMargin, 
-                 240, 
+                 backgroundView.frame.size.height - 120, 
                  viewWidth - 2 * kConnectViewSubviewMargin, 
                  80)] autorelease];    
     self.messageLabel.tag = kBumpMessageLabel;
-    self.messageLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    self.messageLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
     self.messageLabel.backgroundColor = [UIColor clearColor];
-    font = [UIFont fontWithName:fontName size:fontSize];
     self.messageLabel.font = font;
     self.messageLabel.numberOfLines = 0;
+    self.messageLabel.textColor = [UIColor colorWithWhite:0.4 alpha:1];
+    self.messageLabel.textAlignment = UITextAlignmentCenter;
     [self.view addSubview:self.messageLabel];
+
+    UIImageView *imageView = [[[UIImageView alloc] initWithImage:[UIImage imageWithPathName:@"modules/bump/bump-logo"]] autorelease];
+    CGRect frame = imageView.frame;
+    frame.origin.x = floor((viewWidth - imageView.frame.size.width) / 2);
+    frame.origin.y = backgroundView.bounds.size.height - imageView.frame.size.height - 10;
+    imageView.frame = frame;
+    imageView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+    [backgroundView addSubview:imageView];
+
+    UILabel *poweredByLabel = [UILabel multilineLabelWithText:@"Powered By" font:[UIFont systemFontOfSize:13] width:100];
+    poweredByLabel.textAlignment = UITextAlignmentCenter;
+    poweredByLabel.textColor = [UIColor colorWithWhite:0.4 alpha:1];
+    poweredByLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+    frame = poweredByLabel.frame;
+    frame.origin.x = floor((viewWidth - frame.size.width) / 2);
+    frame.origin.y = imageView.frame.origin.y - frame.size.height - 4;
+    poweredByLabel.frame = frame;
+    [backgroundView addSubview:poweredByLabel];
         
     [self setUpBump];
 }
@@ -282,6 +313,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     [messageLabel release];
     [statusLabel release];
     [incomingABRecordDict release];
+    [demoImageView release];
     
     [super dealloc];
 }
@@ -485,7 +517,10 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
  */
 - (void)bumpConnectedToBumpNetwork
 {
-    [self updateStatus:kBumpStatusConnectedToNetwork andMessage:@""];
+    [self updateStatus:kBumpStatusConnectedToNetwork
+            andMessage:@"Both you and your friend need to be running the Harvard Reunion app, open to this screen."];
+
+    self.demoImageView.hidden = NO;
 }
 
 /**
