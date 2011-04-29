@@ -136,7 +136,8 @@
         } else {
             UIImage *image = [UIImage imageWithPathName:@"modules/schedule/badge-register"];
             NSString *title = [NSString stringWithFormat:@"Registration Required (%@)", [eventWrapper registrationFee]];
-            NSString *subtitle = [NSString stringWithFormat:@"Register online at %@", [eventWrapper registrationURL]];
+            NSString *subtitle = [eventWrapper registrationURL] ?
+                [NSString stringWithFormat:@"Register online at %@", [eventWrapper registrationURL]] : nil;
             [attendeeInfo addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                      image, @"image",
                                      title, @"title",
@@ -226,6 +227,33 @@
         }
         indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section - 1];
     }
+    id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    if ([cellData isKindOfClass:[NSDictionary class]]) {
+        NSString *title = [cellData objectForKey:@"title"];
+        NSString *subtitle = [cellData objectForKey:@"subtitle"];
+        NSString *accessory = [cellData objectForKey:@"accessory"];
+        UIImage *image = [cellData objectForKey:@"image"];
+
+        // adjust for icon, padding and accessory
+        CGFloat width = tableView.frame.size.width - 20 - (image ? 34 : 0) - (accessory != KGOAccessoryTypeNone ? 34 : 0); 
+        CGFloat height = 22;
+        
+        UIFont *titleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
+        CGSize titleSize = [title sizeWithFont:titleFont
+                             constrainedToSize:CGSizeMake(width, 1000)
+                                 lineBreakMode:UILineBreakModeWordWrap];
+        height += titleSize.height;
+        
+        if (subtitle && [subtitle length]) {
+            UIFont *subtitleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
+            CGSize subtitleSize = [title sizeWithFont:subtitleFont
+                                    constrainedToSize:CGSizeMake(width, 1000)
+                                        lineBreakMode:UILineBreakModeWordWrap];
+            height += subtitleSize.height + 2;
+        }
+        
+        return height;
+    }
     return [super tableView:tableView heightForRowAtIndexPath:indexPath];
 }
 
@@ -252,11 +280,94 @@
                 cell.imageView.image = [UIImage imageWithPathName:@"modules/foursquare/button-foursquare"];
             }
             
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:KGOAccessoryTypeChevron];
             
             return cell;
         }
         indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section - 1];
+        
+    }
+    
+    id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    if ([cellData isKindOfClass:[NSDictionary class]]) {
+        NSString *title = [cellData objectForKey:@"title"];
+        NSString *subtitle = [cellData objectForKey:@"subtitle"];
+        NSString *accessory = [cellData objectForKey:@"accessory"];
+        UIImage *image = [cellData objectForKey:@"image"];
+        
+        UITableViewCellStyle style = UITableViewCellStyleDefault;
+        if (subtitle && [subtitle length]) {
+            style = UITableViewCellStyleSubtitle;
+        }
+        NSString *cellIdentifier = [NSString stringWithFormat:@"%d", style];
+        
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+        if (!cell) {
+            cell = [[[UITableViewCell alloc] initWithStyle:style reuseIdentifier:cellIdentifier] autorelease];
+        }
+        
+        if (accessory && ![accessory isEqualToString:KGOAccessoryTypeNone]) {
+            cell.selectionStyle = UITableViewCellSelectionStyleGray;
+            
+        } else {
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:accessory];
+        cell.imageView.image = image;
+
+        NSInteger titleTag = 50;
+        NSInteger subtitleTag = 51;
+        
+        // adjust for icon, padding and accessory
+        CGFloat width = tableView.frame.size.width - 20 - (image ? 34 : 0) - (accessory != KGOAccessoryTypeNone ? 34 : 0); 
+        CGFloat x = image ? 44 : 10;
+        CGFloat y = 10;
+        
+        UIFont *titleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
+        UILabel *titleLabel = (UILabel *)[cell.contentView viewWithTag:titleTag];
+        if (!titleLabel) {
+            titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(x, y, width, titleFont.lineHeight)] autorelease];
+            titleLabel.font = titleFont;
+            titleLabel.backgroundColor = [UIColor clearColor];
+            titleLabel.numberOfLines = 10;
+            titleLabel.lineBreakMode = UILineBreakModeWordWrap;
+            titleLabel.tag = titleTag;
+        } 
+        CGSize titleSize = [title sizeWithFont:titleFont
+                             constrainedToSize:CGSizeMake(width, titleFont.lineHeight * 10)
+                                 lineBreakMode:UILineBreakModeWordWrap];
+        CGRect titleFrame = titleLabel.frame;
+        titleFrame.size.height = titleSize.height;
+        titleFrame.origin.x = x;
+        titleLabel.frame = titleFrame;
+        titleLabel.text = title;
+        [cell.contentView addSubview:titleLabel];
+        y += titleSize.height + 1;
+        
+        if (subtitle && [subtitle length]) {
+            UIFont *subtitleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
+            UILabel *subtitleLabel = (UILabel *)[cell.contentView viewWithTag:subtitleTag];
+            if (!subtitleLabel) {
+                subtitleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(x, y, width, subtitleFont.lineHeight)] autorelease];
+                subtitleLabel.font = subtitleFont;
+                subtitleLabel.backgroundColor = [UIColor clearColor];
+                subtitleLabel.numberOfLines = 10;
+                subtitleLabel.lineBreakMode = UILineBreakModeWordWrap;
+                subtitleLabel.tag = subtitleTag;
+            }
+            CGSize subtitleSize = [title sizeWithFont:subtitleFont
+                                    constrainedToSize:CGSizeMake(width, subtitleFont.lineHeight * 10)
+                                        lineBreakMode:UILineBreakModeWordWrap];
+            CGRect subtitleFrame = subtitleLabel.frame;
+            subtitleFrame.size.height = subtitleSize.height;
+            subtitleFrame.origin.x = x;
+            subtitleFrame.origin.y = y;
+            subtitleLabel.frame = subtitleFrame;
+            subtitleLabel.text = subtitle;
+            [cell.contentView addSubview:subtitleLabel];
+        }
+        
+        return cell;
     }
     
     return [super tableView:tableView cellForRowAtIndexPath:indexPath];
@@ -273,8 +384,10 @@
         indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section - 1];
     }
 
-    id cellData = [[self.sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-    if ([cellData isKindOfClass:[NSDictionary class]]) {    
+    id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    if ([cellData isKindOfClass:[NSDictionary class]]) {
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        
         NSString *accessory = [cellData objectForKey:@"accessory"];
         if ([accessory isEqualToString:KGOAccessoryTypeChevron]) {
             NSMutableArray *attendees = [NSMutableArray arrayWithCapacity:self.event.attendees.count];

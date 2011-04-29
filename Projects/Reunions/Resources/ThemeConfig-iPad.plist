@@ -61,10 +61,10 @@
 		<dict>
 			<key>bold</key>
 			<true/>
-			<key>font</key>
-			<string>Georgia</string>
 			<key>color</key>
 			<string>#1A1611</string>
+			<key>font</key>
+			<string>Helvetica</string>
 			<key>size</key>
 			<integer>2</integer>
 		</dict>

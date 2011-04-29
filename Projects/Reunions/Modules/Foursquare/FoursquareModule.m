@@ -1,6 +1,7 @@
 #import "FoursquareModule.h"
 #import "Foundation+KGOAdditions.h"
 #import "KGOSocialMediaController.h"
+#import "KGOFoursquareEngine.h"
 
 #define FACEBOOK_STATUS_POLL_FREQUENCY 60
 
@@ -41,6 +42,11 @@
 - (NSArray *)applicationStateNotificationNames
 {
     return [NSArray arrayWithObjects:FoursquareDidLoginNotification, FoursquareDidLogoutNotification, nil];
+}
+
+- (NSArray *)userDefaults
+{
+    return [NSArray arrayWithObjects:FoursquareOAuthTokenKey, FoursquareUserIDKey, FoursquareUsernameKey, nil];
 }
 
 #pragma mark Social media controller

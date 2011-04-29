@@ -61,6 +61,11 @@
     return self;
 }
 
+- (NSArray *)userDefaults
+{
+    return [NSArray arrayWithObjects:TwitterUsernameKey, nil];
+}
+
 - (NSString *)hashtag
 {
     return _hashTag;
@@ -105,7 +110,7 @@
 
 - (NSArray *)applicationStateNotificationNames
 {
-    return [NSArray arrayWithObjects:TwitterDidLoginNotification, TwitterDidLogoutNotification, nil];
+    return [NSArray arrayWithObjects:TwitterDidLoginNotification, TwitterDidLogoutNotification, TwitterHashTagKey, nil];
 }
 
 #pragma mark polling
@@ -188,8 +193,6 @@
 - (void)twitterSearch:(TwitterSearch *)twitterSearch didFailWithError:(NSError *)error {
     ;
 }
-
-#pragma mark View on home screen
 
 
 #pragma mark Social media controller

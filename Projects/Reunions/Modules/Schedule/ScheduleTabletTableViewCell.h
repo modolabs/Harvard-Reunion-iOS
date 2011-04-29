@@ -1,30 +1,48 @@
 #import <UIKit/UIKit.h>
+#import "NewNoteViewController.h"
 
 typedef enum {
     ScheduleCellTypeOther,
-    ScheduleCellAboveSelectedRow,
     ScheduleCellLastInTable,
-    ScheduleCellLastInSection,
     ScheduleCellSelected
 } ScheduleCellType;
 
-@interface ScheduleTabletTableViewCell : UITableViewCell <UIAlertViewDelegate> {
+@class ScheduleEventWrapper;
+
+@interface ScheduleTabletTableViewCell : UITableViewCell <UIAlertViewDelegate, NotesModalViewDelegate> {
     
-    UIView *_fakeCardBorder;
     UIImageView *_fakeTopOfNextCell;
+    
     UIButton *_bookmarkView;
+    UIButton *_notesButton;
     
     ScheduleCellType _scheduleCellType;
+    NewNoteViewController *_noteViewController;
+
 }
 
-@property (nonatomic, assign) UITableView *tableView;
+@property (nonatomic, retain) ScheduleEventWrapper *event;
 @property ScheduleCellType scheduleCellType;
-@property BOOL isFirstInSection;
 @property (nonatomic, readonly) UIButton *bookmarkView;
+@property (nonatomic) BOOL isFirstInSection;
+@property (nonatomic, assign) UIViewController *parentViewController;
 
 - (void)addBookmark:(id)sender;
 - (void)attemptToAddBookmark:(id)sender;
 - (void)removeBookmark:(id)sender;
 - (void)refuseToRemoveBookmark:(id)sender;
 
+- (void)noteButtonPressed:(id)sender;
+
 @end
+
+
+@interface ScheduleTabletSectionHeaderCell : UITableViewCell {
+    
+}
+
+@property (nonatomic) BOOL isFirst;
+
+@end
+
+

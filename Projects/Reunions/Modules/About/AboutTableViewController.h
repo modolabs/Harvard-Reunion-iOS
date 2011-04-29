@@ -2,6 +2,9 @@
 #import "KGORequestManager.h"
 #import "KGOTableViewController.h"
 
+extern NSString * const AboutParagraphsPrefKey;
+extern NSString * const AboutSectionsPrefKey;
+
 @interface AboutTableViewController : KGOTableViewController <KGORequestDelegate> {
     
     NSArray *_paragraphs;

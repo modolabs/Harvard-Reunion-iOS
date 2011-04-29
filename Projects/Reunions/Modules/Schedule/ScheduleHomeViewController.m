@@ -2,12 +2,6 @@
 #import "ScheduleDataManager.h"
 #import "ScheduleEventWrapper.h"
 #import "UIKit+KGOAdditions.h"
-#import "KGOAppDelegate+ModuleAdditions.h"
-#import "ScheduleDetailTableView.h"
-#import "ScheduleTabletTableViewCell.h"
-#import <QuartzCore/QuartzCore.h>
-#import "MapKit+KGOAdditions.h"
-#import "Note.h"
 
 @implementation ScheduleHomeViewController
 
@@ -25,9 +19,6 @@
     }
     
     self.view.backgroundColor = [UIColor clearColor];
-    
-    KGONavigationStyle navStyle = [KGO_SHARED_APP_DELEGATE() navigationStyle];
-    _isTablet = (navStyle == KGONavigationStyleTabletSidebar);
 }
 
 - (void)viewDidLoad
@@ -70,427 +61,121 @@
         frame.size.height -= _tabstrip.frame.size.height;
     }
     
-    if (_isTablet) {
-        frame.origin.x += 8;
-        frame.origin.y += 8;
-        frame.size.width -= 16;
-        frame.size.height -= 8;
-        
-        self.tableView = [[[UITableView alloc] initWithFrame:frame style:style] autorelease];
-        self.tableView.backgroundColor = [UIColor clearColor];
-        self.tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        self.tableView.dataSource = self;
-        self.tableView.delegate = self;
-        [self addTableView:self.tableView withDataSource:self];
-    } else {
-        self.tableView = [self addTableViewWithFrame:frame style:style];
-        self.tableView.rowHeight += 2;
-    }
+    self.tableView = [self addTableViewWithFrame:frame style:style];
+    self.tableView.rowHeight += 2;
 }
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    
-    if (interfaceOrientation == UIInterfaceOrientationPortrait)
-        return true;
-    
-    else if (interfaceOrientation == UIInterfaceOrientationLandscapeLeft)
-        return true;
-    
-    else if (interfaceOrientation == UIInterfaceOrientationLandscapeRight)
-        return true;
-    
-    else
-        return false;
-    
-    //return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
--(void) newNoteForSection: (int) section andRow: (int) row {
-    NSArray *eventsForSection = [_currentEventsBySection objectForKey:[_currentSections objectAtIndex:section]];
-    ScheduleEventWrapper *event = [eventsForSection objectAtIndex:row];
-    
-    NSString * noteTitle = [NSString stringWithFormat:@"Note for: %@", event.title];
-    
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND eventIdentifier = %@", noteTitle, event.identifier];
-    Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
-    
-    NSDate * dateForNote = [NSDate date];
-    
-    if (nil != note)
-        if (nil != note.date)
-            dateForNote = note.date;
-    
-    if (nil != tempVC)
-        [tempVC release];
-    
-    tempVC = [[[NewNoteViewController alloc] initWithTitleText:noteTitle
-                                                          date:dateForNote              
-                                                   andDateText:[Note dateToDisplay:dateForNote]
-                                                       eventId:event.identifier
-                                                     viewWidth:NEWNOTE_WIDTH 
-                                                    viewHeight:NEWNOTE_HEIGHT] retain];
-    tempVC.viewControllerBackground = self;
-    
-    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:tempVC] autorelease];
-    
-    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                           target:self
-                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
-    
-    tempVC.navigationItem.rightBarButtonItem = item;
-    
-    navC.modalPresentationStyle =  UIModalPresentationFormSheet;
-    [self presentModalViewController:navC animated:YES];
-    navC.navigationBar.tintColor = [UIColor blackColor];
-    navC.view.userInteractionEnabled = YES;
-    
-    CGRect frame = navC.view.superview.frame;
-    
-    frame.size.width = NEWNOTE_WIDTH;
-    
-    navC.view.superview.frame = frame;
-    
-   /* navC.view.superview.frame = CGRectMake(NEWNOTE_XOFFSET, 
-                                           NEWNOTE_YOFFSET, 
-                                           NEWNOTE_WIDTH, 
-                                           NEWNOTE_HEIGHT);//it's important to do this after presentModalViewController
-    */
-}
-
--(void) newNoteButtonPressedForSelected: (id) sender{
-    
-    [self newNoteForSection:_selectedIndexPath.section andRow:_selectedIndexPath.row];
-}
-
--(void) newNoteButtonPressedForLast: (id) sender{
-    NSArray *eventsForSection = [_currentEventsBySection objectForKey:[_currentSections objectAtIndex:_currentSections.count - 1]];
-    
-    [self newNoteForSection:_currentSections.count - 1 andRow:eventsForSection.count - 1];
-}
-
--(void) saveNotesState {
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND date = %@", tempVC.titleText, tempVC.date];
-    Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
-    
-    if (nil == note) {
-        note = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:NotesEntityName];
-    }
-    
-    note.title = tempVC.titleText;
-    note.date = tempVC.date;
-    note.details = tempVC.textViewString;
-    
-    if (nil != tempVC.eventIdentifier)
-        note.eventIdentifier = tempVC.eventIdentifier;
-    
-    [[CoreDataManager sharedManager] saveData];
-}
-
-- (void) dismissModalViewControllerAnimated:(BOOL)animated {
-    
-    if (nil != tempVC) {
-        [self saveNotesState];
-    }
-    
-    [super dismissModalViewControllerAnimated:YES];
-}
-
-
-#pragma mark
-#pragma mark NotesModalViewDelegate 
-
--(void) deleteNoteWithoutSaving {
-    if (nil != tempVC) {
-        NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND date = %@", tempVC.titleText, tempVC.date];
-        Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
-        
-        if (nil != note) {
-            [[CoreDataManager sharedManager] deleteObject:note];
-            [[CoreDataManager sharedManager] saveData];
-        }
-    }
-    [super dismissModalViewControllerAnimated:YES];
-}
-
 
 #pragma mark - Table view overrides
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    if (_isTablet) {
-        return [[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySectionHeader] lineHeight] + 5;
-    }
-    return [super tableView:tableView heightForHeaderInSection:section];
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    if (_isTablet) {
-        NSString *title = [_currentSections objectAtIndex:section];
-        UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySectionHeader];
-        CGSize size = [title sizeWithFont:font];
-        
-        CGFloat hPadding = 10.0f;
-        CGFloat viewHeight = font.lineHeight + 5.0f;
-        
-        UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(hPadding,
-                                                                    floor((viewHeight - size.height) / 2),
-                                                                    tableView.bounds.size.width - hPadding * 2,
-                                                                    size.height)] autorelease];
-        
-        label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySectionHeader];
-        label.backgroundColor = [UIColor clearColor];
-        label.text = title;
-        label.font = font;
-        
-        //UIView *labelContainer = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, viewHeight)] autorelease];
-        //labelContainer.backgroundColor = [UIColor clearColor];
-        //labelContainer.opaque = NO;
-
-        UIImageView *labelBackground = [[[UIImageView alloc] initWithFrame:CGRectMake(0, 0,
-                                                                                      tableView.frame.size.width,
-                                                                                      viewHeight + 5)] autorelease];
-        labelBackground.image = [[UIImage imageWithPathName:@"modules/schedule/fakeheader"] stretchableImageWithLeftCapWidth:5 topCapHeight:0];
-        labelBackground.layer.cornerRadius = 5;
-        labelBackground.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        
-        [labelBackground addSubview:label];
-        return labelBackground;
-        
-        //[labelContainer addSubview:labelBackground];
-        //[labelContainer addSubview:label];
-        
-        //return labelContainer;
-    }
-
-    return [super tableView:tableView viewForHeaderInSection:section];
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    if (_isTablet) {
-        return nil;
-    }
-    return [super tableView:tableView titleForHeaderInSection:section];
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (_isTablet) {
-        
-        if (_selectedIndexPath && _selectedIndexPath.row == indexPath.row && _selectedIndexPath.section == indexPath.section) {
-            return;
-        }
-        
-        NSIndexPath *oldIndexPath = _selectedIndexPath;
-
-        [_selectedIndexPath release];
-        _selectedIndexPath = [indexPath retain];
-        
-        NSIndexPath *scrollToIndexPath;
-        if (_selectedIndexPath.row == 0) {
-            if (_selectedIndexPath.section == 0) {
-                scrollToIndexPath = _selectedIndexPath;
-            } else {
-                NSInteger section = _selectedIndexPath.section-1;
-                NSInteger row = [self tableView:tableView numberOfRowsInSection:section] - 1;
-                scrollToIndexPath = [NSIndexPath indexPathForRow:row inSection:section];
-            }
-        } else {
-            scrollToIndexPath = [NSIndexPath indexPathForRow:_selectedIndexPath.row-1 inSection:_selectedIndexPath.section];
-        }
-        
-        if (_selectedIndexPath.row == 0) {
-            if (oldIndexPath) {
-                [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
-                                 withRowAnimation:UITableViewRowAnimationMiddle];
-            }
-
-        } else {
-            NSIndexPath *aboveIndexPath = [NSIndexPath indexPathForRow:_selectedIndexPath.row-1 inSection:_selectedIndexPath.section];
-            if (oldIndexPath) {
-                if (aboveIndexPath.row != oldIndexPath.row || aboveIndexPath.section != oldIndexPath.section) {
-                    [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
-                                     withRowAnimation:UITableViewRowAnimationNone];
-                } else {
-                    // previously selected indexPath was one above the present
-                    [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
-                                     withRowAnimation:UITableViewRowAnimationMiddle];
-                }
-            }
-        }
-        
-        NSLog(@"1 above: %@ current: %@", scrollToIndexPath, _selectedIndexPath);
-        [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:_selectedIndexPath] withRowAnimation:UITableViewRowAnimationNone];
-        [tableView scrollToRowAtIndexPath:scrollToIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
-        
-    } else {
-        [super tableView:tableView didSelectRowAtIndexPath:indexPath];
-    }
-}
-
-#define TABLE_TAG 1
-#define MAP_TAG 2
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (_isTablet) {
-
-        ScheduleCellType cellType = ScheduleCellTypeOther;
-        
-        NSArray *eventsForSection = [_currentEventsBySection objectForKey:[_currentSections objectAtIndex:indexPath.section]];
-        
-        if (_selectedIndexPath && indexPath.section == _selectedIndexPath.section) {
-            if (indexPath.row == _selectedIndexPath.row) {
-                cellType = ScheduleCellSelected;
-            }
-            
-        } else if (indexPath.row == eventsForSection.count - 1) {
-            if (indexPath.section == _currentSections.count - 1) {
-                cellType = ScheduleCellLastInTable;
-            
-            } else {
-                cellType = ScheduleCellLastInSection;
-            }
-        }
-        
-        NSString *cellIdentifier = [NSString stringWithFormat:@"%d", cellType];
-        ScheduleTabletTableViewCell *cell = (ScheduleTabletTableViewCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-        
-        if (!cell) {
-            cell = [[[ScheduleTabletTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
-                                                       reuseIdentifier:cellIdentifier] autorelease];
-        }
-        
-        cell.scheduleCellType = cellType;
-        cell.isFirstInSection = (indexPath.row == 0);
-        cell.tableView = self.tableView;
-        
-        ScheduleEventWrapper *event = [eventsForSection objectAtIndex:indexPath.row];
-        
-        cell.textLabel.text = event.title;
-        cell.detailTextLabel.text = [self.dataManager shortDateTimeStringFromDate:event.startDate];
-        
-        [[cell.contentView viewWithTag:TABLE_TAG] removeFromSuperview];
-        [[cell.contentView viewWithTag:MAP_TAG] removeFromSuperview];
-
-        UIImage *image = nil;
-        if ([event isRegistered] || [event isBookmarked]) {
-            cell.bookmarkView.hidden = NO;
-            image = [UIImage imageWithPathName:@"common/bookmark-ribbon-on"];
-            
-        } else if (cellType == ScheduleCellSelected) {
-            cell.bookmarkView.hidden = NO;
-            image = [UIImage imageWithPathName:@"common/bookmark-ribbon-off"];
-            
-        } else {
-            cell.bookmarkView.hidden = YES;
-        }
-
-        if (image) {
-            [cell.bookmarkView setImage:image forState:UIControlStateNormal];
-        }
-        
-        switch (cellType) {
-            case ScheduleCellSelected:
-            case ScheduleCellLastInTable:
-            {
-                if (_isTablet) {
-                    // adding Notes button
-                    UIImage *notesImage = [UIImage imageWithPathName:@"modules/schedule/fakeheader.png"];
-                    
-                    UIButton * notesButton = [UIButton buttonWithType:UIButtonTypeCustom];
-                    [notesButton setBackgroundImage:notesImage forState:UIControlStateNormal];
-                    
-                    
-                    notesButton.frame = CGRectMake(tableView.frame.size.width - 80,
-                                                   -4, 
-                                                   notesImage.size.width, 
-                                                   notesImage.size.height);
-                    
-                    if (cellType == ScheduleCellSelected)
-                        [notesButton addTarget:self action:@selector(newNoteButtonPressedForSelected:) forControlEvents:UIControlEventTouchUpInside];
-                    
-                    else if (cellType == ScheduleCellLastInTable)
-                        [notesButton addTarget:self action:@selector(newNoteButtonPressedForLast:) forControlEvents:UIControlEventTouchUpInside];
-                    
-                    [cell.contentView addSubview:notesButton];
-                }
-                
-                
-                CGFloat width = floor((tableView.frame.size.width - 30) / 2);
-                ScheduleDetailTableView *tableView = (ScheduleDetailTableView *)[cell.contentView viewWithTag:TABLE_TAG];
-                if (!tableView) {
-                    tableView = [[[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(10, 60, width, 430)
-                                                                          style:UITableViewStyleGrouped] autorelease];
-                    tableView.backgroundColor = [UIColor clearColor];
-                    tableView.backgroundView = nil;
-                    tableView.tag = TABLE_TAG;
-                    tableView.dataManager = self.dataManager;
-                    tableView.viewController = [KGO_SHARED_APP_DELEGATE() visibleViewController];
-                    [cell.contentView addSubview:tableView];
-                }
-                tableView.event = event;
-                
-                MKMapView *mapView = (MKMapView *)[cell.contentView viewWithTag:MAP_TAG];
-                if (!mapView) {
-                    mapView = [[[MKMapView alloc] initWithFrame:CGRectMake(300, 60, width, 430)] autorelease];
-                    mapView.tag = MAP_TAG;
-                    if (event.coordinate.latitude) {
-                        // we only need to check one assuming there will not
-                        // be any events on the equator
-                        [mapView addAnnotation:event];
-                        mapView.region = MKCoordinateRegionMake(event.coordinate, MKCoordinateSpanMake(0.01, 0.01));
-                    } else {
-                        [mapView centerAndZoomToDefaultRegion];
-                    }
-                    [cell.contentView addSubview:mapView];
-                    
-                    UIControl *control = [[[UIControl alloc] initWithFrame:mapView.frame] autorelease];
-                    control.backgroundColor = [UIColor clearColor];
-                    [cell.contentView addSubview:control];
-                    [control addTarget:self action:@selector(mapViewTapped:) forControlEvents:UIControlEventTouchUpInside];
-                }
-                tableView.mapView = mapView;
-                mapView.delegate = tableView;
-                
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                
-                break;
-            }
-            default:
-                cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                break;
-        }
-
-        return cell;
+    NSArray *eventsForSection = [_currentEventsBySection objectForKey:[_currentSections objectAtIndex:indexPath.section]];
+    ScheduleEventWrapper *event = [eventsForSection objectAtIndex:indexPath.row];
     
+    NSString *title = event.title;
+    NSString *subtitle = [self.dataManager shortDateTimeStringFromDate:event.startDate];
+    UIImage *image = nil;
+    if ([event isRegistered] || [event isBookmarked]) {
+        image = [UIImage imageWithPathName:@"modules/schedule/list-bookmark"];
     }
     
-    return [super tableView:tableView cellForRowAtIndexPath:indexPath];
-}
-
-- (void)mapViewTapped:(id)sender
-{
-    if ([sender isKindOfClass:[UIControl class]]) {
-        
+    UITableViewCellStyle style = UITableViewCellStyleDefault;
+    if (subtitle && [subtitle length]) {
+        style = UITableViewCellStyleSubtitle;
     }
+    NSString *cellIdentifier = [NSString stringWithFormat:@"%d", style];
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (!cell) {
+        cell = [[[UITableViewCell alloc] initWithStyle:style reuseIdentifier:cellIdentifier] autorelease];
+    }
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.imageView.image = image;
+    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+    
+    NSInteger titleTag = 60;
+    NSInteger subtitleTag = 61;
+    
+    // adjust for icon, padding and accessory
+    CGFloat width = tableView.frame.size.width - 20 - (image ? 24 : 0) - 35 /* accessory */; 
+    CGFloat x = image ? 34 : 10;
+    CGFloat y = 10;
+    
+    UIFont *titleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
+    UILabel *titleLabel = (UILabel *)[cell.contentView viewWithTag:titleTag];
+    if (!titleLabel) {
+        titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(x, y, width, titleFont.lineHeight)] autorelease];
+        titleLabel.font = titleFont;
+        titleLabel.backgroundColor = [UIColor clearColor];
+        titleLabel.numberOfLines = 2;
+        titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
+        titleLabel.tag = titleTag;
+    } 
+    CGSize titleSize = [title sizeWithFont:titleFont
+                         constrainedToSize:CGSizeMake(width, titleFont.lineHeight * 2)
+                             lineBreakMode:UILineBreakModeTailTruncation];
+    CGRect titleFrame = titleLabel.frame;
+    titleFrame.size.height = titleSize.height;
+    titleFrame.origin.x = x;
+    titleLabel.frame = titleFrame;
+    titleLabel.text = title;
+    [cell.contentView addSubview:titleLabel];
+    y += titleSize.height + 1;
+    
+    if (subtitle && [subtitle length]) {
+        UIFont *subtitleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
+        UILabel *subtitleLabel = (UILabel *)[cell.contentView viewWithTag:subtitleTag];
+        if (!subtitleLabel) {
+            subtitleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(x, y, width, subtitleFont.lineHeight)] autorelease];
+            subtitleLabel.font = subtitleFont;
+            subtitleLabel.backgroundColor = [UIColor clearColor];
+            subtitleLabel.numberOfLines = 1;
+            subtitleLabel.lineBreakMode = UILineBreakModeTailTruncation;
+            subtitleLabel.tag = subtitleTag;
+        }
+        CGRect subtitleFrame = subtitleLabel.frame;
+        subtitleFrame.origin.x = x;
+        subtitleFrame.origin.y = y;
+        subtitleLabel.frame = subtitleFrame;
+        subtitleLabel.text = subtitle;
+
+        [cell.contentView addSubview:subtitleLabel];
+    }
+    
+    return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (_isTablet) {
-        
-        if (_selectedIndexPath && indexPath.section == _selectedIndexPath.section && indexPath.row == _selectedIndexPath.row) {
-            return 470;
-        }
-        
-        NSArray *eventsForSection = [_currentEventsBySection objectForKey:[_currentSections objectAtIndex:indexPath.section]];
-        if (indexPath.row == eventsForSection.count - 1 && indexPath.section == _currentSections.count - 1) {
-            return 500; // last row
-        }
+    NSArray *eventsForSection = [_currentEventsBySection objectForKey:[_currentSections objectAtIndex:indexPath.section]];
+    ScheduleEventWrapper *event = [eventsForSection objectAtIndex:indexPath.row];
+    
+    NSString *title = event.title;
+    NSString *subtitle = [self.dataManager shortDateTimeStringFromDate:event.startDate];
+    UIImage *image = nil;
+    if ([event isRegistered] || [event isBookmarked]) {
+        image = [UIImage imageWithPathName:@"modules/schedule/list-bookmark"];
     }
+    
+    // adjust for icon, padding and accessory
+    CGFloat width = tableView.frame.size.width - 20 - (image ? 24 : 0) - 35 /* accessory */; 
+    CGFloat height = 22;
+    
+    UIFont *titleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
+    CGSize titleSize = [title sizeWithFont:titleFont
+                         constrainedToSize:CGSizeMake(width, titleFont.lineHeight * 2)
+                             lineBreakMode:UILineBreakModeTailTruncation];
+    height += titleSize.height;
+    
+    if (subtitle && [subtitle length]) {
+        UIFont *subtitleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
+        CGSize subtitleSize = [subtitle sizeWithFont:subtitleFont
+                                   constrainedToSize:CGSizeMake(width, subtitleFont.lineHeight)
+                                       lineBreakMode:UILineBreakModeTailTruncation];
+        height += subtitleSize.height + 1;
+    }
+    
+    return height;
     
     return [super tableView:tableView heightForRowAtIndexPath:indexPath];
 }
@@ -527,18 +212,6 @@
 }
 
 #pragma mark - Scrolling tabstrip
-
-static bool isOverOneMonth(NSTimeInterval interval) {
-    return interval > 31 * 24 * 60 * 60;
-}
-
-static bool isOverOneDay(NSTimeInterval interval) {
-    return interval > 24 * 60 * 60;
-}
-
-static bool isOverOneHour(NSTimeInterval interval) {
-    return interval > 60 * 60;
-}
 
 - (void)eventsDidChange:(NSArray *)events calendar:(KGOCalendar *)calendar
 {

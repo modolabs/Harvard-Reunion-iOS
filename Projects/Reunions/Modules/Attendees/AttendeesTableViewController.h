@@ -9,6 +9,7 @@ UITableViewDataSource, KGORequestDelegate> {
     NSArray *_sectionTitles;
     NSMutableDictionary *_sections;
     UITableView *_tableView;
+    NSArray *_attendees;
 }
 
 @property(nonatomic, retain) UITableView *tableView;

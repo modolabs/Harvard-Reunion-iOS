@@ -10,9 +10,8 @@
 @synthesize request;
 @synthesize moduleTag;
 
-// TODO: clear these defaults if the user switches years, after a timeout, or both
-static NSString * const AboutParagraphsPrefKey = @"AboutParagraphs";
-static NSString * const AboutSectionsPrefKey = @"AboutSections";
+NSString * const AboutParagraphsPrefKey = @"AboutParagraphs";
+NSString * const AboutSectionsPrefKey = @"AboutSections";
 
 - (void)viewDidLoad {
     _paragraphs = [[[NSUserDefaults standardUserDefaults] objectForKey:AboutParagraphsPrefKey] retain];

@@ -2,12 +2,13 @@
 #import "KGOTheme.h"
 #import "KGORequestManager.h"
 #import <QuartzCore/QuartzCore.h>
+#import "KGOAppDelegate+ModuleAdditions.h"
 
 NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 
 @implementation AttendeesTableViewController
 
-@synthesize attendees, eventTitle, request, tableView = _tableView;
+@synthesize eventTitle, request, tableView = _tableView;
 
 - (void)dealloc
 {
@@ -24,6 +25,40 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     [super didReceiveMemoryWarning];
     
     // Release any cached data, images, etc that aren't in use.
+}
+
+- (NSArray *)attendees
+{
+    return _attendees;
+}
+
+- (void)setAttendees:(NSArray *)attendees
+{
+    [_attendees release];
+    _attendees = [attendees retain];
+    
+    if (_attendees.count) {
+        NSMutableArray *titles = [NSMutableArray array];
+        [_sections release];
+        _sections = [[NSMutableDictionary alloc] init];
+        
+        for (NSDictionary *attendeeDict in self.attendees) {
+            NSString *name = [attendeeDict objectForKey:@"display_name"];
+            if (name.length) {
+                NSString *firstLetter = [[name substringWithRange:NSMakeRange(0, 1)] capitalizedString];
+                NSMutableArray *names = [_sections objectForKey:firstLetter];
+                if (!names) {
+                    names = [NSMutableArray array];
+                    [_sections setObject:names forKey:firstLetter];
+                    [titles addObject:firstLetter];
+                }
+                [names addObject:name];
+            }
+        }
+        
+        [_sectionTitles release];
+        _sectionTitles = [[titles sortedArrayUsingSelector:@selector(compare:)] copy];
+    }
 }
 
 #pragma mark - View lifecycle
@@ -45,37 +80,14 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
             [self.request connect];
         }
     }
-    
-    if (!_sectionTitles) {
-        NSMutableArray *titles = [NSMutableArray array];
-        _sections = [[NSMutableDictionary alloc] init];
-        
-        for (NSDictionary *attendeeDict in self.attendees) {
-            NSString *name = [attendeeDict objectForKey:@"display_name"];
-            if (name.length) {
-                NSString *firstLetter = [[name substringWithRange:NSMakeRange(0, 1)] capitalizedString];
-                NSMutableArray *names = [_sections objectForKey:firstLetter];
-                if (!names) {
-                    names = [NSMutableArray array];
-                    [_sections setObject:names forKey:firstLetter];
-                    [titles addObject:firstLetter];
-                }
-                [names addObject:name];
-            }
-        }
-        
-        _sectionTitles = [[titles sortedArrayUsingSelector:@selector(compare:)] copy];
-    }
 
     UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
     CGFloat viewHeight = font.lineHeight + 24;
-    
+
     CGSize size = [self.eventTitle sizeWithFont:font];
-    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 17, self.view.bounds.size.width - 20,
-                                                                size.height)] autorelease];
+    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 17, self.view.bounds.size.width - 20, size.height)] autorelease];
     
     label.text = self.eventTitle;
-    label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
     label.font = font;
     label.backgroundColor = [UIColor clearColor];
     label.layer.shadowColor = [[UIColor blackColor] CGColor];
@@ -83,9 +95,16 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     label.layer.shadowOpacity = 0.75;
     label.layer.shadowRadius = 1;
     
-    UIView *labelContainer = [[[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0,
-                                                                       self.view.bounds.size.width,
-                                                                       viewHeight)] autorelease];
+    CGRect titleFrame;
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+        label.textColor = [UIColor whiteColor];
+        titleFrame = CGRectMake(0.0, 50, self.view.bounds.size.width, viewHeight);
+        viewHeight += 50;
+    } else {
+        label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
+        titleFrame = CGRectMake(0.0, 0.0, self.view.bounds.size.width, viewHeight);
+    }
+    UIView *labelContainer = [[[UIView alloc] initWithFrame:titleFrame] autorelease];
     labelContainer.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
     [labelContainer addSubview:label];
     
@@ -97,6 +116,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     self.tableView.separatorColor = [UIColor whiteColor];
     self.tableView.rowHeight -= 10;
     
+    self.view.backgroundColor = [UIColor clearColor];
     [self.view addSubview:labelContainer];
     [self.view addSubview:self.tableView];
 }

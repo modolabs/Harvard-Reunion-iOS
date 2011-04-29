@@ -50,6 +50,11 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
     [super dealloc];
 }
 
+- (NSArray *)userDefaults
+{
+    return [NSArray arrayWithObjects:HomeScreenConfigPrefKey, nil];
+}
+
 #pragma mark - KGORequest
 
 - (void)logout
@@ -141,6 +146,11 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
 - (NSString *)reunionNumber
 {
     return [_homeScreenConfig objectForKey:@"number"];
+}
+
+- (NSString *)reunionYear
+{
+    return [_homeScreenConfig objectForKey:@"year"];
 }
 
 @end
