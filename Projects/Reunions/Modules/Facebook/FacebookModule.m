@@ -58,6 +58,11 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     return [NSArray arrayWithObjects:FacebookDidLoginNotification, FacebookDidLogoutNotification, nil];
 }
 
+- (NSArray *)userDefaults
+{
+    return [NSArray arrayWithObjects:FacebookGroupKey, FacebookGroupIsMemberKey, FacebookGroupTitleKey, FacebookTokenKey, FacebookTokenExpirationSetting, FacebookUsernameKey, @"photo_bookmarks", @"video_bookmarks", nil];
+}
+
 #pragma mark polling
 
 - (void)setupPolling {

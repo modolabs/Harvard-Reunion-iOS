@@ -23,4 +23,9 @@
     return vc;
 }
 
+- (NSArray *)userDefaults
+{
+    return [NSArray arrayWithObjects:AboutParagraphsPrefKey, AboutSectionsPrefKey, nil];
+}
+
 @end

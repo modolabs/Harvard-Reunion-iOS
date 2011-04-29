@@ -19,4 +19,9 @@
     return vc;
 }
 
+- (NSArray *)userDefaults
+{
+    return [NSArray arrayWithObject:AllReunionAttendeesPrefKey];
+}
+
 @end
