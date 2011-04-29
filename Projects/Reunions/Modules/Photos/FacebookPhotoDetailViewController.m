@@ -150,7 +150,7 @@
     return @"photo";
 }
 
-- (BOOL)allowRotationForIPhone {
+- (BOOL)hideToolbarsInLandscape {
     return YES;
 }
 @end

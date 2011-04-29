@@ -56,7 +56,7 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate, UINavi
 - (void)didLikePost:(id)result;
 - (void)didUnlikePost:(id)result;
 
-- (BOOL)allowRotationForIPhone;
+- (BOOL)hideToolbarsInLandscape;
 
 
 @end

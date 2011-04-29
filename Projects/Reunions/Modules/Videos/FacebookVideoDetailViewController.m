@@ -109,6 +109,12 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
                 
         self.webView = [[[UIWebView alloc] init] autorelease];
         self.webView.delegate = self;
+        // prevent webView from scrolling separately from the parent scrollview
+        for (id subview in webView.subviews) {
+            if ([[subview class] isSubclassOfClass: [UIScrollView class]]) {
+                ((UIScrollView *)subview).bounces = NO;
+            }
+        }
         [self.mediaView setPreviewView:self.webView];
         [self.mediaView setPreviewSize:aspectRatio];
         NSURL *url = [NSURL URLWithString:urlString];
@@ -219,7 +225,7 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     return @"video";
 }
 
-- (BOOL)allowRotationForIPhone {
+- (BOOL)hideToolbarsInLandscape {
     return NO;
 }
 
