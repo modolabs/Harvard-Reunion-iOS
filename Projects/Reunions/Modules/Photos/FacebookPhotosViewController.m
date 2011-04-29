@@ -4,6 +4,7 @@
 #import "FacebookModel.h"
 #import <QuartzCore/QuartzCore.h>
 #import "CoreDataManager.h"
+#import "ReunionHomeModule.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "PhotoUploadViewController.h"
 #import "PhotosModule.h"
@@ -51,60 +52,68 @@
     (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
     
     if (fbModule.groupID) {
-        if (fbModule.latestFeedPosts && (fbModule.latestFeedPosts.count > 0)) {
+        KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
+        ReunionHomeModule *homeModule = (ReunionHomeModule *)[appDelegate moduleForTag:@"home"];
+        
+        if ([homeModule fbGroupIsOld]) {
+            // fql for photos
+            NSString *query = [NSString stringWithFormat:@"SELECT pid, object_id FROM photo WHERE pid IN (SELECT pid FROM photo_tag WHERE subject = %@ LIMIT 1000) LIMIT 1000", fbModule.groupID];
+            [[KGOSocialMediaController facebookService] requestFacebookFQL:query 
+                                                                  receiver:self 
+                                                                  callback:@selector(didReceivePhotoList:)];
 
-            for (NSDictionary *aPost in fbModule.latestFeedPosts) {
-                NSString *type = [aPost stringForKey:@"type" nilIfEmpty:YES];
-                if ([type isEqualToString:@"photo"]) {
-                    NSString *pid = [aPost stringForKey:@"object_id" nilIfEmpty:YES];
-                    if (pid && ![_photosByID objectForKey:pid]) {
-                        FacebookPhoto *aPhoto = [FacebookPhoto photoWithDictionary:aPost size:[self thumbSize]];
-                        if (aPhoto) {
-                            aPhoto.postIdentifier = 
-                            [aPost stringForKey:@"id" nilIfEmpty:YES];
-                            NSLog(@"%@", [aPhoto description]);
-                            [[CoreDataManager sharedManager] saveData];
-                            [_photosByID setObject:aPhoto forKey:pid];
+        } else {
+            if (fbModule.latestFeedPosts && (fbModule.latestFeedPosts.count > 0)) {
+
+                for (NSDictionary *aPost in fbModule.latestFeedPosts) {
+                    NSString *type = [aPost stringForKey:@"type" nilIfEmpty:YES];
+                    if ([type isEqualToString:@"photo"]) {
+                        NSString *pid = [aPost stringForKey:@"object_id" nilIfEmpty:YES];
+                        if (pid && ![_photosByID objectForKey:pid]) {
+                            FacebookPhoto *aPhoto = [FacebookPhoto photoWithDictionary:aPost size:[self thumbSize]];
+                            if (aPhoto) {
+                                aPhoto.postIdentifier = 
+                                [aPost stringForKey:@"id" nilIfEmpty:YES];
+                                NSLog(@"%@", [aPhoto description]);
+                                [[CoreDataManager sharedManager] saveData];
+                                [_photosByID setObject:aPhoto forKey:pid];
+                            }
+                            DLog(@"requesting graph info for photo %@", pid);
+                            [[KGOSocialMediaController facebookService] requestFacebookGraphPath:pid
+                                                                                        receiver:self
+                                                                                        callback:@selector(didReceivePhoto:)];
                         }
-                        DLog(@"requesting graph info for photo %@", pid);
-                        [[KGOSocialMediaController facebookService] requestFacebookGraphPath:pid
-                                                                                    receiver:self
-                                                                                    callback:@selector(didReceivePhoto:)];
+                    }
+                }            
+                [self refreshPhotos];
+            } 
+            else {
+                // Sometimes the photos FB request will come back right away with no 
+                // photos. We need to make the request a few more times until we get
+                // something back or give up after 5 attempts (with a 3-second delay 
+                // between each).
+                dispatch_block_t photosRequestBlock = 
+                ^{
+                    [[NSNotificationCenter defaultCenter] 
+                     addObserver:self 
+                     selector:@selector(getGroupPhotos)
+                     name:FacebookFeedDidUpdateNotification
+                     object:nil];
+                    [fbModule requestStatusUpdates:nil];
+                };
+                if (_photosRequestCount > 0) {
+                    dispatch_after(NSEC_PER_SEC * 3, dispatch_get_current_queue(),
+                                   photosRequestBlock);
+                }
+                else {
+                    if (_photosRequestCount < 6) {
+                        photosRequestBlock();
+                        ++_photosRequestCount;
                     }
                 }
-            }            
-            [self refreshPhotos];
-        } 
-        else {
-            // Sometimes the photos FB request will come back right away with no 
-            // photos. We need to make the request a few more times until we get
-            // something back or give up after 5 attempts (with a 3-second delay 
-            // between each).
-            dispatch_block_t photosRequestBlock = 
-            ^{
-                [[NSNotificationCenter defaultCenter] 
-                 addObserver:self 
-                 selector:@selector(getGroupPhotos)
-                 name:FacebookFeedDidUpdateNotification
-                 object:nil];
-                [fbModule requestStatusUpdates:nil];
-            };
-            if (_photosRequestCount > 0) {
-                dispatch_after(NSEC_PER_SEC * 3, dispatch_get_current_queue(),
-                               photosRequestBlock);
-            }
-            else {
-                if (_photosRequestCount < 6) {
-                    photosRequestBlock();
-                    ++_photosRequestCount;
-                }
-            }
 
+            }
         }
-        
-        // fql for photos
-        //NSString *query = [NSString stringWithFormat:@"SELECT pid FROM photo_tag WHERE subject=%@", fbModule.groupID];
-        //[[KGOSocialMediaController sharedController] requestFacebookFQL:query receiver:self callback:@selector(didReceivePhotoList:)];
 
     } else {
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -124,6 +133,15 @@
     return self;
 }
 */
+
+- (void)loadView
+{
+    [super loadView];
+    
+    [_filterControl insertSegmentWithTitle:@"All Photos" atIndex:0 animated:NO];
+    [_filterControl insertSegmentWithTitle:@"My Photos" atIndex:1 animated:NO];
+    [_filterControl insertSegmentWithTitle:@"Bookmarks" atIndex:2 animated:NO];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -154,6 +172,11 @@
     _icons = [[NSMutableArray alloc] init];
     _photosByID = [[NSMutableDictionary alloc] init];
     _displayedPhotos = [[NSMutableSet alloc] init];
+}
+
+- (void)facebookDidLogin:(NSNotification *)aNotification
+{
+    [super facebookDidLogin:aNotification];
     
     [self loadThumbnailsFromCache];
     [self getGroupPhotos];
@@ -164,6 +187,14 @@
       target:self
       action:@selector(showUploadPhotoController:)] autorelease];
 }
+
+- (void)facebookDidLogout:(NSNotification *)aNotification
+{
+    [super facebookDidLogout:aNotification];
+    
+    self.navigationItem.rightBarButtonItem = nil;
+}
+
 
 /*
 // Override to allow orientations other than the default portrait orientation.
@@ -330,15 +361,19 @@
         
         for (NSDictionary *info in result) {
             NSString *pid = [info objectForKey:@"pid"];
+            NSString *objectId = [NSString stringWithFormat:@"%@", [info objectForKey:@"object_id"], nil];
             if (pid && ![_photosByID objectForKey:pid]) {
-                DLog(@"received fql info for photo %@", pid);
-                NSString *query = [NSString stringWithFormat:@"SELECT object_id, "
-                                   "src_small, src_small_width, src_small_height, "
-                                   "src, src_width, src_height, "
-                                   "owner, caption, created, aid "
-                                   "FROM photo WHERE pid=%@", pid];
-                
-                [[KGOSocialMediaController facebookService] requestFacebookFQL:query receiver:self callback:@selector(didReceivePhoto:)];
+                FacebookPhoto *aPhoto = [FacebookPhoto photoWithDictionary:info size:[self thumbSize]];
+                if (aPhoto) {
+                    aPhoto.postIdentifier = objectId;
+                    NSLog(@"%@", [aPhoto description]);
+                    [[CoreDataManager sharedManager] saveData];
+                    [_photosByID setObject:aPhoto forKey:pid];
+                }
+                DLog(@"requesting graph info for photo %@", pid);
+                [[KGOSocialMediaController facebookService] requestFacebookGraphPath:objectId
+                                                                            receiver:self
+                                                                            callback:@selector(didReceivePhoto:)];
             }
         }
     }
