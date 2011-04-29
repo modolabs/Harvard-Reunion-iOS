@@ -44,7 +44,7 @@
 @property (nonatomic, assign) double width;
 @property (nonatomic, assign) double  height;
 @property (nonatomic, retain) NSString * textViewString;
-@property (nonatomic, assign) UIViewController<NotesModalViewDelegate> * viewControllerBackground;
+@property (nonatomic, assign) id<NotesModalViewDelegate> viewControllerBackground;
 
 
 -(id) initWithTitleText: (NSString *) title date: (NSDate *) dateCreated andDateText: (NSString *) dateString  eventId: (NSString *) eventId viewWidth: (double) viewWidth viewHeight: (double) viewHeight;

@@ -268,7 +268,7 @@
                                                                     eventId:event.identifier
                                                                   viewWidth:NEWNOTE_WIDTH 
                                                                  viewHeight:NEWNOTE_HEIGHT] retain];
-    _noteViewController.viewControllerBackground = self.parentViewController;
+    _noteViewController.viewControllerBackground = self;
     
     UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:_noteViewController] autorelease];
     
