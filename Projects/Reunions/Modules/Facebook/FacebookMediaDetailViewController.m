@@ -180,23 +180,16 @@ ToolbarButtonTags;
     [self restoreToolbars:nil];
     [self restorePortraitOrientation];
     
-    if (UIUserInterfaceIdiomPad == UI_USER_INTERFACE_IDIOM()) {
-        // Present comment view in a non-fullscreen dialog.
-        FacebookCommentViewController *vc = 
-        [[FacebookCommentViewController alloc] initWithNibName:
-         @"FacebookCommentViewController" bundle:nil];
-        vc.delegate = self;
-        vc.post = self.post;
-        vc.modalPresentationStyle = UIModalPresentationFormSheet;
-        [self presentModalViewController:vc animated:YES];
-        [vc release];
-    }
-    else {
-        FacebookCommentViewController *vc = [[[FacebookCommentViewController alloc] initWithNibName:@"FacebookCommentViewController" bundle:nil] autorelease];
-        vc.delegate = self;
-        vc.post = self.post;
-        [self.navigationController presentModalViewController:vc animated:YES];
-    }        
+    FacebookCommentViewController *vc = [[[FacebookCommentViewController alloc] initWithNibName:@"FacebookCommentViewController"
+                                                                                         bundle:nil] autorelease];
+    vc.delegate = self;
+    vc.post = self.post;
+    
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+    navC.navigationBar.barStyle = UIBarStyleBlack;
+    navC.modalPresentationStyle = UIModalPresentationFormSheet;
+    
+    [self presentModalViewController:navC animated:YES];
 }
 
 - (IBAction)likeButtonPressed:(UIBarButtonItem *)sender {
@@ -338,7 +331,7 @@ ToolbarButtonTags;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLikeButtonStatus) name:FacebookDidGetSelfInfoNotification object:nil];
     
-    _tableView.rowHeight = 100;
+    _tableView.rowHeight = 80;
     
     if (self.actionsToolbar) {
         [self setupToolbarButtons];
@@ -553,6 +546,7 @@ ToolbarButtonTags;
     _comments = [[self.post.comments sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] retain];
     
     [_tableView reloadData];
+    _tableView.tableHeaderView = _tableView.tableHeaderView;
 }
 
 - (NSInteger)numberOfSections:(KGODetailPager *)pager {
@@ -573,88 +567,105 @@ ToolbarButtonTags;
     return _comments.count + 1;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     NSString *text;
-    NSDate *date;
-    NSString *ownerName;
+    UIFont *titleFont;
+    
     if (indexPath.row == 0) {
         text = [self postTitle];
-        date = self.post.date;
-        ownerName = self.post.owner.name;
+        titleFont = [UIFont boldSystemFontOfSize:15];
+        
     } else {
         FacebookComment *aComment = [_comments objectAtIndex:indexPath.row-1];
-        NSLog(@"%@", [aComment description]);
-        
+        titleFont = [UIFont systemFontOfSize:15];
         text = aComment.text;
-        ownerName = aComment.owner.name;
-        date = aComment.date;
     }
     
-
+    CGSize size = [text sizeWithFont:titleFont
+                   constrainedToSize:CGSizeMake(tableView.frame.size.width - 20, titleFont.lineHeight * 3)];
     
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    UIFont *subtitleFont = [UIFont systemFontOfSize:13];
+    
+    return size.height + subtitleFont.lineHeight + 18;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSString *text;
+    NSString *cellIdentifier;
+    NSString *subtitle;
+    UIColor *titleColor;
+    UIColor *subtitleColor;
+    UIFont *titleFont;
+    
+    if (indexPath.row == 0) {
+        text = [self postTitle];
+        titleFont = [UIFont boldSystemFontOfSize:15];
+        titleColor = [UIColor whiteColor];
+        subtitleColor = [UIColor colorWithWhite:0.9 alpha:1];
+        cellIdentifier = @"owner";
+        subtitle = [NSString stringWithFormat:@"Uploaded by %@ %@", self.post.owner.name, [self.post.date agoString]];
+        
+    } else {
+        FacebookComment *aComment = [_comments objectAtIndex:indexPath.row-1];
+        DLog(@"%@", [aComment description]);
+        titleFont = [UIFont systemFontOfSize:15];
+        titleColor = [UIColor blackColor];
+        subtitleColor = [UIColor grayColor];
+        text = aComment.text;
+        cellIdentifier = @"notOwner";
+        subtitle = [NSString stringWithFormat:@"%@ %@", aComment.owner.name, [aComment.date agoString]];
+    }
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (!cell) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier] autorelease];
     }
     
     NSInteger commentTag = 80;
     NSInteger authorTag = 81;
-    NSInteger dateTag = 82;
     
     UILabel *commentLabel = (UILabel *)[cell.contentView viewWithTag:commentTag];
     if (!commentLabel) {
-        commentLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width - 20, 80)] autorelease];
-        commentLabel.font = [UIFont systemFontOfSize:15];
-        commentLabel.backgroundColor = [UIColor clearColor];
+        commentLabel = [UILabel multilineLabelWithText:text font:titleFont width:tableView.frame.size.width - 20];
+        commentLabel.textColor = titleColor;
         commentLabel.numberOfLines = 3;
         commentLabel.lineBreakMode = UILineBreakModeTailTruncation;
         commentLabel.tag = commentTag;
-        CGRect frame = commentLabel.frame;
-        frame.origin.x = 10;
-        frame.origin.y = 5;
-        commentLabel.frame = frame;
-    } 
-    CGSize singleLine = [text sizeWithFont:commentLabel.font];
-    CGSize multipleLines = [text sizeWithFont:commentLabel.font constrainedToSize:CGSizeMake(commentLabel.frame.size.width, 1000)];
-    CGFloat height = multipleLines.height;
-    if(height > singleLine.height * commentLabel.numberOfLines) {
-        height = singleLine.height * commentLabel.numberOfLines;
+        [cell.contentView addSubview:commentLabel];
+    } else {
+        commentLabel.text = text;
     }
-    commentLabel.text = text;
+
     CGRect commentFrame = commentLabel.frame;
-    commentFrame.size.height = height;
+    commentFrame.origin = CGPointMake(10, 8);
+    CGSize size = [text sizeWithFont:titleFont
+                   constrainedToSize:CGSizeMake(tableView.frame.size.width - 20, titleFont.lineHeight * commentLabel.numberOfLines)];
+    commentFrame.size.height = size.height;
     commentLabel.frame = commentFrame;
-    [cell.contentView addSubview:commentLabel];
     
     UILabel *authorLabel = (UILabel *)[cell.contentView viewWithTag:authorTag];
     if (!authorLabel) {
         UIFont *authorFont = [UIFont systemFontOfSize:13];
-        authorLabel = [UILabel multilineLabelWithText:ownerName font:authorFont width:tableView.frame.size.width - 20];
+        authorLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, 8 + commentFrame.size.height,
+                                                                 tableView.frame.size.width - 20,
+                                                                 authorFont.lineHeight)] autorelease];
+        authorLabel.textColor = subtitleColor;
+        authorLabel.font = authorFont;
+        authorLabel.backgroundColor = [UIColor clearColor];
         authorLabel.tag = authorTag;
+        [cell.contentView addSubview:authorLabel];
+    } else {
         CGRect frame = authorLabel.frame;
-        frame.origin.x = 10;
-        frame.origin.y = 80;
+        frame.origin.y = 10 + commentFrame.size.height;
         authorLabel.frame = frame;
-    } else {
-        authorLabel.text = ownerName;
     }
-    [cell.contentView addSubview:authorLabel];
+    authorLabel.text = subtitle;
     
-    UILabel *dateLabel = (UILabel *)[cell.contentView viewWithTag:dateTag];
-    NSString *dateString = [date agoString];
-    if (!dateLabel) {
-        UIFont *dateFont = [UIFont systemFontOfSize:13];
-        dateLabel = [UILabel multilineLabelWithText:dateString font:dateFont width:tableView.frame.size.width - 20];
-        dateLabel.tag = dateTag;
-        CGRect frame = dateLabel.frame;
-        frame.origin.x = 160;
-        frame.origin.y = 80;
-        dateLabel.frame = frame;
-    } else {
-        dateLabel.text = dateString;
+    if (indexPath.row == 0) {
+        cell.backgroundColor = [UIColor colorWithWhite:0.4 alpha:1];
+        cell.contentView.backgroundColor = [UIColor colorWithWhite:0.4 alpha:1];
     }
-    [cell.contentView addSubview:dateLabel];
     
     return cell;
 }
