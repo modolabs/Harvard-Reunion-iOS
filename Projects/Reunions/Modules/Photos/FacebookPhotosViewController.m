@@ -57,7 +57,7 @@
         
         if ([homeModule fbGroupIsOld]) {
             // fql for photos
-            NSString *query = [NSString stringWithFormat:@"SELECT pid FROM photo_tag WHERE subject=%@", fbModule.groupID];
+            NSString *query = [NSString stringWithFormat:@"SELECT pid, object_id FROM photo WHERE pid IN (SELECT pid FROM photo_tag WHERE subject = %@ LIMIT 1000) LIMIT 1000", fbModule.groupID];
             [[KGOSocialMediaController facebookService] requestFacebookFQL:query 
                                                                   receiver:self 
                                                                   callback:@selector(didReceivePhotoList:)];
@@ -361,15 +361,19 @@
         
         for (NSDictionary *info in result) {
             NSString *pid = [info objectForKey:@"pid"];
+            NSString *objectId = [NSString stringWithFormat:@"%@", [info objectForKey:@"object_id"], nil];
             if (pid && ![_photosByID objectForKey:pid]) {
-                DLog(@"received fql info for photo %@", pid);
-                NSString *query = [NSString stringWithFormat:@"SELECT object_id, "
-                                   "src_small, src_small_width, src_small_height, "
-                                   "src, src_width, src_height, "
-                                   "owner, caption, created, aid "
-                                   "FROM photo WHERE pid=%@", pid];
-                
-                [[KGOSocialMediaController facebookService] requestFacebookFQL:query receiver:self callback:@selector(didReceivePhoto:)];
+                FacebookPhoto *aPhoto = [FacebookPhoto photoWithDictionary:info size:[self thumbSize]];
+                if (aPhoto) {
+                    aPhoto.postIdentifier = objectId;
+                    NSLog(@"%@", [aPhoto description]);
+                    [[CoreDataManager sharedManager] saveData];
+                    [_photosByID setObject:aPhoto forKey:pid];
+                }
+                DLog(@"requesting graph info for photo %@", pid);
+                [[KGOSocialMediaController facebookService] requestFacebookGraphPath:objectId
+                                                                            receiver:self
+                                                                            callback:@selector(didReceivePhoto:)];
             }
         }
     }
