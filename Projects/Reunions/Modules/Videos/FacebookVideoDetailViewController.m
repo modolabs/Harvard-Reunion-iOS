@@ -219,7 +219,7 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     return @"video";
 }
 
-- (BOOL)allowRotationForIPhone {
+- (BOOL)hideToolbarsInLandscape {
     return NO;
 }
 

@@ -367,8 +367,7 @@ ToolbarButtonTags;
     
     // these listeners and delegates are used for 
     // handling rotations on the iPhone
-    if([self allowRotationForIPhone] &&
-       (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) ) 
+    if((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) ) 
     {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChange:) name:@"UIDeviceOrientationDidChangeNotification" object:nil];
         self.tapRecoginizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(restoreToolbars:)] autorelease];
@@ -402,8 +401,10 @@ ToolbarButtonTags;
                 self.navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
             }
             // disappear toolBars
-            self.navigationController.navigationBar.alpha = 0;
-            actionToolbarRoot.alpha = 0;
+            if([self hideToolbarsInLandscape]) {
+                self.navigationController.navigationBar.alpha = 0;
+                actionToolbarRoot.alpha = 0;
+            }
             
             // shrink navbar
             CGRect navigationBarFrame = self.navigationController.navigationBar.frame;
@@ -412,12 +413,24 @@ ToolbarButtonTags;
             
             // expand tablview to show whole photo
             CGRect tableViewFrame = self.tableView.frame;
-            tableViewFrame.size.height = tableViewFrame.size.height + actionToolbarRoot.frame.size.height;
-            self.tableView.frame = tableViewFrame;
-            _mediaView.fixedPreviewHeight = window.frame.size.width - statusBarHeight;
+            if ([self hideToolbarsInLandscape]) {
+                tableViewFrame.size.height = tableViewFrame.size.height + actionToolbarRoot.frame.size.height;
+                self.tableView.frame = tableViewFrame;
+                _mediaView.fixedPreviewHeight = window.frame.size.width - statusBarHeight;
+            } else {
+                // where these 2 magical pixels come from
+                // i do not know :)
+                tableViewFrame.origin.y = -2.0f;
+                _mediaView.fixedPreviewHeight = window.frame.size.width - 
+                    statusBarHeight - actionToolbarRoot.frame.size.height -
+                    self.navigationController.navigationBar.frame.size.height;
+                self.tableView.frame = tableViewFrame;
+            }
         }
         completion:^(BOOL finished) {
-            [_mediaView addGestureRecognizer:self.tapRecoginizer];
+            if([self hideToolbarsInLandscape]) {
+                [_mediaView addGestureRecognizer:self.tapRecoginizer];
+            }
         }];
     } else {
         [NSObject cancelPreviousPerformRequestsWithTarget:self];
@@ -430,7 +443,7 @@ ToolbarButtonTags;
     }
 }
 
-- (BOOL)allowRotationForIPhone {
+- (BOOL)hideToolbarsInLandscape {
     NSAssert(NO, @"this method must be subclassed");
     return NO;
 }
@@ -451,7 +464,7 @@ ToolbarButtonTags;
 }
 
 - (void)restorePortraitLayout {
-    if([self allowRotationForIPhone] && (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)) {
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         UIWindow *window = [[UIApplication sharedApplication] keyWindow];
         
         [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
@@ -469,7 +482,8 @@ ToolbarButtonTags;
         
         // reset tableview to propersize
         CGRect tableViewFrame = self.tableView.frame;
-        tableViewFrame.size.height = window.frame.size.height - actionToolbarRoot.frame.size.height;
+        tableViewFrame.origin = CGPointZero;
+        tableViewFrame.size.height = window.frame.size.height - actionToolbarRoot.frame.size.height - navigationBarFrame.size.height;
         self.tableView.frame = tableViewFrame;
         _mediaView.fixedPreviewHeight = 0;
     }
@@ -483,10 +497,9 @@ ToolbarButtonTags;
 }
 
 - (void)restoreToolbars:(id)sender {
-    if (![self allowRotationForIPhone]) {
-        // if rotation are disallowed
-        // toolbars will never be hidded 
-        // so dont need to restore them
+    if (![self hideToolbarsInLandscape]) {
+        // no need to restote toolbars
+        // since we never hide them
         return;
     }
     
