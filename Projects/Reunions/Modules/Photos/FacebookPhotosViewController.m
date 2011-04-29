@@ -125,6 +125,15 @@
 }
 */
 
+- (void)loadView
+{
+    [super loadView];
+    
+    [_filterControl insertSegmentWithTitle:@"All Photos" atIndex:0 animated:NO];
+    [_filterControl insertSegmentWithTitle:@"My Photos" atIndex:1 animated:NO];
+    [_filterControl insertSegmentWithTitle:@"Bookmarks" atIndex:2 animated:NO];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -154,6 +163,11 @@
     _icons = [[NSMutableArray alloc] init];
     _photosByID = [[NSMutableDictionary alloc] init];
     _displayedPhotos = [[NSMutableSet alloc] init];
+}
+
+- (void)facebookDidLogin:(NSNotification *)aNotification
+{
+    [super facebookDidLogin:aNotification];
     
     [self loadThumbnailsFromCache];
     [self getGroupPhotos];
@@ -164,6 +178,14 @@
       target:self
       action:@selector(showUploadPhotoController:)] autorelease];
 }
+
+- (void)facebookDidLogout:(NSNotification *)aNotification
+{
+    [super facebookDidLogout:aNotification];
+    
+    self.navigationItem.rightBarButtonItem = nil;
+}
+
 
 /*
 // Override to allow orientations other than the default portrait orientation.

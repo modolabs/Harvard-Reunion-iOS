@@ -32,46 +32,34 @@
 
 - (void)tweetButtonPressed:(id)sender
 {
-    if (_inputView) {
-       [[KGOSocialMediaController twitterService] postToTwitter:_inputView.text];
-        [self hideInputView];
-
-    } else if (![[KGOSocialMediaController twitterService] isSignedIn]) {
-        [[KGOSocialMediaController twitterService] signin];
-
-    } else {
-        [self showInputView];
-    }
-}
-
-- (void)showInputView
-{
-    _inputView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 180)];
-    _inputView.delegate = self;
-    _inputView.text = [NSString stringWithFormat:@" %@", twitterModule.hashtag];
-    _inputView.selectedRange = NSMakeRange(0, 0);
-    [self reloadDataForTableView:self.tableView];
-    [_inputView becomeFirstResponder];
-}
-
-- (void)hideInputView
-{
-    [_inputView release];
-    _inputView = nil;
-    [self reloadDataForTableView:self.tableView];
+    TwitterViewController *twitterVC = [[[TwitterViewController alloc] initWithNibName:@"TwitterViewController"
+                                                                                bundle:nil] autorelease];
+    twitterVC.preCannedMessage = twitterModule.hashtag;
+    twitterVC.delegate = self;
+    
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:twitterVC] autorelease];
+    navC.modalPresentationStyle = UIModalPresentationFormSheet;
+    navC.navigationBar.barStyle = UIBarStyleBlack;
+    
+    [self presentModalViewController:navC animated:YES];
 }
 
 #pragma mark TwitterViewControllerDelegate
 
-- (void)controllerDidLogin:(TwitterViewController *)controller
+- (BOOL)controllerShouldContinueToMessageScreen:(TwitterViewController *)controller
 {
-    [self dismissModalViewControllerAnimated:YES];
-    [self showInputView];
+    return YES;
 }
 
-- (BOOL)controllerShouldContineToMessageScreen:(TwitterViewController *)controller
+- (void)controllerDidPostTweet:(TwitterViewController *)controller
 {
-    return NO;
+    [self dismissModalViewControllerAnimated:YES];
+     [twitterModule performSelector:@selector(requestStatusUpdates:) withObject:nil afterDelay:10];
+}
+
+- (void)controllerFailedToTweet:(TwitterViewController *)controller
+{
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - View lifecycle
