@@ -9,7 +9,7 @@
 
 @implementation FacebookCommentViewController
 
-@synthesize post, delegate;
+@synthesize profileID, post, delegate;
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -35,14 +35,20 @@
 
 #pragma mark -
 
-- (IBAction)submitButtonPressed:(UIButton *)sender {
-    [[KGOSocialMediaController facebookService] addComment:_textView.text toFacebookPost:self.post delegate:self.delegate];
+- (IBAction)submitButtonPressed:(id)sender {
+    NSAssert(self.post != nil || self.profileID != nil, @"no post or profile id provided");
+    
+    if (self.post) {
+        [[KGOSocialMediaController facebookService] addComment:_textView.text toFacebookPost:self.post delegate:self.delegate];
+    } else if (self.profileID) {
+        [[KGOSocialMediaController facebookService] postStatus:_textView.text toProfile:self.profileID delegate:self.delegate];
+    }
     
     _loadingViewContainer.hidden = NO;
     [_spinner startAnimating];
 }
 
-- (IBAction)cancelButtonPressed:(UIButton *)sender {
+- (IBAction)cancelButtonPressed:(id)sender {
     [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -52,15 +58,25 @@
 {
     [super viewDidLoad];
     
-    self.view.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
+    if (self.post) {
+        self.title = @"Comment";
+    } else if (self.profileID) {
+        self.title = @"Post";
+    }
     
-    [_submitButton setTitle:NSLocalizedString(@"Comment", nil) forState:UIControlStateNormal];
-    [_cancelButton setTitle:NSLocalizedString(@"Cancel", nil) 
-                   forState:UIControlStateNormal];
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                            target:self
+                                                                                            action:@selector(submitButtonPressed:)] autorelease];
+    self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                                                                           target:self
+                                                                                           action:@selector(cancelButtonPressed:)] autorelease];
+    
     _textView.layer.cornerRadius = 5.0;
     _textView.layer.borderColor = [[UIColor blackColor] CGColor];
     _textView.layer.borderWidth = 1.0;
     _textView.textColor = [UIColor grayColor];    
+    [_textView becomeFirstResponder];
+    
     _textEditBegun = NO;
 }
 

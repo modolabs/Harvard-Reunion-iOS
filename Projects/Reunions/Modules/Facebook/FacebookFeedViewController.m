@@ -6,6 +6,7 @@
 #import "UIKit+KGOAdditions.h"
 #import "MITThumbnailView.h"
 #import "FacebookModel.h"
+#import "FacebookCommentViewController.h"
 
 @implementation FacebookFeedViewController
 
@@ -50,36 +51,47 @@
         return;
     }
     
-    if (!_inputView) { // user is beginning to post
-        _inputView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 180)];
-        
-        _inputView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        _inputView.delegate = self;
-        
-        [self reloadDataForTableView:self.tableView];
-        [_inputView becomeFirstResponder];
-        
-    } else {
-        [[KGOSocialMediaController facebookService] postStatus:_inputView.text
-                                                     toProfile:_facebookModule.groupID
-                                                      delegate:self];
-        
-        [_inputView release];
-        _inputView = nil;
-    }
+    FacebookCommentViewController *vc = [[[FacebookCommentViewController alloc] initWithNibName:@"FacebookCommentViewController"
+                                                                                         bundle:nil] autorelease];
+    vc.delegate = self;
+    vc.profileID = _facebookModule.groupID;
+    
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+    navC.navigationBar.barStyle = UIBarStyleBlack;
+    navC.modalPresentationStyle = UIModalPresentationFormSheet;
+    
+    [self presentModalViewController:navC animated:YES];
 }
 
 - (void)uploadDidComplete:(FacebookPost *)result
 {
+    [self dismissModalViewControllerAnimated:YES];
     [_facebookModule requestStatusUpdates:nil];
     [self reloadDataForTableView:self.tableView];
 }
 
 #pragma mark - View lifecycle
 
+- (void)refreshNavBarItems
+{
+    NSString *title = nil;
+    if ([[KGOSocialMediaController facebookService] isSignedIn]) {
+        title = @"Post";
+    } else {
+        title = @"Sign in";
+    }
+    
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:title
+                                                                               style:UIBarButtonItemStyleDone
+                                                                              target:self
+                                                                              action:@selector(postButtonPressed:)] autorelease];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self refreshNavBarItems];
     
     _facebookModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
     NSMutableArray *statusUpdates = [NSMutableArray array];
@@ -91,7 +103,13 @@
     }
     self.feedPosts = statusUpdates;
     
-    if (!self.feedPosts.count) {
+    if (![[KGOSocialMediaController facebookService] isSignedIn]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(refreshNavBarItems)
+                                                     name:FacebookDidLoginNotification
+                                                   object:nil];
+        
+    } else if (!self.feedPosts.count) {
         [_facebookModule requestStatusUpdates:nil];
     }
     
@@ -99,11 +117,6 @@
                                              selector:@selector(facebookFeedDidUpdate:)
                                                  name:FacebookStatusDidUpdateNotification
                                                object:nil];
-    
-    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Post"
-                                                                               style:UIBarButtonItemStyleDone
-                                                                              target:self
-                                                                              action:@selector(postButtonPressed:)] autorelease];
 }
 
 - (void)viewDidUnload
@@ -143,6 +156,13 @@
 
 - (CellManipulator)tableView:(UITableView *)tableView manipulatorForCellAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (![[KGOSocialMediaController facebookService] isSignedIn]) {
+        return [[^(UITableViewCell *cell) {
+            cell.textLabel.text = @"Sign into Facebook to post an update";
+            cell.selectionStyle = UITableViewCellEditingStyleNone;
+        } copy] autorelease];
+    }
+    
     return [[^(UITableViewCell *cell) {
         cell.selectionStyle = UITableViewCellEditingStyleNone;
     } copy] autorelease];
@@ -150,17 +170,11 @@
 
 - (NSArray *)tableView:(UITableView *)tableView viewsForCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger rownum = indexPath.row;
-    
-    if (_inputView) {
-        if (rownum == 0) {
-            return [NSArray arrayWithObject:_inputView];
-        } else {
-            rownum--;
-        }
+    if (![[KGOSocialMediaController facebookService] isSignedIn]) {
+        return nil;
     }
-    
-    NSDictionary *aPost = [self.feedPosts objectAtIndex:rownum];
+
+    NSDictionary *aPost = [self.feedPosts objectAtIndex:indexPath.row];
 
     NSString *title = [aPost stringForKey:@"message" nilIfEmpty:YES];
     NSDictionary *from = [aPost dictionaryForKey:@"from"];
@@ -217,11 +231,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger num = self.feedPosts.count;
-    if (_inputView) {
-        num += 1;
+    if ([[KGOSocialMediaController facebookService] isSignedIn]) {
+        return self.feedPosts.count;
+    } else {
+        return 1;
     }
-    return num;
 }
 
 @end

@@ -140,12 +140,18 @@
 
 #pragma mark - View lifecycle
 
-- (void)awakeFromNib
+- (void)loadView
 {
-    [super awakeFromNib];
+    [super loadView];
     
     [_filterControl addTarget:self action:@selector(filterValueChanged:) forControlEvents:UIControlEventValueChanged];
-    _filterControl.tabFont = [UIFont boldSystemFontOfSize:13];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        _filterControl.tabFont = [UIFont boldSystemFontOfSize:13];
+    } else {
+        _filterControl.tabFont = [UIFont boldSystemFontOfSize:12];
+    }
+    
+    _filterControl.tabPadding = 3;
 }
 
 - (void)viewDidLoad

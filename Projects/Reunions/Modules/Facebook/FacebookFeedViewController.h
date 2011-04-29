@@ -7,7 +7,7 @@
 @interface FacebookFeedViewController : KGOTableViewController <FacebookUploadDelegate, UITextViewDelegate> {
     
     FacebookModule *_facebookModule;
-    UITextView *_inputView;
+    //UITextView *_inputView;
     
 }
 

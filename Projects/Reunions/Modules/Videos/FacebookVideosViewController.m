@@ -8,6 +8,7 @@
 #import "CoreDataManager.h"
 #import <QuartzCore/QuartzCore.h>
 #import "KGOSocialMediaController+FacebookAPI.h"
+#import "KGOSegmentedControl.h"
 
 typedef enum {
     kTransitionImageViewTag = 0x701,
@@ -104,6 +105,8 @@ VideosViewTags;
     [_filterControl insertSegmentWithTitle:@"All Videos" atIndex:0 animated:NO];
     [_filterControl insertSegmentWithTitle:@"My Videos" atIndex:1 animated:NO];
     [_filterControl insertSegmentWithTitle:@"Bookmarks" atIndex:2 animated:NO];
+
+    _filterControl.selectedSegmentIndex = 0;
 }
 
 - (void)viewDidLoad {
@@ -413,12 +416,15 @@ VideosViewTags;
     [self syncVideoThumbnailsToGrid];
     [self requestVideosFromFeed];
 }
-/*
+
 - (void)facebookDidLogout:(NSNotification *)aNotification
 {
     [super facebookDidLogout:aNotification];
+    
+    self.iconGrid.icons = nil;
+    [self.iconGrid setNeedsLayout];
 }
-*/
+
 #pragma mark FacebookMediaViewController
 - (IBAction)uploadButtonPressed:(id)sender {
     //[self showUploadPhotoController:sender];

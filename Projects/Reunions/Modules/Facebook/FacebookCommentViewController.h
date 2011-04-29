@@ -16,16 +16,15 @@
     IBOutlet UITextView *_textView;
     IBOutlet UIView *_loadingViewContainer;
     IBOutlet UIActivityIndicatorView *_spinner;
-    IBOutlet UIButton *_submitButton;
-    IBOutlet UIButton *_cancelButton;
     BOOL _textEditBegun;    
 }
 
 @property(nonatomic, retain) FacebookParentPost *post;
+@property(nonatomic, retain) NSString *profileID;
 //@property(nonatomic, assign) id<FacebookCommentDelegate> delegate;
 @property(nonatomic, assign) id<FacebookUploadDelegate> delegate;
 
-- (IBAction)submitButtonPressed:(UIButton *)sender;
-- (IBAction)cancelButtonPressed:(UIButton *)sender;
+- (IBAction)submitButtonPressed:(id)sender;
+- (IBAction)cancelButtonPressed:(id)sender;
 
 @end
