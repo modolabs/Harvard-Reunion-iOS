@@ -14,6 +14,7 @@
     UIView *_previewView;
     
     CGFloat _maximumPreviewHeight;
+    CGFloat _fixedPreviewHeight;
 }
 
 - (UIView *)previewView;
@@ -25,5 +26,6 @@
 + (CGFloat)defaultMaxHeight;
 
 @property CGFloat maximumPreviewHeight;
+@property CGFloat fixedPreviewHeight;
 
 @end

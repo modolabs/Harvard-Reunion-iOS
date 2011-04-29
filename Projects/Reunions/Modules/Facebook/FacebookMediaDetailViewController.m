@@ -25,9 +25,13 @@ ToolbarButtonTags;
 
 - (void)updateLikeButtonStatus;
 
+- (void)restoreToolbars:(id)sender;
+- (void)restorePortraitOrientation;
+- (void)restorePortraitLayout;
+
 @end
 
-@implementation FacebookMediaDetailViewController (Private)
+@implementation FacebookMediaDetailViewController 
 
 - (UIButton *)buttonForTag:(NSInteger)tag {
     
@@ -46,10 +50,6 @@ ToolbarButtonTags;
         likeButton.selected = YES;
     }
 }
-@end
-
-
-@implementation FacebookMediaDetailViewController
 
 @synthesize post, posts, tableView = _tableView;
 @synthesize mediaView = _mediaView;
@@ -177,6 +177,9 @@ ToolbarButtonTags;
 }
 
 - (IBAction)commentButtonPressed:(UIBarButtonItem *)sender {
+    [self restoreToolbars:nil];
+    [self restorePortraitOrientation];
+    
     if (UIUserInterfaceIdiomPad == UI_USER_INTERFACE_IDIOM()) {
         // Present comment view in a non-fullscreen dialog.
         FacebookCommentViewController *vc = 
@@ -197,6 +200,7 @@ ToolbarButtonTags;
 }
 
 - (IBAction)likeButtonPressed:(UIBarButtonItem *)sender {
+    [self restoreToolbars:nil];
 
     UIButton *button = [self buttonForTag:kToolbarLikeButtonTag];
     
@@ -250,6 +254,8 @@ ToolbarButtonTags;
 }
 
 - (IBAction)bookmarkButtonPressed:(UIBarButtonItem *)sender {
+    [self restoreToolbars:nil];
+    
     BOOL bookmarked = 
     [FacebookModule 
      toggleBookmarkForMediaObjectWithID:[self identifierForBookmark] 
@@ -416,35 +422,18 @@ ToolbarButtonTags;
             tableViewFrame.origin.y = statusBarHeight;
             tableViewFrame.size.height = tableViewFrame.size.height + actionToolbarRoot.frame.size.height;
             self.tableView.frame = tableViewFrame;
-            _mediaView.maximumPreviewHeight = window.frame.size.width;
+            _mediaView.fixedPreviewHeight = window.frame.size.width;
         }
         completion:^(BOOL finished) {
-            [self.view addGestureRecognizer:self.tapRecoginizer];
+            [_mediaView addGestureRecognizer:self.tapRecoginizer];
         }];
     } else {
-        [self.view addGestureRecognizer:self.tapRecoginizer];
         [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        [_mediaView removeGestureRecognizer:self.tapRecoginizer];
         
         [[UIApplication sharedApplication] setStatusBarHidden:NO];
         [UIView animateWithDuration:0.75 animations:^(void) {
-            self.navigationController.view.transform = CGAffineTransformMakeRotation(0);
-            self.navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
-            
-            // redisplay toolbars
-            self.navigationController.navigationBar.alpha = 1.0;
-            actionToolbarRoot.alpha = 1.0;
-            
-            // expand navbar
-            CGRect navigationBarFrame = self.navigationController.navigationBar.frame;
-            navigationBarFrame.size.height = 44.0f;
-            self.navigationController.navigationBar.frame = navigationBarFrame;
-            
-            // reset tableview to propersize
-            CGRect tableViewFrame = self.tableView.frame;
-            tableViewFrame.origin.y = 0;
-            tableViewFrame.size.height = window.frame.size.height - actionToolbarRoot.frame.size.height;
-            self.tableView.frame = tableViewFrame;
-            _mediaView.maximumPreviewHeight = [MediaContainerView defaultMaxHeight];
+            [self restorePortraitLayout];
         }];
     }
 }
@@ -456,11 +445,42 @@ ToolbarButtonTags;
 
 - (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
     if (viewController != self) {
-        UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-        navigationController.view.transform = CGAffineTransformMakeRotation(0);
-        navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
-        [[UIApplication sharedApplication] setStatusBarHidden:NO];
+        [self restorePortraitLayout];
         navigationController.delegate = nil;
+    }
+}
+
+- (void)restorePortraitOrientation {
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    [_mediaView removeGestureRecognizer:self.tapRecoginizer];    
+    _tableView.scrollEnabled = YES;
+    
+    [self restorePortraitLayout];
+}
+
+- (void)restorePortraitLayout {
+    if([self allowRotationForIPhone] && (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)) {
+        UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+        
+        [[UIApplication sharedApplication] setStatusBarHidden:NO];
+        self.navigationController.view.transform = CGAffineTransformMakeRotation(0);
+        self.navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
+        
+        // redisplay toolbars
+        self.navigationController.navigationBar.alpha = 1.0;
+        actionToolbarRoot.alpha = 1.0;
+        
+        // expand navbar
+        CGRect navigationBarFrame = self.navigationController.navigationBar.frame;
+        navigationBarFrame.size.height = 44.0f;
+        self.navigationController.navigationBar.frame = navigationBarFrame;
+        
+        // reset tableview to propersize
+        CGRect tableViewFrame = self.tableView.frame;
+        tableViewFrame.origin.y = 0;
+        tableViewFrame.size.height = window.frame.size.height - actionToolbarRoot.frame.size.height;
+        self.tableView.frame = tableViewFrame;
+        _mediaView.fixedPreviewHeight = 0;
     }
 }
 
@@ -472,6 +492,13 @@ ToolbarButtonTags;
 }
 
 - (void)restoreToolbars:(id)sender {
+    if (![self allowRotationForIPhone]) {
+        // if rotation are disallowed
+        // toolbars will never be hidded 
+        // so dont need to restore them
+        return;
+    }
+    
     self.navigationController.navigationBar.alpha = 1;
     actionToolbarRoot.alpha = 1;
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
