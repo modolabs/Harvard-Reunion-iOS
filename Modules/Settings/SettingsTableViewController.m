@@ -56,10 +56,31 @@ static NSString * const KGOSettingsSocialMedia = @"SocialMedia";
             _setUserSettings = [defaultUserSettings copy];
         }
     }
+    
 
+    NSArray *preferredOrder = [NSArray arrayWithObjects: 
+                               KGOSettingsLogin, 
+                               KGOSettingsWidgets, 
+                               KGOSettingsSocialMedia, 
+                               KGOSettingsDefaultFont, 
+                               KGOSettingsDefaultFontSize, 
+                               nil];    
+    
     _settingKeys = [[[_availableUserSettings allKeys] sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        return [(NSString *)obj1 compare:(NSString *)obj2];
+        int obj1Index = [preferredOrder indexOfObject:obj1];
+        int obj2Index = [preferredOrder indexOfObject:obj2];
+        
+        if (obj1Index == obj2Index) {
+            return NSOrderedSame;
+        } else if (obj1Index < obj2Index) { 
+            return NSOrderedAscending;
+        } else {
+            return NSOrderedDescending;
+        }
     }] retain];
+    
+    self.tableView.rowHeight += 16; // room for subtitle
+    
 }
 /*
 - (void)viewWillAppear:(BOOL)animated
@@ -121,9 +142,11 @@ static NSString * const KGOSettingsSocialMedia = @"SocialMedia";
             NSMutableArray *views = [NSMutableArray array];
             
             CGFloat width = tableView.frame.size.width - 45; // adjust for padding and chevron
+            CGFloat x = 10;
             CGFloat y = 10;
+            
             UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
-            UILabel *titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, y, width, font.lineHeight)] autorelease];
+            UILabel *titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(x, y, width, font.lineHeight)] autorelease];
             titleLabel.backgroundColor = [UIColor clearColor];
             titleLabel.font = font;
             titleLabel.text = [service serviceDisplayName];
@@ -131,33 +154,49 @@ static NSString * const KGOSettingsSocialMedia = @"SocialMedia";
             [views addObject:titleLabel];
             
             font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
+            UILabel *serviceLabel = [[[UILabel alloc] initWithFrame:CGRectMake(x, y, width, font.lineHeight)] autorelease];
+            serviceLabel.backgroundColor = [UIColor clearColor];
+            serviceLabel.font = font;
+            if ([service isSignedIn]) {
+                NSString *username = [service userDisplayName];
+                if (username) {
+                    serviceLabel.text = [NSString stringWithFormat:@"Signed in as %@", username];
+                    
+                } else {
+                    serviceLabel.text = @"Signed in";
+                }
+                serviceLabel.textColor = [UIColor colorWithHexString:@"007100"];
+                
+            } else {
+                serviceLabel.text = @"Not signed in";
+                serviceLabel.textColor = [UIColor colorWithHexString:@"c10000"];
+                
+            }
+            y += serviceLabel.frame.size.height + 1;
+            [views addObject:serviceLabel];
+
+            
+            font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
             NSString *string = [optionValue stringForKey:@"subtitle" nilIfEmpty:YES];
             if (string) {
                 UILabel *subtitleLabel = [UILabel multilineLabelWithText:string font:font width:width];
+                subtitleLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyNavListSubtitle];
                 CGRect frame = subtitleLabel.frame;
-                frame.origin.x = 10;
+                frame.origin.x = x;
                 frame.origin.y = y;
                 subtitleLabel.frame = frame;
                 y += subtitleLabel.frame.size.height + 1;
                 [views addObject:subtitleLabel];
             }
 
-            UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, y, tableView.frame.size.width - 20, font.lineHeight)] autorelease];
+            UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(x, y, width, font.lineHeight)] autorelease];
             label.backgroundColor = [UIColor clearColor];
             label.font = font;
             label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyNavListSubtitle];
-            
             if ([service isSignedIn]) {
-                NSString *username = [service userDisplayName];
-                if (username) {
-                    label.text = [NSString stringWithFormat:@"Signed in as %@ - tap to sign out", username];
-            
-                } else {
-                    label.text = @"Signed in - tap to sign out";
-                }
-
+                label.text = @"Tap to sign out";
             } else {
-                label.text = @"Not signed in - tap to sign in";
+                label.text = @"Tap to sign in";
             }
             [views addObject:label];
             
