@@ -398,15 +398,15 @@ ToolbarButtonTags;
     _tableView.contentOffset = CGPointZero;
     
     if (UIDeviceOrientationIsLandscape(device.orientation)) {
-        [[UIApplication sharedApplication] setStatusBarHidden:YES];
+        [[UIApplication sharedApplication] setStatusBarOrientation:device.orientation];
         
         [UIView animateWithDuration:0.75 animations:^(void) {
             if (device.orientation == UIInterfaceOrientationLandscapeRight) {
                 self.navigationController.view.transform = CGAffineTransformMakeRotation(M_PI_2);
-                self.navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width+statusBarHeight, window.frame.size.height);
+                self.navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
             } else {
                 self.navigationController.view.transform = CGAffineTransformMakeRotation(-M_PI_2);
-                self.navigationController.view.frame = CGRectMake(-20.0, 0, window.frame.size.width+statusBarHeight, window.frame.size.height);
+                self.navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
             }
             // disappear toolBars
             self.navigationController.navigationBar.alpha = 0;
@@ -419,10 +419,9 @@ ToolbarButtonTags;
             
             // expand tablview to show whole photo
             CGRect tableViewFrame = self.tableView.frame;
-            tableViewFrame.origin.y = statusBarHeight;
             tableViewFrame.size.height = tableViewFrame.size.height + actionToolbarRoot.frame.size.height;
             self.tableView.frame = tableViewFrame;
-            _mediaView.fixedPreviewHeight = window.frame.size.width;
+            _mediaView.fixedPreviewHeight = window.frame.size.width - statusBarHeight;
         }
         completion:^(BOOL finished) {
             [_mediaView addGestureRecognizer:self.tapRecoginizer];
@@ -431,7 +430,7 @@ ToolbarButtonTags;
         [NSObject cancelPreviousPerformRequestsWithTarget:self];
         [_mediaView removeGestureRecognizer:self.tapRecoginizer];
         
-        [[UIApplication sharedApplication] setStatusBarHidden:NO];
+        [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
         [UIView animateWithDuration:0.75 animations:^(void) {
             [self restorePortraitLayout];
         }];
@@ -462,7 +461,7 @@ ToolbarButtonTags;
     if([self allowRotationForIPhone] && (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)) {
         UIWindow *window = [[UIApplication sharedApplication] keyWindow];
         
-        [[UIApplication sharedApplication] setStatusBarHidden:NO];
+        [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
         self.navigationController.view.transform = CGAffineTransformMakeRotation(0);
         self.navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
         
@@ -477,7 +476,6 @@ ToolbarButtonTags;
         
         // reset tableview to propersize
         CGRect tableViewFrame = self.tableView.frame;
-        tableViewFrame.origin.y = 0;
         tableViewFrame.size.height = window.frame.size.height - actionToolbarRoot.frame.size.height;
         self.tableView.frame = tableViewFrame;
         _mediaView.fixedPreviewHeight = 0;
