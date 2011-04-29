@@ -17,7 +17,4 @@
 - (void)twitterFeedDidUpdate:(NSNotification *)aNotification;
 - (void)tweetButtonPressed:(id)sender;
 
-- (void)showInputView;
-- (void)hideInputView;
-
 @end
