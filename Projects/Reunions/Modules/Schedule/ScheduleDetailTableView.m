@@ -235,20 +235,20 @@
         UIImage *image = [cellData objectForKey:@"image"];
 
         // adjust for icon, padding and accessory
-        CGFloat width = tableView.frame.size.width - 20 - (image ? 34 : 0) - (accessory != KGOAccessoryTypeNone ? 34 : 0); 
+        CGFloat width = tableView.frame.size.width - 20 - (image ? 39 : 0) - (accessory != KGOAccessoryTypeNone ? 39 : 0); 
         CGFloat height = 22;
         
         UIFont *titleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
         CGSize titleSize = [title sizeWithFont:titleFont
-                             constrainedToSize:CGSizeMake(width, 1000)
-                                 lineBreakMode:UILineBreakModeWordWrap];
+                             constrainedToSize:CGSizeMake(width, titleFont.lineHeight * 10)
+                                 lineBreakMode:UILineBreakModeTailTruncation];
         height += titleSize.height;
         
         if (subtitle && [subtitle length]) {
             UIFont *subtitleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
-            CGSize subtitleSize = [title sizeWithFont:subtitleFont
-                                    constrainedToSize:CGSizeMake(width, 1000)
-                                        lineBreakMode:UILineBreakModeWordWrap];
+            CGSize subtitleSize = [subtitle sizeWithFont:subtitleFont
+                                    constrainedToSize:CGSizeMake(width, subtitleFont.lineHeight * 10)
+                                        lineBreakMode:UILineBreakModeTailTruncation];
             height += subtitleSize.height + 2;
         }
         
@@ -319,7 +319,7 @@
         NSInteger subtitleTag = 51;
         
         // adjust for icon, padding and accessory
-        CGFloat width = tableView.frame.size.width - 20 - (image ? 34 : 0) - (accessory != KGOAccessoryTypeNone ? 34 : 0); 
+        CGFloat width = tableView.frame.size.width - 20 - (image ? 39 : 0) - (accessory != KGOAccessoryTypeNone ? 39 : 0); 
         CGFloat x = image ? 44 : 10;
         CGFloat y = 10;
         
@@ -330,13 +330,14 @@
             titleLabel.font = titleFont;
             titleLabel.backgroundColor = [UIColor clearColor];
             titleLabel.numberOfLines = 10;
-            titleLabel.lineBreakMode = UILineBreakModeWordWrap;
+            titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
             titleLabel.tag = titleTag;
         } 
         CGSize titleSize = [title sizeWithFont:titleFont
                              constrainedToSize:CGSizeMake(width, titleFont.lineHeight * 10)
-                                 lineBreakMode:UILineBreakModeWordWrap];
+                                 lineBreakMode:UILineBreakModeTailTruncation];
         CGRect titleFrame = titleLabel.frame;
+        titleFrame.size.width = width;
         titleFrame.size.height = titleSize.height;
         titleFrame.origin.x = x;
         titleLabel.frame = titleFrame;
@@ -352,13 +353,14 @@
                 subtitleLabel.font = subtitleFont;
                 subtitleLabel.backgroundColor = [UIColor clearColor];
                 subtitleLabel.numberOfLines = 10;
-                subtitleLabel.lineBreakMode = UILineBreakModeWordWrap;
+                subtitleLabel.lineBreakMode = UILineBreakModeTailTruncation;
                 subtitleLabel.tag = subtitleTag;
             }
-            CGSize subtitleSize = [title sizeWithFont:subtitleFont
+            CGSize subtitleSize = [subtitle sizeWithFont:subtitleFont
                                     constrainedToSize:CGSizeMake(width, subtitleFont.lineHeight * 10)
-                                        lineBreakMode:UILineBreakModeWordWrap];
+                                        lineBreakMode:UILineBreakModeTailTruncation];
             CGRect subtitleFrame = subtitleLabel.frame;
+            subtitleFrame.size.width = width;
             subtitleFrame.size.height = subtitleSize.height;
             subtitleFrame.origin.x = x;
             subtitleFrame.origin.y = y;
