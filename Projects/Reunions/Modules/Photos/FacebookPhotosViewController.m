@@ -11,6 +11,7 @@
 #import "FacebookModule.h"
 #import "KGOTheme.h"
 #import "FacebookThumbnail.h"
+#import "KGOSegmentedControl.h"
 
 @interface FacebookPhotosViewController (Private)
 
@@ -141,6 +142,8 @@
     [_filterControl insertSegmentWithTitle:@"All Photos" atIndex:0 animated:NO];
     [_filterControl insertSegmentWithTitle:@"My Photos" atIndex:1 animated:NO];
     [_filterControl insertSegmentWithTitle:@"Bookmarks" atIndex:2 animated:NO];
+    
+    _filterControl.selectedSegmentIndex = 0;
 }
 
 - (void)viewDidLoad {
@@ -193,6 +196,9 @@
     [super facebookDidLogout:aNotification];
     
     self.navigationItem.rightBarButtonItem = nil;
+    
+    _iconGrid.icons = nil;
+    [_iconGrid setNeedsLayout];
 }
 
 
