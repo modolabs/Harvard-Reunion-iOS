@@ -55,6 +55,7 @@ ToolbarButtonTags;
 @synthesize mediaView = _mediaView;
 @synthesize moduleTag;
 @synthesize actionsToolbar;
+@synthesize tapRecoginizer = _tapRecognizer;
 
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -72,6 +73,8 @@ ToolbarButtonTags;
     [actionsToolbar release];
     [_comments release];
     self.moduleTag = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    self.tapRecoginizer = nil;
     [super dealloc];
 }
 
@@ -350,7 +353,7 @@ ToolbarButtonTags;
         frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio
         _mediaView = [[[UIView alloc] initWithFrame:frame] autorelease];
     } 
-     
+    
     [_mediaView initPreviewView:_mediaPreviewView];
  
     // add drop show to image background
@@ -362,6 +365,16 @@ ToolbarButtonTags;
     }
     
     [self displayPost];
+    
+    // these listeners and delegates are used for 
+    // handling rotations on the iPhone
+    if([self allowRotationForIPhone] &&
+       (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) ) 
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChange:) name:@"UIDeviceOrientationDidChangeNotification" object:nil];
+        self.tapRecoginizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(restoreToolbars:)] autorelease];
+        self.navigationController.delegate = self;
+    }
 }
 
 - (void)viewDidUnload
@@ -371,9 +384,107 @@ ToolbarButtonTags;
     // e.g. self.myOutlet = nil;
 }
 
+- (void)orientationChange:(NSNotification *)notification {
+    UIDevice *device = [notification object];
+    CGFloat statusBarHeight = 20.0;
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+    _tableView.scrollEnabled = UIInterfaceOrientationIsPortrait(device.orientation);
+    _tableView.contentOffset = CGPointZero;
+    
+    if (UIDeviceOrientationIsLandscape(device.orientation)) {
+        [[UIApplication sharedApplication] setStatusBarHidden:YES];
+        
+        [UIView animateWithDuration:0.75 animations:^(void) {
+            if (device.orientation == UIInterfaceOrientationLandscapeRight) {
+                self.navigationController.view.transform = CGAffineTransformMakeRotation(M_PI_2);
+                self.navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width+statusBarHeight, window.frame.size.height);
+            } else {
+                self.navigationController.view.transform = CGAffineTransformMakeRotation(-M_PI_2);
+                self.navigationController.view.frame = CGRectMake(-20.0, 0, window.frame.size.width+statusBarHeight, window.frame.size.height);
+            }
+            // disappear toolBars
+            self.navigationController.navigationBar.alpha = 0;
+            actionToolbarRoot.alpha = 0;
+            
+            // shrink navbar
+            CGRect navigationBarFrame = self.navigationController.navigationBar.frame;
+            navigationBarFrame.size.height = 30.0f;
+            self.navigationController.navigationBar.frame = navigationBarFrame;
+            
+            // expand tablview to show whole photo
+            CGRect tableViewFrame = self.tableView.frame;
+            tableViewFrame.origin.y = statusBarHeight;
+            tableViewFrame.size.height = tableViewFrame.size.height + actionToolbarRoot.frame.size.height;
+            self.tableView.frame = tableViewFrame;
+            _mediaView.maximumPreviewHeight = window.frame.size.width;
+        }
+        completion:^(BOOL finished) {
+            [self.view addGestureRecognizer:self.tapRecoginizer];
+        }];
+    } else {
+        [self.view addGestureRecognizer:self.tapRecoginizer];
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        
+        [[UIApplication sharedApplication] setStatusBarHidden:NO];
+        [UIView animateWithDuration:0.75 animations:^(void) {
+            self.navigationController.view.transform = CGAffineTransformMakeRotation(0);
+            self.navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
+            
+            // redisplay toolbars
+            self.navigationController.navigationBar.alpha = 1.0;
+            actionToolbarRoot.alpha = 1.0;
+            
+            // expand navbar
+            CGRect navigationBarFrame = self.navigationController.navigationBar.frame;
+            navigationBarFrame.size.height = 44.0f;
+            self.navigationController.navigationBar.frame = navigationBarFrame;
+            
+            // reset tableview to propersize
+            CGRect tableViewFrame = self.tableView.frame;
+            tableViewFrame.origin.y = 0;
+            tableViewFrame.size.height = window.frame.size.height - actionToolbarRoot.frame.size.height;
+            self.tableView.frame = tableViewFrame;
+            _mediaView.maximumPreviewHeight = [MediaContainerView defaultMaxHeight];
+        }];
+    }
+}
+
+- (BOOL)allowRotationForIPhone {
+    NSAssert(NO, @"this method must be subclassed");
+    return NO;
+}
+
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
+    if (viewController != self) {
+        UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+        navigationController.view.transform = CGAffineTransformMakeRotation(0);
+        navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
+        [[UIApplication sharedApplication] setStatusBarHidden:NO];
+        navigationController.delegate = nil;
+    }
+}
+
+- (void)hideToolbars {
+    [UIView animateWithDuration:0.5 animations:^(void) {
+        self.navigationController.navigationBar.alpha = 0;
+        actionToolbarRoot.alpha = 0;
+    }];
+}
+
+- (void)restoreToolbars:(id)sender {
+    self.navigationController.navigationBar.alpha = 1;
+    actionToolbarRoot.alpha = 1;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone &&
+       UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)) 
+    {   
+       [self performSelector:@selector(hideToolbars) withObject:nil afterDelay:3.0];
+    }
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return YES;
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
@@ -405,6 +516,8 @@ ToolbarButtonTags;
 #pragma mark - KGODetailPager
 
 - (void)pager:(KGODetailPager *)pager showContentForPage:(id<KGOSearchResult>)content {
+    [self restoreToolbars:nil];
+    
     [[KGOSocialMediaController facebookService] disconnectFacebookRequests:self]; // stop getting data for previous post
     
     self.post = (FacebookParentPost *)content;
