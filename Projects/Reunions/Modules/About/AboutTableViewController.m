@@ -63,7 +63,47 @@ NSString * const AboutSectionsPrefKey = @"AboutSections";
         return [NSArray arrayWithObject:label];
 
     } else {
-        return nil;
+        NSInteger section = indexPath.section - _paragraphs.count;
+        NSDictionary *info = [_sections dictionaryAtIndex:section];
+        NSArray *links = [info arrayForKey:@"links"];
+        
+        NSDictionary *linkInfo = [links dictionaryAtIndex:indexPath.row];
+        
+        NSString *title = [linkInfo stringForKey:@"title" nilIfEmpty:YES];
+        NSString *subtitle = [linkInfo stringForKey:@"subtitle" nilIfEmpty:YES];
+        
+        NSMutableArray *views = [NSMutableArray array];
+        
+        CGFloat width = tableView.frame.size.width - 45; // adjust for padding and chevron
+        CGFloat x = 10;
+        CGFloat y = 10;
+        UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
+        CGSize labelSize = [title sizeWithFont:font
+                             constrainedToSize:CGSizeMake(width, font.lineHeight * 10)
+                                 lineBreakMode:UILineBreakModeWordWrap];
+        UILabel *titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(x, y, width, labelSize.height)] autorelease];
+        titleLabel.backgroundColor = [UIColor clearColor];
+        titleLabel.numberOfLines = 10;
+        titleLabel.lineBreakMode = UILineBreakModeWordWrap;
+        titleLabel.font = font;
+        titleLabel.text = title;
+        y += titleLabel.frame.size.height + 1;
+        [views addObject:titleLabel];
+        
+        font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
+        labelSize = [subtitle sizeWithFont:font
+                         constrainedToSize:CGSizeMake(width, font.lineHeight * 10)
+                             lineBreakMode:UILineBreakModeWordWrap];
+        UILabel *subtitleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(x, y, width, labelSize.height)] autorelease];
+        subtitleLabel.backgroundColor = [UIColor clearColor];
+        subtitleLabel.numberOfLines = 10;
+        subtitleLabel.lineBreakMode = UILineBreakModeWordWrap;
+        subtitleLabel.font = font;
+        subtitleLabel.text = subtitle;
+        subtitleLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyNavListSubtitle];
+        [views addObject:subtitleLabel];
+        
+        return views;
     }
 }
 
@@ -85,8 +125,6 @@ NSString * const AboutSectionsPrefKey = @"AboutSections";
         
         NSDictionary *linkInfo = [links dictionaryAtIndex:indexPath.row];
         
-        NSString *title = [linkInfo stringForKey:@"title" nilIfEmpty:YES];
-        NSString *subtitle = [linkInfo stringForKey:@"subtitle" nilIfEmpty:YES];
         NSString *class = [linkInfo stringForKey:@"class" nilIfEmpty:YES];
         
         NSString *accessory = nil;
@@ -99,8 +137,6 @@ NSString * const AboutSectionsPrefKey = @"AboutSections";
         }
         
         return [[^(UITableViewCell *cell) {
-            cell.textLabel.text = title;
-            cell.detailTextLabel.text = subtitle;
             cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:accessory];
         } copy] autorelease];
         
