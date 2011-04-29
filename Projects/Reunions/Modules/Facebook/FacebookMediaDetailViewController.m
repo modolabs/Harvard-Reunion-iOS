@@ -422,7 +422,7 @@ ToolbarButtonTags;
             tableViewFrame.origin.y = statusBarHeight;
             tableViewFrame.size.height = tableViewFrame.size.height + actionToolbarRoot.frame.size.height;
             self.tableView.frame = tableViewFrame;
-            _mediaView.maximumPreviewHeight = window.frame.size.width;
+            _mediaView.fixedPreviewHeight = window.frame.size.width;
         }
         completion:^(BOOL finished) {
             [_mediaView addGestureRecognizer:self.tapRecoginizer];
@@ -480,7 +480,7 @@ ToolbarButtonTags;
         tableViewFrame.origin.y = 0;
         tableViewFrame.size.height = window.frame.size.height - actionToolbarRoot.frame.size.height;
         self.tableView.frame = tableViewFrame;
-        _mediaView.maximumPreviewHeight = [MediaContainerView defaultMaxHeight];
+        _mediaView.fixedPreviewHeight = 0;
     }
 }
 

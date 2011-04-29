@@ -9,12 +9,14 @@
 
 @implementation MediaContainerView
 @synthesize maximumPreviewHeight = _maximumPreviewHeight;
+@synthesize fixedPreviewHeight = _fixedPreviewHeight;
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if(self) {
         _previewSize = CGSizeMake(0, 0);
         _maximumPreviewHeight = [[self class] defaultMaxHeight];
+        _fixedPreviewHeight = 0;
     }
     return self;
 }
@@ -35,7 +37,7 @@
     }
 }
 
-+ (CGFloat)heightForImageSize:(CGSize)size fitToWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight {
++ (CGFloat)heightForImageSize:(CGSize)size fitToWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight {    
     CGFloat newHeight = size.height *  (width / size.width);
     if (newHeight > maxHeight) {
         newHeight = maxHeight;
@@ -83,6 +85,12 @@
 }
 
 - (void)setFrame:(CGRect)frame {
+    if(_fixedPreviewHeight != 0) {
+        frame.size.height = _fixedPreviewHeight;
+        [super setFrame:frame];
+        return;
+    }
+    
     if(_previewSize.width > 0) {
         CGFloat deltaWidth = frame.size.width - self.frame.size.width;
         CGFloat newWidth = _previewView.frame.size.width + deltaWidth;
