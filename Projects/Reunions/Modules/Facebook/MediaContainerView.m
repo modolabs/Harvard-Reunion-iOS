@@ -1,5 +1,4 @@
 #import "MediaContainerView.h"
-#define MAXIMUM_IMAGE_HEIGHT 500
 
 @interface MediaContainerView (Private) 
 
@@ -9,11 +8,15 @@
 @end
 
 @implementation MediaContainerView
+@synthesize maximumPreviewHeight = _maximumPreviewHeight;
+@synthesize fixedPreviewHeight = _fixedPreviewHeight;
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if(self) {
         _previewSize = CGSizeMake(0, 0);
+        _maximumPreviewHeight = [[self class] defaultMaxHeight];
+        _fixedPreviewHeight = 0;
     }
     return self;
 }
@@ -26,10 +29,18 @@
     return self;
 }
 
-+ (CGFloat)heightForImageSize:(CGSize)size fitToWidth:(CGFloat)width {
++ (CGFloat)defaultMaxHeight {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        return 500.0f;
+    } else {
+        return 400.0f;
+    }
+}
+
++ (CGFloat)heightForImageSize:(CGSize)size fitToWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight {    
     CGFloat newHeight = size.height *  (width / size.width);
-    if (newHeight > MAXIMUM_IMAGE_HEIGHT) {
-        newHeight = MAXIMUM_IMAGE_HEIGHT;
+    if (newHeight > maxHeight) {
+        newHeight = maxHeight;
     }
     return  newHeight;
 }
@@ -61,7 +72,8 @@
     
     _previewSize = size;
     CGFloat newHeight = [MediaContainerView heightForImageSize:size 
-                                                   fitToWidth:_previewView.frame.size.width];
+                                                   fitToWidth:_previewView.frame.size.width
+                                                     maxHeight:_maximumPreviewHeight];
     
     [self setFrame:self.frame withImageHeight:newHeight];
 }
@@ -73,10 +85,18 @@
 }
 
 - (void)setFrame:(CGRect)frame {
+    if(_fixedPreviewHeight != 0) {
+        frame.size.height = _fixedPreviewHeight;
+        [super setFrame:frame];
+        return;
+    }
+    
     if(_previewSize.width > 0) {
         CGFloat deltaWidth = frame.size.width - self.frame.size.width;
         CGFloat newWidth = _previewView.frame.size.width + deltaWidth;
-        CGFloat newHeight = [MediaContainerView heightForImageSize:_previewSize fitToWidth:newWidth];
+        CGFloat newHeight = [MediaContainerView heightForImageSize:_previewSize 
+                                                        fitToWidth:newWidth
+                                                         maxHeight:_maximumPreviewHeight];
         [self setFrame:frame withImageHeight:newHeight];
     } else {
         [super setFrame:frame];

@@ -11,7 +11,7 @@
 @class FacebookParentPost;
 
 @interface FacebookMediaDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate,
-KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
+KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate, UINavigationControllerDelegate> {
     IBOutlet UITableView *_tableView;
     IBOutlet UIButton *_commentButton;
     IBOutlet UIButton *_likeButton;
@@ -23,6 +23,9 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
     IBOutlet UIView *_mediaImageBackgroundView;
     
     IBOutlet KGOToolbar *actionsToolbar;
+    IBOutlet UIView *actionToolbarRoot;
+    
+    UITapGestureRecognizer *_tapRecognizer;
     
     NSArray *_comments;
 }
@@ -33,6 +36,7 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
 @property (nonatomic, retain) NSString *moduleTag;
 @property (readonly) MediaContainerView *mediaView;
 @property (nonatomic, retain) KGOToolbar *actionsToolbar;
+@property (nonatomic, retain) UITapGestureRecognizer *tapRecoginizer;
 
 
 - (IBAction)commentButtonPressed:(id)sender;
@@ -51,5 +55,8 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
 
 - (void)didLikePost:(id)result;
 - (void)didUnlikePost:(id)result;
+
+- (BOOL)allowRotationForIPhone;
+
 
 @end

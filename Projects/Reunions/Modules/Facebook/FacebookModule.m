@@ -117,7 +117,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 - (void)requestStatusUpdates:(NSTimer *)aTimer {
     DLog(@"requesting facebook status update");
     
-    NSString *feedPath = [NSString stringWithFormat:@"%@/feed", _gid];
+    NSString *feedPath = [NSString stringWithFormat:@"%@/feed?limit=1000", _gid];
     [[KGOSocialMediaController facebookService] requestFacebookGraphPath:feedPath
                                                                 receiver:self
                                                                 callback:@selector(didReceiveFeed:)];

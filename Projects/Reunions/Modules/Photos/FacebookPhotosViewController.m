@@ -281,7 +281,9 @@
         CGSize imageSize = 
         CGSizeMake([photo.width floatValue], [photo.height floatValue]);
         CGFloat maximumWidth = self.view.frame.size.width - 40;
-        CGFloat height = [MediaContainerView heightForImageSize:imageSize fitToWidth:maximumWidth];
+        CGFloat height = [MediaContainerView heightForImageSize:imageSize 
+                                                     fitToWidth:maximumWidth
+                                                    maxHeight:[MediaContainerView defaultMaxHeight]];
         [thumbnail highlightIntoFrame:CGRectMake(15, _scrollView.contentOffset.y + 15, 
                                                 maximumWidth, height)];
         
