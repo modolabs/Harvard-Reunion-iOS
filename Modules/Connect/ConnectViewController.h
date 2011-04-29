@@ -22,4 +22,6 @@ UIAlertViewDelegate, BumpAPICustomUI> {
 // The most recent notification about the Bump connection.
 @property (nonatomic, retain) UILabel *messageLabel;
 
+@property (nonatomic, retain) UIImageView *demoImageView;
+
 @end
