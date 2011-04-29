@@ -89,7 +89,22 @@ VideosViewTags;
     }
     return self;
 }
-*/
+ */
+
+- (void)loadView
+{
+    [super loadView];
+    
+    if ([self.subheadToolbar.items containsObject:_uploadButton]) {
+        NSMutableArray *array = [[self.subheadToolbar.items mutableCopy] autorelease];
+        [array removeObject:_uploadButton];
+        self.subheadToolbar.items = [NSArray arrayWithArray:array];
+    }
+    
+    [_filterControl insertSegmentWithTitle:@"All Videos" atIndex:0 animated:NO];
+    [_filterControl insertSegmentWithTitle:@"My Videos" atIndex:1 animated:NO];
+    [_filterControl insertSegmentWithTitle:@"Bookmarks" atIndex:2 animated:NO];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -132,9 +147,6 @@ VideosViewTags;
     
     _videos = [[NSMutableArray alloc] init];
     _videoIDs = [[NSMutableSet alloc] init];
-    
-    [self getGroupVideos];
-    [self syncVideoThumbnailsToGrid];
 }
 
 /*
@@ -392,12 +404,21 @@ VideosViewTags;
 }
 
 #pragma mark FacebookMediaViewController
+
 - (void)facebookDidLogin:(NSNotification *)aNotification
 {
     [super facebookDidLogin:aNotification];
+    
+    [self getGroupVideos];
+    [self syncVideoThumbnailsToGrid];
     [self requestVideosFromFeed];
 }
-
+/*
+- (void)facebookDidLogout:(NSNotification *)aNotification
+{
+    [super facebookDidLogout:aNotification];
+}
+*/
 #pragma mark FacebookMediaViewController
 - (IBAction)uploadButtonPressed:(id)sender {
     //[self showUploadPhotoController:sender];

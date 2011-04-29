@@ -7,18 +7,24 @@ typedef enum {
 }
 FacebookMediaSegmentIndexes;
 
+@class KGOSegmentedControl, KGOToolbar;
+
 @interface FacebookMediaViewController : UIViewController 
 <UIImagePickerControllerDelegate, UINavigationControllerDelegate,
 UIPopoverControllerDelegate> {
-    
-    IBOutlet UISegmentedControl *_filterControl;
+
+    IBOutlet KGOSegmentedControl *_filterControl;
     IBOutlet UIScrollView *_scrollView;
-    IBOutlet UIToolbar *subheadToolbar;
+    IBOutlet KGOToolbar *subheadToolbar;
+    NSArray *_hiddenToolbarItems;
     
     // hidden for logged-in users
     IBOutlet UIView *_loginView;
     IBOutlet UILabel *_loginHintLabel;
     IBOutlet UIButton *_loginButton; // login or open facebook
+    
+    // ipad views
+    IBOutlet UIBarButtonItem *_uploadButton;
 
     NSString *_gid; // facebook group id
     

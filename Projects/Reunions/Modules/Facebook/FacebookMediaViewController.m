@@ -1,9 +1,11 @@
 #import "FacebookMediaViewController.h"
 #import "KGOSocialMediaController+FacebookAPI.h"
 #import "FacebookUser.h"
-
+#import "UIKit+KGOAdditions.h"
 #import "KGOFoursquareEngine.h"
 #import "KGOTheme.h"
+#import "KGOSegmentedControl.h"
+#import "KGOToolbar.h"
 
 @implementation FacebookMediaViewController
 
@@ -33,18 +35,24 @@
         if (animated) {
             [UIView animateWithDuration:0.4 animations:^(void) {
                 _loginView.alpha = 1;
+                _scrollView.alpha = 0;
                 
             } completion:^(BOOL finished) {
                 if (finished) {
                     _loginView.hidden = NO;
+                    _scrollView.hidden = YES;
                 }
             }];
         } else {
+            _scrollView.alpha = 0;
+            _scrollView.hidden = YES;
+
             _loginView.alpha = 1;
             _loginView.hidden = NO;
         }
     } else {
         _loginView.hidden = NO;
+        _scrollView.hidden = YES;
     }
 }
 
@@ -53,18 +61,24 @@
         if (animated) {
             [UIView animateWithDuration:0.4 animations:^(void) {
                 _loginView.alpha = 0;
+                _scrollView.alpha = 1;
                 
             } completion:^(BOOL finished) {
                 if (finished) {
                     _loginView.hidden = YES;
+                    _scrollView.hidden = NO;
                 }
             }];
         } else {
             _loginView.alpha = 0;
             _loginView.hidden = YES;
+            
+            _scrollView.alpha = 1;
+            _scrollView.hidden = NO;
         }
     } else {
         _loginView.hidden = YES;
+        _scrollView.hidden = NO;
     }
 }
 
@@ -76,6 +90,7 @@
     [photoPickerPopover release];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_scrollView release];
+    [_hiddenToolbarItems release];
     [super dealloc];
 }
 
@@ -91,8 +106,15 @@
 
 - (void)facebookDidLogin:(NSNotification *)aNotification
 {
-    facebookUserLoggedIn = YES;
     [self hideLoginViewAnimated:YES];
+    
+    if (self.subheadToolbar && !self.subheadToolbar.items.count && _hiddenToolbarItems.count) {
+        self.subheadToolbar.items = _hiddenToolbarItems;
+        [_hiddenToolbarItems release];
+        _hiddenToolbarItems = nil;
+    }
+    DLog(@"toolbar items: %@", self.subheadToolbar.items);
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(facebookDidLogout:)
                                                  name:FacebookDidLogoutNotification
@@ -101,8 +123,15 @@
 
 - (void)facebookDidLogout:(NSNotification *)aNotification
 {
-    facebookUserLoggedIn = NO;
     [self showLoginViewAnimated:YES];
+
+    if (self.subheadToolbar.items.count) {
+        [_hiddenToolbarItems release];
+        _hiddenToolbarItems = [self.subheadToolbar.items copy];
+        self.subheadToolbar.items = nil;
+    }
+    DLog(@"toolbar items: %@", self.subheadToolbar.items);
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(facebookDidLogin:)
                                                  name:FacebookDidLoginNotification
@@ -111,48 +140,40 @@
 
 #pragma mark - View lifecycle
 
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    
+    [_filterControl addTarget:self action:@selector(filterValueChanged:) forControlEvents:UIControlEventValueChanged];
+    _filterControl.tabFont = [UIFont boldSystemFontOfSize:13];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
-    // Set up toolbar background.
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        UIImageView *backgroundView = 
-        [[UIImageView alloc] initWithImage:
-         [UIImage imageNamed:@"common/subheadbar_background"]];
-        [self.subheadToolbar addSubview:backgroundView];
-        [self.subheadToolbar sendSubviewToBack:backgroundView];
-        [backgroundView release];
-        
-    // Set up segmented control images.
-//    [_filterControl 
-//     setImage:[UIImage imageNamed:@"common/toolbar-segmented-left"] 
-//     forSegmentAtIndex:kAllMediaObjectsSegment];
-//    [_filterControl 
-//     setImage:[UIImage imageNamed:@"common/toolbar-segmented-middle"] 
-//     forSegmentAtIndex:kMyUploadsSegment];
-//    [_filterControl 
-//     setImage:[UIImage imageNamed:@"common/toolbar-segmented-right"] 
-//     forSegmentAtIndex:kBookmarksSegment];
-    }
-    
-    if (facebookUserLoggedIn) {
-        [self hideLoginViewAnimated:NO];
-    }
     _loginHintLabel.text = NSLocalizedString(@"Photos and videos are posted to the Facebook group page for each class. To view and comment on them, you must sign into Facebook, and you must be a member of the class Facebook group.", nil);
     [_loginButton setTitle:@"Sign in to Facebook" forState:UIControlStateNormal];
-    
+    UIImage *image = [[UIImage imageWithPathName:@"common/red-button.png"] stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+    [_loginButton setBackgroundImage:image forState:UIControlStateNormal];
+
+    if ([[KGOSocialMediaController facebookService] isSignedIn]) {
+        [self facebookDidLogin:nil];
+    } else {
+        [self facebookDidLogout:nil];
+    }
+
     [pool release];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    
-    if (![[KGOSocialMediaController facebookService] isSignedIn]) {
-        [self facebookDidLogout:nil];
-    } else {
+- (void)viewWillAppear:(BOOL)animated
+{
+    if ([[KGOSocialMediaController facebookService] isSignedIn]) {
         [self facebookDidLogin:nil];
+    } else {
+        [self facebookDidLogout:nil];
     }
 }
 
