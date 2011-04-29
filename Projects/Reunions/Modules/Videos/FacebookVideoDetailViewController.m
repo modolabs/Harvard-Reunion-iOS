@@ -219,6 +219,10 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     return @"video";
 }
 
+- (BOOL)allowRotationForIPhone {
+    return NO;
+}
+
 #pragma mark UIWebViewDelegate
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
     [self fadeOutLoadingCurtainView];
