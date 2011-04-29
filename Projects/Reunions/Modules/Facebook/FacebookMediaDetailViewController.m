@@ -180,23 +180,16 @@ ToolbarButtonTags;
     [self restoreToolbars:nil];
     [self restorePortraitOrientation];
     
-    if (UIUserInterfaceIdiomPad == UI_USER_INTERFACE_IDIOM()) {
-        // Present comment view in a non-fullscreen dialog.
-        FacebookCommentViewController *vc = 
-        [[FacebookCommentViewController alloc] initWithNibName:
-         @"FacebookCommentViewController" bundle:nil];
-        vc.delegate = self;
-        vc.post = self.post;
-        vc.modalPresentationStyle = UIModalPresentationFormSheet;
-        [self presentModalViewController:vc animated:YES];
-        [vc release];
-    }
-    else {
-        FacebookCommentViewController *vc = [[[FacebookCommentViewController alloc] initWithNibName:@"FacebookCommentViewController" bundle:nil] autorelease];
-        vc.delegate = self;
-        vc.post = self.post;
-        [self.navigationController presentModalViewController:vc animated:YES];
-    }        
+    FacebookCommentViewController *vc = [[[FacebookCommentViewController alloc] initWithNibName:@"FacebookCommentViewController"
+                                                                                         bundle:nil] autorelease];
+    vc.delegate = self;
+    vc.post = self.post;
+    
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+    navC.navigationBar.barStyle = UIBarStyleBlack;
+    navC.modalPresentationStyle = UIModalPresentationFormSheet;
+    
+    [self presentModalViewController:navC animated:YES];
 }
 
 - (IBAction)likeButtonPressed:(UIBarButtonItem *)sender {

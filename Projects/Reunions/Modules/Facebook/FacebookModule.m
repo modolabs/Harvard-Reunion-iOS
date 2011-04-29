@@ -148,9 +148,6 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 - (void)facebookDidLogout:(NSNotification *)aNotification
 {
-    [_gid release];
-    _gid = nil;
-    
     [_latestFeedPosts release];
     _latestFeedPosts = nil;
     
@@ -257,6 +254,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     return [NSArray arrayWithObject:@"FacebookModel"];
 }
 
+// called when kurogo logs in
 - (void)didLogin:(NSNotification *)aNotification
 {
     ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
