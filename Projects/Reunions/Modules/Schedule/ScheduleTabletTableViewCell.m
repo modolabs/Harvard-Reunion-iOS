@@ -282,6 +282,10 @@
     navC.navigationBar.tintColor = [UIColor blackColor];
     [self.parentViewController presentModalViewController:navC animated:YES];
     
+    CGRect frame = navC.view.superview.frame;
+    frame.size.width = NEWNOTE_WIDTH;
+    navC.view.superview.frame = frame;
+    
 }
 
 -(void) saveNotesState {
