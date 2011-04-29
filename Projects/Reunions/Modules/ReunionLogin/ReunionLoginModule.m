@@ -55,26 +55,49 @@
     UILabel *titleLabel = nil;
     UILabel *subtitleLabel = nil;
     
-    CGFloat y = 18; // iphone only
+    if (navStyle == KGONavigationStylePortlet) {
+        CGFloat y = 14; // iphone only
     
-    if (title) {
-        if (navStyle == KGONavigationStylePortlet) {
-            //UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
-            UIFont *font = [UIFont fontWithName:@"Georgia" size:24];
+        if (subtitle) {
+            subtitle = [NSString stringWithFormat:@"%@ Reunion", subtitle, nil];
+            
+            UIFont *font = [UIFont boldSystemFontOfSize:16];
+            subtitleLabel = [UILabel multilineLabelWithText:subtitle font:font width:widget.frame.size.width];
+            subtitleLabel.text = subtitle;
+            CGRect frame = subtitleLabel.frame;
+            frame.origin.x = 3;
+            frame.origin.y = y;
+            subtitleLabel.frame = frame;
+            subtitleLabel.textColor = [UIColor colorWithHexString:@"D3DBE0"];
+        
+            y += subtitleLabel.frame.size.height + 8;
+            
+            [widget addSubview:subtitleLabel];
+        }
+        
+        if (title) {
+            UIFont *font = [UIFont fontWithName:@"Georgia" size:26];
             titleLabel = [UILabel multilineLabelWithText:title font:font width:widget.frame.size.width];
-            titleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-            titleLabel.layer.shadowOffset = CGSizeMake(0, 1);
-            titleLabel.layer.shadowOpacity = 0.75;
-            titleLabel.layer.shadowRadius = 1;
             CGRect frame = titleLabel.frame;
             frame.origin.x = 3;
             frame.origin.y = y;
             titleLabel.frame = frame;
+            titleLabel.text = title;
+            titleLabel.font = font;
+            titleLabel.backgroundColor = [UIColor clearColor];
             titleLabel.textColor = [UIColor whiteColor];
+            titleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+            titleLabel.layer.shadowOffset = CGSizeMake(0, 1);
+            titleLabel.layer.shadowOpacity = 0.75;
+            titleLabel.layer.shadowRadius = 1;
             
-            y += titleLabel.frame.size.height + 6;
+            y += titleLabel.frame.size.height + 10;
             
-        } else {
+            [widget addSubview:titleLabel];
+        }
+        
+    } else {
+        if (title) {
             UIFont *font = [UIFont boldSystemFontOfSize:IPAD_CURRENTUSER_FONT];
             CGSize size = [title sizeWithFont:font];
             CGRect frame = CGRectMake(0, 0, size.width, size.height);
@@ -84,45 +107,27 @@
             titleLabel.font = font;
             titleLabel.textColor = [UIColor whiteColor];
             
-            CGFloat width = titleLabel.frame.size.width;
-            if (subtitleLabel) {
-                width += subtitleLabel.frame.size.width;
-                CGRect titleFrame = titleLabel.frame;
-                titleFrame.origin.x += subtitleLabel.frame.size.width;
-                titleLabel.frame = titleFrame;
-            }
+            [widget addSubview:titleLabel];
         }
         
-        [widget addSubview:titleLabel];
-    }
-    
-    if (subtitle) {
-        UIFont *font;
-        CGRect frame;
-        if (navStyle == KGONavigationStylePortlet) {
-            font = [UIFont systemFontOfSize:17];
-            CGSize size = [subtitle sizeWithFont:font constrainedToSize:widget.frame.size];
-            frame = CGRectMake(3, y, size.width, size.height);
-        } else {
+        if (subtitle) {
             subtitle = [NSString stringWithFormat:@"%@ : ", subtitle];
-            font = [UIFont boldSystemFontOfSize:IPAD_CURRENTUSER_FONT];
+            UIFont *font = [UIFont boldSystemFontOfSize:IPAD_CURRENTUSER_FONT];
             CGSize size = [subtitle sizeWithFont:font];
-            frame = CGRectMake(0, 0, size.width, size.height);
+            CGRect frame = CGRectMake(0, 0, size.width, size.height);
+            subtitleLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
+            subtitleLabel.text = subtitle;
+            
+            subtitleLabel.font = font;
+            subtitleLabel.backgroundColor = [UIColor clearColor];
+            subtitleLabel.textColor = [UIColor whiteColor];
+            subtitleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+            subtitleLabel.layer.shadowOffset = CGSizeMake(0, 1);
+            subtitleLabel.layer.shadowOpacity = 0.75;
+            subtitleLabel.layer.shadowRadius = 1;
+
+            [widget addSubview:subtitleLabel];
         }
-        
-        subtitleLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
-        subtitleLabel.font = font;
-        subtitleLabel.backgroundColor = [UIColor clearColor];
-        subtitleLabel.textColor = [UIColor whiteColor];
-        subtitleLabel.text = subtitle;
-        subtitleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-        subtitleLabel.layer.shadowOffset = CGSizeMake(0, 1);
-        subtitleLabel.layer.shadowOpacity = 0.75;
-        subtitleLabel.layer.shadowRadius = 1;
-        
-        y += subtitleLabel.frame.size.height + 10;
-        
-        [widget addSubview:subtitleLabel];
     }
     
     if (navStyle == KGONavigationStyleTabletSidebar) {
