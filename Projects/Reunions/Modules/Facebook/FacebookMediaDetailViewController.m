@@ -480,11 +480,14 @@ ToolbarButtonTags;
         navigationBarFrame.size.height = 44.0f;
         self.navigationController.navigationBar.frame = navigationBarFrame;
         
-        // reset tableview to propersize
-        CGRect tableViewFrame = self.tableView.frame;
-        tableViewFrame.origin = CGPointZero;
-        tableViewFrame.size.height = window.frame.size.height - actionToolbarRoot.frame.size.height - navigationBarFrame.size.height;
-        self.tableView.frame = tableViewFrame;
+        // reset tableview to propersize        
+        if([self hideToolbarsInLandscape]) {
+            CGFloat statusBarHeight = 20.0f;
+            CGRect tableViewFrame = self.tableView.frame;
+            tableViewFrame.origin = CGPointZero;
+            tableViewFrame.size.height = window.frame.size.height - actionToolbarRoot.frame.size.height - statusBarHeight;
+            self.tableView.frame = tableViewFrame;
+        }
         _mediaView.fixedPreviewHeight = 0;
     }
 }
