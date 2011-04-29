@@ -351,6 +351,7 @@
             if (!subtitleLabel) {
                 subtitleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(x, y, width, subtitleFont.lineHeight)] autorelease];
                 subtitleLabel.font = subtitleFont;
+                subtitleLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyNavListSubtitle];
                 subtitleLabel.backgroundColor = [UIColor clearColor];
                 subtitleLabel.numberOfLines = 10;
                 subtitleLabel.lineBreakMode = UILineBreakModeTailTruncation;
