@@ -93,7 +93,10 @@
         NSArray *categories = nil;
         if (self.parentCategory == nil) {
             NSPredicate *pred = [NSPredicate predicateWithFormat:@"parentCategory = nil"];
-            categories = [[CoreDataManager sharedManager] objectsForEntity:self.categoryEntityName matchingPredicate:pred];
+            NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"sortOrder" ascending:YES];
+            categories = [[CoreDataManager sharedManager] objectsForEntity:self.categoryEntityName 
+                                                         matchingPredicate:pred
+                                                           sortDescriptors:[NSArray arrayWithObject:sort]];
 
         } else {
             categories = [self.parentCategory children];
