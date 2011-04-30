@@ -107,6 +107,8 @@
 			<string>foursquare</string>
 		</dict>
 		<dict>
+			<key>longName</key>
+			<string>Settings</string>
 			<key>class</key>
 			<string>SettingsModule</string>
 			<key>hidden</key>
