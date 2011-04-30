@@ -2,7 +2,6 @@
 #import "FacebookModel.h"
 #import "UIKit+KGOAdditions.h"
 #import "CoreDataManager.h"
-#import "MediaPlayer/MediaPlayer.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "FacebookModule.h"
 
@@ -42,6 +41,7 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
 @synthesize webView;
 //@synthesize curtainView;
 @synthesize loadingCurtainImage;
+@synthesize player;
 
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -55,6 +55,7 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
 
 - (void)dealloc {
     self.webView.delegate = nil;
+    self.player = nil;
     [loadingCurtainImage release];
     [webView release];
     [video release];
@@ -88,8 +89,8 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     NSString *src = self.video.src;
     if ([src rangeOfString:@"fbcdn.net"].location != NSNotFound) {
         NSURL *url = [NSURL URLWithString:src];
-        MPMoviePlayerController *player = 
-        [[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
+        self.player = 
+        [[MPMoviePlayerController alloc] initWithContentURL:url];
         player.shouldAutoplay = NO;
         [self.mediaView setPreviewView:player.view];
         [self.mediaView setPreviewSize:CGSizeMake(10, 10)];
