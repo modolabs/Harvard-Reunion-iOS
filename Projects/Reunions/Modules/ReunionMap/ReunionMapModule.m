@@ -4,6 +4,8 @@
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "MapHomeViewController.h"
 
+NSString * const EventMapCategoryName = @"event"; // this is what the mobile web gives us
+
 @implementation ReunionMapModule
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {

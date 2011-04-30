@@ -20,7 +20,7 @@
 
 + (NSString * ) dateToDisplay: (NSDate *) date {
     
-    NSDateFormatter *format = [[NSDateFormatter alloc] init];
+    NSDateFormatter *format = [[[NSDateFormatter alloc] init] autorelease];
     [format setDateFormat:@"MM/dd/yyyy"];
     
     NSString * dayMonthYearString = [format stringFromDate:date];

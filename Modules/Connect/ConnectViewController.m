@@ -208,9 +208,9 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     self.statusLabel = 
     [[[UILabel alloc] initWithFrame:
       CGRectMake(kConnectViewSubviewMargin, 
-                 12, 
+                 0, 
                  viewWidth - 2 * kConnectViewSubviewMargin, 
-                 80)] 
+                 75)] 
      autorelease];
     self.statusLabel.textAlignment = UITextAlignmentCenter;
     self.statusLabel.tag = kBumpStatusLabel;
@@ -236,14 +236,14 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     
     self.demoImageView = [[[UIImageView alloc] initWithImage:[UIImage imageWithPathName:@"modules/bump/bumping"]] autorelease];
     [backgroundView addSubview:self.demoImageView];
-    self.demoImageView.center = backgroundView.center;
+    self.demoImageView.center = CGPointMake(backgroundView.center.x, backgroundView.center.y - 50);
     self.demoImageView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
     self.demoImageView.hidden = YES;
     
     self.messageLabel = 
     [[[UILabel alloc] initWithFrame:
       CGRectMake(kConnectViewSubviewMargin, 
-                 backgroundView.frame.size.height - 120, 
+                 backgroundView.frame.size.height - 150, 
                  viewWidth - 2 * kConnectViewSubviewMargin, 
                  80)] autorelease];    
     self.messageLabel.tag = kBumpMessageLabel;

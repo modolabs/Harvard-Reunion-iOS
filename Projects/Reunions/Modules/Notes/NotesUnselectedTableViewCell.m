@@ -126,7 +126,7 @@
         //UIImage *image = nil;
         
         if (nil != detailsView) {
-            frame = detailsView.frame;
+            //frame = detailsView.frame;
             [self addSubview:detailsView];
 
         }

@@ -94,6 +94,11 @@
     }
 }
 
+- (CGFloat)headerWidthWithButtons
+{
+    return self.frame.size.width - 70;
+}
+
 - (void)hideBookmarkButton
 {
     if (_bookmarkButton) {

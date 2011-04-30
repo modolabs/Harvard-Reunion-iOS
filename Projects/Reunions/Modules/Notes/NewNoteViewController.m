@@ -63,7 +63,9 @@
     
     UIFont *fontTitle = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
     CGSize titleSize = [self.titleText sizeWithFont:fontTitle];
-    UILabel * titleTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 5,  self.width- 130, titleSize.height + 5.0)];
+    UILabel * titleTextLabel = [[[UILabel alloc] initWithFrame:CGRectMake(5, 5,
+                                                                          self.width - 130,
+                                                                          titleSize.height + 5.0)] autorelease];
     titleTextLabel.text = self.titleText;
     titleTextLabel.font = fontTitle;
     titleTextLabel.textColor = [UIColor blackColor];
@@ -71,7 +73,10 @@
     
     UIFont *fontDetail = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentSubtitle];
     CGSize detailSize = [self.dateText sizeWithFont:fontTitle];
-    UILabel * detailTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, titleTextLabel.frame.size.height + 10, self.width - 130, detailSize.height + 5.0)];
+    UILabel * detailTextLabel = [[[UILabel alloc] initWithFrame:CGRectMake(5,
+                                                                           titleTextLabel.frame.size.height + 10,
+                                                                           self.width - 130,
+                                                                           detailSize.height + 5.0)] autorelease];
     detailTextLabel.text = self.dateText;
     detailTextLabel.font = fontDetail;
     detailTextLabel.textColor = [UIColor blackColor];
@@ -84,7 +89,7 @@
     CGFloat buttonX = self.width - deleteButtonImage.size.width - shareButtonImage.size.width - printButtonImage.size.width - 20;
     CGFloat buttonY = 5;
     
-    printButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+    printButton = [UIButton buttonWithType:UIButtonTypeCustom];
     printButton.frame = CGRectMake(buttonX, buttonY, printButtonImage.size.width, printButtonImage.size.height);
     [printButton setImage:printButtonImage forState:UIControlStateNormal];
     [printButton setImage:[UIImage imageWithPathName:@"common/unread-message.png"] forState:UIControlStateHighlighted];
@@ -93,7 +98,7 @@
     
     buttonX += printButtonImage.size.width + 5;
     
-    UIButton * shareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+    UIButton * shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
     shareButton.frame = CGRectMake(buttonX, buttonY, shareButtonImage.size.width, shareButtonImage.size.height);
     [shareButton setImage:shareButtonImage forState:UIControlStateNormal];
     [shareButton setImage:[UIImage imageWithPathName:@"common/share_pressed.png"] forState:UIControlStateHighlighted];
@@ -103,7 +108,7 @@
     
     buttonX += shareButtonImage.size.width + 5;
     
-    UIButton * deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+    UIButton * deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
     deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
     [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
     [deleteButton setImage:[UIImage imageWithPathName:@"common/subheadbar_button.png"] forState:UIControlStateHighlighted];

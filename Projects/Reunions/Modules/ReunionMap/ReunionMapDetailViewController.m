@@ -3,7 +3,13 @@
 #import "KGOTheme.h"
 #import "KGOHTMLTemplate.h"
 #import "ScheduleEventWrapper.h"
+#import "KGOMapCategory.h"
+#import "ReunionMapModule.h"
+#import "KGOEvent.h"
 #import <MapKit/MKAnnotation.h>
+#import "Foundation+KGOAdditions.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
+#import "CoreDataManager.h"
 
 @implementation ReunionMapDetailViewController
 
@@ -21,8 +27,17 @@
 
 - (void)dealloc
 {
+    if (_placemarkInfoRequest) {
+        [_placemarkInfoRequest cancel];
+    }
+
     [_webView release];
     [_thumbView release];
+    [_htmlTemplate release];
+    [_placemarkInfo release];
+    
+    self.annotation = nil;
+    self.pager = nil;
     
     [super dealloc];
 }
@@ -39,6 +54,28 @@
 
 - (void)loadAnnotationContent
 {
+    if (_placemarkInfoRequest) {
+        [_placemarkInfoRequest cancel];
+        _placemarkInfoRequest = nil;
+    }
+    
+    [_placemarkInfo release];
+    _placemarkInfo = nil;
+    [_image release];
+    _image = nil;
+    [_imageURL release];
+    _imageURL = nil;
+    
+    if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
+        KGOPlacemark *placemark = (KGOPlacemark *)self.annotation;
+        if ([placemark.category.identifier isEqualToString:EventMapCategoryName]) {
+            KGOEvent *storedEvent = [KGOEvent eventWithID:placemark.identifier];
+            if (storedEvent) {
+                self.annotation = [[ScheduleEventWrapper alloc] initWithKGOEvent:storedEvent];
+            }
+        }
+    }
+    
     // set up webview
     
     CGRect webViewFrame = CGRectMake(10, 10, self.tableView.frame.size.width - 40, 1);
@@ -49,48 +86,59 @@
         _webView.frame = webViewFrame;
     }
     
-    NSString *info = nil;
     if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
-        info = [(KGOPlacemark *)self.annotation info];
+        KGOPlacemark *placemark = (KGOPlacemark *)self.annotation;
+        _placemarkInfo = [placemark.info copy];
+        _imageURL = [placemark.photoURL copy];
+        _image = [[UIImage imageWithData:placemark.photo] retain];
         
-    } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]]
-               && [(ScheduleEventWrapper *)self.annotation placemarkID]
-               ) {
-        info = [NSString stringWithFormat:@"Building Number: %@", [(ScheduleEventWrapper *)self.annotation placemarkID]];
+    } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]]) {
+        NSString *placemarkID = [(ScheduleEventWrapper *)self.annotation placemarkID];
+        if (placemarkID) {
+            NSPredicate *pred = [NSPredicate predicateWithFormat:@"identifier = %@", placemarkID];
+            NSArray *matches = [[CoreDataManager sharedManager] objectsForEntity:KGOPlacemarkEntityName matchingPredicate:pred];
+            if (matches.count) {
+                KGOPlacemark *placemark = [matches objectAtIndex:0];
+                _placemarkInfo = [placemark.info copy];
+                _imageURL = [placemark.photoURL copy];
+                _image = [[UIImage imageWithData:placemark.photo] retain];
+                
+            } else {            
+                NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:placemarkID, @"q", nil];
+                _placemarkInfoRequest = [[KGORequestManager sharedManager] requestWithDelegate:self
+                                                                                        module:@"map"
+                                                                                          path:@"search"
+                                                                                        params:params];
+                [_placemarkInfoRequest connect];
+            }
+        }
     }
     
-    NSDictionary *replacements = [NSDictionary dictionaryWithObjectsAndKeys:info, @"BODY", nil];
-    NSString *string = [_htmlTemplate stringWithReplacements:replacements];
-    [_webView loadHTMLString:string baseURL:nil];
+    if (_placemarkInfo) {
+        NSDictionary *replacements = [NSDictionary dictionaryWithObjectsAndKeys:_placemarkInfo, @"BODY", nil];
+        NSString *string = [_htmlTemplate stringWithReplacements:replacements];
+        [_webView loadHTMLString:string baseURL:nil];
+    }
     
     // set up photo
     
-    UIImage *image = nil;
-    NSString *imageURL = nil;
-    if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
-        image = [UIImage imageWithData:[(KGOPlacemark *)self.annotation photo]];
-        imageURL = [(KGOPlacemark *)self.annotation photoURL];
-    } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]]) {
-        
-    }
-    
-    if (image || imageURL) {
+    if (_image || _imageURL) {
         if (!_thumbView) {
             _thumbView = [[MITThumbnailView alloc] initWithFrame:CGRectMake(10, 10, 1, 1)];
             _thumbView.delegate = self;
         }
         
-        if (image) {
+        if (_image) {
             CGFloat maxWidth = self.tableView.frame.size.width - 40;
-            CGFloat ratio = maxWidth / image.size.width;
+            CGFloat ratio = maxWidth / _image.size.width;
             CGRect frame = _thumbView.frame;
-            frame.size = CGSizeMake(floor(ratio * image.size.width), floor(ratio * image.size.height));
+            frame.size = CGSizeMake(floor(ratio * _image.size.width), floor(ratio * _image.size.height));
             _thumbView.frame = frame;
-            _thumbView.imageData = UIImagePNGRepresentation(image);
+            _thumbView.imageData = UIImagePNGRepresentation(_image);
             [_thumbView displayImage];
             
         } else {
-            _thumbView.imageURL = imageURL;
+            _thumbView.imageURL = _imageURL;
             _thumbView.imageData = nil;
             [_thumbView loadImage];
         }
@@ -136,7 +184,7 @@
     }
     
     if (!_headerView) {
-        _headerView = [[ReunionDetailPageHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 1)];
+        _headerView = [[ReunionMapDetailHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 1)];
         _headerView.delegate = self;
         _headerView.showsBookmarkButton = YES;
     }
@@ -186,6 +234,9 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
+    if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]] && _placemarkInfo) {
+        return 3;
+    }
     return 2;
 }
 
@@ -197,7 +248,9 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat height = tableView.rowHeight;
-    if (indexPath.section == 1) {
+    if ((indexPath.section == 1 && [self.annotation isKindOfClass:[KGOPlacemark class]])
+        || indexPath.section == 2
+    ) {
         height = _webView.frame.size.height + 20;
         if (_thumbView) {
             height += _thumbView.frame.size.height + 10;
@@ -215,31 +268,33 @@
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier] autorelease];
     }
     
-    switch (indexPath.section) {
-        case 0:
-            cell.textLabel.text = @"View Location in Google Maps";
-            cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:KGOAccessoryTypeExternal];
-            break;
-        case 1:
-        {
-            if (![_webView isDescendantOfView:cell.contentView]) {
-                [cell.contentView addSubview:_webView];
+    if (indexPath.section == 0 && [self.annotation isKindOfClass:[ScheduleEventWrapper class]]) {
+        cell.textLabel.text = @"More event info";
+        cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:KGOAccessoryTypeChevron];
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
+        
+    } else if (indexPath.section == 0 || (indexPath.section == 1 && [self.annotation isKindOfClass:[ScheduleEventWrapper class]])) {
+        cell.textLabel.text = @"View Location in Google Maps";
+        cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:KGOAccessoryTypeExternal];
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
+        
+    } else {
+        if (![_webView isDescendantOfView:cell.contentView]) {
+            [cell.contentView addSubview:_webView];
+        }
+        
+        if (_thumbView) {
+            if (![_thumbView isDescendantOfView:cell.contentView]) {
+                [cell.contentView addSubview:_thumbView];
             }
             
-            if (_thumbView) {
-                if (![_thumbView isDescendantOfView:cell.contentView]) {
-                    [cell.contentView addSubview:_thumbView];
-                }
-                
-                CGFloat y = _thumbView.frame.origin.y + _thumbView.frame.size.height;
-                if (y > 11) {
-                    _webView.frame = CGRectMake(10, y + 10, _webView.frame.size.width, _webView.frame.size.height);
-                }
+            CGFloat y = _thumbView.frame.origin.y + _thumbView.frame.size.height;
+            if (y > 11) {
+                _webView.frame = CGRectMake(10, y + 10, _webView.frame.size.width, _webView.frame.size.height);
             }
-            break;
         }
-        default:
-            break;
+
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     
     return cell;
@@ -251,19 +306,39 @@
 {
     NSString *search = nil;
     
-    if (self.annotation.coordinate.latitude || self.annotation.coordinate.longitude) {
-        search = [NSString stringWithFormat:@"%.5f,%.5f", self.annotation.coordinate.latitude, self.annotation.coordinate.longitude];
-    } else if ([self.annotation isKindOfClass:[KGOPlacemark class]] && [(KGOPlacemark *)self.annotation street]) {
-        search = [(KGOPlacemark *)self.annotation street];
-    } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)self.annotation location]) {
-        search = [(ScheduleEventWrapper *)self.annotation location];
-    }
-    
-    NSString *urlString = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%@", [search stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-
-    NSURL *url = [NSURL URLWithString:urlString];
-    if ([[UIApplication sharedApplication] canOpenURL:url]) {
-        [[UIApplication sharedApplication] openURL:url];
+    if (indexPath.section == 0 && [self.annotation isKindOfClass:[ScheduleEventWrapper class]]) {
+        // more info
+        NSIndexPath *currentIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        NSString *sectionID = @"aSectionID"; // usually this is date strings
+        NSArray *events = [NSArray arrayWithObject:self.annotation];
+        NSDictionary *eventsBySection = [NSDictionary dictionaryWithObject:events forKey:sectionID];
+        NSArray *sections = [NSArray arrayWithObject:sectionID];
+        
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                currentIndexPath, @"currentIndexPath",
+                                eventsBySection, @"eventsBySection",
+                                sections, @"sections",
+                                nil];
+        [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail forModuleTag:@"schedule" params:params];
+        
+        
+    } else if (indexPath.section == 0 || (indexPath.section == 1 && [self.annotation isKindOfClass:[ScheduleEventWrapper class]])) {
+        // google maps
+        
+        if (self.annotation.coordinate.latitude || self.annotation.coordinate.longitude) {
+            search = [NSString stringWithFormat:@"%.5f,%.5f", self.annotation.coordinate.latitude, self.annotation.coordinate.longitude];
+        } else if ([self.annotation isKindOfClass:[KGOPlacemark class]] && [(KGOPlacemark *)self.annotation street]) {
+            search = [(KGOPlacemark *)self.annotation street];
+        } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]] && [(ScheduleEventWrapper *)self.annotation location]) {
+            search = [(ScheduleEventWrapper *)self.annotation location];
+        }
+        
+        NSString *urlString = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%@", [search stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        
+        NSURL *url = [NSURL URLWithString:urlString];
+        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+            [[UIApplication sharedApplication] openURL:url];
+        }
     }
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -304,6 +379,28 @@
         }
         
     }
+}
+
+#pragma mark KGORequestDelegate
+
+- (void)request:(KGORequest *)request didReceiveResult:(id)result
+{
+    NSArray *results = [result arrayForKey:@"results"];
+    for (NSDictionary *aDictionary in results) {
+        NSString *identifer = [aDictionary stringForKey:@"id" nilIfEmpty:YES];
+        if ([identifer isEqualToString:self.annotation.identifier]) {
+            KGOPlacemark *placemark = [KGOPlacemark placemarkWithDictionary:aDictionary];
+            NSLog(@"i am a placemark: %@", placemark);
+            _placemarkInfo = [placemark.info copy];
+            _imageURL = [placemark.photoURL copy];
+            [self.tableView reloadData];
+        }
+    }
+}
+
+- (void)requestWillTerminate:(KGORequest *)request
+{
+    _placemarkInfoRequest = nil;
 }
 
 @end

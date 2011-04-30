@@ -170,13 +170,13 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 - (void)didReceiveGroups:(id)result {
     _requestingGroups = NO;
     NSArray *data = [result arrayForKey:@"data"];
-    BOOL foundGroup = NO;
+    //BOOL foundGroup = NO;
     DLog(@"%@", data);
     
     for (id aGroup in data) {
         // TODO: get group names from server
         if ([[aGroup objectForKey:@"id"] isEqualToString:_gid]) {
-            foundGroup = YES;
+            //foundGroup = YES;
             [[NSUserDefaults standardUserDefaults] setObject:_gid forKey:FacebookGroupIsMemberKey];
             [[NSUserDefaults standardUserDefaults] synchronize];
             

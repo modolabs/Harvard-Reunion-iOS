@@ -360,7 +360,6 @@
         static NSString *CellIdentifier = @"CellNotesSelected";
         
         NotesUnselectedTableViewCell *cell = (NotesUnselectedTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-        cell = nil;
         if (cell == nil) {
             cell = [[[NotesUnselectedTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
         }
@@ -387,7 +386,6 @@
         static NSString *CellIdentifier = @"CellNotes";
         
         NotesUnselectedTableViewCell *cell = (NotesUnselectedTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-        cell = nil;
         if (cell == nil) {
             cell = [[[NotesUnselectedTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
         }
