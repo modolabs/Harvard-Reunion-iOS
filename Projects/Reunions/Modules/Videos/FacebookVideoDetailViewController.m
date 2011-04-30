@@ -90,7 +90,7 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     if ([src rangeOfString:@"fbcdn.net"].location != NSNotFound) {
         NSURL *url = [NSURL URLWithString:src];
         self.player = 
-        [[MPMoviePlayerController alloc] initWithContentURL:url];
+        [[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
         player.shouldAutoplay = NO;
         [self.mediaView setPreviewView:player.view];
         [self.mediaView setPreviewSize:CGSizeMake(10, 10)];
