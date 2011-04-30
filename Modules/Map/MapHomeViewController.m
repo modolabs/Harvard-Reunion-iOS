@@ -145,6 +145,11 @@
 
 
 - (void)dealloc {
+    if (_placemarkInfoRequest) {
+        [_placemarkInfoRequest cancel];
+    }
+    
+    [_pendingPlacemark release];
     _mapView.delegate = nil;
     [_annotations release];
 	[_searchController release];
@@ -159,12 +164,54 @@
 - (void)setAnnotations:(NSArray *)annotations {
     [_annotations release];
     _annotations = [annotations retain];
+    
+    if (_annotations.count == 1) {
+        id<MKAnnotation> annotation = [_annotations lastObject];
+        if ([annotation isKindOfClass:[KGOPlacemark class]] && !annotation.coordinate.latitude && !annotation.coordinate.longitude) {
+            [_pendingPlacemark release];
+            _pendingPlacemark = [annotation retain];
+            
+            // TODO: server needs a detail API
+            NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[_pendingPlacemark identifier], @"q", nil];
+            _placemarkInfoRequest = [[KGORequestManager sharedManager] requestWithDelegate:self
+                                                                                    module:self.mapModule.tag
+                                                                                      path:@"search"
+                                                                                    params:params];
+            [_placemarkInfoRequest connect];
+            return;
+        }
+    }
 
     if (_mapView) {
         [_mapView removeAnnotations:_mapView.annotations];
         if (_annotations) {
             [_mapView addAnnotations:_annotations];
         }
+    }
+}
+
+#pragma mark KGORequest
+
+- (void)requestWillTerminate:(KGORequest *)request
+{
+    _placemarkInfoRequest = nil;
+}
+
+- (void)request:(KGORequest *)request didReceiveResult:(id)result
+{
+    if (_pendingPlacemark) {
+        NSArray *results = [result arrayForKey:@"results"];
+        if (results.count) {
+            // TODO: find a way to filter results
+            NSDictionary *dictionary = [results objectAtIndex:0];
+            [_pendingPlacemark updateWithDictionary:dictionary];
+            DLog(@"%@", _pendingPlacemark);
+            [_mapView removeAnnotation:_pendingPlacemark];
+            [_mapView addAnnotation:_pendingPlacemark];
+        }
+        
+        [_pendingPlacemark release];
+        _pendingPlacemark = nil;
     }
 }
 
@@ -192,7 +239,7 @@
 - (IBAction)browseButtonPressed {
 	KGOCategoryListViewController *categoryVC = [[[KGOCategoryListViewController alloc] init] autorelease];
     categoryVC.categoryEntityName = MapCategoryEntityName;
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"parentCategory = nil"];
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"parentCategory = nil AND browsable = YES"];
     NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"sortOrder" ascending:YES]];
     categoryVC.categories = [[CoreDataManager sharedManager] objectsForEntity:MapCategoryEntityName matchingPredicate:pred sortDescriptors:sortDescriptors];
     categoryVC.categoriesRequest = [self.mapModule subcategoriesRequestForCategory:nil delegate:categoryVC];
@@ -267,7 +314,7 @@
     
     // TODO: remove this thing about NSUserDefaults if we aren't actually
     // going to use it
-    CLLocation *location;
+    CLLocation *location = nil;
     NSDictionary *locationPreferences = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"Location"];
     if (!locationPreferences) {    
         KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
@@ -280,7 +327,7 @@
         if (parts.count == 2) {
             NSString *lat = [parts objectAtIndex:0];
             NSString *lon = [parts objectAtIndex:1];
-            location = [[CLLocation alloc] initWithLatitude:[lat floatValue] longitude:[lon floatValue]];
+            location = [[[CLLocation alloc] initWithLatitude:[lat floatValue] longitude:[lon floatValue]] autorelease];
         }
     }
 
@@ -292,6 +339,15 @@
         _didCenter = YES;
     } else {
         DLog(@"distance %.1f is out of bounds", [_userLocation distanceFromLocation:location]);
+        
+        NSString *message = NSLocalizedString(@"Cannot show your location because you are too far away", @"map home screen geo button");
+        UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
+                                                             message:message
+                                                            delegate:nil
+                                                   cancelButtonTitle:@"OK"
+                                                   otherButtonTitles:nil] autorelease];
+        [alertView show];
+        
         _locateUserButton.enabled = NO;
     }
 }
@@ -300,6 +356,9 @@
 {
     if (status == kCLAuthorizationStatusRestricted || status == kCLAuthorizationStatusDenied) {
         _locateUserButton.enabled = NO;
+        [_locationManager release];
+        _locationManager = nil;
+
         _mapView.showsUserLocation = NO;
     } else {
         _locateUserButton.enabled = YES;
@@ -311,6 +370,9 @@
     DLog(@"location update failed: %@", [error description]);
     if ([error code] == kCLErrorDenied) {
         [_locationManager stopUpdatingLocation];
+        [_locationManager release];
+        _locationManager = nil;
+
         _locateUserButton.enabled = NO;
         _mapView.showsUserLocation = NO;
     }    
@@ -320,6 +382,10 @@
 {
     [_userLocation release];
     _userLocation = [newLocation retain];
+    
+    [_locationManager stopUpdatingHeading];
+    [_locationManager release];
+    _locationManager = nil;
     
     [self showUserLocationIfInRange];
 }

@@ -556,10 +556,10 @@ webpages = _webpages;
         NSDictionary *addressDict = [aDict dictionaryForKey:@"value"];
         if (addressDict) {
             NSMutableDictionary *convertedAddressDict = [NSMutableDictionary dictionary];
-            for (NSString *label in [valueMap allKeys]) {
-                NSString *value = [addressDict stringForKey:label nilIfEmpty:YES];
+            for (NSString *aLabel in [valueMap allKeys]) {
+                NSString *value = [addressDict stringForKey:aLabel nilIfEmpty:YES];
                 if (value) {
-                    [convertedAddressDict setObject:value forKey:[valueMap objectForKey:label]];
+                    [convertedAddressDict setObject:value forKey:[valueMap objectForKey:aLabel]];
                 }
             }
             if (convertedAddressDict.count) {
@@ -614,8 +614,8 @@ webpages = _webpages;
 
     ABMutableMultiValueRef multi = ABMultiValueCreateMutable(kABMultiStringPropertyType);
     for (NSDictionary *aDict in values) {
-        NSString *label = [aDict objectForKey:@"label"];
-        label = (NSString *)kABOtherLabel;
+        //NSString *label = [aDict objectForKey:@"label"];
+        NSString *label = (NSString *)kABOtherLabel;
         id value = [aDict objectForKey:@"value"];
         if ([value isKindOfClass:expectedClass]) {
             ABMultiValueAddValueAndLabel(multi, (CFTypeRef)value, (CFStringRef)label, NULL);
