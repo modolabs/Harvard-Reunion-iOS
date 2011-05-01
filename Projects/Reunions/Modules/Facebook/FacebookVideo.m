@@ -3,6 +3,7 @@
 #import "CoreDataManager.h"
 #import "FacebookUser.h"
 #import "FacebookComment.h"
+#import "FacebookModule.h"
 
 NSString * const FacebookVideoEntityName = @"FacebookVideo";
 
@@ -61,6 +62,17 @@ NSString * const FacebookVideoEntityName = @"FacebookVideo";
                 FacebookComment *aComment = [FacebookComment commentWithDictionary:commentDict];
                 aComment.parent = video;
             }
+        }
+        
+        // logic to parse the date copied from FacebookPhoto.m
+        // TODO: decide if we're using created_time (created) or updated_time (modified)
+        NSString *createdTime = [dictionary stringForKey:@"created_time" nilIfEmpty:YES]; // graph
+        if (!createdTime) {
+            createdTime = [dictionary stringForKey:@"created" nilIfEmpty:YES]; // fql
+        }
+        if (createdTime) {
+            // graph API returns RFC3339 strings
+            video.date = [FacebookModule dateFromRFC3339DateTimeString:createdTime];
         }
     }
     
