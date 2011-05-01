@@ -610,6 +610,16 @@ ToolbarButtonTags;
     
     [_tableView reloadData];
     _tableView.tableHeaderView = _tableView.tableHeaderView;
+    
+    // update the toolbar button status
+    UIButton *likeButton = [self buttonForTag:kToolbarLikeButtonTag];
+    likeButton.selected = [self currentUserLikesThisPost];
+    
+    UIButton *bookmarkButton = [self buttonForTag:kToolbarBookmarkButtonTag];
+    bookmarkButton.selected = 
+    [FacebookModule isMediaObjectWithIDBookmarked:[self identifierForBookmark]
+                                        mediaType:[self mediaTypeForBookmark]];
+
 }
 
 - (NSInteger)numberOfSections:(KGODetailPager *)pager {
