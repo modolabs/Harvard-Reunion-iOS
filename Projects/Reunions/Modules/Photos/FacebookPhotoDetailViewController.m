@@ -150,6 +150,10 @@
     return @"photo";
 }
 
+- (NSString *)mediaTypeHumanReadableName{
+    return @"photo";
+}
+
 - (BOOL)hideToolbarsInLandscape {
     return YES;
 }

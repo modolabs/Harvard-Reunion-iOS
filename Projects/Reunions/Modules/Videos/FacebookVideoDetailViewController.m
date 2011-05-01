@@ -230,6 +230,10 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     return @"video";
 }
 
+- (NSString *)mediaTypeHumanReadableName{
+    return @"video";
+}
+
 - (BOOL)hideToolbarsInLandscape {
     return NO;
 }

@@ -46,6 +46,7 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate, UINavi
 - (IBAction)uploadButtonPressed:(id)sender;
 - (NSString *)identifierForBookmark;
 - (NSString *)mediaTypeForBookmark;
+- (NSString *)mediaTypeHumanReadableName;
 
 - (void)displayPost;
 - (NSString *)postTitle;

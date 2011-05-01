@@ -23,7 +23,9 @@ ToolbarButtonTags;
 
 - (UIButton *)buttonForTag:(NSInteger)tag;
 
-- (void)updateLikeButtonStatus;
+- (BOOL)currentUserLikesThisPost;
+- (NSString *)likeText;
+- (void)updateLikeStatus;
 
 - (void)restoreToolbars:(id)sender;
 - (void)restorePortraitOrientation;
@@ -42,12 +44,55 @@ ToolbarButtonTags;
     return (UIButton *)[buttonParent viewWithTag:tag];
 }
 
-- (void)updateLikeButtonStatus {
+
+- (void)updateLikeStatus {
+   UIButton *likeButton = [self buttonForTag:kToolbarLikeButtonTag];
+    likeButton.selected = [self currentUserLikesThisPost];
+    [self.tableView reloadData];
+}
+
+- (BOOL)currentUserLikesThisPost {
     
     KGOFacebookService *fbService = [[KGOSocialMediaController sharedController] serviceWithType:KGOSocialMediaTypeFacebook];
     if([self.post.likes member:[fbService currentFacebookUser]]) {
-        UIButton *likeButton = [self buttonForTag:kToolbarLikeButtonTag];
-        likeButton.selected = YES;
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (NSString *)likeText {
+    NSInteger likeCount = [self.post.likes count];
+    if (likeCount == 0) {
+        return @"";
+    }
+    
+    NSInteger othersLikeCount;
+    if([self currentUserLikesThisPost]) {
+        othersLikeCount = likeCount - 1;
+    } else {
+        othersLikeCount = likeCount;
+    }
+    
+    NSString *mediaName = [self mediaTypeHumanReadableName];
+    
+    NSString *othersLikeText = nil;
+    if (othersLikeCount == 0) {
+        if([self currentUserLikesThisPost]) {
+            return [NSString stringWithFormat: @"You like this %@", mediaName];
+        }
+    } else if (othersLikeCount == 1) {
+        othersLikeText = [NSString 
+                          stringWithFormat:@"1 person likes this %@", mediaName];
+    } else {
+        othersLikeText = [NSString 
+                          stringWithFormat:@"%i people like this %@", othersLikeCount, mediaName];
+    }
+    
+    if([self currentUserLikesThisPost]) {
+        return [NSString stringWithFormat:@"You and %@", othersLikeText];
+    } else {
+        return othersLikeText;
     }
 }
 
@@ -103,6 +148,7 @@ ToolbarButtonTags;
     [likeButton 
      addTarget:self action:@selector(likeButtonPressed:) 
      forControlEvents:UIControlEventTouchUpInside];
+    likeButton.selected = [self currentUserLikesThisPost];
 
     UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
     commentButton.tag = kToolbarCommentButtonTag;
@@ -170,9 +216,6 @@ ToolbarButtonTags;
      [[[UIBarButtonItem alloc] initWithCustomView:bookmarkButton] autorelease], 
      nil];
     
-    // this has to be called after button attached to 
-    // to view heirarchy
-    [self updateLikeButtonStatus];
     [setupPool release];
 }
 
@@ -216,10 +259,9 @@ ToolbarButtonTags;
         
         KGOFacebookService *fbService = [[KGOSocialMediaController sharedController] serviceWithType:KGOSocialMediaTypeFacebook];
         [self.post addLikesObject:[fbService currentFacebookUser]];
+        [[CoreDataManager sharedManager] saveData];
         
-        // Set the button to the "unlike" state.
-        UIButton *button = [self buttonForTag:kToolbarLikeButtonTag];
-        button.selected = YES;
+        [self updateLikeStatus];
     }
 }
 
@@ -230,9 +272,9 @@ ToolbarButtonTags;
         KGOFacebookService *fbService = [[KGOSocialMediaController sharedController] serviceWithType:KGOSocialMediaTypeFacebook];
         [self.post removeLikesObject:[fbService currentFacebookUser]];
          
-        // Set the button to the "like" state.
-        UIButton *button = [self buttonForTag:kToolbarLikeButtonTag];
-        button.selected = NO;
+        [[CoreDataManager sharedManager] saveData];
+        
+        [self updateLikeStatus];
     }
 }
 
@@ -243,6 +285,11 @@ ToolbarButtonTags;
 
 - (NSString *)mediaTypeForBookmark {
     // Override if implementing bookmarking.
+    return nil;
+}
+
+- (NSString *)mediaTypeHumanReadableName {
+    NSAssert(NO, @"must override method mediaTypeHumanReadableName");
     return nil;
 }
 
@@ -329,7 +376,7 @@ ToolbarButtonTags;
 {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLikeButtonStatus) name:FacebookDidGetSelfInfoNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLikeStatus) name:FacebookDidGetSelfInfoNotification object:nil];
     
     _tableView.rowHeight = 80;
     
@@ -588,10 +635,16 @@ ToolbarButtonTags;
     NSString *text;
     UIFont *titleFont;
     
+    CGFloat likeTextHeight = 0; 
+    
+    UIFont *subtitleFont = [UIFont systemFontOfSize:13];
+    
     if (indexPath.row == 0) {
         text = [self postTitle];
         titleFont = [UIFont boldSystemFontOfSize:15];
-        
+        if([[self likeText] length]) {
+            likeTextHeight = subtitleFont.lineHeight + 4;
+        }
     } else {
         FacebookComment *aComment = [_comments objectAtIndex:indexPath.row-1];
         titleFont = [UIFont systemFontOfSize:15];
@@ -601,15 +654,15 @@ ToolbarButtonTags;
     CGSize size = [text sizeWithFont:titleFont
                    constrainedToSize:CGSizeMake(tableView.frame.size.width - 20, titleFont.lineHeight * 3)];
     
-    UIFont *subtitleFont = [UIFont systemFontOfSize:13];
     
-    return size.height + subtitleFont.lineHeight + 18;
+    return size.height + subtitleFont.lineHeight + 18 + likeTextHeight;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *text;
     NSString *cellIdentifier;
     NSString *subtitle;
+    NSString *likeText = @"";
     UIColor *titleColor;
     UIColor *subtitleColor;
     UIFont *titleFont;
@@ -621,6 +674,7 @@ ToolbarButtonTags;
         subtitleColor = [UIColor colorWithWhite:0.9 alpha:1];
         cellIdentifier = @"owner";
         subtitle = [NSString stringWithFormat:@"Uploaded by %@ %@", self.post.owner.name, [self.post.date agoString]];
+        likeText = [self likeText];
         
     } else {
         FacebookComment *aComment = [_comments objectAtIndex:indexPath.row-1];
@@ -641,6 +695,7 @@ ToolbarButtonTags;
     
     NSInteger commentTag = 80;
     NSInteger authorTag = 81;
+    NSInteger likeTag = 82;
     
     UILabel *commentLabel = (UILabel *)[cell.contentView viewWithTag:commentTag];
     if (!commentLabel) {
@@ -674,10 +729,30 @@ ToolbarButtonTags;
         [cell.contentView addSubview:authorLabel];
     } else {
         CGRect frame = authorLabel.frame;
-        frame.origin.y = 10 + commentFrame.size.height;
+        frame.origin.y = 8 + commentFrame.size.height;
         authorLabel.frame = frame;
     }
     authorLabel.text = subtitle;
+    
+    if(indexPath.row == 0) {
+        UILabel *likeLabel = (UILabel *)[cell.contentView viewWithTag:likeTag];
+        CGRect authorFrame = authorLabel.frame;
+        CGFloat yOrigin = 2 + authorFrame.origin.y + authorFrame.size.height;
+        if(!likeLabel) {
+            UIFont *likeFont = [UIFont systemFontOfSize:13]; // same as author font
+            likeLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, yOrigin, tableView.frame.size.width - 20, likeFont.lineHeight)] autorelease];
+            likeLabel.textColor = subtitleColor;
+            likeLabel.font = likeFont;
+            likeLabel.backgroundColor = [UIColor clearColor];
+            likeLabel.tag = likeTag;
+            [cell.contentView addSubview:likeLabel];
+        } else {
+            CGRect frame = likeLabel.frame;
+            frame.origin.y = yOrigin;
+            likeLabel.frame = frame;
+        }
+        likeLabel.text = likeText;
+    }
     
     if (indexPath.row == 0) {
         cell.backgroundColor = [UIColor colorWithWhite:0.4 alpha:1];
