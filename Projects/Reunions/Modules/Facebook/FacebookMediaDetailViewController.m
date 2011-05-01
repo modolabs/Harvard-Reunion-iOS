@@ -608,8 +608,8 @@ ToolbarButtonTags;
     [_comments release];
     _comments = [[self.post.comments sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] retain];
     
-    [_tableView reloadData];
     _tableView.tableHeaderView = _tableView.tableHeaderView;
+    [_tableView reloadData];
     
     // update the toolbar button status
     UIButton *likeButton = [self buttonForTag:kToolbarLikeButtonTag];

@@ -39,6 +39,7 @@
 
 + (CGFloat)heightForImageSize:(CGSize)size fitToWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight {    
     CGFloat newHeight = size.height *  (width / size.width);
+    newHeight = floorf(newHeight);
     if (newHeight > maxHeight) {
         newHeight = maxHeight;
     }
