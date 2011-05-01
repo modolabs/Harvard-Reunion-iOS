@@ -114,6 +114,12 @@
         }
     }
     
+    [self loadDetailSection];
+}
+
+- (void)loadDetailSection
+{
+    
     if (_placemarkInfo) {
         NSDictionary *replacements = [NSDictionary dictionaryWithObjectsAndKeys:_placemarkInfo, @"BODY", nil];
         NSString *string = [_htmlTemplate stringWithReplacements:replacements];
@@ -393,6 +399,7 @@
             NSLog(@"i am a placemark: %@", placemark);
             _placemarkInfo = [placemark.info copy];
             _imageURL = [placemark.photoURL copy];
+            [self loadDetailSection];
             [self.tableView reloadData];
         }
     }

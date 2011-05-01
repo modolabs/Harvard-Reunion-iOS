@@ -31,4 +31,6 @@ KGORequestDelegate> {
 @property(nonatomic, retain) id<MKAnnotation, KGOSearchResult> annotation;
 @property(nonatomic, retain) KGODetailPager *pager;
 
+- (void)loadDetailSection;
+
 @end

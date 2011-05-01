@@ -47,12 +47,12 @@
     [_bookmarkedItem release];
     _bookmarkedItem = nil;
 }
-
+/*
 - (CGFloat)headerWidthWithButtons
 {
     return self.bounds.size.width - 70;
 }
-
+*/
 - (void)layoutBookmarkButton
 {
     [super layoutBookmarkButton];
