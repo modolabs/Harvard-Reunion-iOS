@@ -34,7 +34,17 @@
 
 - (void)presentFoursquareCheckinController
 {
-    if ([(UIViewController *)self.viewController modalViewController]) {
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            self.event.title, @"eventTitle",
+                            _checkedInUsers, @"checkinData",
+                            [NSNumber numberWithInt:_checkedInUserCount], @"checkedInUserCount",
+                            _foursquareVenue, @"venue",
+                            [NSNumber numberWithBool:(_checkinStatus == CHECKIN_STATUS_CHECKED_IN)], @"isCheckedIn",
+                            self, @"parentTableView",
+                            nil];
+    [KGO_SHARED_APP_DELEGATE() showPage:@"foursquareCheckins" forModuleTag:@"schedule" params:params];
+
+    /*if ([(UIViewController *)self.viewController modalViewController]) {
         [self performSelector:@selector(presentFoursquareCheckinController) withObject:nil afterDelay:0.1];
         return;
     }
@@ -54,12 +64,14 @@
     
     navC.modalPresentationStyle = UIModalPresentationFormSheet;
     navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
-    [self.viewController presentModalViewController:navC animated:YES];
+    [self.viewController presentModalViewController:navC animated:YES];*/
 }
 
 - (void)refreshFoursquareCell
 {
+    [self beginUpdates];
     [self reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
+    [self endUpdates];
 }
 
 - (void)venueCheckinStatusReceived:(BOOL)status forVenue:(NSString *)venue
@@ -110,14 +122,15 @@
 
         [_checkedInUsers release];
         _checkedInUsers = nil;
+        _checkedInUserCount = 0;
     }
-    
-    [super eventDetailsDidChange];
     
     if (_foursquareVenue && [[KGOSocialMediaController foursquareService] isSignedIn]) {
         [[[KGOSocialMediaController foursquareService] foursquareEngine] checkUserStatusForVenue:_foursquareVenue
                                                                                         delegate:self];
     }
+    
+    [super eventDetailsDidChange];
 }
 
 - (NSArray *)sectionForAttendeeInfo
@@ -156,6 +169,66 @@
     }
     
     return attendeeInfo;
+}
+
+#pragma mark foursquare cell
+
+- (NSString *)titleForFoursquareCell 
+{
+    NSString *title = nil;
+    
+    if (_foursquareVenue) {
+        if (_checkinStatus == CHECKIN_STATUS_CHECKED_IN) {
+            NSInteger otherCount = _checkedInUserCount - 1; // don't count user
+            
+            NSString *othersString = @"";
+            if (otherCount > 0) {
+                othersString = [NSString stringWithFormat:@" and %d %@", otherCount, 
+                                otherCount == 1 ? @"other person" : @"other people"];
+            }
+            title = [NSString stringWithFormat:@"You%@ are here", othersString, nil];
+            
+        } else {
+            title = @"foursquare checkin";
+        }
+    }
+    
+    return title;
+}
+
+- (NSString *)subtitleForFoursquareCell
+{
+    NSString *subtitle = nil;
+    
+    if (_foursquareVenue) {
+        if (_checkinStatus != CHECKIN_STATUS_CHECKED_IN) {
+            NSInteger otherCount = _checkedInUserCount;
+            
+            if (otherCount > 0) {
+                subtitle = [NSString stringWithFormat:@"%d %@", otherCount, 
+                            otherCount == 1 ? @"other person is here" : @"other people are here"];
+            }
+        }
+        
+    }
+    
+    return subtitle;
+}
+
+- (UIImage *)imageForFoursquareCell
+{
+    UIImage *image = nil;
+    
+    if (_foursquareVenue) {
+        if (_checkinStatus == CHECKIN_STATUS_CHECKED_IN) {
+            image = [UIImage imageWithPathName:@"modules/foursquare/button-foursquare-checkedin"];
+            
+        } else {
+            image = [UIImage imageWithPathName:@"modules/foursquare/button-foursquare"];
+        }        
+    }
+    
+    return image;
 }
 
 #pragma mark table view overrides
@@ -221,19 +294,33 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSString *title = nil;
+    NSString *subtitle = nil;
+    NSString *accessory = KGOAccessoryTypeNone;
+    UIImage *image = nil;
+    
     if (_foursquareVenue) {
         if (indexPath.section == 0) {
-            return tableView.rowHeight;
+            title = [self titleForFoursquareCell];
+            subtitle = [self subtitleForFoursquareCell];
+            image = [self imageForFoursquareCell];
+            accessory = KGOAccessoryTypeChevron;
+            
         }
         indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section - 1];
     }
-    id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-    if ([cellData isKindOfClass:[NSDictionary class]]) {
-        NSString *title = [cellData objectForKey:@"title"];
-        NSString *subtitle = [cellData objectForKey:@"subtitle"];
-        NSString *accessory = [cellData objectForKey:@"accessory"];
-        UIImage *image = [cellData objectForKey:@"image"];
 
+    if (!title) {
+        id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+        if ([cellData isKindOfClass:[NSDictionary class]]) {
+            title = [cellData objectForKey:@"title"];
+            subtitle = [cellData objectForKey:@"subtitle"];
+            accessory = [cellData objectForKey:@"accessory"];
+            image = [cellData objectForKey:@"image"];
+        }
+    }
+    
+    if (title) {
         // adjust for icon, padding and accessory
         CGFloat width = tableView.frame.size.width - 20 - (image ? 39 : 0) - (accessory != KGOAccessoryTypeNone ? 39 : 0); 
         CGFloat height = 22;
@@ -259,42 +346,34 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSString *title = nil;
+    NSString *subtitle = nil;
+    NSString *accessory = KGOAccessoryTypeNone;
+    UIImage *image = nil;
+
+    
     if (_foursquareVenue) {
         if (indexPath.section == 0) {
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"foursquare"];
-            if (!cell) {
-                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"foursquare"] autorelease];
-            }
+            title = [self titleForFoursquareCell];
+            subtitle = [self subtitleForFoursquareCell];
+            image = [self imageForFoursquareCell];
+            accessory = KGOAccessoryTypeChevron;
             
-            if (_checkinStatus == CHECKIN_STATUS_CHECKED_IN) {
-                NSInteger count = _checkedInUserCount;
-                count--;
-                NSString *othersString = @"";
-                if (count) {
-                    othersString = [NSString stringWithFormat:@" and %d %@", count, count == 1 ? @"other person" : @"others"];
-                }
-                cell.textLabel.text = [NSString stringWithFormat:@"You%@ are checked in here", othersString, nil];
-                cell.imageView.image = [UIImage imageWithPathName:@"modules/foursquare/button-foursquare-checkedin"];
-            } else {
-                cell.textLabel.text = @"foursquare checkin";
-                cell.imageView.image = [UIImage imageWithPathName:@"modules/foursquare/button-foursquare"];
-            }
-            
-            cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:KGOAccessoryTypeChevron];
-            
-            return cell;
         }
         indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section - 1];
-        
     }
-    
-    id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-    if ([cellData isKindOfClass:[NSDictionary class]]) {
-        NSString *title = [cellData objectForKey:@"title"];
-        NSString *subtitle = [cellData objectForKey:@"subtitle"];
-        NSString *accessory = [cellData objectForKey:@"accessory"];
-        UIImage *image = [cellData objectForKey:@"image"];
-        
+
+    if (!title) {
+        id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+        if ([cellData isKindOfClass:[NSDictionary class]]) {
+            title = [cellData objectForKey:@"title"];
+            subtitle = [cellData objectForKey:@"subtitle"];
+            accessory = [cellData objectForKey:@"accessory"];
+            image = [cellData objectForKey:@"image"];
+        }
+    }
+
+    if (title) {
         UITableViewCellStyle style = UITableViewCellStyleDefault;
         if (subtitle && [subtitle length]) {
             style = UITableViewCellStyleSubtitle;
@@ -314,6 +393,7 @@
         }
         cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:accessory];
         cell.imageView.image = image;
+        cell.autoresizingMask = UIViewAutoresizingFlexibleHeight;
 
         NSInteger titleTag = 50;
         NSInteger subtitleTag = 51;
@@ -332,6 +412,7 @@
             titleLabel.numberOfLines = 10;
             titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
             titleLabel.tag = titleTag;
+            [cell.contentView addSubview:titleLabel];
         } 
         CGSize titleSize = [title sizeWithFont:titleFont
                              constrainedToSize:CGSizeMake(width, titleFont.lineHeight * 10)
@@ -342,7 +423,6 @@
         titleFrame.origin.x = x;
         titleLabel.frame = titleFrame;
         titleLabel.text = title;
-        [cell.contentView addSubview:titleLabel];
         y += titleSize.height + 1;
         
         if (subtitle && [subtitle length]) {
@@ -356,6 +436,7 @@
                 subtitleLabel.numberOfLines = 10;
                 subtitleLabel.lineBreakMode = UILineBreakModeTailTruncation;
                 subtitleLabel.tag = subtitleTag;
+                [cell.contentView addSubview:subtitleLabel];
             }
             CGSize subtitleSize = [subtitle sizeWithFont:subtitleFont
                                     constrainedToSize:CGSizeMake(width, subtitleFont.lineHeight * 10)
@@ -367,7 +448,6 @@
             subtitleFrame.origin.y = y;
             subtitleLabel.frame = subtitleFrame;
             subtitleLabel.text = subtitle;
-            [cell.contentView addSubview:subtitleLabel];
         }
         
         return cell;
@@ -380,8 +460,8 @@
 {
     if (_foursquareVenue) {
         if (indexPath.section == 0) {
-            [self foursquareButtonPressed:nil];
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
+            [self foursquareButtonPressed:nil];
             return;
         }
         indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section - 1];

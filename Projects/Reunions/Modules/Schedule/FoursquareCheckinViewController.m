@@ -1,4 +1,5 @@
 #import "FoursquareCheckinViewController.h"
+#import "FoursquareAddCheckinViewController.h"
 #import "Foundation+KGOAdditions.h"
 #import "MITThumbnailView.h"
 #import "KGOTheme.h"
@@ -35,29 +36,72 @@
 {
     [super viewDidLoad];
     
-    self.view.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
-    
     CGFloat width = self.tableView.frame.size.width - 20;
     
     UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 60)] autorelease];
     UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
     CGSize size = [self.eventTitle sizeWithFont:font
-                              constrainedToSize:CGSizeMake(width, font.lineHeight * 3)
+                              constrainedToSize:CGSizeMake(width, font.lineHeight * 4)
                                   lineBreakMode:UILineBreakModeTailTruncation];
     UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 10, width, size.height)] autorelease];
     label.text = self.eventTitle;
     label.font = font;
-    label.numberOfLines = 3;
+    label.numberOfLines = 4;
     label.lineBreakMode = UILineBreakModeTailTruncation;
     label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
     label.backgroundColor = [UIColor clearColor];
     [view addSubview:label];
     self.tableView.tableHeaderView = view;
+    
+    [[[KGOSocialMediaController foursquareService] foursquareEngine] checkUserStatusForVenue:self.venue
+                                                                                    delegate:self];
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    // Return YES for supported orientations
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+#pragma mark
+
+- (void)showCheckinDialog:(id)sender
+{
+    FoursquareAddCheckinViewController *vc = [[[FoursquareAddCheckinViewController alloc] initWithNibName:@"FoursquareAddCheckinViewController"
+                                                                                                   bundle:nil] autorelease];
+    vc.parent = self;
+    vc.venue = self.venue;
+    
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+    navC.navigationBar.barStyle = UIBarStyleBlack;
+    navC.modalPresentationStyle = UIModalPresentationFormSheet;
+    
+    [self presentModalViewController:navC animated:YES];
 }
 
 - (void)checkinButtonPressed:(id)sender
@@ -72,6 +116,15 @@
 - (void)venueCheckinStatusReceived:(BOOL)status forVenue:(NSString *)aVenue
 {
     self.isCheckedIn = status;
+    
+    if (self.isCheckedIn) {
+        self.navigationItem.rightBarButtonItem = nil;
+    } else {
+        self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Check in Here"
+                                                                                   style:UIBarButtonItemStyleDone
+                                                                                  target:self
+                                                                                  action:@selector(showCheckinDialog:)] autorelease];
+    }
     
     [self.parentTableView venueCheckinStatusReceived:status forVenue:aVenue];
 }
@@ -88,8 +141,13 @@
 
 - (void)venueCheckinDidSucceed:(NSString *)venue
 {
+    [self dismissModalViewControllerAnimated:YES];
     [[[KGOSocialMediaController foursquareService] foursquareEngine] checkUserStatusForVenue:self.venue
                                                                                     delegate:self];
+}
+- (void)venueCheckinDidFail:(NSString *)venue;
+{
+    [self dismissModalViewControllerAnimated:YES];    
 }
 
 - (void)setCheckinData:(NSArray *)checkinData
@@ -118,31 +176,16 @@
     return _checkinData;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	return YES;
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     NSInteger count = _filteredCheckinData.count;
-    if (!self.isCheckedIn) {
-        count++;
-    }
     return count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (!self.isCheckedIn) {
-        if (section == 0) {
-            return 1;
-        }
-        section--;
-    }
-    
     NSDictionary *groupInfo = [_filteredCheckinData objectAtIndex:section];
     return [groupInfo integerForKey:@"count"];
 }
@@ -155,15 +198,6 @@
 - (CellManipulator)tableView:(UITableView *)tableView manipulatorForCellAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger section = indexPath.section;
-    
-    if (!self.isCheckedIn) {
-        if (section == 0) {
-            return [[^(UITableViewCell *cell) {
-                cell.selectionStyle = UITableViewCellEditingStyleNone;
-            } copy] autorelease];
-        }
-        section--;
-    }
     
     NSDictionary *groupInfo = [_filteredCheckinData objectAtIndex:section];
     NSDictionary *itemInfo = [[groupInfo arrayForKey:@"items"] dictionaryAtIndex:indexPath.row];
@@ -194,32 +228,6 @@
 - (NSArray *)tableView:(UITableView *)tableView viewsForCellAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger section = indexPath.section;
-    if (!self.isCheckedIn) {
-        if (section == 0) {
-            CGFloat hPadding = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? 80 : 40;
-            if (!_textField) {
-                _textField = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, tableView.frame.size.width - hPadding, 48)];
-                _textField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-                _textField.borderStyle = UITextBorderStyleLine;
-                _textField.placeholder = @"Add a shout with this checkin";
-            } else {
-                _textField.frame = CGRectMake(10, 10, tableView.frame.size.width - hPadding, 48);
-            }
-            
-            if (!_button) {
-                _button = [[UIButton buttonWithType:UIButtonTypeRoundedRect] retain];
-                [_button setTitle:@"Check in" forState:UIControlStateNormal];
-                [_button addTarget:self action:@selector(checkinButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-                _button.frame = CGRectMake(tableView.frame.size.width - hPadding - 75, _textField.frame.size.height + 15, 75, 30);
-                _button.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
-            } else {
-                _button.frame = CGRectMake(tableView.frame.size.width - hPadding - 75, _textField.frame.size.height + 15, 75, 30);
-            }
-
-            return [NSArray arrayWithObjects:_textField, _button, nil];
-        }
-        section--;
-    }
     
     NSDictionary *groupInfo = [_filteredCheckinData objectAtIndex:section];
     NSDictionary *itemInfo = [[groupInfo arrayForKey:@"items"] dictionaryAtIndex:indexPath.row];
@@ -233,13 +241,6 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    if (!self.isCheckedIn) {
-        if (section == 0) {
-            return nil;
-        }
-        section--;
-    }
-    
     NSDictionary *groupInfo = [_filteredCheckinData objectAtIndex:section];
     NSString *groupName = [groupInfo stringForKey:@"name" nilIfEmpty:YES];
     //NSInteger count = [groupInfo integerForKey:@"count"];

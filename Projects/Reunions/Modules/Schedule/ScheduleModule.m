@@ -3,6 +3,7 @@
 #import "ScheduleDetailViewController.h"
 #import "ScheduleDataManager.h"
 #import "AttendeesTableViewController.h"
+#import "FoursquareCheckinViewController.h"
 #import "KGOSocialMediaController.h"
 #import "ScheduleHomeViewController-iPad.h"
 
@@ -18,6 +19,12 @@
         [[KGOSocialMediaController foursquareService] startup];
         [super launch];
     }
+}
+
+- (NSArray *)registeredPageNames {
+    return [NSArray arrayWithObjects:
+            LocalPathPageNameHome, LocalPathPageNameSearch, LocalPathPageNameDetail,
+            LocalPathPageNameCategoryList, LocalPathPageNameItemList, @"foursquareCheckins", nil];
 }
 
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
@@ -73,6 +80,18 @@
         attendeesVC.eventTitle = [params objectForKey:@"title"];
         attendeesVC.attendees = [params objectForKey:@"attendees"];
         vc = attendeesVC;
+        
+    } else if ([pageName isEqualToString:@"foursquareCheckins"]) {
+        
+        FoursquareCheckinViewController *foursquareVC = [[[FoursquareCheckinViewController alloc]  initWithStyle:UITableViewStyleGrouped] autorelease];
+        foursquareVC.eventTitle = [params objectForKey:@"eventTitle"];
+        foursquareVC.checkinData = [params objectForKey:@"checkinData"];
+        foursquareVC.checkedInUserCount = [(NSNumber *)[params objectForKey:@"checkedInUserCount"] integerValue];
+        foursquareVC.venue = [params objectForKey:@"venue"];
+        foursquareVC.isCheckedIn = [(NSNumber *)[params objectForKey:@"isCheckedIn"] boolValue];
+        foursquareVC.parentTableView = [params objectForKey:@"parentTableView"];
+
+        vc = foursquareVC;
     }
     return vc;
 }
