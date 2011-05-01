@@ -9,7 +9,7 @@ typedef BOOL (^PhotoTest)(FacebookPhoto *photo);
 
 @interface FacebookPhotosViewController : FacebookMediaViewController <IconGridDelegate,
 UINavigationControllerDelegate, UIImagePickerControllerDelegate, FacebookUploadDelegate,
-UIActionSheetDelegate> {
+UIActionSheetDelegate, UIPopoverControllerDelegate> {
     
     IconGrid *_iconGrid;
     NSMutableArray *_icons;
@@ -27,6 +27,7 @@ UIActionSheetDelegate> {
 - (void)displayPhoto:(FacebookPhoto *)photo;
 - (void)loadThumbnailsFromCache;
 
+@property (nonatomic, retain) UIPopoverController *photoPickerPopover;
 @property (nonatomic, retain) PhotoTest currentFilterBlock;
 
 @end

@@ -33,6 +33,7 @@ static NSString * const FromLibraryOption = @"From photo library";
 @implementation FacebookPhotosViewController
 
 @synthesize currentFilterBlock;
+@synthesize photoPickerPopover;
 
 // This method does not hit the API to get new photos. It expects _photosByID 
 // to have the unfiltered collection of photos and applies filters locally 
@@ -364,6 +365,7 @@ static NSString * const FromLibraryOption = @"From photo library";
 
 - (void)uploadDidComplete:(FacebookPost *)result {
     [self dismissModalViewControllerAnimated:YES];    
+    self.photoPickerPopover = nil;
     
     FacebookPhoto *photo = (FacebookPhoto *)result;
     [_photosByID setObject:photo forKey:photo.identifier];
@@ -373,6 +375,20 @@ static NSString * const FromLibraryOption = @"From photo library";
                                                                 callback:@selector(didReceivePhoto:)];    
     [self displayPhoto:photo];
     [self updateIconGrid];
+}
+
+// TODO: this needs to be implemented upstream by the facebook controller
+- (void)uploadDidFail
+{
+    [self dismissModalViewControllerAnimated:YES];    
+    self.photoPickerPopover = nil;
+    
+    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:@"Oops!"
+                                                         message:@"Could not upload your photo, please try again later."
+                                                        delegate:nil
+                                               cancelButtonTitle:@"OK"
+                                               otherButtonTitles:nil] autorelease];
+    [alertView show];
 }
 
 #pragma mark Facebook request callbacks
@@ -474,7 +490,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                             fbModule.groupID, @"profile",
                             self, @"parentVC",
                             nil];
-    /*
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         PhotosModule *photosModule = 
         (PhotosModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:PhotosTag];
@@ -484,13 +499,14 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         [self presentModalViewController:vc animated:YES];
     }
     else {
-        */
         [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNamePhotoUpload
                                forModuleTag:PhotosTag
                                      params:params];
-    //}
+    }
 
-    //[self.photoPickerPopover dismissPopoverAnimated:YES];
+    // doing this doesn't call the popover delegate methods,
+    // so we assign self.photoPickerPopover to nil when the upload terminates.
+    [self.photoPickerPopover dismissPopoverAnimated:YES];
 }
 
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender {
@@ -548,7 +564,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     picker.delegate = self;
     
     picker.sourceType = sourceType;
-    /*
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         // Show the popover if it is not already there.
         if (!self.photoPickerPopover) {
@@ -563,9 +578,8 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         }
     }
     else {
-        */
         [self presentModalViewController:picker animated:YES];
-    //}
+    }
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex

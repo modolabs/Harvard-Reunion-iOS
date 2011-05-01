@@ -10,7 +10,6 @@
 @implementation FacebookMediaViewController
 
 @synthesize scrollView = _scrollView;
-@synthesize photoPickerPopover;
 @synthesize subheadToolbar;
 
 #pragma mark -
@@ -99,7 +98,6 @@
 - (void)dealloc
 {
     [subheadToolbar release];
-    [photoPickerPopover release];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_scrollView release];
     [super dealloc];
