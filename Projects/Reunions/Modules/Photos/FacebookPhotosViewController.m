@@ -12,6 +12,7 @@
 #import "KGOTheme.h"
 #import "FacebookThumbnail.h"
 #import "KGOSegmentedControl.h"
+#import "KGOToolbar.h"
 
 @interface FacebookPhotosViewController (Private)
 
@@ -20,12 +21,19 @@
 - (NSDictionary *)paramsForPhotoDetails:(FacebookPhoto *)photo;
 - (void)focusThumbnail:(FacebookThumbnail *)thumbnail animated:(BOOL)animated completion:(void (^)(BOOL finished))completion;
 - (void)updateIconGrid;
+- (void)showUploadPhotoController:(UIImagePickerControllerSourceType)sourceType;
 
 @end
+
+
+
+static NSString * const TakePhotoOption = @"Take a picture";
+static NSString * const FromLibraryOption = @"From photo library";
 
 @implementation FacebookPhotosViewController
 
 @synthesize currentFilterBlock;
+@synthesize photoPickerPopover;
 
 // This method does not hit the API to get new photos. It expects _photosByID 
 // to have the unfiltered collection of photos and applies filters locally 
@@ -138,6 +146,15 @@
 - (void)loadView
 {
     [super loadView];
+
+    // old style groups cannot take photo uploads via the graph API afaik
+    KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
+    ReunionHomeModule *homeModule = (ReunionHomeModule *)[appDelegate moduleForTag:@"home"];
+    if ([homeModule fbGroupIsOld] && [self.subheadToolbar.items containsObject:_uploadButton]) {
+        NSMutableArray *array = [[self.subheadToolbar.items mutableCopy] autorelease];
+        [array removeObject:_uploadButton];
+        self.subheadToolbar.items = [NSArray arrayWithArray:array];
+    }
     
     [_filterControl insertSegmentWithTitle:@"All Photos" atIndex:0 animated:NO];
     [_filterControl insertSegmentWithTitle:@"My Photos" atIndex:1 animated:NO];
@@ -188,7 +205,7 @@
     [[[UIBarButtonItem alloc] 
       initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
       target:self
-      action:@selector(showUploadPhotoController:)] autorelease];
+      action:@selector(uploadButtonPressed:)] autorelease];
 }
 
 - (void)facebookDidLogout:(NSNotification *)aNotification
@@ -348,6 +365,7 @@
 
 - (void)uploadDidComplete:(FacebookPost *)result {
     [self dismissModalViewControllerAnimated:YES];    
+    self.photoPickerPopover = nil;
     
     FacebookPhoto *photo = (FacebookPhoto *)result;
     [_photosByID setObject:photo forKey:photo.identifier];
@@ -357,6 +375,20 @@
                                                                 callback:@selector(didReceivePhoto:)];    
     [self displayPhoto:photo];
     [self updateIconGrid];
+}
+
+// TODO: this needs to be implemented upstream by the facebook controller
+- (void)uploadDidFail
+{
+    [self dismissModalViewControllerAnimated:YES];    
+    self.photoPickerPopover = nil;
+    
+    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:@"Oops!"
+                                                         message:@"Could not upload your photo, please try again later."
+                                                        delegate:nil
+                                               cancelButtonTitle:@"OK"
+                                               otherButtonTitles:nil] autorelease];
+    [alertView show];
 }
 
 #pragma mark Facebook request callbacks
@@ -432,12 +464,23 @@
 
 #pragma mark FacebookMediaViewController
 - (IBAction)uploadButtonPressed:(id)sender {
-    [self showUploadPhotoController:sender];
+    // there are actually three source type options, and if there was more time
+    // we would ideally check all of them for whether they are available
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@"Upload Photo"
+                                                            delegate:self
+                                                   cancelButtonTitle:nil
+                                              destructiveButtonTitle:nil
+                                                   otherButtonTitles:TakePhotoOption, FromLibraryOption, nil] autorelease];
+        [sheet showInView:self.view];
+        
+    } else {
+        [self showUploadPhotoController:UIImagePickerControllerSourceTypePhotoLibrary];
+    }
 }
      
 - (void)imagePickerController:(UIImagePickerController *)picker 
 didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    [super imagePickerController:picker didFinishPickingMediaWithInfo:info];
     
     UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];    
     FacebookModule *fbModule = 
@@ -461,7 +504,9 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                                      params:params];
     }
 
-    self.photoPickerPopover = nil;
+    // doing this doesn't call the popover delegate methods,
+    // so we assign self.photoPickerPopover to nil when the upload terminates.
+    [self.photoPickerPopover dismissPopoverAnimated:YES];
 }
 
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender {
@@ -508,6 +553,48 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         default:
             break;
     } 
+}
+
+#pragma mark Photo upload
+
+- (void)showUploadPhotoController:(UIImagePickerControllerSourceType)sourceType
+{
+    UIImagePickerController *picker = 
+    [[[UIImagePickerController alloc] init] autorelease];
+    picker.delegate = self;
+    
+    picker.sourceType = sourceType;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        // Show the popover if it is not already there.
+        if (!self.photoPickerPopover) {
+            self.photoPickerPopover = 
+            [[[UIPopoverController alloc] initWithContentViewController:picker] 
+             autorelease];
+            self.photoPickerPopover.delegate = self;
+            [self.photoPickerPopover 
+             presentPopoverFromBarButtonItem:_uploadButton
+             permittedArrowDirections:UIPopoverArrowDirectionAny 
+             animated:YES];
+        }
+    }
+    else {
+        [self presentModalViewController:picker animated:YES];
+    }
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *title = [actionSheet buttonTitleAtIndex:buttonIndex];
+    if ([title isEqualToString:TakePhotoOption]) {
+        [self showUploadPhotoController:UIImagePickerControllerSourceTypeCamera];
+    } else {
+        [self showUploadPhotoController:UIImagePickerControllerSourceTypePhotoLibrary];
+    }
+}
+
+#pragma mark UIPopoverControllerDelegate
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
+    self.photoPickerPopover = nil;
 }
 
 @end

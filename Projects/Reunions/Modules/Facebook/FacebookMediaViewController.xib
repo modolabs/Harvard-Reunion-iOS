@@ -68,7 +68,7 @@
 							<object class="IBUIView" id="771882996">
 								<reference key="NSNextResponder" ref="95592540"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{49, 7}, {222, 31}}</string>
+								<string key="NSFrame">{{33, 7}, {254, 31}}</string>
 								<reference key="NSSuperview" ref="95592540"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="28924118"/>
@@ -260,7 +260,7 @@
 						<reference key="source" ref="372490531"/>
 						<reference key="destination" ref="95592540"/>
 					</object>
-					<int key="connectionID">39</int>
+					<int key="connectionID">40</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -410,7 +410,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">39</int>
+			<int key="maxID">40</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

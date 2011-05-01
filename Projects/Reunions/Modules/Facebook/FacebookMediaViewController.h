@@ -10,13 +10,11 @@ FacebookMediaSegmentIndexes;
 @class KGOSegmentedControl, KGOToolbar;
 
 @interface FacebookMediaViewController : UIViewController 
-<UIImagePickerControllerDelegate, UINavigationControllerDelegate,
-UIPopoverControllerDelegate> {
+<UINavigationControllerDelegate> {
 
     IBOutlet KGOSegmentedControl *_filterControl;
     IBOutlet UIScrollView *_scrollView;
     IBOutlet KGOToolbar *subheadToolbar;
-    NSArray *_hiddenToolbarItems;
     
     // hidden for logged-in users
     IBOutlet UIView *_loginView;
@@ -41,10 +39,7 @@ UIPopoverControllerDelegate> {
 - (void)facebookDidLogout:(NSNotification *)aNotification;
 - (void)facebookDidLogin:(NSNotification *)aNotification;
 
-- (void)showUploadPhotoController:(id)sender;
-
 @property (nonatomic, retain) UIScrollView *scrollView;
-@property (nonatomic, retain) UIPopoverController *photoPickerPopover;
-@property (nonatomic, retain) UIToolbar *subheadToolbar;
+@property (nonatomic, retain) KGOToolbar *subheadToolbar;
 
 @end
