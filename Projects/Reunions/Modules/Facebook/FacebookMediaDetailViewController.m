@@ -636,6 +636,7 @@ ToolbarButtonTags;
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (!cell) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier] autorelease];
+        cell.selectionStyle = UITableViewCellEditingStyleNone;
     }
     
     NSInteger commentTag = 80;
