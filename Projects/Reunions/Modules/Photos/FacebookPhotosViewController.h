@@ -8,7 +8,8 @@
 typedef BOOL (^PhotoTest)(FacebookPhoto *photo);
 
 @interface FacebookPhotosViewController : FacebookMediaViewController <IconGridDelegate,
-UINavigationControllerDelegate, UIImagePickerControllerDelegate, FacebookUploadDelegate> {
+UINavigationControllerDelegate, UIImagePickerControllerDelegate, FacebookUploadDelegate,
+UIActionSheetDelegate> {
     
     IconGrid *_iconGrid;
     NSMutableArray *_icons;

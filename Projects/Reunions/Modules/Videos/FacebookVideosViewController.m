@@ -9,6 +9,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "KGOSocialMediaController+FacebookAPI.h"
 #import "KGOSegmentedControl.h"
+#import "KGOToolbar.h"
 
 typedef enum {
     kTransitionImageViewTag = 0x701,

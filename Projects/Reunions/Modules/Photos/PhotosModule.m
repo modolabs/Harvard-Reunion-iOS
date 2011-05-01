@@ -76,7 +76,7 @@ NSString * const LocalPathPageNamePhotoUpload = @"uploadPhoto";
     if ([mediaType isEqualToString:KGOSocialMediaTypeFacebook]) {
         return [NSDictionary dictionaryWithObject:[NSArray arrayWithObjects:
                                                    @"read_stream",
-                                                   @"offline_access",
+                                                   //@"offline_access",
                                                    @"user_groups",
                                                    @"user_photos",
                                                    @"publish_stream",
