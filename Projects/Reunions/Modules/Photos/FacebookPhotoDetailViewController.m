@@ -62,7 +62,6 @@
     }
     
     UIImageView *imageView = [[[UIImageView alloc] initWithImage:image] autorelease];
-    imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.mediaView setPreviewView:imageView];
     [self.mediaView setPreviewSize:image.size];
     
