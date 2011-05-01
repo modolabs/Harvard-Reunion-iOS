@@ -18,7 +18,9 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
 @implementation FacebookVideoDetailViewController (Private)
 
 - (void)fadeOutLoadingCurtainView {
-    UIView *loadingCurtainView = [self.webView viewWithTag:kLoadingCurtainViewTag];
+    UIView *loadingCurtainView = [[self.mediaView previewView] viewWithTag:kLoadingCurtainViewTag];
+    loadingCurtainView.tag = 0; // prevent us from trying to fade this out twice
+    
     if (loadingCurtainView) {
         [UIView 
          animateWithDuration:0.4f 
@@ -94,6 +96,7 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
         player.shouldAutoplay = NO;
         [self.mediaView setPreviewView:player.view];
         [self.mediaView setPreviewSize:CGSizeMake(10, 10)];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerLoadStateDidChange:) name:MPMoviePlayerLoadStateDidChangeNotification object:nil];
     } else {
         CGSize aspectRatio = CGSizeMake(16, 9); // default aspect ratio 
         NSString *urlString;
@@ -183,7 +186,8 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     // Show curtain image in view over the web view until the web view finishes 
     // loading.
     if (self.loadingCurtainImage) {
-        CGRect loadingCurtainFrame = self.webView.frame;
+        UIView *previewView = [self.mediaView previewView];
+        CGRect loadingCurtainFrame = previewView.frame;
         loadingCurtainFrame.origin = CGPointZero;
         UIImageView *loadingCurtainView = 
         [[UIImageView alloc] initWithFrame:loadingCurtainFrame];
@@ -192,7 +196,7 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
         loadingCurtainView.backgroundColor = [UIColor blackColor];
         loadingCurtainView.autoresizingMask = 
         [self.mediaView previewView].autoresizingMask;
-        [self.webView addSubview:loadingCurtainView];
+        [[self.mediaView previewView] addSubview:loadingCurtainView];
         [loadingCurtainView release];
     }
 }
@@ -238,5 +242,15 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
 - (void)webView:(UIWebView *)theWebView didFailLoadWithError:(NSError *)error {
     [self fadeOutLoadingCurtainView];    
 }
+
+#pragma player state change notification 
+//(used for facebook videos which play directly in MPMoviePlayer)
+
+- (void)playerLoadStateDidChange:(id)notification {
+    if(player.loadState | MPMovieLoadStatePlayable) {
+        [self fadeOutLoadingCurtainView];
+    }
+}
+
 
 @end
