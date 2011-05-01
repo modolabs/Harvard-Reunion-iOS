@@ -67,7 +67,6 @@
 {
     [self dismissModalViewControllerAnimated:YES];
     [_facebookModule requestStatusUpdates:nil];
-    [self reloadDataForTableView:self.tableView];
 }
 
 #pragma mark - View lifecycle
@@ -77,6 +76,11 @@
     NSString *title = nil;
     if ([[KGOSocialMediaController facebookService] isSignedIn]) {
         title = @"Post";
+        
+        if (!self.feedPosts.count) {
+            [_facebookModule requestStatusUpdates:nil];
+        }
+        
     } else {
         title = @"Sign in";
     }
@@ -90,8 +94,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    [self refreshNavBarItems];
     
     _facebookModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
     NSMutableArray *statusUpdates = [NSMutableArray array];
@@ -109,14 +111,14 @@
                                                      name:FacebookDidLoginNotification
                                                    object:nil];
         
-    } else if (!self.feedPosts.count) {
-        [_facebookModule requestStatusUpdates:nil];
     }
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(facebookFeedDidUpdate:)
                                                  name:FacebookStatusDidUpdateNotification
                                                object:nil];
+    
+    [self refreshNavBarItems];
 }
 
 - (void)viewDidUnload
@@ -156,14 +158,13 @@
 
 - (CellManipulator)tableView:(UITableView *)tableView manipulatorForCellAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSString *title = nil;
     if (![[KGOSocialMediaController facebookService] isSignedIn]) {
-        return [[^(UITableViewCell *cell) {
-            cell.textLabel.text = @"Sign into Facebook to post an update";
-            cell.selectionStyle = UITableViewCellEditingStyleNone;
-        } copy] autorelease];
+        title = @"Sign into Facebook to post an update";
     }
     
     return [[^(UITableViewCell *cell) {
+        cell.textLabel.text = title;
         cell.selectionStyle = UITableViewCellEditingStyleNone;
     } copy] autorelease];
 }
