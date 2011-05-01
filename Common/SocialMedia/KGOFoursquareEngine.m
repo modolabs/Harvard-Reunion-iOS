@@ -219,6 +219,15 @@ NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
     return request;
 }
 
+- (KGOFoursquareRequest *)queryUserWithDelegate:(id<KGOFoursquareRequestDelegate>)delegate
+{
+    KGOFoursquareRequest *request = [self requestWithDelegate:delegate];
+    request.resourceName = @"users";
+    request.resourceID = @"self";
+    
+    return request;
+}
+
 - (KGOFoursquareRequest *)queryCheckinsRequestWithDelegate:(id<KGOFoursquareRequestDelegate>)delegate
 {
     KGOFoursquareRequest *request = [self requestWithDelegate:delegate];
@@ -273,12 +282,10 @@ NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
 
 - (void)checkUserStatusForVenue:(NSString *)venue delegate:(id<KGOFoursquareCheckinDelegate>)delegate
 {
-    //KGOFoursquareRequest *request = [self queryCheckinsRequestWithDelegate:self];
     KGOFoursquareRequest *request = [self herenowRequestWithDelegate:self venue:venue];
     KGOFoursquareCheckinPair *pair = [[[KGOFoursquareCheckinPair alloc] init] autorelease];
     pair.delegate = delegate;
     pair.request = request;
-    //pair.userData = [NSDictionary dictionaryWithObjectsAndKeys:venue, @"venue", nil];
     
     if (!_checkinQueue) {
         _checkinQueue = [[NSMutableArray alloc] init];
@@ -485,55 +492,178 @@ NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
                 NSDictionary *hereNowDict = [venueDict dictionaryForKey:@"hereNow"];
                 NSInteger total = [hereNowDict integerForKey:@"count"];
                 NSArray *groups = [hereNowDict arrayForKey:@"groups"];
-
+                
                 if (foundSelf && groups.count) {
                     foundSelf = NO;
                     NSDictionary *firstGroup = [groups dictionaryAtIndex:0];
-                    for (NSDictionary *itemInfo in [firstGroup arrayForKey:@"items"]) {
+                    NSArray *items = [firstGroup arrayForKey:@"items"];
+                    for (NSDictionary *itemInfo in items) {
                         NSDictionary *userInfo = [itemInfo dictionaryForKey:@"user"];
                         if ([[userInfo stringForKey:@"relationship" nilIfEmpty:YES] isEqualToString:@"self"]) {
                             foundSelf = YES;
+                            
+                            // Remove the user from the list
+                            // We handle the user separately
+                            NSMutableArray *tempGroups = [NSMutableArray arrayWithArray:groups];
+                            NSMutableDictionary *tempFirstGroup = [NSMutableDictionary dictionaryWithDictionary:firstGroup];
+                            NSMutableArray *tempItems = [NSMutableArray arrayWithArray:items];
+
+                            // Create new group containing only the user
+                            NSArray *selfItems = [NSArray arrayWithObject:itemInfo];
+                            NSDictionary *selfGroup = [NSDictionary dictionaryWithObjectsAndKeys: 
+                                                       [NSNumber numberWithInt:1], @"count",
+                                                       selfItems, @"items",
+                                                       @"You are here!", @"name",
+                                                       @"self", @"type",
+                                                       nil];
+                            
+                            // Remove the user from the friends group
+                            [tempItems removeObject:itemInfo];
+                            NSInteger count = [tempFirstGroup integerForKey:@"count"];
+                            [tempFirstGroup setObject:[NSNumber numberWithInt:(count-1)] forKey:@"count"];
+
+                            [tempFirstGroup setObject:[NSArray arrayWithArray:tempItems] forKey:@"items"];
+                            [tempGroups replaceObjectAtIndex:0 withObject:[NSDictionary dictionaryWithDictionary:tempFirstGroup]];
+                            
+                            // Insert the new self group
+                            [tempGroups insertObject:selfGroup atIndex:0];
+                            
+                            groups = [NSArray arrayWithArray:tempGroups];
+                            DLog(@"%@", groups);
+
                             break;
                         }
                     }
                 }
                 
+               
+                if (foundSelf) {
+                    if ([currentPair.delegate respondsToSelector:@selector(venueCheckinStatusReceived:forVenue:)]) {
+                        [currentPair.delegate venueCheckinStatusReceived:foundSelf forVenue:request.resourceID];
+                    }
+                    
+                    if ([currentPair.delegate respondsToSelector:@selector(didReceiveCheckins:total:forVenue:)]) {
+                        [currentPair.delegate didReceiveCheckins:groups total:total forVenue:request.resourceID];
+                    }
+                } else {
+                    // sometimes the hereNow API is out of date.  Also look at the user's checkins:
+                    
+                    KGOFoursquareRequest *checkinsRequest = [self queryCheckinsRequestWithDelegate:self];
+                    KGOFoursquareCheckinPair *pair = [[[KGOFoursquareCheckinPair alloc] init] autorelease];
+                    pair.delegate = currentPair.delegate;
+                    pair.request = checkinsRequest;
+                    pair.userData = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     request.resourceID, @"venue", 
+                                     groups, @"groups", 
+                                     [NSNumber numberWithInt: total], @"total", 
+                                     nil];
+                    
+                    if (!_checkinQueue) {
+                        _checkinQueue = [[NSMutableArray alloc] init];
+                    }
+                    
+                    [_checkinQueue addObject:pair];
+                    
+                    [checkinsRequest connect];
+                }
+                    
+                
+            } else if ([request.resourceName isEqualToString:@"users"] && [request.command isEqualToString:@"checkins"]) {
+                BOOL foundSelf = NO;
+                
+                NSArray *groups = [currentPair.userData objectForKey:@"groups"];
+                NSInteger total = [currentPair.userData integerForKey:@"total"];
+                
+                NSDictionary *checkinDict = [response dictionaryForKey:@"checkins"];
+                NSArray *items = [checkinDict arrayForKey:@"items"];
+                NSString *targetVenue = [currentPair.userData objectForKey:@"venue"];
+
+                if (!targetVenue) return;
+                DLog(@"%@", currentPair.userData);
+                
+                NSMutableDictionary *newestCheckin = nil;
+                NSString *newestCheckinVenue = nil;
+                int newestCheckinAge = 60*60*3; // Anything after 3 hours ago is invalid
+                
+                // Only the very newest checkin at a venue is valid
+                for (NSDictionary *itemDict in items) {
+                    double creationTime = (double)[itemDict integerForKey:@"createdAt"];
+                    NSDate *creationDate = [NSDate dateWithTimeIntervalSince1970:creationTime];
+                    int checkinAge = -(int)[creationDate timeIntervalSinceNow];
+                    
+                    if (checkinAge < newestCheckinAge) {
+                        NSDictionary *venue = [itemDict dictionaryForKey:@"venue"];
+                        newestCheckin = [NSMutableDictionary dictionaryWithDictionary:itemDict];
+                        newestCheckinVenue = [venue stringForKey:@"id" nilIfEmpty:YES];
+                        newestCheckinAge = checkinAge;
+                    }
+                }
+                
+                if (newestCheckinVenue && targetVenue && [newestCheckinVenue isEqualToString:targetVenue]) {
+                    foundSelf = YES;
+                    total++;
+                    
+                    KGOFoursquareRequest *usersRequest = [self queryUserWithDelegate:self];
+                    KGOFoursquareCheckinPair *pair = [[[KGOFoursquareCheckinPair alloc] init] autorelease];
+                    pair.delegate = currentPair.delegate;
+                    pair.request = usersRequest;
+                    pair.userData = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     targetVenue, @"venue", 
+                                     groups, @"groups", 
+                                     [NSNumber numberWithInt: total], @"total", 
+                                     newestCheckin, @"selfCheckin", 
+                                     nil];
+                    
+                    if (!_checkinQueue) {
+                        _checkinQueue = [[NSMutableArray alloc] init];
+                    }
+                    
+                    [_checkinQueue addObject:pair];
+                    
+                    [usersRequest connect];
+                    
+                } else {
+                    if ([currentPair.delegate respondsToSelector:@selector(venueCheckinStatusReceived:forVenue:)]) {
+                        [currentPair.delegate venueCheckinStatusReceived:foundSelf forVenue:targetVenue];
+                    }
+                    
+                    if ([currentPair.delegate respondsToSelector:@selector(didReceiveCheckins:total:forVenue:)]) {
+                        [currentPair.delegate didReceiveCheckins:groups total:total forVenue:targetVenue];
+                    }
+
+                }
+                
+            } else if ([request.resourceName isEqualToString:@"users"] && [request.resourceID isEqualToString:@"self"]) {
+                NSString *targetVenue = [currentPair.userData objectForKey:@"venue"];
+                NSArray *groups = [currentPair.userData objectForKey:@"groups"];
+                NSInteger total = [currentPair.userData integerForKey:@"total"];
+                NSMutableDictionary *selfCheckin = [NSMutableDictionary dictionaryWithDictionary:[currentPair.userData dictionaryForKey:@"selfCheckin"]];
+
+                // Add the user bits
+                [selfCheckin setObject:[response dictionaryForKey:@"user"] forKey:@"user"];
+                
+                NSArray *selfItems = [NSArray arrayWithObject:[NSDictionary dictionaryWithDictionary:selfCheckin]];
+                NSDictionary *selfGroup = [NSDictionary dictionaryWithObjectsAndKeys: 
+                                           [NSNumber numberWithInt:1], @"count",
+                                           selfItems, @"items",
+                                           @"You are here!", @"name",
+                                           @"self", @"type",
+                                           nil];
+                
+                // Insert the new self group
+                NSMutableArray *tempGroups = [NSMutableArray arrayWithArray:groups];
+                [tempGroups insertObject:selfGroup atIndex:0];
+                groups = [NSArray arrayWithArray:tempGroups];
+                
                 if ([currentPair.delegate respondsToSelector:@selector(venueCheckinStatusReceived:forVenue:)]) {
-                    [currentPair.delegate venueCheckinStatusReceived:foundSelf forVenue:request.resourceID];
+                    [currentPair.delegate venueCheckinStatusReceived:YES forVenue:targetVenue];
                 }
                 
                 if ([currentPair.delegate respondsToSelector:@selector(didReceiveCheckins:total:forVenue:)]) {
-                    [currentPair.delegate didReceiveCheckins:groups total:total forVenue:request.resourceID];
+                    [currentPair.delegate didReceiveCheckins:groups total:total forVenue:targetVenue];
                 }
-                
-            /*} else if ([request.resourceName isEqualToString:@"users"] && [request.command isEqualToString:@"checkins"]) {
-                NSDictionary *checkinDict = [response dictionaryForKey:@"checkins"];
-                NSArray *items = [checkinDict arrayForKey:@"items"];
-                NSString *checkedInVenueID = nil;
-                NSString *targetVenue = [currentPair.userData objectForKey:@"venue"];
-                
-                if (!targetVenue) return;
-                NSLog(@"%@", currentPair.userData);
-                
-                for (NSDictionary *itemDict in items) {
-                    NSDictionary *venue = [itemDict dictionaryForKey:@"venue"];
-                    NSString *venueID = [venue stringForKey:@"id" nilIfEmpty:YES];
-                    NSLog(@"%@ %@", venueID, targetVenue);
-                    if (venueID && targetVenue && [venueID isEqualToString:targetVenue]) {
-                        checkedInVenueID = venueID;
-                        break;
-                    }
-                }
-                
-                if ([currentPair.delegate respondsToSelector:@selector(venueCheckinStatusReceived:forVenue:)]) {
-                    if (checkedInVenueID) {
-                        [currentPair.delegate venueCheckinStatusReceived:YES forVenue:checkedInVenueID];
 
-                    } else if (request.resourceID) {
-                        [currentPair.delegate venueCheckinStatusReceived:NO forVenue:request.resourceID];
-                    }
-                }
-                */
+
             } else if ([request.resourceName isEqualToString:@"checkins"] && [request.command isEqualToString:@"add"]) {
                 if ([currentPair.delegate respondsToSelector:@selector(venueCheckinDidSucceed:)]) {
                     [currentPair.delegate venueCheckinDidSucceed:request.resourceID];

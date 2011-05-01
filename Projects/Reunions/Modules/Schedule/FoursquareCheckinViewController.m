@@ -37,10 +37,18 @@
     
     self.view.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
     
+    CGFloat width = self.tableView.frame.size.width - 20;
+    
     UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 60)] autorelease];
-    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 10, self.tableView.frame.size.width - 40, 24)] autorelease];
+    UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
+    CGSize size = [self.eventTitle sizeWithFont:font
+                              constrainedToSize:CGSizeMake(width, font.lineHeight * 3)
+                                  lineBreakMode:UILineBreakModeTailTruncation];
+    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 10, width, size.height)] autorelease];
     label.text = self.eventTitle;
-    label.font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
+    label.font = font;
+    label.numberOfLines = 3;
+    label.lineBreakMode = UILineBreakModeTailTruncation;
     label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
     label.backgroundColor = [UIColor clearColor];
     [view addSubview:label];
@@ -190,12 +198,12 @@
         if (section == 0) {
             CGFloat hPadding = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? 80 : 40;
             if (!_textField) {
-                _textField = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, tableView.frame.size.width - hPadding, 22)];
+                _textField = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, tableView.frame.size.width - hPadding, 48)];
                 _textField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
                 _textField.borderStyle = UITextBorderStyleLine;
                 _textField.placeholder = @"Add a shout with this checkin";
             } else {
-                _textField.frame = CGRectMake(10, 10, tableView.frame.size.width - hPadding, 22);
+                _textField.frame = CGRectMake(10, 10, tableView.frame.size.width - hPadding, 48);
             }
             
             if (!_button) {
