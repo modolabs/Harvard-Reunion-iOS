@@ -249,6 +249,7 @@ static NSString * const FromLibraryOption = @"From photo library";
 
 - (void)dealloc {
     [[KGOSocialMediaController facebookService] disconnectFacebookRequests:self];
+    self.photoPickerPopover = nil;
 
     [currentFilterBlock release];
     [_iconGrid release];
@@ -464,12 +465,17 @@ static NSString * const FromLibraryOption = @"From photo library";
 
 #pragma mark FacebookMediaViewController
 - (IBAction)uploadButtonPressed:(id)sender {
+    NSString *cancelButtonTitle = nil;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        cancelButtonTitle = @"Cancel";
+    }
+    
     // there are actually three source type options, and if there was more time
     // we would ideally check all of them for whether they are available
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@"Upload Photo"
                                                             delegate:self
-                                                   cancelButtonTitle:nil
+                                                   cancelButtonTitle:cancelButtonTitle
                                               destructiveButtonTitle:nil
                                                    otherButtonTitles:TakePhotoOption, FromLibraryOption, nil] autorelease];
         [sheet showInView:self.view];
@@ -495,8 +501,9 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         (PhotosModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:PhotosTag];
         UIViewController *vc = 
         [photosModule modulePage:LocalPathPageNamePhotoUpload params:params];
-        vc.modalPresentationStyle = UIModalPresentationFormSheet;
-        [self presentModalViewController:vc animated:YES];
+        UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+        navC.modalPresentationStyle = UIModalPresentationFormSheet;
+        [self presentModalViewController:navC animated:YES];
     }
     else {
         [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNamePhotoUpload
@@ -566,29 +573,37 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     picker.sourceType = sourceType;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         // Show the popover if it is not already there.
+        if (self.photoPickerPopover.popoverVisible) {
+            return;
+        }
+
         if (!self.photoPickerPopover) {
             self.photoPickerPopover = 
             [[[UIPopoverController alloc] initWithContentViewController:picker] 
              autorelease];
             self.photoPickerPopover.delegate = self;
-            [self.photoPickerPopover 
-             presentPopoverFromBarButtonItem:_uploadButton
-             permittedArrowDirections:UIPopoverArrowDirectionAny 
-             animated:YES];
+        } else {
+            self.photoPickerPopover.contentViewController = picker;
         }
-    }
-    else {
+        
+        [self.photoPickerPopover presentPopoverFromBarButtonItem:_uploadButton
+                                        permittedArrowDirections:UIPopoverArrowDirectionAny 
+                                                        animated:YES];
+
+    } else {
         [self presentModalViewController:picker animated:YES];
     }
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    NSString *title = [actionSheet buttonTitleAtIndex:buttonIndex];
-    if ([title isEqualToString:TakePhotoOption]) {
-        [self showUploadPhotoController:UIImagePickerControllerSourceTypeCamera];
-    } else {
-        [self showUploadPhotoController:UIImagePickerControllerSourceTypePhotoLibrary];
+    if (buttonIndex >= 0 && buttonIndex < [actionSheet numberOfButtons]) {
+        NSString *title = [actionSheet buttonTitleAtIndex:buttonIndex];
+        if ([title isEqualToString:TakePhotoOption]) {
+            [self showUploadPhotoController:UIImagePickerControllerSourceTypeCamera];
+        } else {
+            [self showUploadPhotoController:UIImagePickerControllerSourceTypePhotoLibrary];
+        }
     }
 }
 
