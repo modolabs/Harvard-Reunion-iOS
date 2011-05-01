@@ -43,28 +43,6 @@
                             self, @"parentTableView",
                             nil];
     [KGO_SHARED_APP_DELEGATE() showPage:@"foursquareCheckins" forModuleTag:@"schedule" params:params];
-
-    /*if ([(UIViewController *)self.viewController modalViewController]) {
-        [self performSelector:@selector(presentFoursquareCheckinController) withObject:nil afterDelay:0.1];
-        return;
-    }
-    
-    FoursquareCheckinViewController *checkinVC = [[[FoursquareCheckinViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
-    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:checkinVC] autorelease];
-    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                           target:self.viewController
-                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
-    checkinVC.navigationItem.rightBarButtonItem = item;
-    checkinVC.checkinData = _checkedInUsers;
-    checkinVC.checkedInUserCount = _checkedInUserCount;
-    checkinVC.venue = _foursquareVenue;
-    checkinVC.eventTitle = self.event.title;
-    checkinVC.isCheckedIn = (_checkinStatus == CHECKIN_STATUS_CHECKED_IN);
-    checkinVC.parentTableView = self;
-    
-    navC.modalPresentationStyle = UIModalPresentationFormSheet;
-    navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
-    [self.viewController presentModalViewController:navC animated:YES];*/
 }
 
 - (void)refreshFoursquareCell

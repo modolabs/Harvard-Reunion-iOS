@@ -197,29 +197,7 @@
 
 - (CellManipulator)tableView:(UITableView *)tableView manipulatorForCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger section = indexPath.section;
-    
-    NSDictionary *groupInfo = [_filteredCheckinData objectAtIndex:section];
-    NSDictionary *itemInfo = [[groupInfo arrayForKey:@"items"] dictionaryAtIndex:indexPath.row];
-    NSDictionary *userInfo = [itemInfo dictionaryForKey:@"user"];
-    
-    NSMutableArray *nameParts = [NSMutableArray array];
-    NSString *firstName = [userInfo stringForKey:@"firstName" nilIfEmpty:YES];
-    if (firstName) {
-        [nameParts addObject:firstName];
-    }
-    NSString *lastName = [userInfo stringForKey:@"lastName" nilIfEmpty:YES];
-    if (lastName) {
-        [nameParts addObject:lastName];
-    }
-
-    double creationTime = (double)[itemInfo integerForKey:@"createdAt"];
-    NSDate *creationDate = [NSDate dateWithTimeIntervalSince1970:creationTime];
-    NSString *dateString = [creationDate agoString];
-
     return [[^(UITableViewCell *cell) {
-        cell.textLabel.text = [nameParts componentsJoinedByString:@" "];
-        cell.detailTextLabel.text = dateString;
         cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:KGOAccessoryTypeExternal];
         cell.imageView.image = [UIImage imageWithPathName:@"common/action-blank"];
     } copy] autorelease];
@@ -232,11 +210,53 @@
     NSDictionary *groupInfo = [_filteredCheckinData objectAtIndex:section];
     NSDictionary *itemInfo = [[groupInfo arrayForKey:@"items"] dictionaryAtIndex:indexPath.row];
     NSDictionary *userInfo = [itemInfo dictionaryForKey:@"user"];
+    
+    // thumbnail
     NSString *photoURL = [userInfo stringForKey:@"photo" nilIfEmpty:YES];
     MITThumbnailView *thumb = [[[MITThumbnailView alloc] initWithFrame:CGRectMake(10, 10, 24, 24)] autorelease];
     thumb.imageURL = photoURL;
     [thumb loadImage];
-    return [NSArray arrayWithObject:thumb];
+
+    NSMutableArray *nameParts = [NSMutableArray array];
+    NSString *firstName = [userInfo stringForKey:@"firstName" nilIfEmpty:YES];
+    if (firstName) {
+        [nameParts addObject:firstName];
+    }
+    NSString *lastName = [userInfo stringForKey:@"lastName" nilIfEmpty:YES];
+    if (lastName) {
+        [nameParts addObject:lastName];
+    }
+    NSString *shout = [itemInfo stringForKey:@"shout" nilIfEmpty:YES];
+    if (shout) {
+        [nameParts addObject:[NSString stringWithFormat:@"\"%@\"", shout, nil]];
+    }
+    NSString *title = [nameParts componentsJoinedByString:@" "];
+    
+    double creationTime = (double)[itemInfo integerForKey:@"createdAt"];
+    NSDate *creationDate = [NSDate dateWithTimeIntervalSince1970:creationTime];
+    NSString *dateString = [creationDate agoString];
+
+    
+    CGFloat width = tableView.frame.size.width - 20 - thumb.frame.size.width;
+    UIFont *titleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
+    UILabel *titleLabel = [UILabel multilineLabelWithText:title
+                                                     font:titleFont
+                                                    width:width];
+    CGRect frame = titleLabel.frame;
+    frame.origin.x = thumb.frame.size.width + 20;
+    frame.origin.y = 10;
+    titleLabel.frame = frame;
+
+    UIFont *subtitleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
+    frame.origin.y += titleLabel.frame.size.height + 2;
+    frame.size.height = subtitleFont.lineHeight;
+    UILabel *subtitleLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
+    subtitleLabel.text = dateString;
+    subtitleLabel.font = subtitleFont;
+    subtitleLabel.backgroundColor = [UIColor clearColor];
+    subtitleLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyNavListSubtitle];
+    
+    return [NSArray arrayWithObjects:thumb, titleLabel, subtitleLabel, nil];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
