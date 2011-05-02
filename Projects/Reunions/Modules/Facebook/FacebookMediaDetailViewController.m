@@ -258,7 +258,7 @@ ToolbarButtonTags;
     if ([result isKindOfClass:[NSDictionary class]] && 
         [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
         
-        KGOFacebookService *fbService = [[KGOSocialMediaController sharedController] serviceWithType:KGOSocialMediaTypeFacebook];
+        KGOFacebookService *fbService = [KGOSocialMediaController facebookService];
         [self.post addLikesObject:[fbService currentFacebookUser]];
         [[CoreDataManager sharedManager] saveData];
         
@@ -270,7 +270,7 @@ ToolbarButtonTags;
     NSLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
 
-        KGOFacebookService *fbService = [[KGOSocialMediaController sharedController] serviceWithType:KGOSocialMediaTypeFacebook];
+        KGOFacebookService *fbService = [KGOSocialMediaController facebookService];
         [self.post removeLikesObject:[fbService currentFacebookUser]];
          
         [[CoreDataManager sharedManager] saveData];
