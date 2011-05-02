@@ -11,7 +11,7 @@
 @class FacebookParentPost;
 
 @interface FacebookMediaDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate,
-KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate, UINavigationControllerDelegate> {
+KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
     IBOutlet UITableView *_tableView;
     IBOutlet UIButton *_commentButton;
     IBOutlet UIButton *_likeButton;
@@ -28,6 +28,8 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate, UINavi
     UITapGestureRecognizer *_tapRecognizer;
     
     NSArray *_comments;
+    
+    UIInterfaceOrientation displayedOrientation;
 }
 
 @property (nonatomic, retain) NSArray *posts;
