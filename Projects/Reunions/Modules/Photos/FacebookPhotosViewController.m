@@ -496,21 +496,24 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                             fbModule.groupID, @"profile",
                             self, @"parentVC",
                             nil];
+    
+    PhotosModule *photosModule = 
+    (PhotosModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:PhotosTag];
+    UIViewController *vc = 
+    [photosModule modulePage:LocalPathPageNamePhotoUpload params:params];
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+    
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        PhotosModule *photosModule = 
-        (PhotosModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:PhotosTag];
-        UIViewController *vc = 
-        [photosModule modulePage:LocalPathPageNamePhotoUpload params:params];
-        UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
         navC.modalPresentationStyle = UIModalPresentationFormSheet;
         [self presentModalViewController:navC animated:YES];
-    }
-    else {
-        [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNamePhotoUpload
-                               forModuleTag:PhotosTag
-                                     params:params];
+    } else {
+        navC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+        navC.navigationBar.barStyle = UIBarStyleBlack;
+        [picker presentModalViewController:navC animated:YES];
     }
 
+    [self presentModalViewController:navC animated:YES];
+    
     // doing this doesn't call the popover delegate methods,
     // so we assign self.photoPickerPopover to nil when the upload terminates.
     [self.photoPickerPopover dismissPopoverAnimated:YES];

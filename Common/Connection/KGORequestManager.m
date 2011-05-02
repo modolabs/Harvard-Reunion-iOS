@@ -314,35 +314,18 @@ NSString * const KGODeviceTokenKey = @"KGODeviceToken";
 
 - (void)logoutKurogoServer
 {
-    NSArray *cookies = [[[[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies] copy] autorelease];
-    for (NSHTTPCookie *aCookie in cookies) {
-        if ([[aCookie domain] rangeOfString:[self host]].location != NSNotFound) {
-            [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:aCookie];
-        }
-    }
-    
-    [_sessionInfo release];
-    _sessionInfo = nil;
-    
-    if ([[CoreDataManager sharedManager] deleteStore]) {
-        DLog(@"deleted store");
-    }
-    
-    for (KGOModule *aModule in [KGO_SHARED_APP_DELEGATE() modules]) {
-        for (NSString *aDefault in [aModule userDefaults]) {
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:aDefault];
-        }
-    }
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:KGODidLogoutNotification object:self];
-
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"1" forKey:@"hard"];
-    NSString *authority = [_sessionInfo objectForKey:@"authority"];
-    if (authority) {
-        [params setObject:authority forKey:@"authority"];
+    NSDictionary *userInfo = [_sessionInfo dictionaryForKey:@"user"];
+    if (userInfo) {
+        NSString *authority = [userInfo stringForKey:@"authority" nilIfEmpty:YES];
+        if (authority) {
+            [params setObject:authority forKey:@"authority"];
+        }
     }
+
     _logoutRequest = [self requestWithDelegate:self module:self.loginPath path:@"logout" params:params];
+    [_logoutRequest connect];
 }
 
 - (BOOL)isUserLoggedIn
@@ -395,6 +378,8 @@ NSString * const KGODeviceTokenKey = @"KGODeviceToken";
         _logoutRequest = nil;
     } else if (request == _deviceRegistrationRequest) {
         _deviceRegistrationRequest = nil;
+    } else if (request == _logoutRequest) {
+        _logoutRequest = nil;
     }
 }
 
@@ -446,6 +431,29 @@ NSString * const KGODeviceTokenKey = @"KGODeviceToken";
             
             [[NSNotificationCenter defaultCenter] removeObserver:self name:KGODidLoginNotification object:nil];
         }
+        
+    } else if (request == _logoutRequest) {
+        NSArray *cookies = [[[[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies] copy] autorelease];
+        for (NSHTTPCookie *aCookie in cookies) {
+           if ([[aCookie domain] rangeOfString:[self host]].location != NSNotFound) {
+               [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:aCookie];
+           }
+        }
+        
+        [_sessionInfo release];
+        _sessionInfo = nil;
+        
+        if ([[CoreDataManager sharedManager] deleteStore]) {
+            DLog(@"deleted store");
+        }
+        
+        for (KGOModule *aModule in [KGO_SHARED_APP_DELEGATE() modules]) {
+            for (NSString *aDefault in [aModule userDefaults]) {
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:aDefault];
+            }
+        }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:KGODidLogoutNotification object:self];
     }
 }
 

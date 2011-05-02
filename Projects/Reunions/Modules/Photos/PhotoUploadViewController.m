@@ -123,6 +123,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
     
     self.title = @"Upload Photo";
     
