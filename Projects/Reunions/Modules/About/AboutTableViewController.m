@@ -28,9 +28,9 @@ NSString * const AboutSectionsPrefKey = @"AboutSections";
         }
     }
     
-    UILabel *footerLabel = [UILabel multilineLabelWithText:@"© 2011 The President and Fellows of Harvard College"
+    UILabel *footerLabel = [UILabel multilineLabelWithText:@"\n© 2011 The President and Fellows of Harvard College\n\n"
                                                       font:[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertySmallPrint]
-                                                     width:self.view.frame.size.width - 20];
+                                                     width:self.view.frame.size.width];
     footerLabel.textAlignment = UITextAlignmentCenter;
     footerLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySmallPrint];
     UIView *footerView = [[[UIView alloc] initWithFrame:footerLabel.frame] autorelease];
