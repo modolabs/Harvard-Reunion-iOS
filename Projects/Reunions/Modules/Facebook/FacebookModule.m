@@ -332,6 +332,11 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     return [FacebookFeedViewController class];
 }
 
+- (NSString *)feedViewControllerTitle
+{
+    return @"Facebook group updates";
+}
+
 - (void)willShowModalFeedController
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:FacebookStatusDidUpdateNotification object:self];

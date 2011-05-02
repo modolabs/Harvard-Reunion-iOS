@@ -3,6 +3,8 @@
 #import "KGORequestManager.h"
 #import <QuartzCore/QuartzCore.h>
 #import "KGOAppDelegate+ModuleAdditions.h"
+#import "UIKit+KGOAdditions.h"
+#import "Foundation+KGOAdditions.h"
 
 NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 
@@ -58,6 +60,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
         
         [_sectionTitles release];
         _sectionTitles = [[titles sortedArrayUsingSelector:@selector(compare:)] copy];
+        
     }
 }
 
@@ -66,30 +69,26 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor clearColor];
 
     self.title = @"Attendees";
     
-    if (!self.attendees) {
-        self.attendees = [[NSUserDefaults standardUserDefaults] objectForKey:AllReunionAttendeesPrefKey];
-    }
-    
-    if (!self.attendees) {
-        self.request = [[KGORequestManager sharedManager] requestWithDelegate:self module:@"attendees" path:@"all" params:nil];
-        self.request.expectedResponseType = [NSArray class];
-        if (self.request) {
-            [self.request connect];
-        }
+    NSString *listTitle = nil;
+
+    NSDictionary *userDict = [[[KGORequestManager sharedManager] sessionInfo] dictionaryForKey:@"user"];
+    NSString *username = [userDict stringForKey:@"name" nilIfEmpty:YES];
+    if (!username) {
+        listTitle = @"In order to see the list of attendees you must sign in";
+    } else {
+        listTitle = self.eventTitle;
     }
 
     UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
     CGFloat viewHeight = font.lineHeight + 24;
 
-    CGSize size = [self.eventTitle sizeWithFont:font];
-    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 17, self.view.bounds.size.width - 20, size.height)] autorelease];
+    UILabel *label = [UILabel multilineLabelWithText:listTitle font:font width:self.view.bounds.size.width - 20];
+    label.frame = CGRectMake(10, 17, label.frame.size.width, label.frame.size.height);
     
-    label.text = self.eventTitle;
-    label.font = font;
-    label.backgroundColor = [UIColor clearColor];
     label.layer.shadowColor = [[UIColor blackColor] CGColor];
     label.layer.shadowOffset = CGSizeMake(0, 1);
     label.layer.shadowOpacity = 0.75;
@@ -107,18 +106,40 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     UIView *labelContainer = [[[UIView alloc] initWithFrame:titleFrame] autorelease];
     labelContainer.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
     [labelContainer addSubview:label];
-    
-    CGRect frame = CGRectMake(0, viewHeight, self.view.frame.size.width, self.view.frame.size.height - 44);
-    self.tableView = [[[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain] autorelease];
-    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.tableView.dataSource = self;
-    self.tableView.delegate = self;
-    self.tableView.separatorColor = [UIColor whiteColor];
-    self.tableView.rowHeight -= 10;
-    
-    self.view.backgroundColor = [UIColor clearColor];
     [self.view addSubview:labelContainer];
-    [self.view addSubview:self.tableView];
+    
+    if (username) {
+        if (!self.attendees) {
+            self.attendees = [[NSUserDefaults standardUserDefaults] objectForKey:AllReunionAttendeesPrefKey];
+        }
+        
+        if (!self.attendees) {
+            self.request = [[KGORequestManager sharedManager] requestWithDelegate:self module:@"attendees" path:@"all" params:nil];
+            self.request.expectedResponseType = [NSArray class];
+            if (self.request) {
+                [self.request connect];
+            }
+        }
+        
+        CGRect frame = CGRectMake(0, viewHeight, self.view.frame.size.width, self.view.frame.size.height - viewHeight);
+        self.tableView = [[[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain] autorelease];
+        self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.tableView.dataSource = self;
+        self.tableView.delegate = self;
+        self.tableView.separatorColor = [UIColor whiteColor];
+        self.tableView.rowHeight -= 10;
+        
+        [self.view addSubview:self.tableView];
+        
+    } else {
+        UIButton *signoutButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        signoutButton.frame = CGRectMake(10, viewHeight + 10, 100, 31);
+        [signoutButton setTitle:@"Sign in" forState:UIControlStateNormal];
+        [signoutButton addTarget:[KGORequestManager sharedManager]
+                          action:@selector(logoutKurogoServer)
+                forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:signoutButton];
+    }
 }
 
 - (void)viewDidUnload

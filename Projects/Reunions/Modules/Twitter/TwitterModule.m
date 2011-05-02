@@ -86,6 +86,11 @@
     return [TwitterFeedViewController class];
 }
 
+- (NSString *)feedViewControllerTitle
+{
+    return [NSString stringWithFormat:@"Twitter: %@", self.hashtag];
+}
+
 - (void)willShowModalFeedController
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:TwitterStatusDidUpdateNotification object:self];

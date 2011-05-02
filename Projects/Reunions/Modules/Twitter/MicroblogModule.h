@@ -27,6 +27,7 @@ extern NSString * const TwitterStatusDidUpdateNotification;
 - (void)didLogin:(NSNotification *)aNotification;
 
 - (Class)feedViewControllerClass;
+- (NSString *)feedViewControllerTitle;
 - (void)hideModalFeedController:(id)sender;
 - (void)willShowModalFeedController;
 
