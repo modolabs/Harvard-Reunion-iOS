@@ -4,4 +4,6 @@
     
 }
 
+- (void)didLogout:(NSNotification *)aNotification;
+
 @end

@@ -14,11 +14,21 @@
     if (!self.dataManager) {
         self.dataManager = [[[ScheduleDataManager alloc] init] autorelease];
         self.dataManager.moduleTag = self.tag;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didLogout:) name:KGODidLogoutNotification object:nil];
     }
     if (!self.isLaunched) {
         [[KGOSocialMediaController foursquareService] startup];
         [super launch];
     }
+}
+
+- (void)didLogout:(NSNotification *)aNotification
+{
+    // release the old data manager which is referncing expired core data objects
+    // TODO: fix this in kurogo if needed
+    self.dataManager = [[[ScheduleDataManager alloc] init] autorelease];
+    self.dataManager.moduleTag = self.tag;
 }
 
 - (NSArray *)registeredPageNames {
