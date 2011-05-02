@@ -435,6 +435,11 @@ ToolbarButtonTags;
     UIDevice *device = [notification object];
     
     DLog(@"Orientation change");
+    if (!device.orientation) {
+        // nil means this value has not yet been defined
+        return;
+    }
+    
     // check if orientation really needs to be changed
     if (
         (UIInterfaceOrientationIsPortrait(device.orientation) && UIInterfaceOrientationIsPortrait(displayedOrientation)) ||
@@ -453,6 +458,7 @@ ToolbarButtonTags;
     
     if (UIDeviceOrientationIsLandscape(device.orientation)) {
         displayedOrientation = device.orientation;
+        NSLog(@"Landscape");
         
         [[UIApplication sharedApplication] setStatusBarOrientation:device.orientation];
         
@@ -497,6 +503,7 @@ ToolbarButtonTags;
             }
         }];
     } else {
+        NSLog(@"Portrait");
         
         [NSObject cancelPreviousPerformRequestsWithTarget:self];
         [_mediaView removeGestureRecognizer:self.tapRecoginizer];
