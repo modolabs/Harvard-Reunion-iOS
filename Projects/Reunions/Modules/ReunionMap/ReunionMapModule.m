@@ -3,6 +3,7 @@
 #import "ReunionMapDetailViewController.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "MapHomeViewController.h"
+#import "KGOSidebarFrameViewController.h"
 
 NSString * const EventMapCategoryName = @"event"; // this is what the mobile web gives us
 
@@ -21,6 +22,22 @@ NSString * const EventMapCategoryName = @"event"; // this is what the mobile web
             UIViewController *topVC = [KGO_SHARED_APP_DELEGATE() visibleViewController];
             if (topVC.modalViewController) {
                 [topVC dismissModalViewControllerAnimated:YES];
+            }
+            
+            KGONavigationStyle navStyle = [KGO_SHARED_APP_DELEGATE() navigationStyle];
+            if (navStyle == KGONavigationStyleTabletSidebar) {
+                KGOSidebarFrameViewController *homescreen = (KGOSidebarFrameViewController *)[KGO_SHARED_APP_DELEGATE() homescreen];
+                topVC = homescreen.visibleViewController;
+                if (topVC.modalViewController) {
+                    [topVC dismissModalViewControllerAnimated:YES];
+                }
+            }
+            
+            if ([topVC isKindOfClass:[MapHomeViewController class]]) {
+                [(MapHomeViewController *)topVC setAnnotations:annotations];
+                
+            } else {
+                return [self modulePage:LocalPathPageNameHome params:params];
             }
             
             if ([topVC isKindOfClass:[MapHomeViewController class]]) {
