@@ -48,6 +48,8 @@
 {
     [super viewDidLoad];
     
+    self.title = @"Check In";
+    
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                             target:self
                                                                                             action:@selector(submitButtonPressed:)] autorelease];

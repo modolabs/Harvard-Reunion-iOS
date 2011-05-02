@@ -222,7 +222,7 @@
 {
     if (self.checkinMessage) {
         if (section == 0) {
-            return 1;
+            return 1; // For the "no one has checked in yet" message
         }
         section--;
     }
@@ -245,6 +245,8 @@
     if (self.checkinMessage && indexPath.section == 0) {
         return [[^(UITableViewCell *cell) {
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.accessoryView = nil;
+            cell.accessoryType = UITableViewCellAccessoryNone;
         } copy] autorelease];
     }
     
@@ -306,11 +308,12 @@
     NSString *dateString = [creationDate agoString];
 
     
-    CGFloat width = tableView.frame.size.width - 20 - thumb.frame.size.width;
+    CGFloat width = tableView.frame.size.width - thumb.frame.size.width - 75; // padding and accessory
     UIFont *titleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
     UILabel *titleLabel = [UILabel multilineLabelWithText:title
                                                      font:titleFont
                                                     width:width];
+    titleLabel.backgroundColor = [UIColor clearColor];
     CGRect frame = titleLabel.frame;
     frame.origin.x = thumb.frame.size.width + 20;
     frame.origin.y = 10;
@@ -364,15 +367,19 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.checkedInUserCount) {    
+    if (self.checkedInUserCount) {
+        NSInteger section = indexPath.section;
+        
         if (self.checkinMessage) {
-            if (indexPath.section == 0) {
+            if (section == 0) {
                 return;
             }
-            indexPath = [NSIndexPath indexPathWithIndex: indexPath.section-1];
+            section--;
         }
 
-        NSDictionary *groupInfo = [_filteredCheckinData objectAtIndex:indexPath.section];
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        
+        NSDictionary *groupInfo = [_filteredCheckinData objectAtIndex:section];
         NSDictionary *itemInfo = [[groupInfo arrayForKey:@"items"] dictionaryAtIndex:indexPath.row];
         NSDictionary *userInfo = [itemInfo dictionaryForKey:@"user"];
         NSString *userID = [userInfo stringForKey:@"id" nilIfEmpty:YES];
