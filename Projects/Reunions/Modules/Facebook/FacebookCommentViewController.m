@@ -67,6 +67,8 @@
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                             target:self
                                                                                             action:@selector(submitButtonPressed:)] autorelease];
+    self.navigationItem.rightBarButtonItem.enabled = NO;
+    
     self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                                            target:self
                                                                                            action:@selector(cancelButtonPressed:)] autorelease];
@@ -81,11 +83,16 @@
 }
 
 - (void)textViewDidBeginEditing:(UITextView *)textView {
-    if(!_textEditBegun) {
+    if (!_textEditBegun) {
         _textView.textColor = [UIColor blackColor];
         _textView.text = @"";
         _textEditBegun = YES;
     }
+}
+
+- (void)textViewDidChange:(UITextView *)textView
+{
+    self.navigationItem.rightBarButtonItem.enabled = _textView.text.length > 0;
 }
 
 - (void)viewDidUnload
