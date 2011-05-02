@@ -128,7 +128,7 @@
     if (!self.navigationItem.leftBarButtonItem) {
         self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                                                target:self
-                                                                                               action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+                                                                                               action:@selector(cancelButtonPressed:)] autorelease];
     }
     
     _captionButton.layer.cornerRadius = 5.0;
