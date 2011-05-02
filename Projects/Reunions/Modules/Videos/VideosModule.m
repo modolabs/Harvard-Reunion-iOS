@@ -24,14 +24,12 @@
         vc = [[[FacebookVideosViewController alloc] initWithNibName:homeNibName bundle:nil] autorelease];
     } else if ([pageName isEqualToString:LocalPathPageNameDetail]) {
         FacebookVideo *video = [params objectForKey:@"video"];
-        if (video) {
-            vc = [[[FacebookVideoDetailViewController alloc] initWithNibName:detailNibName bundle:nil] autorelease];
-            [(FacebookVideoDetailViewController *)vc setVideo:video];
-            NSArray *videos = [params objectForKey:@"videos"];
-            if (videos) {
-                [(FacebookVideoDetailViewController *)vc setPosts:videos];
-            }
-        }
+
+        vc = [[[FacebookVideoDetailViewController alloc] initWithNibName:detailNibName bundle:nil] autorelease];
+        NSArray *videos = [params objectForKey:@"videos"];
+        NSInteger videoIndex = [videos indexOfObject:video];
+        [(FacebookVideoDetailViewController *)vc setPosts:videos];
+        [(FacebookVideoDetailViewController *)vc setInitialIndex:videoIndex];
         
         UIImage *curtainImage = [params objectForKey:@"loadingCurtainImage"];
         [(FacebookVideoDetailViewController *)vc 

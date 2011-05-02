@@ -97,6 +97,7 @@ ToolbarButtonTags;
 }
 
 @synthesize post, posts, tableView = _tableView;
+@synthesize initialIndex;
 @synthesize mediaView = _mediaView;
 @synthesize moduleTag;
 @synthesize actionsToolbar;
@@ -385,15 +386,15 @@ ToolbarButtonTags;
         [self setupToolbarButtons];
     }
     
+    self.post = [self.posts objectAtIndex:self.initialIndex];
+    
     NSSortDescriptor *sort = 
     [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:YES];
     [_comments release];
     _comments = [[self.post.comments sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] retain];
     
-    if (self.post) {
-        KGODetailPager *pager = [[[KGODetailPager alloc] initWithPagerController:self delegate:self] autorelease];
-        self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:pager] autorelease];
-    }
+    KGODetailPager *pager = [[[KGODetailPager alloc] initWithPagerController:self delegate:self] autorelease];
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:pager] autorelease];
         
     if (!_mediaView) {
         CGRect frame = self.view.bounds;
@@ -411,7 +412,8 @@ ToolbarButtonTags;
         _mediaImageBackgroundView.layer.shadowOpacity = 0.8;
     }
     
-    [self displayPost];
+    // show the initial page
+    [pager selectPageAtSection:0 row:self.initialIndex];
     
     // these listeners and delegates are used for 
     // handling rotations on the iPhone

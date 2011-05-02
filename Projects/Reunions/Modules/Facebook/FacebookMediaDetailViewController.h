@@ -31,6 +31,7 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate, UINavi
 }
 
 @property (nonatomic, retain) NSArray *posts;
+@property NSInteger initialIndex;
 @property (nonatomic, retain) FacebookParentPost *post;
 @property (nonatomic, retain) UITableView *tableView;
 @property (nonatomic, retain) NSString *moduleTag;

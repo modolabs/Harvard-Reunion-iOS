@@ -29,11 +29,10 @@ NSString * const LocalPathPageNamePhotoUpload = @"uploadPhoto";
         FacebookPhoto *photo = [params objectForKey:@"photo"];
         if (photo) {
             vc = [[[FacebookPhotoDetailViewController alloc] initWithNibName:detailNibName bundle:nil] autorelease];
-            [(FacebookPhotoDetailViewController *)vc setPhoto:photo];
             NSArray *photos = [params objectForKey:@"photos"];
-            if (photos) {
-                [(FacebookPhotoDetailViewController *)vc setPosts:photos];
-            }
+            NSInteger index = [photos indexOfObject:photo];
+            [(FacebookPhotoDetailViewController *)vc setPosts:photos];
+            [(FacebookPhotoDetailViewController *)vc setInitialIndex:index];
             [(FacebookPhotoDetailViewController *)vc setModuleTag:PhotosTag];
         }
     } else if ([pageName isEqualToString:LocalPathPageNamePhotoUpload]) {
