@@ -419,10 +419,9 @@ ToolbarButtonTags;
     // handling rotations on the iPhone
     if((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) ) 
     {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChange:) name:@"UIDeviceOrientationDidChangeNotification" object:nil];
         self.tapRecoginizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(restoreToolbars:)] autorelease];
-        self.navigationController.delegate = self;
     }
+    displayedOrientation = UIInterfaceOrientationPortrait;
 }
 
 - (void)viewDidUnload
@@ -434,12 +433,27 @@ ToolbarButtonTags;
 
 - (void)orientationChange:(NSNotification *)notification {
     UIDevice *device = [notification object];
+    
+    DLog(@"Orientation change");
+    // check if orientation really needs to be changed
+    if (
+        (UIInterfaceOrientationIsPortrait(device.orientation) && UIInterfaceOrientationIsPortrait(displayedOrientation)) ||
+        device.orientation == displayedOrientation) {
+        
+        // not really changing
+        return;
+    }
+    DLog(@"layout needs to be rotated");
+    
     CGFloat statusBarHeight = 20.0;
     UIWindow *window = [[UIApplication sharedApplication] keyWindow];
     _tableView.scrollEnabled = UIInterfaceOrientationIsPortrait(device.orientation);
     _tableView.contentOffset = CGPointZero;
+
     
     if (UIDeviceOrientationIsLandscape(device.orientation)) {
+        displayedOrientation = device.orientation;
+        
         [[UIApplication sharedApplication] setStatusBarOrientation:device.orientation];
         
         [UIView animateWithDuration:0.75 animations:^(void) {
@@ -483,6 +497,7 @@ ToolbarButtonTags;
             }
         }];
     } else {
+        
         [NSObject cancelPreviousPerformRequestsWithTarget:self];
         [_mediaView removeGestureRecognizer:self.tapRecoginizer];
         
@@ -497,11 +512,15 @@ ToolbarButtonTags;
     NSAssert(NO, @"this method must be subclassed");
     return NO;
 }
+ 
+- (void)viewWillDisappear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"UIDeviceOrientationDidChangeNotification" object:nil];
+    [self restorePortraitOrientation];
+}
 
-- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    if (viewController != self) {
-        [self restorePortraitLayout];
-        navigationController.delegate = nil;
+- (void)viewWillAppear:(BOOL)animated {
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChange:) name:@"UIDeviceOrientationDidChangeNotification" object:nil];
     }
 }
 
@@ -510,7 +529,10 @@ ToolbarButtonTags;
     [_mediaView removeGestureRecognizer:self.tapRecoginizer];    
     _tableView.scrollEnabled = YES;
     
-    [self restorePortraitLayout];
+    if(!UIInterfaceOrientationIsPortrait(displayedOrientation)) {
+        [self restorePortraitLayout];
+        displayedOrientation = UIInterfaceOrientationPortrait;
+    }
 }
 
 - (void)restorePortraitLayout {
@@ -560,7 +582,7 @@ ToolbarButtonTags;
     actionToolbarRoot.alpha = 1;
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone &&
-       UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)) 
+       UIInterfaceOrientationIsLandscape(displayedOrientation)) 
     {   
        [self performSelector:@selector(hideToolbars) withObject:nil afterDelay:3.0];
     }
@@ -569,23 +591,6 @@ ToolbarButtonTags;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-    CGFloat height;
-    if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
-        CGRect frame = self.view.frame;
-        height = frame.size.width * self.view.transform.c + frame.size.height * self.view.transform.d;
-        height -= _buttonsBar.frame.size.height;
-    } else {
-        height = floor(_tableView.frame.size.width * 9 / 16);
-    }
-    
-    _tableView.tableHeaderView.frame = CGRectMake(0, 0, _tableView.frame.size.width, height);
-    _tableView.tableHeaderView = _tableView.tableHeaderView;
-    [_tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-    
-    _tableView.scrollEnabled = UIInterfaceOrientationIsPortrait(self.interfaceOrientation);
 }
     
 - (void)displayPost {

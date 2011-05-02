@@ -1,11 +1,11 @@
 #import "FacebookCommentViewController.h"
-#import "FacebookParentPost.h"
-#import "FacebookComment.h"
 #import <QuartzCore/QuartzCore.h>
 #import "KGOSocialMediaController+FacebookAPI.h"
-#import "KGOAppDelegate.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
 #import "KGOTheme.h"
 #import "Foundation+KGOAdditions.h"
+#import "AnalyticsWrapper.h"
+#import "FacebookModel.h"
 
 @implementation FacebookCommentViewController
 
@@ -46,6 +46,22 @@
     
     _loadingViewContainer.hidden = NO;
     [_spinner startAnimating];
+    
+    NSString *action = nil;
+    NSString *label = nil;
+    if (self.profileID) {
+        action = @"Post";
+        label = [NSString stringWithFormat:@"facebook profile id: %@", self.profileID];
+        
+    } else {
+        action = @"Comment";
+        if ([self.post isKindOfClass:[FacebookPhoto class]]) {
+            label = @"photo comment";
+        } else if ([self.post isKindOfClass:[FacebookVideo class]]) {
+            label = @"video comment";
+        }
+    }
+    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Facebook" action:action label:label];
 }
 
 - (IBAction)cancelButtonPressed:(id)sender {
