@@ -51,5 +51,13 @@
     [self.delegate twitterSearch:self didFailWithError:error];
 }
 
+- (void)dealloc
+{
+    if (_connection) {
+        [_connection cancel];
+    }
+    self.delegate = nil;
+    [super dealloc];
+}
 
 @end
