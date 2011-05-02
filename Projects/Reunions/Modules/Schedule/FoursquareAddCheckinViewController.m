@@ -34,7 +34,7 @@
     _loadingViewContainer.hidden = NO;
     [_spinner startAnimating];
     
-    NSString *label = [NSString stringWithFormat:@"foursquare venue id: %@"];
+    NSString *label = [NSString stringWithFormat:@"foursquare venue id: %@", self.venue];
     [[AnalyticsWrapper sharedWrapper] trackEvent:@"foursquare" action:@"checkin" label:label];
 }
 
