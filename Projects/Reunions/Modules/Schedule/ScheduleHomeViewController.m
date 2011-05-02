@@ -280,10 +280,9 @@
         _currentGroupIndex = index;
 
         if (index == 0) {
-            //[self eventsDidChange:[_myEvents allValues] calendar:_currentCalendar];
             NSArray *events = [[(ScheduleDataManager *)self.dataManager allEvents] allValues];
             NSPredicate *pred = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
-                KGOEvent *wrapper = (ScheduleEventWrapper *)evaluatedObject;
+                ScheduleEventWrapper *wrapper = (ScheduleEventWrapper *)evaluatedObject;
                 return [wrapper isBookmarked] || [wrapper isRegistered];
             }];
             NSArray *myEvents = [events filteredArrayUsingPredicate:pred];
