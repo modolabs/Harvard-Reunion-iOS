@@ -5,6 +5,7 @@
 #import "UIKit+KGOAdditions.h"
 #import "TwitterViewController.h"
 #import "MITThumbnailView.h"
+#import "AnalyticsWrapper.h"
 
 @implementation TwitterFeedViewController
 
@@ -55,6 +56,8 @@
 {
     [self dismissModalViewControllerAnimated:YES];
      [twitterModule performSelector:@selector(requestStatusUpdates:) withObject:nil afterDelay:10];
+    
+    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Twitter" action:@"Tweet" label:twitterModule.hashtag];
 }
 
 - (void)controllerFailedToTweet:(TwitterViewController *)controller

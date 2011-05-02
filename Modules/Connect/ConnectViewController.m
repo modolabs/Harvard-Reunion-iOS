@@ -8,6 +8,7 @@
 #import "KGOTheme.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "UIKit+KGOAdditions.h"
+#import "AnalyticsWrapper.h"
 
 typedef enum
 {
@@ -367,16 +368,16 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     [self updateStatus:kBumpStatusDisconnected andMessage:alertText];
 	
 	if (reason != END_USER_QUIT) { 
-		UIAlertView *alert = 
-        [[UIAlertView alloc] 
-         initWithTitle:@"Disconnected" 
-         message:alertText 
-         delegate:nil 
-         cancelButtonTitle:@"OK" 
-         otherButtonTitles:nil];
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Disconnected" 
+                                                        message:alertText 
+                                                       delegate:nil 
+                                              cancelButtonTitle:@"OK" 
+                                              otherButtonTitles:nil];
 		[alert show];
 		[alert release];
 	}
+    
+    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Bump" action:@"Bump" label:nil];
     
     // Start the session over.
     [self setUpBump];    
