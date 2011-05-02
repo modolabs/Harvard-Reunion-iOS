@@ -2,6 +2,7 @@
 #import "KGOAppDelegate.h"
 #import "TwitterViewController.h"
 #import "MITMailComposeController.h"
+#import "AnalyticsWrapper.h"
 
 @implementation KGOShareButtonController
 
@@ -106,12 +107,17 @@
                                 self.shareTitle, self.shareURL, self.shareBody];
         
         [[KGOSocialMediaController facebookService] shareOnFacebook:attachment prompt:nil];
+        
+        // TODO: this can't record if the user taps cancel; the listener is in
+        // KGOFacebookService
+        [[AnalyticsWrapper sharedWrapper] trackEvent:@"Share" action:@"Facebook" label:nil];
 
 	} else if ([method isEqualToString:KGOSocialMediaTypeTwitter]) {
 		TwitterViewController *twitterVC = [[[TwitterViewController alloc] initWithNibName:@"TwitterViewController"
                                                                                     bundle:nil] autorelease];
         twitterVC.preCannedMessage = self.shareTitle;
         twitterVC.longURL = self.shareURL;
+        twitterVC.delegate = self;
         
         UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:twitterVC] autorelease];
         navC.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -125,8 +131,34 @@
                         error:(NSError*)error 
 {
     [self.contentsController dismissModalViewControllerAnimated:YES];
+    
+    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Share" action:@"Email" label:nil];
 }
 
+
+#pragma mark TwitterViewControllerDelegate
+
+- (BOOL)controllerShouldContinueToMessageScreen:(TwitterViewController *)controller
+{
+    return YES;
+}
+
+- (void)controllerDidPostTweet:(TwitterViewController *)controller
+{
+    [self.contentsController dismissModalViewControllerAnimated:YES];
+
+    // will do nothing if no analytics provider is configured
+    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Share" action:@"Twitter" label:nil];
+}
+
+- (void)controllerFailedToTweet:(TwitterViewController *)controller
+{
+    [self.contentsController dismissModalViewControllerAnimated:YES];
+
+    // record the attempt.
+    // will do nothing if no analytics provider is configured
+    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Share" action:@"Twitter" label:nil];
+}
 
 #pragma mark -
 

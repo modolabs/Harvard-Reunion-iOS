@@ -19,6 +19,10 @@
     }
     
     self.view.backgroundColor = [UIColor clearColor];
+
+    //if (!_myEvents) {
+    //    _myEvents = [[NSMutableDictionary alloc] init];
+    //}
 }
 
 - (void)viewDidLoad
@@ -30,8 +34,8 @@
 - (void)dealloc
 {
     self.dataManager.delegate = nil;
-    [_myEvents release];
-    _myEvents = nil;
+    //[_myEvents release];
+    //_myEvents = nil;
     [super dealloc];
 }
 
@@ -204,25 +208,22 @@
     } copy] autorelease];
 }
 
-- (void)clearEvents
-{
-    [super clearEvents];
-    
-    [_myEvents release];
-    _myEvents = nil;
-}
-
 #pragma mark - Scrolling tabstrip
+
+- (void)groupsDidChange:(NSArray *)groups
+{
+    [super groupsDidChange:groups];
+    
+    [(ScheduleDataManager *)self.dataManager requestAllEvents];
+}
 
 - (void)eventsDidChange:(NSArray *)events calendar:(KGOCalendar *)calendar
 {
-    if (_currentCalendar != calendar) {
+    if (calendar && _currentCalendar != calendar) {
         return;
     }
     
     [self clearEvents];
-    
-    BOOL isViewingMyEvents = _currentGroupIndex == 0;
     
     if (events.count) {
         // TODO: make sure this set of events is what we last requested
@@ -258,20 +259,7 @@
                 [eventsBySection setObject:eventsForCurrentSection forKey:title];
                 [sectionTitles addObject:title];
             }
-
-            if ([event isRegistered] || [event isBookmarked]) {
-                if (!_myEvents) {
-                    _myEvents = [[NSMutableDictionary alloc] init];
-                }
-                [_myEvents setObject:event forKey:event.identifier];
-                
-            } else {
-                [_myEvents removeObjectForKey:event.identifier];
-            }
-
-            if (!isViewingMyEvents || [event isRegistered] || [event isBookmarked]) {
-                [eventsForCurrentSection addObject:event];
-            }
+            [eventsForCurrentSection addObject:event];
         }
         
         [_currentSections release];
@@ -292,7 +280,13 @@
         _currentGroupIndex = index;
 
         if (index == 0) {
-            [self eventsDidChange:[_myEvents allValues] calendar:_currentCalendar];
+            NSArray *events = [[(ScheduleDataManager *)self.dataManager allEvents] allValues];
+            NSPredicate *pred = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+                ScheduleEventWrapper *wrapper = (ScheduleEventWrapper *)evaluatedObject;
+                return [wrapper isBookmarked] || [wrapper isRegistered];
+            }];
+            NSArray *myEvents = [events filteredArrayUsingPredicate:pred];
+            [self eventsDidChange:myEvents calendar:nil];
             
         } else {
             [self removeTableView:self.tableView];

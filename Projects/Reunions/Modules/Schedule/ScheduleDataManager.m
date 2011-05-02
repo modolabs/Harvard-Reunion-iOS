@@ -1,9 +1,12 @@
 #import "ScheduleDataManager.h"
 #import "ScheduleEventWrapper.h"
+#import "Foundation+KGOAdditions.h"
 
 #define EVENT_TIMEOUT -3600
 
 @implementation ScheduleDataManager
+
+@synthesize allEvents = _allEvents;
 
 /*
 
@@ -38,6 +41,15 @@
     "allday":false,
     "registered":true}
 */
+
+- (void)dealloc
+{
+    [_allEvents release];
+    if (_allEventsRequest) {
+        [_allEventsRequest cancel];
+    }
+    [super dealloc];
+}
 
 - (BOOL)requestGroups
 {
@@ -84,24 +96,25 @@
 // override superclass b/c we want to initialize ScheduleEventWrapper
 - (BOOL)requestEventsForCalendar:(KGOCalendar *)calendar params:(NSDictionary *)params
 {
-    
     BOOL success = NO;
     NSArray *events = [calendar.events allObjects];
     if (events.count) {
+        NSMutableArray *wrappers = [NSMutableArray arrayWithCapacity:events.count];
+        for (KGOEvent *event in events) {
+            ScheduleEventWrapper *eventWrapper = [_allEvents objectForKey:event.identifier];
+            if (!eventWrapper) {
+                eventWrapper = [[[ScheduleEventWrapper alloc] initWithKGOEvent:event] autorelease];
+                [_allEvents setObject:eventWrapper forKey:event.identifier];
+            }
+            [wrappers addObject:eventWrapper];
+        }
+        
+        [self.delegate eventsDidChange:wrappers calendar:calendar];
+        
         NSPredicate *pred = [NSPredicate predicateWithFormat:@"lastUpdate < %@", [NSDate dateWithTimeIntervalSinceNow:EVENT_TIMEOUT]];
         NSArray *oldEvents = [events filteredArrayUsingPredicate:pred];
         
-        if (oldEvents.count) {
-            [[CoreDataManager sharedManager] deleteObjects:oldEvents];
-            
-        } else {
-            NSMutableArray *wrappers = [NSMutableArray arrayWithCapacity:events.count];
-            for (KGOEvent *event in events) {
-                [wrappers addObject:[[[ScheduleEventWrapper alloc] initWithKGOEvent:event] autorelease]];
-            }
-            
-            [self.delegate eventsDidChange:wrappers calendar:calendar];
-            
+        if (!oldEvents.count) {
             if (wrappers.count) {
                 return YES;
             }
@@ -149,6 +162,18 @@
     return [self requestEventsForCalendar:calendar params:params];
 }
 
+- (void)requestAllEvents
+{
+    if (!_allEvents) {
+        _allEvents = [[NSMutableDictionary alloc] init];
+    }
+    
+    KGOCalendar *calendar = [KGOCalendar calendarWithID:@"all"];
+    if (calendar) {
+        [self requestEventsForCalendar:calendar startDate:[NSDate distantPast] endDate:[NSDate distantFuture]];
+    }
+}
+
 - (void)request:(KGORequest *)request didReceiveResult:(id)result
 {
     if ([request.path isEqualToString:@"events"]) { // events
@@ -171,10 +196,17 @@
         NSMutableArray *array = [NSMutableArray array];
         for (NSInteger i = 0; i < returned; i++) {
             NSDictionary *aDict = [eventDicts objectAtIndex:i];
-            ScheduleEventWrapper *event = [[[ScheduleEventWrapper alloc] initWithDictionary:aDict] autorelease];
-            [event addCalendar:calendar];
-            [array addObject:event];
-            [event convertToKGOEvent];
+            NSString *identifier = [aDict stringForKey:@"id" nilIfEmpty:YES];
+            if (identifier) {
+                ScheduleEventWrapper *event = [_allEvents objectForKey:identifier];
+                if (!event) {
+                    event = [[[ScheduleEventWrapper alloc] initWithDictionary:aDict] autorelease];
+                    [_allEvents setObject:event forKey:identifier];
+                }
+                [event addCalendar:calendar];
+                [array addObject:event];
+                [event convertToKGOEvent];
+            }
         }
         
         [[CoreDataManager sharedManager] saveData];

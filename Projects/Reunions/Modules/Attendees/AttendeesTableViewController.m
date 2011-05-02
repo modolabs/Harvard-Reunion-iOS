@@ -66,15 +66,10 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
+- (void)setupViews
 {
-    [super viewDidLoad];
-    self.view.backgroundColor = [UIColor clearColor];
-
-    self.title = @"Attendees";
-    
     NSString *listTitle = nil;
-
+    
     NSDictionary *userDict = [[[KGORequestManager sharedManager] sessionInfo] dictionaryForKey:@"user"];
     NSString *username = [userDict stringForKey:@"name" nilIfEmpty:YES];
     if (!username) {
@@ -82,31 +77,58 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     } else {
         listTitle = self.eventTitle;
     }
-
+    
     UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
     CGFloat viewHeight = font.lineHeight + 24;
-
-    UILabel *label = [UILabel multilineLabelWithText:listTitle font:font width:self.view.bounds.size.width - 20];
-    label.frame = CGRectMake(10, 17, label.frame.size.width, label.frame.size.height);
     
-    label.layer.shadowColor = [[UIColor blackColor] CGColor];
-    label.layer.shadowOffset = CGSizeMake(0, 1);
-    label.layer.shadowOpacity = 0.75;
-    label.layer.shadowRadius = 1;
+    UILabel *label = nil;
+    UIView *labelContainer = [self.view viewWithTag:200];
+    UIButton *signoutButton = (UIButton *)[self.view viewWithTag:100];
     
-    CGRect titleFrame;
-    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
-        label.textColor = [UIColor whiteColor];
-        titleFrame = CGRectMake(0.0, 50, self.view.bounds.size.width, viewHeight);
-        viewHeight += 50;
+    if (labelContainer) {
+        label = (UILabel *)[labelContainer viewWithTag:10];
+        CGRect frame = labelContainer.frame;
+        frame.size.height = viewHeight;
+        labelContainer.frame = frame;
+        
     } else {
-        label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
-        titleFrame = CGRectMake(0.0, 0.0, self.view.bounds.size.width, viewHeight);
+        CGRect titleFrame;
+        if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+            titleFrame = CGRectMake(0.0, 50, self.view.bounds.size.width, viewHeight);
+            viewHeight += 50;
+        } else {
+            titleFrame = CGRectMake(0.0, 0.0, self.view.bounds.size.width, viewHeight);
+        }
+        labelContainer = [[[UIView alloc] initWithFrame:titleFrame] autorelease];
+        labelContainer.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
+        labelContainer.tag = 200;
+        [labelContainer addSubview:label];
+        [self.view addSubview:labelContainer];
     }
-    UIView *labelContainer = [[[UIView alloc] initWithFrame:titleFrame] autorelease];
-    labelContainer.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
-    [labelContainer addSubview:label];
-    [self.view addSubview:labelContainer];
+    
+    if (!label) {
+        label = [UILabel multilineLabelWithText:listTitle font:font width:self.view.bounds.size.width - 20];
+        label.frame = CGRectMake(10, 17, label.frame.size.width, label.frame.size.height);
+        label.tag = 10;
+        
+        label.layer.shadowColor = [[UIColor blackColor] CGColor];
+        label.layer.shadowOffset = CGSizeMake(0, 1);
+        label.layer.shadowOpacity = 0.75;
+        label.layer.shadowRadius = 1;
+        
+        if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+            label.textColor = [UIColor whiteColor];
+        } else {
+            label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
+        }
+        
+        [labelContainer addSubview:label];
+
+    } else {
+        CGSize size = [listTitle sizeWithFont:label.font constrainedToSize:CGSizeMake(self.view.bounds.size.width - 20, 100)];
+        label.frame = CGRectMake(10, 17, size.width, size.height);
+        label.text = listTitle;
+    }
     
     if (username) {
         if (!self.attendees) {
@@ -131,17 +153,44 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
         
         [self.view addSubview:self.tableView];
         
+        if (signoutButton) {
+            [signoutButton removeFromSuperview];
+        }
+        
     } else {
-        UIButton *signoutButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        signoutButton.frame = CGRectMake(10, viewHeight + 10, 100, 31);
-        [signoutButton setTitle:@"Sign in" forState:UIControlStateNormal];
-        [signoutButton addTarget:[KGORequestManager sharedManager]
-                          action:@selector(logoutKurogoServer)
-                forControlEvents:UIControlEventTouchUpInside];
-        [self.view addSubview:signoutButton];
+        if (!signoutButton) {
+            signoutButton = [UIButton buttonWithType:UIButtonTypeCustom];
+            signoutButton.frame = CGRectMake(0, label.frame.origin.y + label.frame.size.height + 10, 100, 31);
+            signoutButton.titleLabel.textAlignment = UITextAlignmentLeft;
+            signoutButton.tag = 100;
+            [signoutButton setTitle:@"Sign in >" forState:UIControlStateNormal];
+            [signoutButton addTarget:[KGORequestManager sharedManager]
+                              action:@selector(logoutKurogoServer)
+                    forControlEvents:UIControlEventTouchUpInside];
+            [self.view addSubview:signoutButton];
+        }
+        
+        if (self.tableView) {
+            [_tableView removeFromSuperview];
+            self.tableView = nil;
+        }
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(setupViews)
+                                                     name:KGODidLoginNotification object:nil];
     }
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor clearColor];
+    
+    self.title = @"Attendees";
+    
+    [self setupViews];
+}
+         
 - (void)viewDidUnload
 {
     [super viewDidUnload];

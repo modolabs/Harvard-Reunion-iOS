@@ -6,6 +6,7 @@
 #import "Foundation+KGOAdditions.h"
 #import "KGOSocialMediaController.h"
 #import "KGOFoursquareEngine.h"
+#import "AnalyticsWrapper.h"
 
 @implementation FoursquareAddCheckinViewController
 
@@ -32,6 +33,9 @@
 
     _loadingViewContainer.hidden = NO;
     [_spinner startAnimating];
+    
+    NSString *label = [NSString stringWithFormat:@"foursquare venue id: %@"];
+    [[AnalyticsWrapper sharedWrapper] trackEvent:@"foursquare" action:@"checkin" label:label];
 }
 
 - (IBAction)cancelButtonPressed:(id)sender {

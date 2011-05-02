@@ -262,10 +262,6 @@
     vc.searchResultsDelegate = self;
 
     UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
-    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                           target:self
-                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
-    vc.navigationItem.rightBarButtonItem = item;
     navC.modalPresentationStyle = UIModalPresentationFormSheet;
     navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
     [self presentModalViewController:navC animated:YES];
@@ -277,6 +273,10 @@
     vc.view.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
 
     UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                           target:self
+                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+    vc.navigationItem.rightBarButtonItem = item;
     navC.modalPresentationStyle = UIModalPresentationFormSheet;
     navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
     [self presentModalViewController:navC animated:YES];
@@ -590,6 +590,8 @@
 		[self switchToMapView];
 	}
 	
+    [_mapView removeAnnotations:[_mapView annotations]];
+    
 	for (id<KGOSearchResult> aResult in controller.searchResults) {
 		if ([aResult conformsToProtocol:@protocol(MKAnnotation)]) {
 			id<MKAnnotation> annotation = (id<MKAnnotation>)aResult;

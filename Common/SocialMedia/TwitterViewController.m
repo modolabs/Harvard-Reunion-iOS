@@ -10,6 +10,7 @@
 
 - (void)updateCounter:(NSString *)message delta:(NSInteger)deltaChars;
 - (void)refreshNavBarItems;
+- (void)populateMessageView;
 
 @end
 
@@ -117,20 +118,7 @@
 		[[KGOSocialMediaController sharedController] getBitlyURLForLongURL:longURL delegate:self];
 
     } else {
-        _loadingView.hidden = YES;
-
-        NSMutableArray *messageParts = [NSMutableArray array];
-        if (self.preCannedMessage) {
-            [messageParts addObject:self.preCannedMessage];
-        }
-        if (self.shortURL) {
-            [messageParts addObject:self.shortURL];
-        } else if (self.longURL) {
-            [messageParts addObject:self.longURL];
-        }
-        if (messageParts.count) {
-            _messageView.text = [messageParts componentsJoinedByString:@"\n"];
-        }
+        [self populateMessageView];
     }
     
     [_messageView becomeFirstResponder];
@@ -141,6 +129,24 @@
                                                object:nil];
 }
 
+- (void)populateMessageView
+{
+    _loadingView.hidden = YES;
+    
+    NSMutableArray *messageParts = [NSMutableArray array];
+    if (self.preCannedMessage) {
+        [messageParts addObject:self.preCannedMessage];
+    }
+    if (self.shortURL) {
+        [messageParts addObject:self.shortURL];
+    } else if (self.longURL) {
+        [messageParts addObject:self.longURL];
+    }
+    if (messageParts.count) {
+        _messageView.text = [messageParts componentsJoinedByString:@"\n"];
+        [self updateCounter:_messageView.text delta:0];
+    }
+}
 
 - (void)twitterDidLogout:(NSNotification *)aNotification
 {
@@ -174,6 +180,12 @@
 - (void)didGetBitlyURL:(NSString *)url {
     self.shortURL = url;
     _loadingView.hidden = NO;
+    [self populateMessageView];
+}
+
+- (void)failedToGetBitlyURL
+{
+    [self populateMessageView];
 }
 
 #pragma mark Text field and Text view delegation
@@ -197,8 +209,8 @@
 	}
 }
 
-- (void)updateCounter:(NSString *)aMessage delta:(NSInteger)deltaChars{
-	_counterLabel.text = [NSString stringWithFormat:@"%i", TWEET_MAX_CHARS-[aMessage length]-deltaChars];
+- (void)updateCounter:(NSString *)aMessage delta:(NSInteger)deltaChars {
+	_counterLabel.text = [NSString stringWithFormat:@"%i", TWEET_MAX_CHARS - [aMessage length] - deltaChars];
 }
 
 @end

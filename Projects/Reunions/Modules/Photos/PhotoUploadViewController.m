@@ -4,6 +4,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "KGOAppDelegate.h"
 #import "UIKit+KGOAdditions.h"
+#import "AnalyticsWrapper.h"
 
 @implementation FacebookPhotoCaptionViewController
 
@@ -68,6 +69,10 @@
                                           toFacebookProfile:self.profile
                                                     message:self.caption
                                                    delegate:self.parentVC];
+    
+    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Facebook"
+                                          action:@"Photo upload"
+                                           label:[NSString stringWithFormat:@"facebook profile id: %@", self.profile]];
 }
 
 - (IBAction)captionButtonPressed:(UIButton *)sender {
@@ -128,7 +133,7 @@
     if (!self.navigationItem.leftBarButtonItem) {
         self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                                                target:self
-                                                                                               action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+                                                                                               action:@selector(cancelButtonPressed:)] autorelease];
     }
     
     _captionButton.layer.cornerRadius = 5.0;

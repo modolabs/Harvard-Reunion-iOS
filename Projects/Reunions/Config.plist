@@ -5,7 +5,7 @@
 	<key>Analytics</key>
 	<dict>
 		<key>AccountID</key>
-		<string></string>
+		<string>UA-2923555-29</string>
 		<key>Provider</key>
 		<string>Google</string>
 	</dict>
@@ -107,12 +107,12 @@
 			<string>foursquare</string>
 		</dict>
 		<dict>
-			<key>longName</key>
-			<string>Settings</string>
 			<key>class</key>
 			<string>SettingsModule</string>
 			<key>hidden</key>
 			<true/>
+			<key>longName</key>
+			<string>Settings</string>
 			<key>tag</key>
 			<string>settings</string>
 		</dict>
@@ -151,7 +151,7 @@
 			<key>APIPath</key>
 			<string>rest</string>
 			<key>Host</key>
-			<string>m-dev.reunion.harvard.edu</string>
+			<string>m.reunion.harvard.edu</string>
 			<key>PathExtension</key>
 			<string></string>
 			<key>UseHTTPS</key>
@@ -162,7 +162,7 @@
 			<key>APIPath</key>
 			<string>rest</string>
 			<key>Host</key>
-			<string>m-dev.reunion.harvard.edu</string>
+			<string>m-staging.reunion.harvard.edu</string>
 			<key>PathExtension</key>
 			<string></string>
 			<key>UseHTTPS</key>
@@ -175,7 +175,7 @@
 			<key>Host</key>
 			<string>m-dev.reunion.harvard.edu</string>
 			<key>PathExtension</key>
-			<string>qa</string>
+			<string>beta</string>
 			<key>UseHTTPS</key>
 			<true/>
 		</dict>

@@ -38,12 +38,14 @@
 - (void)addBookmark {
     if (![self isBookmarked]) {
         self.bookmarked = [NSNumber numberWithBool:YES];
+        [[CoreDataManager sharedManager] saveData];
     }
 }
 
 - (void)removeBookmark {
     if ([self isBookmarked]) {
         self.bookmarked = [NSNumber numberWithBool:NO];
+        [[CoreDataManager sharedManager] saveData];
     }
 }
 
@@ -128,7 +130,7 @@
         }
 
     } else {
-        result = [[CoreDataManager sharedManager] objectsForEntity:KGOPlacemarkEntityName matchingPredicate:pred];
+        result = [[[CoreDataManager sharedManager] objectsForEntity:KGOPlacemarkEntityName matchingPredicate:pred] lastObject];
         if (!result) {
             result = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:KGOPlacemarkEntityName];
             result.identifier = placemarkID;

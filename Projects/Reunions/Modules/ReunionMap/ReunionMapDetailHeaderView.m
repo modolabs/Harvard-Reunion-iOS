@@ -5,39 +5,123 @@
 #import "KGOMapCategory.h"
 #import "ReunionMapModule.h"
 #import "UIKit+KGOAdditions.h"
+#import "CoreDataManager.h"
+
+#define LABEL_PADDING_SMALL 2
+#define LABEL_PADDING_LARGE 10
+#define MAX_TITLE_LINES 3
+#define MAX_SUBTITLE_LINES 5
 
 @implementation ReunionMapDetailHeaderView
 
-- (void)toggleBookmark:(id)sender
+- (void)layoutSubviews
 {
+    if (_placeSubtitleLabel) {
+        [_placeSubtitleLabel removeFromSuperview];
+    }
+    if (_placeTitleLabel) {
+        [_placeTitleLabel removeFromSuperview];
+    }
+    
     if ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]]) {
+        CGRect oldFrame = self.frame;
         
         ScheduleEventWrapper *event = (ScheduleEventWrapper *)self.detailItem;
-        NSArray *categoryPath = [NSArray arrayWithObject:EventMapCategoryName];
-        KGOPlacemark *placemark = [KGOPlacemark placemarkWithID:event.identifier categoryPath:categoryPath];
-        placemark.longitude = [NSNumber numberWithFloat:event.coordinate.longitude];
-        placemark.latitude = [NSNumber numberWithFloat:event.coordinate.latitude];
-        placemark.bookmarked = [NSNumber numberWithBool:YES];
-
-        if (placemark) {
-            _bookmarkedItem = [placemark retain];
+        
+        CGFloat maxWidth = self.bounds.size.width - 2 * LABEL_PADDING_LARGE;
+        CGFloat y = LABEL_PADDING_LARGE;
+        
+        if (_titleLabel) {
+            CGSize constraintSize = CGSizeMake(maxWidth, _titleLabel.font.lineHeight * MAX_TITLE_LINES);
+            CGSize textSize = [_titleLabel.text sizeWithFont:_titleLabel.font constrainedToSize:constraintSize];
+            _titleLabel.frame = CGRectMake(LABEL_PADDING_LARGE, y, maxWidth, textSize.height);
+            y += _titleLabel.frame.size.height;
         }
+        
+        if (_subtitleLabel) {
+            y += LABEL_PADDING_SMALL;
+            CGSize constraintSize = CGSizeMake(maxWidth, _subtitleLabel.font.lineHeight * MAX_SUBTITLE_LINES);
+            CGSize textSize = [_subtitleLabel.text sizeWithFont:_subtitleLabel.font constrainedToSize:constraintSize];
+            _subtitleLabel.frame = CGRectMake(LABEL_PADDING_LARGE, y, maxWidth, textSize.height);
+            y += _subtitleLabel.frame.size.height;
+        }
+        
+        y += LABEL_PADDING_LARGE;
+        
+        [self layoutBookmarkButton];
+        
+        // two extra views for the location
+        maxWidth = [self headerWidthWithButtons] - 2 * LABEL_PADDING_LARGE;
+        
+        if (event.briefLocation) {
+            if (!_placeTitleLabel) {
+                _placeTitleLabel = [[UILabel alloc] init];
+                _placeTitleLabel.backgroundColor = [UIColor clearColor];
+                _placeTitleLabel.font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
+                _placeTitleLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
+            }
+            
+            _placeTitleLabel.text = event.briefLocation;
+
+            CGSize constraintSize = CGSizeMake(maxWidth, _subtitleLabel.font.lineHeight * MAX_SUBTITLE_LINES);
+            CGSize textSize = [_placeTitleLabel.text sizeWithFont:_placeTitleLabel.font constrainedToSize:constraintSize];
+            
+            _placeTitleLabel.frame = CGRectMake(LABEL_PADDING_LARGE, y, maxWidth, textSize.height);
+            
+            y += _placeTitleLabel.frame.size.height;
+            
+            [self addSubview:_placeTitleLabel];
+        }
+        
+        if (event.location) {
+            if (!_placeSubtitleLabel) {
+                _placeSubtitleLabel = [[UILabel alloc] init];
+                _placeSubtitleLabel.backgroundColor = [UIColor clearColor];
+                _placeSubtitleLabel.font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentSubtitle];
+                _placeSubtitleLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentSubtitle];
+            }
+            
+            y += LABEL_PADDING_SMALL;
+            
+            _placeSubtitleLabel.text = event.location;
+            
+            CGSize constraintSize = CGSizeMake(maxWidth, _subtitleLabel.font.lineHeight * MAX_SUBTITLE_LINES);
+            CGSize textSize = [_placeSubtitleLabel.text sizeWithFont:_placeSubtitleLabel.font constrainedToSize:constraintSize];
+            
+            _placeSubtitleLabel.frame = CGRectMake(LABEL_PADDING_LARGE, y, maxWidth, textSize.height);
+            y += _placeSubtitleLabel.frame.size.height;
+            
+            [self addSubview:_placeSubtitleLabel];
+        }
+        
+        CGRect frame = self.frame;
+        frame.size.height = y + LABEL_PADDING_LARGE;
+        self.frame = frame;
+        
+        if ((self.frame.size.width != oldFrame.size.width || self.frame.size.height != oldFrame.size.height)
+            && [self.delegate respondsToSelector:@selector(headerViewFrameDidChange:)]
+        ) {
+            [self.delegate headerViewFrameDidChange:self];
+        }
+        
+    } else {
+        [super layoutSubviews];
+    }
+}
+
+- (void)toggleBookmark:(id)sender
+{
+    if (_bookmarkedItem) {
+        if ([_bookmarkedItem isBookmarked]) {
+            [_bookmarkedItem removeBookmark];
+        } else {
+            [_bookmarkedItem addBookmark];
+        }
+        [self layoutBookmarkButton];
         
     } else {
         [super toggleBookmark:sender];
     }
-}
-
-- (UILabel *)subtitleLabel
-{
-    if (!_subtitleLabel) {
-        _subtitleLabel = [[UILabel alloc] init];
-        _subtitleLabel.backgroundColor = [UIColor clearColor];
-        _subtitleLabel.font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentSubtitle];
-        _subtitleLabel.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentSubtitle];
-        //_subtitleLabel.numberOfLines = MAX_SUBTITLE_LINES;
-    }
-    return _subtitleLabel;
 }
 
 - (void)setDetailItem:(id<KGOSearchResult>)detailItem
@@ -46,13 +130,42 @@
     
     [_bookmarkedItem release];
     _bookmarkedItem = nil;
+    
+    if ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]]) {
+        ScheduleEventWrapper *event = (ScheduleEventWrapper *)self.detailItem;
+
+        NSArray *categoryPath = [NSArray arrayWithObject:EventMapCategoryName];
+        KGOPlacemark *placemark = [KGOPlacemark placemarkWithID:event.identifier categoryPath:categoryPath];
+        placemark.longitude = [NSNumber numberWithFloat:event.coordinate.longitude];
+        placemark.latitude = [NSNumber numberWithFloat:event.coordinate.latitude];
+        placemark.title = event.title;
+        placemark.street = event.location;
+        
+        if (placemark) {
+            [_bookmarkedItem release];
+            _bookmarkedItem = [placemark retain];
+        }
+        
+        NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+        [formatter setDateFormat:@"EEE, MMMM dd"];
+        NSString *dateString = [formatter stringFromDate:event.startDate];
+        [formatter setTimeStyle:NSDateFormatterShortStyle];
+        NSString *timeString = nil;
+        if (event.endDate) {
+            timeString = [NSString stringWithFormat:@"%@ | %@-%@",
+                          dateString,
+                          [formatter stringFromDate:event.startDate],
+                          [formatter stringFromDate:event.endDate]];
+        } else {
+            timeString = [NSString stringWithFormat:@"%@ | %@",
+                          dateString,
+                          [formatter stringFromDate:event.startDate]];
+        }
+        
+        self.subtitleLabel.text = timeString;
+    }
 }
-/*
-- (CGFloat)headerWidthWithButtons
-{
-    return self.bounds.size.width - 70;
-}
-*/
+
 - (void)layoutBookmarkButton
 {
     [super layoutBookmarkButton];
@@ -71,6 +184,23 @@
         [_bookmarkButton setImage:pressedButtonImage forState:UIControlStateHighlighted];
     }
     
+    if ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]]) {
+        CGRect frame = _bookmarkButton.frame;
+        if (_subtitleLabel) {
+            frame.origin.y = _subtitleLabel.frame.origin.y + _subtitleLabel.frame.size.height;
+        } else {
+            frame.origin.y = _titleLabel.frame.origin.y + _titleLabel.frame.size.height;
+        }
+        _bookmarkButton.frame = frame;
+        
+    }
+}
+
+- (void)dealloc
+{
+    [_placeSubtitleLabel release];
+    [_placeTitleLabel release];
+    [super dealloc];
 }
 
 @end
