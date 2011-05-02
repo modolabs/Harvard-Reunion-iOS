@@ -10,7 +10,7 @@ extern NSString * const FoursquareOAuthExpirationDate; // not supported by fours
 
 @protocol KGOFoursquareRequestDelegate <NSObject>
 
-- (void)foursquareRequest:(KGOFoursquareRequest *)request didSucceedWithResponse:(NSDictionary *)response;
+- (void)foursquareRequest:(KGOFoursquareRequest *)request didSucceedWithResponse:(NSDictionary *)response andNotifications:(NSArray *)notifications;
 - (void)foursquareRequest:(KGOFoursquareRequest *)request didFailWithError:(NSError *)error;
 
 @end
@@ -56,9 +56,11 @@ typedef enum {
 
 @optional
 
-- (void)venueCheckinDidSucceed:(NSString *)venue;
-- (void)venueCheckinDidFail:(NSString *)venue;
+- (void)venueCheckinDidSucceed:(NSString *)venue withResponse:(NSDictionary *)response;
+- (void)venueCheckinDidFail:(NSString *)venue withMessage:(NSString *)message;
+
 - (void)venueCheckinStatusReceived:(BOOL)status forVenue:(NSString *)venue;
+- (void)venueCheckinStatusFailed:(NSString *)venue withMessage:(NSString *)message;
 
 - (void)didReceiveCheckins:(NSArray *)checkins total:(NSInteger)total forVenue:(NSString *)venue;
 

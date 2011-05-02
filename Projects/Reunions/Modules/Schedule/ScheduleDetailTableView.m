@@ -34,22 +34,28 @@
 
 - (void)presentFoursquareCheckinController
 {
+    if ([[KGOSocialMediaController foursquareService] isSignedIn]) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                        name:FoursquareDidLoginNotification
+                                                      object:nil];
+    }
+    
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            self.event.title, @"eventTitle",
-                            _checkedInUsers, @"checkinData",
-                            [NSNumber numberWithInt:_checkedInUserCount], @"checkedInUserCount",
-                            _foursquareVenue, @"venue",
-                            [NSNumber numberWithBool:(_checkinStatus == CHECKIN_STATUS_CHECKED_IN)], @"isCheckedIn",
                             self, @"parentTableView",
+                            self.event.title, @"eventTitle",
+                            [NSNumber numberWithInt:_checkedInUserCount], @"checkedInUserCount",
+                            [NSNumber numberWithBool:(_checkinStatus == CHECKIN_STATUS_CHECKED_IN)], @"isCheckedIn",
+                            _foursquareVenue, @"venue",
+                            _checkedInUsers, @"checkinData", // last because it can be nil
                             nil];
     [KGO_SHARED_APP_DELEGATE() showPage:@"foursquareCheckins" forModuleTag:@"schedule" params:params];
 }
 
 - (void)refreshFoursquareCell
 {
-    [self beginUpdates];
+    //[self beginUpdates];
     [self reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
-    [self endUpdates];
+    //[self endUpdates];
 }
 
 - (void)venueCheckinStatusReceived:(BOOL)status forVenue:(NSString *)venue
@@ -73,6 +79,12 @@
         _checkedInUserCount = total;
     }
     [self refreshFoursquareCell];
+}
+
+- (void)venueCheckinStatusFailed:(NSString *)venue withMessage:(NSString *)message
+{
+    // Currently we don't try to handle this.  Just leave the UI as is and when they click on 
+    // the foursquare link the FoursquareCheckinViewController will display an error
 }
 
 - (void)eventDetailsDidChange
