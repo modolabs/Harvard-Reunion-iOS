@@ -12,6 +12,7 @@
     
 }
 
+@property(nonatomic, retain) NSString *checkinMessage;
 @property(nonatomic, retain) NSArray *checkinData;
 @property(nonatomic, retain) NSString *eventTitle;
 @property(nonatomic) BOOL isCheckedIn;

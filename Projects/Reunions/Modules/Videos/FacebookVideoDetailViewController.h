@@ -17,6 +17,4 @@
 @property (nonatomic, retain) UIImage *loadingCurtainImage;
 @property (nonatomic, retain) MPMoviePlayerController *player;
 
-- (void)loadVideosFromCache;
-
 @end

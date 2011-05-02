@@ -131,19 +131,6 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     }
 }
 
-- (void)loadVideosFromCache {
-    // TODO: sort by date or whatever
-    NSArray *videos = [[CoreDataManager sharedManager] objectsForEntity:FacebookVideoEntityName matchingPredicate:nil];
-    for (FacebookVideo *aVideo in videos) {
-        //[_photosByID setObject:aPhoto forKey:aPhoto.identifier];
-        NSLog(@"found cached video %@", aVideo.identifier);
-        //[self displayPhoto:aPhoto];
-    }
-    
-    self.posts = videos;
-    //[[CoreDataManager sharedManager] deleteObjects:photos];
-}
-
 - (void)setVideo:(FacebookVideo *)aVideo {
     self.post = aVideo;
 }
@@ -167,8 +154,6 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    [self loadVideosFromCache];
     
     self.title = @"Video";
     

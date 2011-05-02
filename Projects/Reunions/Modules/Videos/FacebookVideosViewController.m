@@ -150,6 +150,7 @@ VideosViewTags;
     }
     
     _videos = [[NSMutableArray alloc] init];
+    _displayedVideos = [[NSMutableArray alloc] init];
     _videoIDs = [[NSMutableSet alloc] init];
 }
 
@@ -183,6 +184,7 @@ VideosViewTags;
     [currentFilterBlock release];
     [iconGrid release];
     [_videos release];
+    [_displayedVideos release];
     [_videoIDs release];
     [super dealloc];
 }
@@ -222,6 +224,7 @@ VideosViewTags;
 - (void)syncVideoThumbnailsToGrid {
     NSAutoreleasePool *thumbnailLoadingPool = [[NSAutoreleasePool alloc] init];
     NSMutableArray *thumbnails = [NSMutableArray arrayWithCapacity:_videos.count];
+    [_displayedVideos removeAllObjects];
     for (FacebookVideo *video in _videos) {
         if (!self.currentFilterBlock || self.currentFilterBlock(video)) {
             FacebookThumbnail *thumbnail = 
@@ -231,6 +234,8 @@ VideosViewTags;
             [thumbnail addTarget:self action:@selector(thumbnailTapped:) 
                 forControlEvents:UIControlEventTouchUpInside];
             [thumbnails addObject:thumbnail];
+            
+            [_displayedVideos addObject:video];
         }
     }    
     self.iconGrid.icons = thumbnails;
@@ -310,7 +315,7 @@ VideosViewTags;
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                                _videos, @"videos", video, @"video", nil];
+                                _displayedVideos, @"videos", video, @"video", nil];
         [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail 
                                forModuleTag:@"video" 
                                      params:params]; 
@@ -397,7 +402,7 @@ VideosViewTags;
              
              NSDictionary *params = 
              [NSDictionary dictionaryWithObjectsAndKeys:
-              _videos, @"videos", video, @"video", 
+              _displayedVideos, @"videos", video, @"video", 
               curtainImage, @"loadingCurtainImage", nil];
              
              [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail 

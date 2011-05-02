@@ -104,17 +104,20 @@ static NSString * const FoursquareBaseURL = @"https://api.foursquare.com/v2";
     
     if ([result isKindOfClass:[NSDictionary class]]) {
         DLog(@"%@", [result description]);
+        NSDictionary *meta = [result objectForKey:@"meta"];
+        id errorType = [meta objectForKey:@"errorType"];
         id errorInfo = [result objectForKey:@"error"];
-        if (errorInfo) {
+        if (errorInfo || errorType) {
             NSError *error = [NSError errorWithDomain:@"com.modolabs.foursquareEngine" code:1 userInfo:result];
             [self.delegate foursquareRequest:self didFailWithError:error];
             
         } else {
             NSDictionary *response = [result dictionaryForKey:@"response"];
+            NSArray *notifications = [result arrayForKey:@"notifications"];
             if (response) {
-                [self.delegate foursquareRequest:self didSucceedWithResponse:response];
+                [self.delegate foursquareRequest:self didSucceedWithResponse:response andNotifications: notifications];
             } else {
-                [self.delegate foursquareRequest:self didSucceedWithResponse:result];
+                [self.delegate foursquareRequest:self didSucceedWithResponse:result andNotifications: nil];
             }
         }
         
@@ -392,7 +395,7 @@ NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
 }
 
 
-- (void)foursquareRequest:(KGOFoursquareRequest *)request didSucceedWithResponse:(NSDictionary *)response
+- (void)foursquareRequest:(KGOFoursquareRequest *)request didSucceedWithResponse:(NSDictionary *)response andNotifications:(NSArray *)notifications
 {
     if (request == _oauthRequest) {
         [_oauthRequest release];
@@ -665,8 +668,30 @@ NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
 
 
             } else if ([request.resourceName isEqualToString:@"checkins"] && [request.command isEqualToString:@"add"]) {
-                if ([currentPair.delegate respondsToSelector:@selector(venueCheckinDidSucceed:)]) {
-                    [currentPair.delegate venueCheckinDidSucceed:request.resourceID];
+                NSString *message = nil;
+                NSInteger points = 0;
+                
+                if (notifications) {
+                    for (NSDictionary *notification in notifications) {
+                        NSString *type = [notification objectForKey:@"type"];
+                        NSDictionary *item = [notification dictionaryForKey:@"item"];
+                        
+                        if (item && [type isEqualToString:@"message"]) {
+                            message = [item objectForKey:@"message"];
+                            
+                        } else if (item && [type isEqualToString:@"score"]) {
+                            points += [item integerForKey:@"total"];
+                        }
+                    }
+                }
+                DLog(@"%d points", points);
+                NSDictionary *checkinResponse = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                 message, @"message", 
+                                                 [NSNumber numberWithInteger:points], @"points", 
+                                                 nil];
+                
+                if ([currentPair.delegate respondsToSelector:@selector(venueCheckinDidSucceed:withResponse:)]) {
+                    [currentPair.delegate venueCheckinDidSucceed:request.resourceID withResponse:checkinResponse];
                 }
                 
             }
@@ -694,6 +719,56 @@ NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
         
     } else if (request == _currentUserRequest) {
         _currentUserRequest = nil;
+        
+    } else {
+        
+        KGOFoursquareCheckinPair *currentPair = nil;
+        for (KGOFoursquareCheckinPair *aPair in _checkinQueue) {
+            if (aPair.request == request) {
+                currentPair = aPair;
+                break;
+            }
+        }
+        
+        if (currentPair) {
+            NSString *message = nil;
+            
+            NSDictionary *errorInfo = [error userInfo];
+            if (errorInfo) {
+                DLog(@"%@", errorInfo);
+                NSString *errorDetail = [[errorInfo objectForKey:@"meta"] objectForKey:@"errorDetail"];
+                if (errorDetail) {
+                    message = errorDetail;
+                }
+            }
+            
+            if ([request.resourceName isEqualToString:@"venues"]) {
+                if ([currentPair.delegate respondsToSelector:@selector(venueCheckinStatusFailed:withMessage:)]) {
+                    [currentPair.delegate venueCheckinStatusFailed:request.resourceID withMessage:message];
+                }
+ 
+            } else if ([request.resourceName isEqualToString:@"users"] && [request.command isEqualToString:@"checkins"]) {
+                if ([currentPair.delegate respondsToSelector:@selector(venueCheckinStatusFailed:withMessage:)]) {
+                    NSString *venue = [currentPair.userData objectForKey:@"venue"];
+                    [currentPair.delegate venueCheckinStatusFailed:venue withMessage:message];
+                }
+                
+            } else if ([request.resourceName isEqualToString:@"users"] && [request.resourceID isEqualToString:@"self"]) {
+                if ([currentPair.delegate respondsToSelector:@selector(venueCheckinStatusFailed:withError:)]) {
+                    NSString *venue = [currentPair.userData objectForKey:@"venue"];
+                    [currentPair.delegate venueCheckinStatusFailed:venue withMessage:message];
+                }
+                
+                
+            } else if ([request.resourceName isEqualToString:@"checkins"] && [request.command isEqualToString:@"add"]) {
+                if ([currentPair.delegate respondsToSelector:@selector(venueCheckinDidFail:withMessage:)]) {
+                    [currentPair.delegate venueCheckinDidFail:request.resourceID withMessage:message];
+                }
+                
+            }
+            
+            [_checkinQueue removeObject:currentPair];
+        }
         
     }
 }
