@@ -105,7 +105,7 @@
 		<key>SmallPrint</key>
 		<dict>
 			<key>color</key>
-			<string>#FFFFFF</string>
+			<string>#bab7b5</string>
 			<key>size</key>
 			<integer>-2</integer>
 		</dict>
