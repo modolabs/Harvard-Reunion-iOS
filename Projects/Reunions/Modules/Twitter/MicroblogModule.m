@@ -239,8 +239,6 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         CGFloat rightInset = maxSize.width - textSize.width + 5;
         button.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, rightInset);
         button.imageEdgeInsets = UIEdgeInsetsMake(3, 5, 3, rightInset + textSize.width);
-        
-        NSLog(@"%.1f %.1f %.1f %.1f %@ %@", button.titleEdgeInsets.left, button.titleEdgeInsets.right, button.imageEdgeInsets.left, button.imageEdgeInsets.right, button.titleLabel, button.imageView);
     }
     
     return _buttonWidget;

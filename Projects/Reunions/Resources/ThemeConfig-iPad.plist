@@ -170,8 +170,6 @@
 		<string>modules/home/home-masthead.png</string>
 		<key>SearchBarBackground</key>
 		<string>common/searchbar-background.png</string>
-		<key>SearchBarDropShadow</key>
-		<string>common/bar-drop-shadow.png</string>
 		<key>ToolbarBackground</key>
 		<string>common/toolbar-background.png</string>
 	</dict>
