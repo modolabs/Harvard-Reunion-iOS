@@ -23,9 +23,10 @@
                             withKey:(NSString *)key
 {
     id value = nil;
-    if (propertyID == kABPersonEmailProperty) {
+    if ((propertyID == kABPersonEmailProperty) ||
+        (propertyID == kABPersonPhoneProperty)) {
         value = 
-        [[self class] getMultiValueRecordProperty:kABPersonEmailProperty
+        [[self class] getMultiValueRecordProperty:propertyID
                                            record:record]; 
     }
     else if ((propertyID == kABPersonBirthdayProperty) ||
@@ -183,6 +184,9 @@
      addNonNilValueForPropertyID:kABPersonEmailProperty
      inRecord:record toDictionary:dict withKey:@"kABPersonEmailProperty"];
     [[self class] 
+     addNonNilValueForPropertyID:kABPersonPhoneProperty
+     inRecord:record toDictionary:dict withKey:@"kABPersonPhoneProperty"];
+    [[self class] 
      addNonNilValueForPropertyID:kABPersonBirthdayProperty
      inRecord:record toDictionary:dict withKey:@"kABPersonBirthdayProperty"];
     [[self class] 
@@ -250,6 +254,9 @@
     [[self class] 
      setMultiValue:[dict objectForKey:@"kABPersonEmailProperty"]
      record:record propertyID:kABPersonEmailProperty];
+    [[self class] 
+     setMultiValue:[dict objectForKey:@"kABPersonPhoneProperty"]
+     record:record propertyID:kABPersonPhoneProperty];
     
     [[self class] 
      setSimpleValue:[dict objectForKey:@"kABPersonBirthdayProperty"]
