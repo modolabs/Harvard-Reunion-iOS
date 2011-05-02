@@ -17,6 +17,7 @@ typedef BOOL (^VideoTest)(FacebookVideo *video);
 //    UITableView *_tableView;
     
     NSMutableArray *_videos;
+    NSMutableArray *_displayedVideos;
     NSMutableSet *_videoIDs;
     CGFloat resizeFactor;
 }

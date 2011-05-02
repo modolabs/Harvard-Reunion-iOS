@@ -191,7 +191,7 @@ static NSString * const FromLibraryOption = @"From photo library";
     
     _icons = [[NSMutableArray alloc] init];
     _photosByID = [[NSMutableDictionary alloc] init];
-    _displayedPhotos = [[NSMutableSet alloc] init];
+    _displayedPhotos = [[NSMutableArray alloc] init];
 }
 
 - (void)facebookDidLogin:(NSNotification *)aNotification
@@ -289,7 +289,7 @@ static NSString * const FromLibraryOption = @"From photo library";
         return;
     }
     
-    if ([_displayedPhotos containsObject:photo.identifier]) {
+    if ([_displayedPhotos containsObject:photo]) {
         return;
     }
     
@@ -304,7 +304,7 @@ static NSString * const FromLibraryOption = @"From photo library";
         [_icons addObject:thumbnail];
         _iconGrid.icons = _icons;
         
-        [_displayedPhotos addObject:photo.identifier];
+        [_displayedPhotos addObject:photo];
     }
 }
 
@@ -358,7 +358,7 @@ static NSString * const FromLibraryOption = @"From photo library";
         NSLog(@"adding photo with id %@", photo.identifier);
         [photos addObject:photo];
     }];
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:photo, @"photo", photos, @"photos", nil];
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:photo, @"photo", _displayedPhotos, @"photos", nil];
     return params;
 }
 

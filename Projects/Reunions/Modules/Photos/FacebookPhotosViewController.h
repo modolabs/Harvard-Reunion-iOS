@@ -13,7 +13,7 @@ UIActionSheetDelegate, UIPopoverControllerDelegate> {
     
     IconGrid *_iconGrid;
     NSMutableArray *_icons;
-    NSMutableSet *_displayedPhotos;
+    NSMutableArray *_displayedPhotos;
     // This is the unfiltered collection of photos.
     NSMutableDictionary *_photosByID; 
     CGFloat resizeFactor;
