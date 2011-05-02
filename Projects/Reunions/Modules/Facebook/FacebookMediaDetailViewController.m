@@ -654,7 +654,7 @@ ToolbarButtonTags;
         text = [self postTitle];
         titleFont = [UIFont boldSystemFontOfSize:15];
         if([[self likeText] length]) {
-            likeTextHeight = subtitleFont.lineHeight + 4;
+            likeTextHeight = subtitleFont.lineHeight + 2;
         }
     } else {
         FacebookComment *aComment = [_comments objectAtIndex:indexPath.row-1];
