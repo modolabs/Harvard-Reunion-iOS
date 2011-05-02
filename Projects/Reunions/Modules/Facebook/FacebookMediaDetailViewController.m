@@ -452,12 +452,8 @@ ToolbarButtonTags;
     
     CGFloat statusBarHeight = 20.0;
     UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-    _tableView.scrollEnabled = UIInterfaceOrientationIsPortrait(device.orientation);
-    _tableView.contentOffset = CGPointZero;
-
     
     if (UIDeviceOrientationIsLandscape(device.orientation)) {
-        displayedOrientation = device.orientation;
         NSLog(@"Landscape");
         
         [[UIApplication sharedApplication] setStatusBarOrientation:device.orientation];
@@ -466,9 +462,11 @@ ToolbarButtonTags;
             if (device.orientation == UIInterfaceOrientationLandscapeRight) {
                 self.navigationController.view.transform = CGAffineTransformMakeRotation(M_PI_2);
                 self.navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
+                displayedOrientation = UIInterfaceOrientationLandscapeRight;
             } else {
                 self.navigationController.view.transform = CGAffineTransformMakeRotation(-M_PI_2);
                 self.navigationController.view.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
+                displayedOrientation = UIInterfaceOrientationLandscapeLeft;
             }
             // disappear toolBars
             if([self hideToolbarsInLandscape]) {
@@ -511,8 +509,14 @@ ToolbarButtonTags;
         [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
         [UIView animateWithDuration:0.75 animations:^(void) {
             [self restorePortraitLayout];
+        } completion:^(BOOL finished) {
+            displayedOrientation = UIInterfaceOrientationPortrait;
+            _tableView.scrollEnabled = YES;
         }];
     }
+    
+    _tableView.scrollEnabled = UIInterfaceOrientationIsPortrait(displayedOrientation);
+    _tableView.contentOffset = CGPointZero;
 }
 
 - (BOOL)hideToolbarsInLandscape {
@@ -538,8 +542,8 @@ ToolbarButtonTags;
     
     if(!UIInterfaceOrientationIsPortrait(displayedOrientation)) {
         [self restorePortraitLayout];
-        displayedOrientation = UIInterfaceOrientationPortrait;
     }
+    displayedOrientation = UIInterfaceOrientationPortrait;
 }
 
 - (void)restorePortraitLayout {
