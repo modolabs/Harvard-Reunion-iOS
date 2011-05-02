@@ -273,6 +273,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
     if ([KGO_SHARED_APP_DELEGATE() navigationStyle] != KGONavigationStyleTabletSidebar) {
         if ([pageName isEqualToString:LocalPathPageNameHome]) {
             vc = [[[[self feedViewControllerClass] alloc] initWithStyle:UITableViewStylePlain] autorelease];
+            vc.title = [self feedViewControllerTitle];
         }
         
     } else {
@@ -288,7 +289,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         UIViewController *feedVC = [[[[self feedViewControllerClass] alloc] initWithStyle:UITableViewStylePlain] autorelease];
         _modalFeedController = [[UINavigationController alloc] initWithRootViewController:feedVC];
         
-        feedVC.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+        feedVC.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                                                  target:self
                                                                                                  action:@selector(hideModalFeedController:)] autorelease];
         
@@ -322,9 +323,15 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
             
         } completion:^(BOOL finished) {
             blockFeedVC.navigationItem.rightBarButtonItem = item;
+            blockFeedVC.navigationItem.title = [self feedViewControllerTitle];
         }];
     }
     return vc;
+}
+
+- (NSString *)feedViewControllerTitle
+{
+    return nil;
 }
 
 - (void)hideModalFeedController:(id)sender
