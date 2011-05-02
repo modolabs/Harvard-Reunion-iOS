@@ -151,7 +151,7 @@
 			<key>APIPath</key>
 			<string>rest</string>
 			<key>Host</key>
-			<string>m-dev.reunion.harvard.edu</string>
+			<string>m.reunion.harvard.edu</string>
 			<key>PathExtension</key>
 			<string></string>
 			<key>UseHTTPS</key>
@@ -162,7 +162,7 @@
 			<key>APIPath</key>
 			<string>rest</string>
 			<key>Host</key>
-			<string>m-dev.reunion.harvard.edu</string>
+			<string>m-staging.reunion.harvard.edu</string>
 			<key>PathExtension</key>
 			<string></string>
 			<key>UseHTTPS</key>
@@ -175,7 +175,7 @@
 			<key>Host</key>
 			<string>m-dev.reunion.harvard.edu</string>
 			<key>PathExtension</key>
-			<string>qa</string>
+			<string>beta</string>
 			<key>UseHTTPS</key>
 			<true/>
 		</dict>
