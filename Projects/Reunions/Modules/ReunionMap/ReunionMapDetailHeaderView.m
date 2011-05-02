@@ -5,6 +5,7 @@
 #import "KGOMapCategory.h"
 #import "ReunionMapModule.h"
 #import "UIKit+KGOAdditions.h"
+#import "CoreDataManager.h"
 
 #define LABEL_PADDING_SMALL 2
 #define LABEL_PADDING_LARGE 10
@@ -118,24 +119,6 @@
         }
         [self layoutBookmarkButton];
         
-    } else if ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]]) {
-        
-        ScheduleEventWrapper *event = (ScheduleEventWrapper *)self.detailItem;
-        NSArray *categoryPath = [NSArray arrayWithObject:EventMapCategoryName];
-        KGOPlacemark *placemark = [KGOPlacemark placemarkWithID:event.identifier categoryPath:categoryPath];
-        placemark.longitude = [NSNumber numberWithFloat:event.coordinate.longitude];
-        placemark.latitude = [NSNumber numberWithFloat:event.coordinate.latitude];
-        placemark.bookmarked = [NSNumber numberWithBool:YES];
-        placemark.title = event.title;
-        placemark.street = event.location;
-
-        if (placemark) {
-            [_bookmarkedItem release];
-            _bookmarkedItem = [placemark retain];
-        }
-        
-        [self layoutBookmarkButton];
-        
     } else {
         [super toggleBookmark:sender];
     }
@@ -150,6 +133,18 @@
     
     if ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]]) {
         ScheduleEventWrapper *event = (ScheduleEventWrapper *)self.detailItem;
+
+        NSArray *categoryPath = [NSArray arrayWithObject:EventMapCategoryName];
+        KGOPlacemark *placemark = [KGOPlacemark placemarkWithID:event.identifier categoryPath:categoryPath];
+        placemark.longitude = [NSNumber numberWithFloat:event.coordinate.longitude];
+        placemark.latitude = [NSNumber numberWithFloat:event.coordinate.latitude];
+        placemark.title = event.title;
+        placemark.street = event.location;
+        
+        if (placemark) {
+            [_bookmarkedItem release];
+            _bookmarkedItem = [placemark retain];
+        }
         
         NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
         [formatter setDateFormat:@"EEE, MMMM dd"];
