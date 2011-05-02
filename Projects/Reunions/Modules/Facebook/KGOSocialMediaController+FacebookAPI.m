@@ -141,6 +141,9 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
             message:(NSString *)caption
            delegate:(id<FacebookUploadDelegate>)delegate
 {
+    if(!caption) {
+        caption = @"";
+    }
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                    caption, @"message",
                                    photo, @"image",
