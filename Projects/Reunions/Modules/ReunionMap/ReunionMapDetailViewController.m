@@ -178,6 +178,8 @@
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor clearColor];
+
+    [self loadAnnotationContent]; // load annotation before inspecting it
     
     if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
         self.title = @"Building Detail";
@@ -200,7 +202,6 @@
     if (!_htmlTemplate) {
         _htmlTemplate = [[KGOHTMLTemplate templateWithPathName:@"modules/map/detail.html"] retain];
     }
-    [self loadAnnotationContent];
 }
 
 - (void)viewDidUnload
