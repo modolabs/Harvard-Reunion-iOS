@@ -69,7 +69,7 @@
 
 - (void)eventsDidChange:(NSArray *)events calendar:(KGOCalendar *)calendar
 {
-    if (_currentCalendar != calendar) {
+    if (calendar && _currentCalendar != calendar) {
         return;
     }
 

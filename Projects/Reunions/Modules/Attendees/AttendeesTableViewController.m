@@ -133,7 +133,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
         
     } else {
         UIButton *signoutButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        signoutButton.frame = CGRectMake(10, viewHeight + 10, 100, 31);
+        signoutButton.frame = CGRectMake(0, viewHeight + 10, 100, 31);
         [signoutButton setTitle:@"Sign in" forState:UIControlStateNormal];
         [signoutButton addTarget:[KGORequestManager sharedManager]
                           action:@selector(logoutKurogoServer)
