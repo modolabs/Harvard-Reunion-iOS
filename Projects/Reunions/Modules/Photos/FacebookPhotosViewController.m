@@ -560,6 +560,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         default:
             break;
     } 
+    self.scrollView.contentOffset = CGPointMake(0, 0);
 }
 
 #pragma mark Photo upload

@@ -238,6 +238,7 @@ VideosViewTags;
             [_displayedVideos addObject:video];
         }
     }    
+    self.scrollView.contentOffset = CGPointMake(0, 0);
     self.iconGrid.icons = thumbnails;
     [self.iconGrid setNeedsLayout];
     
