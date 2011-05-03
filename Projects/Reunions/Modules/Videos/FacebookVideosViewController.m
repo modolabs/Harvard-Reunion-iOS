@@ -122,6 +122,8 @@ VideosViewTags;
     CGFloat spacing = 10. * resizeFactor;
     
     CGRect frame = self.scrollView.frame;
+    frame.origin.x = 0;
+    frame.origin.y = 0;
     self.iconGrid = [[[IconGrid alloc] initWithFrame:frame] autorelease];
     self.iconGrid.delegate = self;
     self.iconGrid.spacing = GridSpacingMake(spacing, spacing);
