@@ -4,8 +4,10 @@
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "MapHomeViewController.h"
 #import "KGOSidebarFrameViewController.h"
+#import "ScheduleDataManager.h"
 
 NSString * const EventMapCategoryName = @"event"; // this is what the mobile web gives us
+NSString * const ScheduleTag = @"schedule";
 
 @implementation ReunionMapModule
 
@@ -62,8 +64,22 @@ NSString * const EventMapCategoryName = @"event"; // this is what the mobile web
         
         return detailVC;
     }
+    else if([pageName isEqualToString:LocalPathPageNameHome]) {
+        // schedule needs to be loaded in case user taps on
+        // annotation that corresponds to an event
+        if(!scheduleManager) {
+            scheduleManager = [ScheduleDataManager new];
+            scheduleManager.moduleTag = ScheduleTag;
+        }
+        if (![scheduleManager allEvents]) {
+            [scheduleManager requestAllEvents];
+        }
+    }
     
     return [super modulePage:pageName params:params];
 }
 
+- (void)dealloc {
+    [scheduleManager release];
+}
 @end

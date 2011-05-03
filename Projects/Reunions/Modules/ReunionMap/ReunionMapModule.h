@@ -2,7 +2,10 @@
 
 extern NSString * const EventMapCategoryName;
 
+@class ScheduleDataManager;
+
 @interface ReunionMapModule : MapModule {
+    ScheduleDataManager *scheduleManager;
 
 }
 
