@@ -35,6 +35,18 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 {
 }
 
+- (id)initWithDictionary:(NSDictionary *)moduleDict
+{
+    self = [super initWithDictionary:moduleDict];
+    if (self) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(didLogin:)
+                                                     name:KGODidLoginNotification
+                                                   object:nil];
+    }
+    return self;
+}
+
 #pragma mark chat bubble widget
 
 - (void)hideChatBubble:(NSNotification *)aNotification {
@@ -180,10 +192,6 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 
 - (KGOHomeScreenWidget *)buttonWidget {
     if (!self.labelText) {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(didLogin:)
-                                                     name:KGODidLoginNotification
-                                                   object:nil];
         return nil;
     }
     
