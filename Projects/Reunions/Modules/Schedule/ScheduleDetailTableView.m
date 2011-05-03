@@ -99,9 +99,21 @@
     NSString *foursquareVenue = nil;
     
     if ([self.event isKindOfClass:[ScheduleEventWrapper class]]) {
-        foursquareVenue = [(ScheduleEventWrapper *)self.event foursquareID];
-    } else {
-        foursquareVenue = nil;
+#if defined(USE_MOBILE_DEV) || defined(USE_MOBILE_TEST) || defined(USE_MOBILE_STAGE)
+        // Fake that the event is happening now so we can test the foursquare checkin
+        NSDate *now = [NSDate dateWithTimeInterval: 60 sinceDate:_event.startDate];
+#else
+        // Production behavior
+        NSDate *now = [NSDate date];
+#endif
+        NSDate *begin = [NSDate dateWithTimeInterval: -900 sinceDate:_event.startDate];
+        NSDate *end = [NSDate dateWithTimeInterval:  900 sinceDate:_event.endDate];
+        
+        if ([now compare:begin] != NSOrderedAscending &&  // on or after start
+            [now compare:end]   != NSOrderedDescending) { // on or before end
+            
+            foursquareVenue = [(ScheduleEventWrapper *)self.event foursquareID];
+        }
     }
     
     if (!foursquareVenue || ![_foursquareVenue isEqualToString:foursquareVenue]) {
