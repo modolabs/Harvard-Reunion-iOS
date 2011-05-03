@@ -421,6 +421,11 @@
                 }
             }
             
+            if(!didRemove && (_currentContentBuffer.count > maxCells * 2 + 1)) {
+                // over the limit but unable to remove from caceh
+                // so just clear it all
+                [_currentContentBuffer removeAllObjects];
+            }
         }
 
     }
@@ -507,8 +512,12 @@
     return cell;
 }
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return [[self dataSourceForTableView:tableView] numberOfSectionsInTableView:tableView];
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return 0;
+	return [[self dataSourceForTableView:tableView] tableView:tableView numberOfRowsInSection:section]; 
 }
 
 #pragma mark UITableViewDelegate methods
@@ -539,6 +548,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     NSArray *views = [self tableView:tableView cachedViewsForCellAtIndexPath:indexPath];
     
     if (!views.count) {
