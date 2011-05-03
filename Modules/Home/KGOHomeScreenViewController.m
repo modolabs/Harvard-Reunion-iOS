@@ -193,7 +193,6 @@
 }
 
 - (void)helloRequestDidFail:(NSNotification *)aNotification {
-    [self hideLoadingView];
     UIAlertView *startupFailure = [[UIAlertView alloc] 
                                    initWithTitle:@"Network Error" 
                                    message:@"Connection Failure. Please try again"
