@@ -162,7 +162,12 @@
                           [formatter stringFromDate:event.startDate]];
         }
         
+        // recreate and reattach the subtitle if needed
+        // it was deleted if we didn't have a briefLocation
         self.subtitleLabel.text = timeString;
+        if (![_subtitleLabel isDescendantOfView:self]) {
+            [self addSubview:_subtitleLabel];
+        }
     }
 }
 
