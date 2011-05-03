@@ -87,9 +87,6 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     
     if (labelContainer) {
         label = (UILabel *)[labelContainer viewWithTag:10];
-        CGRect frame = labelContainer.frame;
-        frame.size.height = viewHeight;
-        labelContainer.frame = frame;
         
     } else {
         CGRect titleFrame;
@@ -129,6 +126,14 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
         label.frame = CGRectMake(10, 17, size.width, size.height);
         label.text = listTitle;
     }
+    
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] != KGONavigationStyleTabletSidebar) {
+        viewHeight = label.frame.size.height + 34;
+    }
+    
+    CGRect frame = labelContainer.frame;
+    frame.size.height = viewHeight;
+    labelContainer.frame = frame;
     
     if (username) {
         if (!self.attendees) {
