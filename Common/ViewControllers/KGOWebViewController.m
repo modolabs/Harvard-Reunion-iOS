@@ -107,6 +107,10 @@ enum {
     }
 }
 
+- (void)retryRequest {
+    [_webView loadRequest:[NSURLRequest requestWithURL:self.requestURL]];
+}
+
 - (void)applyTemplate:(NSString *)filename
 {
     if (!_templateStack) {

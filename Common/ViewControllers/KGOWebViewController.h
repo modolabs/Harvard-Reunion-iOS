@@ -37,6 +37,9 @@
 
 - (void)applyTemplate:(NSString *)filename;
 
+// useful if a network connection causes a request to fail
+- (void)retryRequest;
+
 // UI for leaving when we get stuck in a full screen modal view
 - (void)fadeInDismissControls;
 - (void)showDismissControlsAnimated:(BOOL)animated;

@@ -5,7 +5,8 @@
 #import "Reachability.h"
 #import "KGOModule.h"
 
-NSString * const HelloRequestDidCompleteNotification = @"HelloComplete";
+NSString * const HelloRequestDidCompleteNotification = @"HelloDidComplete";
+NSString * const HelloRequestDidFailNotification = @"HelloDidFail";
 NSString * const KGODidLoginNotification = @"LoginComplete";
 NSString * const KGODidLogoutNotification = @"LogoutComplete";
 
@@ -398,6 +399,9 @@ NSString * const KGODeviceTokenKey = @"KGODeviceToken";
                                                          name:KGODidLoginNotification
                                                        object:nil];
         }
+    }
+    else if(request == _helloRequest) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:HelloRequestDidFailNotification object:self];
     }
 }
 

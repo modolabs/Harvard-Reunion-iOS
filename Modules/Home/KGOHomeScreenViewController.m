@@ -150,6 +150,12 @@
                                              selector:@selector(helloRequestDidComplete:)
                                                  name:HelloRequestDidCompleteNotification
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(helloRequestDidFail:)
+                                                 name:HelloRequestDidFailNotification
+                                               object:nil];
+    
     [self showLoadingView];
 }
 
@@ -184,6 +190,18 @@
             [self hideLoadingView];
         }
     }
+}
+
+- (void)helloRequestDidFail:(NSNotification *)aNotification {
+    UIAlertView *startupFailure = [[UIAlertView alloc] 
+                                   initWithTitle:@"Network Error" 
+                                   message:@"Connection Failure. Please try again"
+                                   delegate:self 
+                                   cancelButtonTitle:nil 
+                                   otherButtonTitles:@"Retry", nil];
+    
+    [startupFailure show];
+    [startupFailure release];
 }
 
 - (void)showLoadingView
@@ -562,6 +580,12 @@
     NSArray *args = [[_preferences objectForKey:@"SecondaryModuleIconSize"] componentsSeparatedByString:@" "];
     return [KGOHomeScreenViewController sizeWithArgs:args];
 }
+
+#pragma AlertView Delegate methods
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    [[KGORequestManager sharedManager] requestServerHello];
+}
+
 
 #pragma mark Private
 
