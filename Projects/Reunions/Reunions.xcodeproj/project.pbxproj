@@ -2032,7 +2032,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B7E1347CC7F00D2EEF6 /* dev_server.xcconfig */;
 			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
@@ -2043,7 +2042,6 @@
 		1D6058950D05DD3E006BFB54 /* Release - Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
@@ -2088,7 +2086,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B821347CC7F00D2EEF6 /* stage_server.xcconfig */;
 			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
@@ -2109,7 +2106,6 @@
 		DE8B4DBF110FAB1100B7D991 /* Debug - Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
@@ -2131,7 +2127,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B821347CC7F00D2EEF6 /* stage_server.xcconfig */;
 			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
@@ -2153,7 +2148,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B831347CC7F00D2EEF6 /* test_server.xcconfig */;
 			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
@@ -2175,7 +2169,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B831347CC7F00D2EEF6 /* test_server.xcconfig */;
 			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
