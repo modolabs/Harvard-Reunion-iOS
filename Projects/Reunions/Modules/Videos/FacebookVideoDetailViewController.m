@@ -56,6 +56,8 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
 */
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     self.webView.delegate = nil;
     self.player = nil;
     [loadingCurtainImage release];

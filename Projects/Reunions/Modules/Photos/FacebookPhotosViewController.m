@@ -251,6 +251,8 @@ static NSString * const FromLibraryOption = @"From photo library";
     [[KGOSocialMediaController facebookService] disconnectFacebookRequests:self];
     self.photoPickerPopover = nil;
 
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     [currentFilterBlock release];
     [_iconGrid release];
     [_icons release];

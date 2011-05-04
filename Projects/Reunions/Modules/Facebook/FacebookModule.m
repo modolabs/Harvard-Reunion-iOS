@@ -237,6 +237,17 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 #pragma mark -
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    [self stopPollingStatusUpdates]; // invalidates and releases NSTimer object
+    [_latestFeedPosts release];
+    [_gid release];
+    [_lastMessageDate release];
+    [super dealloc];
+}
+
 - (id)initWithDictionary:(NSDictionary *)moduleDict {
     self = [super initWithDictionary:moduleDict];
     if (self) {

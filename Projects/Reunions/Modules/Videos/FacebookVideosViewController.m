@@ -183,6 +183,8 @@ VideosViewTags;
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     [currentFilterBlock release];
     [iconGrid release];
     [_videos release];

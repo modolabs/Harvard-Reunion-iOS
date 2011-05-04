@@ -116,6 +116,8 @@ ToolbarButtonTags;
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     [actionsToolbar release];
     [_comments release];
     self.moduleTag = nil;

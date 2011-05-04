@@ -47,6 +47,19 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
     return self;
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    // releases _chatBubbleTitleLabel, _chatBubbleSubtitleLabel,
+    // _chatBubbleThumbnail
+    [_chatBubble release];
+    [_buttonWidget release];
+    [_labelText release];
+    
+    [super dealloc];
+}
+
 #pragma mark chat bubble widget
 
 - (void)hideChatBubble:(NSNotification *)aNotification {

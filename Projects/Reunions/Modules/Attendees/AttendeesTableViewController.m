@@ -14,6 +14,8 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
     self.attendees = nil;
     self.eventTitle = nil;
     [self.request cancel];

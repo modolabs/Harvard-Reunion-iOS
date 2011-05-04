@@ -14,6 +14,8 @@
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     self.feedPosts = nil;
     _facebookModule = nil;
     [super dealloc];
