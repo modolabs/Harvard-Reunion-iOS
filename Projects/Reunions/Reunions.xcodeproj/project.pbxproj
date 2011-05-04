@@ -2032,22 +2032,24 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B7E1347CC7F00D2EEF6 /* dev_server.xcconfig */;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Debug - Development";
 		};
 		1D6058950D05DD3E006BFB54 /* Release - Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Release - Production";
 		};
@@ -2057,6 +2059,7 @@
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug - Development";
 		};
@@ -2069,6 +2072,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release - Production";
 		};
@@ -2078,6 +2082,7 @@
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug - Staging";
 		};
@@ -2085,11 +2090,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B821347CC7F00D2EEF6 /* stage_server.xcconfig */;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Debug - Staging";
 		};
@@ -2099,17 +2105,19 @@
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug - Production";
 		};
 		DE8B4DBF110FAB1100B7D991 /* Debug - Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Debug - Production";
 		};
@@ -2119,6 +2127,7 @@
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release - Staging";
 		};
@@ -2126,11 +2135,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B821347CC7F00D2EEF6 /* stage_server.xcconfig */;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Release - Staging";
 		};
@@ -2140,6 +2150,7 @@
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug - Testing";
 		};
@@ -2147,11 +2158,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B831347CC7F00D2EEF6 /* test_server.xcconfig */;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Debug - Testing";
 		};
@@ -2161,6 +2173,7 @@
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "Harvard Reunion";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release - Testing";
 		};
@@ -2168,11 +2181,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB913B831347CC7F00D2EEF6 /* test_server.xcconfig */;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Release - Testing";
 		};
