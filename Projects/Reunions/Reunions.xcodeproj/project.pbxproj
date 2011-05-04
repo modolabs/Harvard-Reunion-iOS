@@ -2037,7 +2037,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Debug - Development";
 		};
@@ -2049,7 +2048,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Release - Production";
 		};
@@ -2095,7 +2093,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Debug - Staging";
 		};
@@ -2117,7 +2114,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Debug - Production";
 		};
@@ -2140,7 +2136,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Release - Staging";
 		};
@@ -2163,7 +2158,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Debug - Testing";
 		};
@@ -2186,7 +2180,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Contrib/bump/API_build\"",
 				);
-				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = "Release - Testing";
 		};
