@@ -125,6 +125,13 @@
         
         //UIImage *image = nil;
         
+        for (UIView * aView in self.subviews){
+            
+            if ([aView isKindOfClass:[NotesTextView class]]){
+                [aView removeFromSuperview];
+            }
+        }
+        
         if (nil != detailsView) {
             //frame = detailsView.frame;
             [self addSubview:detailsView];
