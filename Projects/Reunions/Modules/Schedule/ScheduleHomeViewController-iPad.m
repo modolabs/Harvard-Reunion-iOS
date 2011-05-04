@@ -269,14 +269,11 @@
     }
     
     if (cellType == ScheduleCellLastInTable || cellType == ScheduleCellSelected) {
-        
-        CGFloat width = floor((tableView.frame.size.width - 60) / 2);
         ScheduleDetailTableView *tableView = [self tableViewForCellType:cellType];
         tableView.event = event;
         [cell.contentView addSubview:tableView];
         
         MKMapView *mapView = [self mapViewForCellType:cellType];
-        mapView.frame = CGRectMake(280, 60, width, 430);
         if (event.coordinate.latitude) {
             // we only need to check one assuming there will not
             // be any events on the equator
@@ -312,7 +309,7 @@
     BOOL needsInitialize = NO;
     if (cellType == ScheduleCellSelected) {
         if (!_tableViewForSelectedCell) {
-            _tableViewForSelectedCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(0, 60, 260, 430)
+            _tableViewForSelectedCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(-18, 50, 302, 430)
                                                                                  style:UITableViewStyleGrouped];
             needsInitialize = YES;
         }
@@ -320,7 +317,7 @@
         
     } else if (cellType == ScheduleCellLastInTable) {
         if (!_tableViewForLastCell) {
-            _tableViewForLastCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(0, 60, 260, 430)
+            _tableViewForLastCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(-18, 50, 302, 450)
                                                                              style:UITableViewStyleGrouped];
             needsInitialize = YES;
         }
@@ -346,13 +343,13 @@
     MKMapView *mapView = nil;
     if (cellType == ScheduleCellSelected) {
         if (!_mapViewForSelectedCell) {
-            _mapViewForSelectedCell = [[MKMapView alloc] initWithFrame:CGRectMake(280, 60, 260, 430)];
+            _mapViewForSelectedCell = [[MKMapView alloc] initWithFrame:CGRectMake(290, 60, 255, 410)];
         }
         mapView = _mapViewForSelectedCell;
         
     } else if (cellType == ScheduleCellLastInTable) {
         if (!_mapViewForLastCell) {
-            _mapViewForLastCell = [[MKMapView alloc] initWithFrame:CGRectMake(280, 60, 260, 430)];
+            _mapViewForLastCell = [[MKMapView alloc] initWithFrame:CGRectMake(290, 60, 255, 430)];
         }
         mapView = _mapViewForLastCell;
     }
