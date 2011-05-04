@@ -31,6 +31,7 @@
 - (void)logoutDidComplete:(NSNotification *)aNotification;
 - (void)showLoadingView;
 - (void)hideLoadingView;
+- (void)subscribeToModuleChangeNotifications;
 
 // springboard helpers
 - (NSArray *)iconsForPrimaryModules:(BOOL)isPrimary;

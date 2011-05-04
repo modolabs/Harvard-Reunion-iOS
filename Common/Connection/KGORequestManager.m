@@ -264,6 +264,8 @@ NSString * const KGODeviceTokenKey = @"KGODeviceToken";
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
 	self.host = nil;
     
     [_helloRequest cancel];

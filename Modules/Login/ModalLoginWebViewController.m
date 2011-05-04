@@ -9,6 +9,8 @@
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     if (self.connection) {
         [self.connection cancel];
         self.connection = nil;
