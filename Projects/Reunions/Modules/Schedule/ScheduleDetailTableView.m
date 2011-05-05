@@ -7,6 +7,7 @@
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "FoursquareCheckinViewController.h"
 #import "KGOSocialMediaController.h"
+#import "KGOModule.h"
 
 #define CHECKIN_STATUS_CHECKED_IN 438
 #define CHECKIN_STATUS_NOT_CHECKED_IN 41
@@ -484,7 +485,23 @@
                                     self.event.title, @"title",
                                     attendees, @"attendees",
                                     nil];
-            [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameItemList forModuleTag:@"schedule" params:params];
+            
+            KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
+            if ([appDelegate navigationStyle] == KGONavigationStyleTabletSidebar) {
+                KGOModule *scheduleModule = [appDelegate moduleForTag:@"schedule"];
+                UIViewController *vc = [scheduleModule modulePage:LocalPathPageNameItemList params:params];
+                UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+                UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                       target:self.viewController
+                                                                                       action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+                vc.navigationItem.rightBarButtonItem = item;
+                navC.modalPresentationStyle = UIModalPresentationFormSheet;
+                navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
+                [self.viewController presentModalViewController:navC animated:YES];
+                
+            } else {
+                [appDelegate showPage:LocalPathPageNameItemList forModuleTag:@"schedule" params:params];
+            }
             return;
         }
     }

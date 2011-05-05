@@ -216,7 +216,8 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+        || (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 #pragma mark - KGORequestDelegate
