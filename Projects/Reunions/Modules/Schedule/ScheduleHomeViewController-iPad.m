@@ -303,10 +303,8 @@
         mapView.delegate = tableView;
         
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-
-    } else {
-        cell.selectionStyle = UITableViewCellSelectionStyleGray;
     }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
 }

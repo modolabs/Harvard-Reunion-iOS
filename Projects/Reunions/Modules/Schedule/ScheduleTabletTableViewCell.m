@@ -127,6 +127,21 @@
     self.detailTextLabel.frame = detailLabelFrame;
 }
 
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
+    [super setHighlighted:highlighted animated:animated];
+
+    if (highlighted) {
+        self.textLabel.textColor = [UIColor whiteColor];
+        self.detailTextLabel.textColor = [UIColor whiteColor];
+    } else {
+        self.textLabel.textColor = [UIColor blackColor];
+        self.detailTextLabel.textColor = [UIColor grayColor];
+    }
+    
+    [self setNeedsDisplay];
+}
+
 - (void)drawRect:(CGRect)rect
 {
     [super drawRect:rect];
@@ -175,6 +190,9 @@
     
     if (self.scheduleCellType == ScheduleCellSelected) {
         CGFloat components[4] = { 1, 1, 1, 1 };
+        CGContextSetFillColor(context, components);
+    } else if (self.highlighted) {
+        CGFloat components[4] = { 0.5, 0.5, 0.5, 1 };
         CGContextSetFillColor(context, components);
     } else {
         CGFloat components[4] = { 216.0/255.0, 217.0/255.0, 216.0/255.0, 1.0 };
