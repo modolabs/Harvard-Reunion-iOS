@@ -28,6 +28,9 @@
     DLog(@"uplaodButtonPressed should be overridden in a subclass.");
 }
 
+- (BOOL)implementsUpload {
+    return NO;
+}
 
 - (void)showLoginViewAnimated:(BOOL)animated {
     if (_loginView.alpha == 0) {
@@ -168,6 +171,15 @@
         [self facebookDidLogout:nil];
     }
 
+    if ([self implementsUpload]) {
+        if(_uploadButton) {
+            UIImage *toolbarButtonImage = [[UIImage imageWithPathName:@"common/toolbar-button.png"] stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+            [_uploadButton setBackgroundImage:toolbarButtonImage forState:UIControlStateNormal];
+        }
+    } else {
+        [_uploadButton removeFromSuperview];
+    }
+    
     [pool release];
 }
 
