@@ -7,6 +7,7 @@
 #import "CoreDataManager.h"
 
 #define TABLE_TAG 1
+#define BOOKMARK_OK_ALERTVIEW 456
 
 @implementation ScheduleTabletTableViewCell
 
@@ -27,6 +28,14 @@
         _bookmarkView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
         [self.contentView addSubview:_bookmarkView];
         
+        UIImage *notesImage = [UIImage imageWithPathName:@"modules/schedule/list-note.png"];
+        _notesButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+        [_notesButton addTarget:self action:@selector(noteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        _notesButton.frame = CGRectMake(self.frame.size.width - 100, 0, notesImage.size.width, notesImage.size.height);
+        _notesButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+        [self.contentView addSubview:_notesButton];
+        
+        
         self.textLabel.font = [UIFont fontWithName:@"Georgia" size:18];
         self.textLabel.backgroundColor = [UIColor clearColor];
         self.detailTextLabel.backgroundColor = [UIColor clearColor];
@@ -36,10 +45,10 @@
 
 - (void)addBookmark:(id)sender;
 {
-    ScheduleDetailTableView *detailTV = (ScheduleDetailTableView *)[self.contentView viewWithTag:TABLE_TAG];
-    [detailTV.event addBookmark];
+    [self.event addBookmark];
     [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-on"] forState:UIControlStateNormal];
-    [_bookmarkView removeTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
+    [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+    //[_bookmarkView removeTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
     [_bookmarkView addTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
 }
 
@@ -50,21 +59,28 @@
                                                         delegate:self
                                                cancelButtonTitle:@"OK"
                                                otherButtonTitles:nil] autorelease];
+    alertView.tag = BOOKMARK_OK_ALERTVIEW;
     [alertView show];
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    [self addBookmark:nil];
+    if (alertView.tag == BOOKMARK_OK_ALERTVIEW) {
+        [self addBookmark:nil];
+    }
 }
 
 - (void)removeBookmark:(id)sender
 {
-    ScheduleDetailTableView *detailTV = (ScheduleDetailTableView *)[self.contentView viewWithTag:TABLE_TAG];
-    [detailTV.event removeBookmark];
+    [self.event removeBookmark];
     [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-off"] forState:UIControlStateNormal];
-    [_bookmarkView removeTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
-    [_bookmarkView addTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
+    [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+    //[_bookmarkView removeTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
+    if ([self.event registrationRequired]) {
+        [_bookmarkView addTarget:self action:@selector(attemptToAddBookmark:) forControlEvents:UIControlEventTouchUpInside];
+    } else {
+        [_bookmarkView addTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
+    }
 }
 
 - (void)refuseToRemoveBookmark:(id)sender
@@ -89,7 +105,7 @@
     CGRect detailLabelFrame = self.detailTextLabel.frame;
     detailLabelFrame.origin.x = -11;
 
-    [_bookmarkView removeTarget:NULL action:NULL forControlEvents:UIControlEventTouchUpInside];
+    [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventTouchUpInside];
     
     if (self.scheduleCellType == ScheduleCellLastInTable || self.scheduleCellType == ScheduleCellSelected) {
         
@@ -99,28 +115,26 @@
         detailLabelFrame.origin.y = textLabelFrame.origin.y + gap;
         
         // activate bookmark view
-        if ([self.event isRegistered]) {
+        if ([self.event isRegistered]) { // must always be bookmarked
             [_bookmarkView addTarget:self action:@selector(refuseToRemoveBookmark:) forControlEvents:UIControlEventTouchUpInside];
+            
         } else if ([self.event isBookmarked]) {
             [_bookmarkView addTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
-        } else if ([self.event registrationURL]) {
+            
+        } else if ([self.event registrationRequired]) { // not bookmarked, registration required
             [_bookmarkView addTarget:self action:@selector(attemptToAddBookmark:) forControlEvents:UIControlEventTouchUpInside];
-        } else {
+            
+        } else { // not bookmarked, no registration
             [_bookmarkView addTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
         }
-
-        // activate note view
-        UIButton *notesButton = (UIButton *)[self.contentView viewWithTag:4348];
-        if (!notesButton) {
-            UIImage *notesImage = [UIImage imageWithPathName:@"modules/schedule/list-note.png"];
-            UIButton *notesButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            notesButton.tag = 4348;
-            [notesButton setImage:notesImage forState:UIControlStateNormal];
-            notesButton.frame = CGRectMake(self.frame.size.width - 100, -4, notesImage.size.width, notesImage.size.height);
-            [notesButton addTarget:self action:@selector(noteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-            notesButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
-            [self.contentView addSubview:notesButton];
-        }
+    }
+    
+    // activate note view
+    if ([self.event note]) {
+        [_notesButton setImage:[UIImage imageWithPathName:@"modules/schedule/list-note.png"] forState:UIControlStateNormal];
+        
+    } else {
+        [_notesButton setImage:[UIImage imageWithPathName:@"modules/schedule/list-note-off.png"] forState:UIControlStateNormal];
     }
 
     self.textLabel.frame = textLabelFrame;
@@ -246,6 +260,11 @@
     return _bookmarkView;
 }
 
+- (UIButton *)notesButton
+{
+    return _notesButton;
+}
+
 - (ScheduleCellType)scheduleCellType
 {
     return _scheduleCellType;
@@ -272,10 +291,9 @@
 
 - (void)noteButtonPressed:(id)sender
 {
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND eventIdentifier = %@", self.event.title, event.identifier];
-    Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
-    
     NSDate * dateForNote = [NSDate date];
+    
+    Note *note = [self.event note];
     
     if (nil != note)
         if (nil != note.date)
@@ -308,8 +326,7 @@
 }
 
 -(void) saveNotesState {
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND date = %@", _noteViewController.titleText, _noteViewController.date];
-    Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
+    Note *note = [self.event note];
     
     if (nil == note) {
         note = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:NotesEntityName];
@@ -323,6 +340,8 @@
         note.eventIdentifier = _noteViewController.eventIdentifier;
     
     [[CoreDataManager sharedManager] saveData];
+    
+    [self setNeedsLayout];
 }
 
 - (void) dismissModalViewControllerAnimated:(BOOL)animated {
