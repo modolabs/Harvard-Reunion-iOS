@@ -169,7 +169,7 @@
     } else {
         scrollToIndexPath = [NSIndexPath indexPathForRow:_selectedRow - 2 inSection:0];
     }
-    
+    /*
     UITableViewRowAnimation animation = UITableViewRowAnimationNone;
     
     if (_selectedRow == 0) {
@@ -182,16 +182,18 @@
         if (oldIndexPath) {
             if (oldSelectedRow < _selectedRow) { // the previously expanded row is above us
                 [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
-                                 withRowAnimation:UITableViewRowAnimationMiddle];
+                                 withRowAnimation:UITableViewRowAnimationNone];
             } else {
-                animation = UITableViewRowAnimationMiddle;
+                //animation = UITableViewRowAnimationMiddle;
                 [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:oldIndexPath]
                                  withRowAnimation:UITableViewRowAnimationNone];
             }
         }
     }
+    */
     
-    [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:animation];
+    [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:oldIndexPath, indexPath, nil]
+                     withRowAnimation:UITableViewRowAnimationNone];
     [tableView scrollToRowAtIndexPath:scrollToIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
