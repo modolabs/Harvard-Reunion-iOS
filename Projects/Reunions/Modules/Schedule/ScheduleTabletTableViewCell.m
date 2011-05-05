@@ -83,10 +83,10 @@
     // i have not figured out why the table view cells
     // end up being so much narrower than their frame
     CGRect textLabelFrame = self.textLabel.frame;
-    textLabelFrame.origin.x = -10;
+    textLabelFrame.origin.x = -11;
     
     CGRect detailLabelFrame = self.detailTextLabel.frame;
-    detailLabelFrame.origin.x = -10;
+    detailLabelFrame.origin.x = -11;
 
     [_bookmarkView removeTarget:NULL action:NULL forControlEvents:UIControlEventTouchUpInside];
     
