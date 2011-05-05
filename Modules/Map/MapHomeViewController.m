@@ -495,8 +495,12 @@
                 view = [[[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"fajwioth"] autorelease];
                 view.image = image;
                 view.canShowCallout = YES;
-                // TODO: not all annotations will want to do this
-                view.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+                
+                KGONavigationStyle navStyle = [KGO_SHARED_APP_DELEGATE() navigationStyle];
+                if (navStyle != KGONavigationStyleTabletSidebar) {
+                    // TODO: not all annotations will want to do this
+                    view.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+                }
             }
         }
     }
@@ -509,15 +513,7 @@
     if ([annotation conformsToProtocol:@protocol(KGOSearchResult)]) {
         KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
         NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:annotation, @"place", self, @"pagerController", nil];
-        KGONavigationStyle navStyle = [appDelegate navigationStyle];
-        // TODO: clean up sidebar home screen so we don't have to deal with this
-        if (navStyle == KGONavigationStyleTabletSidebar) {
-            UIViewController *vc = [self.mapModule modulePage:LocalPathPageNameDetail params:params];
-            [(KGOSidebarFrameViewController *)[appDelegate homescreen] showDetailViewController:vc];
-            
-        } else {
-            [appDelegate showPage:LocalPathPageNameDetail forModuleTag:self.mapModule.tag params:params];
-        }
+        [appDelegate showPage:LocalPathPageNameDetail forModuleTag:self.mapModule.tag params:params];
     }
 }
 
@@ -536,6 +532,40 @@
     
     if (calloutCount == 1) {
         [mapView selectAnnotation:selectedAnnotation animated:YES];
+    }
+}
+
+- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
+{
+    KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
+    KGONavigationStyle navStyle = [appDelegate navigationStyle];
+    // TODO: clean up sidebar home screen so we don't have to deal with this
+    if (navStyle == KGONavigationStyleTabletSidebar) {
+        id<MKAnnotation> annotation = view.annotation;
+        if ([annotation conformsToProtocol:@protocol(KGOSearchResult)]) {
+            NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:annotation, @"place", self, @"pagerController", nil];
+            UIViewController *vc = [self.mapModule modulePage:LocalPathPageNameDetail params:params];
+            [(KGOSidebarFrameViewController *)[appDelegate homescreen] showDetailViewController:vc];
+        }
+    }
+}
+
+- (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view
+{
+    NSInteger searchResultAnnotationCount = mapView.selectedAnnotations.count;
+    for (id<MKAnnotation> anAnnotation in mapView.selectedAnnotations) {
+        if (![anAnnotation conformsToProtocol:@protocol(KGOSearchResult)]) {
+            searchResultAnnotationCount--;
+        }
+    }
+    
+    if (!searchResultAnnotationCount) {    
+        KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
+        KGONavigationStyle navStyle = [appDelegate navigationStyle];
+        // TODO: clean up sidebar home screen so we don't have to deal with this
+        if (navStyle == KGONavigationStyleTabletSidebar) {
+            [(KGOSidebarFrameViewController *)[appDelegate homescreen] hideDetailViewController];
+        }
     }
 }
 
