@@ -6,7 +6,4 @@
 
 }
 
-- (void)addToMyEvents:(ScheduleEventWrapper *)event;
-- (void)removeFromMyEvents:(ScheduleEventWrapper *)event;
-
 @end

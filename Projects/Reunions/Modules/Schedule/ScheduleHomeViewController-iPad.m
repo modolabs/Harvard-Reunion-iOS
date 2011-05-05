@@ -6,6 +6,13 @@
 #import <QuartzCore/QuartzCore.h>
 #import "MapKit+KGOAdditions.h"
 #import "UIKit+KGOAdditions.h"
+#import "ReunionMapModule.h"
+#import "KGOSidebarFrameViewController.h"
+#import "MapHomeViewController.h"
+
+#define EXPANDED_CELL_HEIGHT 500
+#define LAST_CELL_HEIGHT EXPANDED_CELL_HEIGHT + 30
+
 
 @interface ScheduleHomeViewController_iPad (Private)
 
@@ -189,7 +196,8 @@
 }
 
 #define TABLE_TAG 1
-#define MAP_TAG 2
+#define SELECTED_MAP_TAG 2
+#define LAST_MAP_TAG 3
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -248,9 +256,6 @@
     cell.textLabel.text = event.title;
     cell.detailTextLabel.text = [self.dataManager shortDateTimeStringFromDate:event.startDate];
     
-    //[[cell.contentView viewWithTag:TABLE_TAG] removeFromSuperview];
-    //[[cell.contentView viewWithTag:MAP_TAG] removeFromSuperview];
-    
     UIImage *image = nil;
     if ([event isRegistered] || [event isBookmarked]) {
         cell.bookmarkView.hidden = NO;
@@ -287,12 +292,13 @@
         }
         [cell.contentView addSubview:mapView];
         
-        // TODO: if we don't do anything in mapViewTapped then just remove this
-        // and set mapview userinteractionenabled to false.
-        UIControl *control = [[[UIControl alloc] initWithFrame:mapView.frame] autorelease];
-        control.backgroundColor = [UIColor clearColor];
-        [cell.contentView addSubview:control];
-        [control addTarget:self action:@selector(mapViewTapped:) forControlEvents:UIControlEventTouchUpInside];
+        if (mapView.annotations.count) {
+            UIControl *control = [[[UIControl alloc] initWithFrame:mapView.frame] autorelease];
+            control.backgroundColor = [UIColor clearColor];
+            [cell.contentView addSubview:control];
+            [control addTarget:self action:@selector(mapViewTapped:) forControlEvents:UIControlEventTouchUpInside];
+            control.tag = mapView.tag;
+        }
 
         tableView.mapView = mapView;
         mapView.delegate = tableView;
@@ -320,7 +326,7 @@
         
     } else if (cellType == ScheduleCellLastInTable) {
         if (!_tableViewForLastCell) {
-            _tableViewForLastCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(0, 60, 260, 430)
+            _tableViewForLastCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(0, 60, 260, EXPANDED_CELL_HEIGHT)
                                                                              style:UITableViewStyleGrouped];
             needsInitialize = YES;
         }
@@ -346,19 +352,23 @@
     MKMapView *mapView = nil;
     if (cellType == ScheduleCellSelected) {
         if (!_mapViewForSelectedCell) {
-            _mapViewForSelectedCell = [[MKMapView alloc] initWithFrame:CGRectMake(280, 60, 260, 430)];
+            _mapViewForSelectedCell = [[MKMapView alloc] initWithFrame:CGRectMake(280, 60, 260, EXPANDED_CELL_HEIGHT)];
+            _mapViewForSelectedCell.userInteractionEnabled = NO;
+            _mapViewForSelectedCell.tag = SELECTED_MAP_TAG;
         }
         mapView = _mapViewForSelectedCell;
         
     } else if (cellType == ScheduleCellLastInTable) {
         if (!_mapViewForLastCell) {
-            _mapViewForLastCell = [[MKMapView alloc] initWithFrame:CGRectMake(280, 60, 260, 430)];
+            _mapViewForLastCell = [[MKMapView alloc] initWithFrame:CGRectMake(280, 60, 260, EXPANDED_CELL_HEIGHT)];
+            _mapViewForLastCell.userInteractionEnabled = NO;
+            _mapViewForLastCell.tag = LAST_MAP_TAG;
         }
         mapView = _mapViewForLastCell;
     }
     
     [mapView removeFromSuperview];
-    [mapView removeAnnotations:[_mapViewForSelectedCell annotations]];
+    [mapView removeAnnotations:[mapView annotations]];
     
     return mapView;
 }
@@ -366,9 +376,58 @@
 - (void)mapViewTapped:(id)sender
 {
     if ([sender isKindOfClass:[UIControl class]]) {
-        //NSArray *annotations = [NSArray arrayWithObject:_event];
-        //NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:annotations, @"annotations", nil];
-        //[KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome forModuleTag:MapTag params:params];
+        MKMapView *mapView = nil;
+        
+        if ([sender tag] == SELECTED_MAP_TAG) {
+            mapView = _mapViewForSelectedCell;
+        } else {
+            mapView = _mapViewForLastCell;
+        }
+        
+        CGRect outsideFrame = self.view.bounds;
+        outsideFrame.origin = CGPointMake(18, 60);
+        outsideFrame.size.width -= 32;
+        outsideFrame.size.height -= 80;
+        //outsideFrame = [self.view convertRect:outsideFrame toView:mapView.superview];
+        
+        
+        MKCoordinateRegion outsideRegion = [mapView convertRect:outsideFrame toRegionFromView:self.view];
+        NSArray *startRegion = [NSArray arrayWithObjects:
+                                [NSNumber numberWithFloat:mapView.region.center.latitude],
+                                [NSNumber numberWithFloat:mapView.region.center.longitude],
+                                [NSNumber numberWithFloat:mapView.region.span.latitudeDelta],
+                                [NSNumber numberWithFloat:mapView.region.span.longitudeDelta],
+                                nil];
+
+        NSArray *endRegion = [NSArray arrayWithObjects:
+                              [NSNumber numberWithFloat:outsideRegion.center.latitude],
+                              [NSNumber numberWithFloat:outsideRegion.center.longitude],
+                              [NSNumber numberWithFloat:outsideRegion.span.latitudeDelta],
+                              [NSNumber numberWithFloat:outsideRegion.span.longitudeDelta],
+                              nil];
+        
+        CGRect mapFrame = [mapView convertRect:mapView.frame toView:self.view];
+        mapFrame.origin.x = 320;
+        mapFrame.origin.y -= 56;
+        
+        NSArray *startFrame = [NSArray arrayWithObjects:
+                               [NSNumber numberWithFloat:mapFrame.origin.x],
+                               [NSNumber numberWithFloat:mapFrame.origin.y],
+                               [NSNumber numberWithFloat:mapFrame.size.width],
+                               [NSNumber numberWithFloat:mapFrame.size.height],
+                               nil];
+        
+        KGOSidebarFrameViewController *homescreen = (KGOSidebarFrameViewController *)[KGO_SHARED_APP_DELEGATE() homescreen];
+        homescreen.animationDuration = 1;
+        
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                mapView.annotations, @"annotations",
+                                startFrame, @"startFrame",
+                                startRegion, @"startRegion",
+                                endRegion, @"endRegion",
+                                nil];
+        [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome forModuleTag:MapTag params:params];
+        homescreen.animationDuration = 0.2;
     }
 }
 
@@ -380,11 +439,11 @@
     }
     
     if (indexPath.row == _cellData.count - 1) {
-        return 500;
+        return LAST_CELL_HEIGHT;
     }
     
     if (indexPath.row == _selectedRow) {
-        return 470;
+        return EXPANDED_CELL_HEIGHT;
     }
     
     return tableView.rowHeight;
@@ -418,6 +477,21 @@
 {
     // Return YES for supported orientations
 	return YES;
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    CGRect selectedFrame = _mapViewForSelectedCell.frame;
+    CGRect lastFrame = _mapViewForLastCell.frame;
+    if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation)) {
+        selectedFrame.size.width = 300;
+        lastFrame.size.width = 300;
+    } else {
+        selectedFrame.size.width = 400;
+        lastFrame.size.width = 400;
+    }
+    _mapViewForSelectedCell.frame = selectedFrame;
+    _mapViewForLastCell.frame = lastFrame;
 }
 
 @end

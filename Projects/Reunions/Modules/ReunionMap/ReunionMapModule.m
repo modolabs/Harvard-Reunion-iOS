@@ -2,7 +2,7 @@
 #import "KGOPlacemark.h"
 #import "ReunionMapDetailViewController.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
-#import "MapHomeViewController.h"
+#import "ReunionMapHomeViewController.h"
 #import "KGOSidebarFrameViewController.h"
 #import "ScheduleDataManager.h"
 
@@ -63,8 +63,66 @@ NSString * const ScheduleTag = @"schedule";
         }
         
         return detailVC;
-    }
-    else if([pageName isEqualToString:LocalPathPageNameHome]) {
+        
+    } else if([pageName isEqualToString:LocalPathPageNameHome]) {
+        
+        ReunionMapHomeViewController *mapVC = nil;
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+            mapVC = [[[ReunionMapHomeViewController alloc] initWithNibName:@"MapHomeViewController" bundle:nil] autorelease];
+        } else {
+            if ([[NSBundle mainBundle] pathForResource:@"MapHomeViewController-iPad" ofType:@"nib"] != nil) {
+                mapVC = [[[ReunionMapHomeViewController alloc] initWithNibName:@"MapHomeViewController-iPad" bundle:nil] autorelease];
+            } else {
+                mapVC = [[[ReunionMapHomeViewController alloc] initWithNibName:@"MapHomeViewController" bundle:nil] autorelease];
+            }
+        }
+        
+        mapVC.mapModule = self;
+        
+        NSString *searchText = [params objectForKey:@"q"];
+        if (searchText) {
+            mapVC.searchTerms = searchText;
+            mapVC.searchOnLoad = YES;
+            mapVC.searchParams = params;
+        }
+        
+        NSArray *annotations = [params objectForKey:@"annotations"];
+        if (annotations) {
+            NSLog(@"annotations: %@", annotations);
+            mapVC.annotations = annotations;
+        }
+        
+        NSArray *frameParts = [params objectForKey:@"startFrame"];
+        if (frameParts) {
+            CGRect frame = CGRectMake([[frameParts objectAtIndex:0] floatValue],
+                                      [[frameParts objectAtIndex:1] floatValue],
+                                      [[frameParts objectAtIndex:2] floatValue],
+                                      [[frameParts objectAtIndex:3] floatValue]);
+            mapVC.startFrame = frame;
+        }
+        
+        NSArray *regionParts = [params objectForKey:@"startRegion"];
+        if (regionParts) {
+            CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[regionParts objectAtIndex:0] floatValue],
+                                                                           [[regionParts objectAtIndex:1] floatValue]);
+            MKCoordinateSpan span = MKCoordinateSpanMake([[regionParts objectAtIndex:2] floatValue],
+                                                         [[regionParts objectAtIndex:3] floatValue]);
+            
+            MKCoordinateRegion region = MKCoordinateRegionMake(coordinate, span);
+            mapVC.startRegion = region;
+        }
+        
+        regionParts = [params objectForKey:@"endRegion"];
+        if (regionParts) {
+            CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[regionParts objectAtIndex:0] floatValue],
+                                                                           [[regionParts objectAtIndex:1] floatValue]);
+            MKCoordinateSpan span = MKCoordinateSpanMake([[regionParts objectAtIndex:2] floatValue],
+                                                         [[regionParts objectAtIndex:3] floatValue]);
+            
+            MKCoordinateRegion region = MKCoordinateRegionMake(coordinate, span);
+            mapVC.endRegion = region;
+        }
+        
         // schedule needs to be loaded in case user taps on
         // annotation that corresponds to an event
         if(!scheduleManager) {
@@ -74,6 +132,8 @@ NSString * const ScheduleTag = @"schedule";
         if (![scheduleManager allEvents]) {
             [scheduleManager requestAllEvents];
         }
+
+        return mapVC;
     }
     
     return [super modulePage:pageName params:params];
