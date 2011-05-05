@@ -117,6 +117,7 @@ ToolbarButtonTags;
 - (void)dealloc
 {
     [actionsToolbar release];
+    [pagerBarItem release];
     [_comments release];
     self.moduleTag = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -394,8 +395,12 @@ ToolbarButtonTags;
     _comments = [[self.post.comments sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] retain];
     
     KGODetailPager *pager = [[[KGODetailPager alloc] initWithPagerController:self delegate:self] autorelease];
-    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:pager] autorelease];
-        
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:pager] autorelease];
+    } else {
+        pagerBarItem.customView = pager;
+    }
+         
     if (!_mediaView) {
         CGRect frame = self.view.bounds;
         frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio
