@@ -8,6 +8,8 @@
 #import "FoursquareCheckinViewController.h"
 #import "KGOSocialMediaController.h"
 #import "KGOModule.h"
+#import "ScheduleHomeViewController-iPad.h"
+#import "KGOSidebarFrameViewController.h"
 
 #define CHECKIN_STATUS_CHECKED_IN 438
 #define CHECKIN_STATUS_NOT_CHECKED_IN 41
@@ -503,6 +505,13 @@
                 [appDelegate showPage:LocalPathPageNameItemList forModuleTag:@"schedule" params:params];
             }
             return;
+            
+        } else if ([accessory isEqualToString:KGOAccessoryTypeMap] && self.mapView) {
+            KGOSidebarFrameViewController *homescreen = (KGOSidebarFrameViewController *)[KGO_SHARED_APP_DELEGATE() homescreen];
+            ScheduleHomeViewController_iPad *tableVC = (ScheduleHomeViewController_iPad *)[homescreen visibleViewController];
+            [tableVC mapViewTapped:self.mapView];
+            return;
+            
         }
     }
     [super tableView:tableView didSelectRowAtIndexPath:indexPath];

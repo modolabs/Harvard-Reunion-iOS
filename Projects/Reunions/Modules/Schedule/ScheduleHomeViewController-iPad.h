@@ -18,4 +18,6 @@
 
 }
 
+- (void)mapViewTapped:(id)sender;
+
 @end

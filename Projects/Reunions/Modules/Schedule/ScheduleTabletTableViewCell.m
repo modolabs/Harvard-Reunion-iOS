@@ -19,7 +19,8 @@
         self.backgroundColor = [UIColor clearColor];
         self.contentMode = UIViewContentModeRedraw;
         
-        CGRect frame = CGRectMake(self.frame.size.width - 40, -2, 30, 40);
+        UIImage *image = [UIImage imageWithPathName:@"common/bookmark-ribbon-on"];
+        CGRect frame = CGRectMake(self.frame.size.width - 40, -2, image.size.width, image.size.height);
         
         _bookmarkView = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
         _bookmarkView.frame = frame;
@@ -153,7 +154,7 @@
     } else {
         CGFloat components[4] = { 216.0/255.0, 217.0/255.0, 216.0/255.0, 1.0 };
         CGContextSetFillColor(context, components);
-        CGRect innerRect = CGRectMake(minx, miny, maxx-minx, maxy-miny);
+        CGRect innerRect = CGRectMake(minx, miny, maxx-minx, midy-miny);
         CGContextFillRect(context, innerRect);
         
         // stroke the sides.

@@ -10,7 +10,7 @@
 #import "KGOSidebarFrameViewController.h"
 #import "MapHomeViewController.h"
 
-#define EXPANDED_CELL_HEIGHT 450
+#define EXPANDED_CELL_HEIGHT 500
 #define LAST_CELL_HEIGHT EXPANDED_CELL_HEIGHT + 30
 
 
@@ -315,7 +315,7 @@
     BOOL needsInitialize = NO;
     if (cellType == ScheduleCellSelected) {
         if (!_tableViewForSelectedCell) {
-            _tableViewForSelectedCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(-18, 50, 302, EXPANDED_CELL_HEIGHT)
+            _tableViewForSelectedCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(-18, 50, 302, EXPANDED_CELL_HEIGHT - 60)
                                                                                  style:UITableViewStyleGrouped];
             needsInitialize = YES;
         }
@@ -323,7 +323,7 @@
         
     } else if (cellType == ScheduleCellLastInTable) {
         if (!_tableViewForLastCell) {
-            _tableViewForLastCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(-18, 50, 302, LAST_CELL_HEIGHT)
+            _tableViewForLastCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(-18, 50, 302, LAST_CELL_HEIGHT - 60)
                                                                              style:UITableViewStyleGrouped];
             needsInitialize = YES;
         }
@@ -349,7 +349,7 @@
     MKMapView *mapView = nil;
     if (cellType == ScheduleCellSelected) {
         if (!_mapViewForSelectedCell) {
-            _mapViewForSelectedCell = [[MKMapView alloc] initWithFrame:CGRectMake(290, 60, 255, EXPANDED_CELL_HEIGHT - 20)];
+            _mapViewForSelectedCell = [[MKMapView alloc] initWithFrame:CGRectMake(290, 60, 255, EXPANDED_CELL_HEIGHT - 80)];
             _mapViewForSelectedCell.userInteractionEnabled = NO;
             _mapViewForSelectedCell.tag = SELECTED_MAP_TAG;
         }
@@ -357,7 +357,7 @@
         
     } else if (cellType == ScheduleCellLastInTable) {
         if (!_mapViewForLastCell) {
-            _mapViewForLastCell = [[MKMapView alloc] initWithFrame:CGRectMake(280, 60, 255, LAST_CELL_HEIGHT - 20)];
+            _mapViewForLastCell = [[MKMapView alloc] initWithFrame:CGRectMake(290, 60, 255, LAST_CELL_HEIGHT - 80)];
             _mapViewForLastCell.userInteractionEnabled = NO;
             _mapViewForLastCell.tag = LAST_MAP_TAG;
         }
@@ -372,7 +372,7 @@
 
 - (void)mapViewTapped:(id)sender
 {
-    if ([sender isKindOfClass:[UIControl class]]) {
+    if ([sender isKindOfClass:[UIControl class]] || [sender isKindOfClass:[MKMapView class]]) {
         MKMapView *mapView = nil;
         
         if ([sender tag] == SELECTED_MAP_TAG) {
@@ -481,8 +481,8 @@
     CGRect selectedFrame = _mapViewForSelectedCell.frame;
     CGRect lastFrame = _mapViewForLastCell.frame;
     if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation)) {
-        selectedFrame.size.width = 300;
-        lastFrame.size.width = 300;
+        selectedFrame.size.width = 255;
+        lastFrame.size.width = 255;
     } else {
         selectedFrame.size.width = 400;
         lastFrame.size.width = 400;
