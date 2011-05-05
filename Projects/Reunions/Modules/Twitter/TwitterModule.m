@@ -208,7 +208,14 @@
 
 - (void)dealloc
 {
-    // TODO: release other stuff
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    [self stopPollingStatusUpdates]; // releases _statusPoller and _twitterSearch
+    [_latestTweets release];
+    [_lastUpdate release];
+    [_twitterDateFormatter release];
+    [_hashTag release];
+
     [super dealloc];
 }
 

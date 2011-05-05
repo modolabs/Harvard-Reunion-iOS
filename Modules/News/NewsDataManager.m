@@ -500,11 +500,11 @@ NSString * const NewsTagBody            = @"body";
             }
         }
         
-        [[KGORequestManager sharedManager] showAlertForError:error];
+        [[KGORequestManager sharedManager] showAlertForError:error request:request];
     } else if ([request.path isEqualToString:@"categories"]) {
         NSArray *categories = [self fetchCategoriesFromCoreData];
         if ([categories count] == 0) {
-            [[KGORequestManager sharedManager] showAlertForError:error];
+            [[KGORequestManager sharedManager] showAlertForError:error request:request];
         }
     }
 }

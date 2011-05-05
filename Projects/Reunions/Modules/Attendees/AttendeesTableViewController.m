@@ -14,6 +14,8 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
     self.attendees = nil;
     self.eventTitle = nil;
     [self.request cancel];
@@ -141,6 +143,9 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
         }
         
         if (!self.attendees) {
+            if (self.request) {
+                [self.request cancel];
+            }
             self.request = [[KGORequestManager sharedManager] requestWithDelegate:self module:@"attendees" path:@"all" params:nil];
             self.request.expectedResponseType = [NSArray class];
             if (self.request) {
@@ -148,7 +153,12 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
             }
         }
         
-        CGRect frame = CGRectMake(0, viewHeight, self.view.frame.size.width, self.view.frame.size.height - viewHeight);
+        CGFloat tableY = viewHeight;
+        if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+            tableY = 44;
+        }
+        
+        CGRect frame = CGRectMake(0, tableY, self.view.frame.size.width, self.view.frame.size.height - viewHeight);
         self.tableView = [[[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain] autorelease];
         self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         self.tableView.dataSource = self;
@@ -165,7 +175,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     } else {
         if (!signoutButton) {
             signoutButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            signoutButton.frame = CGRectMake(0, label.frame.origin.y + label.frame.size.height + 10, 100, 31);
+            signoutButton.frame = CGRectMake(0, labelContainer.frame.origin.y + labelContainer.frame.size.height + 10, 100, 31);
             signoutButton.titleLabel.textAlignment = UITextAlignmentLeft;
             signoutButton.tag = 100;
             [signoutButton setTitle:@"Sign in >" forState:UIControlStateNormal];
@@ -206,7 +216,8 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+        || (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 #pragma mark - KGORequestDelegate
@@ -218,7 +229,6 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 
 - (void)request:(KGORequest *)request didReceiveResult:(id)result
 {
-    self.request = nil;
     self.attendees = result;
     
     [[NSUserDefaults standardUserDefaults] setObject:self.attendees forKey:AllReunionAttendeesPrefKey];

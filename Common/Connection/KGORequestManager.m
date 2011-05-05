@@ -78,12 +78,18 @@ NSString * const KGODidLogoutNotification = @"LogoutComplete";
 	} else {
 		NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:nil];
 		NSError *error = [NSError errorWithDomain:KGORequestErrorDomain code:KGORequestErrorForbidden userInfo:userInfo];
-		[self showAlertForError:error];
+		[self showAlertForError:error request:request];
 	}
 	return request;
 }
 
-- (void)showAlertForError:(NSError *)error {
+- (void)showAlertForError:(NSError *)error request:(KGORequest *)request
+{
+    [self showAlertForError:error request:request delegate:self];
+}
+
+- (void)showAlertForError:(NSError *)error request:(KGORequest *)request delegate:(id<UIAlertViewDelegate>)delegate
+{
     DLog(@"%@", [error userInfo]);
     
 	NSString *title = nil;
@@ -127,9 +133,27 @@ NSString * const KGODidLogoutNotification = @"LogoutComplete";
 	}
 	
 	if (title) {
-		UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil] autorelease];
+        if (delegate == self) {
+            [_retryRequest release];
+            _retryRequest = [request retain];
+        }
+        
+		UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:title
+                                                             message:message
+                                                            delegate:delegate
+                                                   cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
+                                                   otherButtonTitles:NSLocalizedString(@"Retry", nil), nil] autorelease];
 		[alertView show];
 	}
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex != [alertView cancelButtonIndex]) {
+        [_retryRequest connect];
+        [_retryRequest release];
+        _retryRequest = nil;
+    }
 }
 
 #pragma mark Push notifications
@@ -264,6 +288,8 @@ NSString * const KGODeviceTokenKey = @"KGODeviceToken";
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
 	self.host = nil;
     
     [_helloRequest cancel];

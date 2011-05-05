@@ -19,8 +19,12 @@
 
 @implementation KGOSidebarFrameViewController
 
+@synthesize animationDuration;
 
 - (void)showViewController:(UIViewController *)viewController {
+    
+    [self highlightIconForModule:[KGO_SHARED_APP_DELEGATE() visibleModule]];
+    
     if (viewController != _visibleViewController) {
 
         if (_visibleViewController.modalViewController) {
@@ -36,20 +40,53 @@
             }
             
         } else {
+
+            [self hideDetailViewController];
+            
+            [viewController viewWillAppear:YES];
+            viewController.view.frame = _container.bounds;
+            viewController.view.alpha = 0.1;
+            
+            [_container addSubview:viewController.view];
+            
             [_visibleViewController viewWillDisappear:NO];
+
+            [UIView animateWithDuration:self.animationDuration animations:^(void) {
+                viewController.view.alpha = 1;
+                _visibleViewController.view.alpha = 0;
+                
+            } completion:^(BOOL finished) {
+                
+                [_visibleViewController.view removeFromSuperview];
+                [_visibleViewController viewDidDisappear:YES];
+                
+                [_visibleViewController release];
+                _visibleViewController = [viewController retain];
+                
+                [_visibleViewController viewDidAppear:YES];
+            }];
+            
+            
+            
+            
+            /*
             [_visibleViewController.view removeFromSuperview];
             [_visibleViewController viewDidDisappear:NO];
             
             [_visibleViewController release];
             _visibleViewController = [viewController retain];
-            [self hideDetailViewController];
             
             [_visibleViewController viewWillAppear:NO];
             _visibleViewController.view.frame = CGRectMake(0, 0, _container.frame.size.width, _container.frame.size.height);
             [_container addSubview:viewController.view];
-            [_visibleViewController viewDidDisappear:NO];
+            */
         }
     }
+}
+
+- (UIView *)container
+{
+    return _container;
 }
 
 - (void)showDetailViewController:(UIViewController *)viewController
@@ -168,6 +205,8 @@
     _container = [[UIView alloc] initWithFrame:containerFrame];
 
     [self.view addSubview:_container];
+
+    self.animationDuration = 0.2;
 }
 
 - (void)viewDidLoad
@@ -213,9 +252,35 @@
     return self.view.frame;
 }
 
+- (void)highlightIconForModule:(KGOModule *)module
+{
+    for (UIView *aView in _sidebar.subviews) {
+        if ([aView isKindOfClass:[SpringboardIcon class]] && [(SpringboardIcon *)aView module] == module) {
+            [self highlightIcon:aView];
+        }
+    }
+}
+
+- (void)highlightIcon:(SpringboardIcon *)anIcon
+{
+    UIFont *font = [self moduleLabelFontLarge];
+    NSString *boldName = [NSString stringWithFormat:@"%@-Bold", [font fontName]];
+    UIFont *boldFont = [UIFont fontWithName:boldName size:[font pointSize]];
+    if (boldFont) {
+        anIcon.titleLabel.font = boldFont;
+    }
+    
+    for (UIView *aView in [_sidebar subviews]) {
+        if (aView != anIcon && [aView isKindOfClass:[SpringboardIcon class]]) {
+            [(SpringboardIcon *)aView titleLabel].font = font;
+        }
+    }
+}
+
 - (void)buttonPressed:(id)sender {
     [super buttonPressed:sender];
-    
+    [self highlightIcon:sender];
+    /*
     SpringboardIcon *anIcon = (SpringboardIcon *)sender;
     
     UIFont *font = [self moduleLabelFontLarge];
@@ -230,6 +295,7 @@
             [(SpringboardIcon *)aView titleLabel].font = font;
         }
     }
+     */
 }
 
 - (void)viewDidUnload

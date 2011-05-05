@@ -247,6 +247,7 @@
 		EBE2CCBB13441E940037546A /* KGODetailPageHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = EBE2CCBA13441E940037546A /* KGODetailPageHeaderView.m */; };
 		EBE2CCBE13441EB10037546A /* KGOBookmarksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EBE2CCBD13441EB10037546A /* KGOBookmarksViewController.m */; };
 		EBE2CCC41344C8BE0037546A /* FoursquareModule.m in Sources */ = {isa = PBXBuildFile; fileRef = EBE2CCC31344C8BE0037546A /* FoursquareModule.m */; };
+		EBE725EA13722745009C5769 /* ReunionMapHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EBE725E913722745009C5769 /* ReunionMapHomeViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -723,6 +724,8 @@
 		EBE2CCBD13441EB10037546A /* KGOBookmarksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOBookmarksViewController.m; sourceTree = "<group>"; };
 		EBE2CCC21344C8BE0037546A /* FoursquareModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoursquareModule.h; sourceTree = "<group>"; };
 		EBE2CCC31344C8BE0037546A /* FoursquareModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoursquareModule.m; sourceTree = "<group>"; };
+		EBE725E813722745009C5769 /* ReunionMapHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReunionMapHomeViewController.h; sourceTree = "<group>"; };
+		EBE725E913722745009C5769 /* ReunionMapHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionMapHomeViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1318,6 +1321,8 @@
 				EB469E83134B9FEF005796E4 /* ReunionMapDetailViewController.m */,
 				EB163926136B7E3B003C69E2 /* ReunionMapDetailHeaderView.h */,
 				EB163927136B7E3B003C69E2 /* ReunionMapDetailHeaderView.m */,
+				EBE725E813722745009C5769 /* ReunionMapHomeViewController.h */,
+				EBE725E913722745009C5769 /* ReunionMapHomeViewController.m */,
 			);
 			path = ReunionMap;
 			sourceTree = "<group>";
@@ -1994,6 +1999,7 @@
 				EB1638151369BB94003C69E2 /* ScheduleHomeViewController-iPad.m in Sources */,
 				EB163928136B7E3B003C69E2 /* ReunionMapDetailHeaderView.m in Sources */,
 				A1D5187F136DE8B6009ADBB5 /* FoursquareAddCheckinViewController.m in Sources */,
+				EBE725EA13722745009C5769 /* ReunionMapHomeViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

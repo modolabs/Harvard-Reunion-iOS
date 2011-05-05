@@ -380,9 +380,12 @@ showingOnlySearchResults = _showingOnlySearchResults;
     return nil;
 }
 
+// TODO: uncomment and edit if we have search results that need multiple sections
+/*
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
+*/
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	return self.searchResults.count;

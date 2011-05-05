@@ -121,8 +121,6 @@
 			<string>NotesModule</string>
 			<key>hidden</key>
 			<false/>
-			<key>iconImage</key>
-			<string>modules/home/schedule.png</string>
 			<key>longName</key>
 			<string>Notes</string>
 			<key>shortName</key>

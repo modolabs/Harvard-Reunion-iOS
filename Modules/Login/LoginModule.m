@@ -30,6 +30,12 @@
     return vc;
 }
 
+- (void)webViewControllerFrameLoadInterrupted:(KGOWebViewController *)webVC
+{
+    DLog(@"login controller frame load interrupted");
+    [webVC.parentViewController dismissModalViewControllerAnimated:YES];
+}
+
 - (UIView *)currentUserWidget
 {
     NSDictionary *userDict = [[[KGORequestManager sharedManager] sessionInfo] dictionaryForKey:@"user"];

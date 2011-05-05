@@ -12,7 +12,7 @@
 @end
 
 
-@interface KGOWebViewController : UIViewController <UIWebViewDelegate> {
+@interface KGOWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate> {
     
     UIWebView *_webView;
     UIActivityIndicatorView *_loadingView;

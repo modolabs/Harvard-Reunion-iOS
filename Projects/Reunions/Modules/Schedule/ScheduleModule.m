@@ -9,6 +9,12 @@
 
 @implementation ScheduleModule
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super dealloc];
+}
+
 - (void)launch
 {
     if (!self.dataManager) {

@@ -6,11 +6,15 @@
 
 // UIWebView throws WebKit errors, but the WebKit framework can't be imported
 // in iOS so we'll just reproduce the error constants here
+NSString * const WebKitErrorDomain = @"WebKitErrorDomain";
+
 enum {
     WebKitErrorCannotShowMIMEType = 100,
     WebKitErrorCannotShowURL = 101,
     WebKitErrorFrameLoadInterruptedByPolicyChange = 102
 };
+
+
 
 @implementation KGOWebViewController
 
@@ -227,13 +231,27 @@ enum {
 {
     NSLog(@"%@", [error description]);
     
-    // we seem to get to this point when our original request gets redirected
-    // to a URL to which we return NO in -shouldStartLoadWithRequest.
-    // TODO: figure out why we aren't being dismissed by other triggers
-    if ([error code] == WebKitErrorFrameLoadInterruptedByPolicyChange) {
-        if ([self.delegate respondsToSelector:@selector(webViewControllerFrameLoadInterrupted:)]) {
-            [self.delegate webViewControllerFrameLoadInterrupted:self];
+    if ([[error domain] isEqualToString:NSURLErrorDomain]) {
+        KGORequestErrorCode code = [KGORequest internalCodeForNSError:error];
+        NSError *kgoError = [NSError errorWithDomain:KGORequestErrorDomain code:code userInfo:[error userInfo]];
+        [[KGORequestManager sharedManager] showAlertForError:kgoError request:nil delegate:self];
+    
+    } else if ([[error domain] isEqualToString:WebKitErrorDomain]) {    
+        // we seem to get to this point when our original request gets redirected
+        // to a URL to which we return NO in -shouldStartLoadWithRequest.
+        // TODO: figure out why we aren't being dismissed by other triggers
+        if ([error code] == WebKitErrorFrameLoadInterruptedByPolicyChange) {
+            if ([self.delegate respondsToSelector:@selector(webViewControllerFrameLoadInterrupted:)]) {
+                [self.delegate webViewControllerFrameLoadInterrupted:self];
+            }
         }
+    }
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex != [alertView cancelButtonIndex]) {
+        [_webView loadRequest:_webView.request];
     }
 }
 

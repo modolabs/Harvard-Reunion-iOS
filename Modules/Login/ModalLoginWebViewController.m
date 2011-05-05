@@ -9,6 +9,8 @@
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     if (self.connection) {
         [self.connection cancel];
         self.connection = nil;
@@ -44,14 +46,10 @@
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
 {
-    [super webView:webView didFailLoadWithError:error];
-
     if ([[KGORequestManager sharedManager] isUserLoggedIn]) {
         [self.parentViewController dismissModalViewControllerAnimated:YES];
     } else {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Connection Failure. Please try again" delegate:self cancelButtonTitle:nil otherButtonTitles:@"Retry", nil];
-        [alertView show];
-        [alertView release];
+        [super webView:webView didFailLoadWithError:error];
     }
 }
 
