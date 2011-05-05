@@ -195,9 +195,9 @@
     
     UIActionSheet * deleteActionSheet = [[UIActionSheet alloc] initWithTitle:@"Are you sure you want to delete the note?" 
                                                                     delegate:self 
-                                                           cancelButtonTitle:@"Cancel" 
+                                                           cancelButtonTitle:nil
                                                       destructiveButtonTitle:@"Delete" 
-                                                           otherButtonTitles:nil];
+                                                           otherButtonTitles:@"Cancel", nil];
     
     [deleteActionSheet showInView:self.view];
     [deleteActionSheet release];
@@ -250,11 +250,9 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     
-    if (buttonIndex == 0) {// destructive button pressed
-        NSLog(@"note delete button pressed");
-        
-        if (nil != self.viewControllerBackground)
-            [self.viewControllerBackground deleteNoteWithoutSaving];
+    NSString *title = [actionSheet buttonTitleAtIndex:buttonIndex];
+    if ([title isEqualToString:@"Delete"]) {
+        [self.viewControllerBackground deleteNoteWithoutSaving];
     }
 }
 

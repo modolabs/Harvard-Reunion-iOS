@@ -164,9 +164,9 @@
     
     UIActionSheet * deleteActionSheet = [[UIActionSheet alloc] initWithTitle:@"Are you sure you want to delete the note?" 
                                                                     delegate:self 
-                                                           cancelButtonTitle:@"Cancel" 
+                                                           cancelButtonTitle:nil
                                                       destructiveButtonTitle:@"Delete" 
-                                                           otherButtonTitles:nil];
+                                                           otherButtonTitles:@"Cancel", nil];
     
     [deleteActionSheet showInView:self];
     [deleteActionSheet release];
@@ -216,23 +216,21 @@
 
 #pragma mark
 #pragma mark UIActionSheetDelegate
-
+/*
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     if (buttonIndex == 0) {// destructive button pressed
         NSLog(@"delete button pressed from notes-listview");
     }
 }
-
+*/
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
     
-    if (buttonIndex == 0) {// destructive button pressed
-        NSLog(@"action sheet dismissed from view");
-        
+    NSString *title = [actionSheet buttonTitleAtIndex:buttonIndex];
+    if ([title isEqualToString:@"Delete"]) {
         [self removeFromSuperview];
         [self.delegate deleteNoteAndReload:note];
-
     }
 }
 
