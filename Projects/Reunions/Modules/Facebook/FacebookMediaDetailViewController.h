@@ -24,6 +24,7 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
     
     IBOutlet KGOToolbar *actionsToolbar;
     IBOutlet UIView *actionToolbarRoot;
+    IBOutlet UIBarButtonItem *pagerBarItem;
     
     UITapGestureRecognizer *_tapRecognizer;
     

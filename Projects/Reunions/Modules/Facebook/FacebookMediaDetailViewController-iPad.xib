@@ -3,22 +3,21 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1056</int>
 		<string key="IBDocument.SystemVersion">10J869</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1305</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1306</string>
 		<string key="IBDocument.AppKitVersion">1038.35</string>
 		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-			<string key="NS.object.0">300</string>
+			<string key="NS.object.0">301</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<string>IBProxyObject</string>
 			<string>IBUIBarButtonItem</string>
-			<string>IBUIButton</string>
 			<string>IBUIToolbar</string>
-			<string>IBUISegmentedControl</string>
 			<string>IBUITableView</string>
 			<string>IBUIView</string>
+			<string>IBUIButton</string>
+			<string>IBProxyObject</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -196,6 +195,7 @@
 														<string key="NSFrame">{{404, 8}, {55, 46}}</string>
 														<reference key="NSSuperview" ref="292828924"/>
 														<reference key="NSWindow"/>
+														<reference key="NSNextKeyView"/>
 														<reference key="IBUIBackgroundColor" ref="1022567284"/>
 														<bool key="IBUIOpaque">NO</bool>
 														<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -262,75 +262,23 @@
 					<object class="IBUIToolbar" id="1033442698">
 						<reference key="NSNextResponder" ref="574806177"/>
 						<int key="NSvFlags">290</int>
-						<object class="NSMutableArray" key="NSSubviews">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBUISegmentedControl" id="605221075">
-								<reference key="NSNextResponder" ref="1033442698"/>
-								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{7, 8}, {254, 30}}</string>
-								<reference key="NSSuperview" ref="1033442698"/>
-								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="1455157"/>
-								<bool key="IBUIOpaque">NO</bool>
-								<string key="IBUIContentStretch">{{1.38778e-17, 0}, {1, 1}}</string>
-								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-								<int key="IBSegmentControlStyle">2</int>
-								<int key="IBNumberOfSegments">3</int>
-								<int key="IBSelectedSegmentIndex">0</int>
-								<object class="NSArray" key="IBSegmentTitles">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<string>All Photos</string>
-									<string>My Uploads</string>
-									<string>Bookmarks</string>
-								</object>
-								<object class="NSMutableArray" key="IBSegmentWidths">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<real value="0.0"/>
-									<real value="0.0"/>
-									<real value="0.0"/>
-								</object>
-								<object class="NSMutableArray" key="IBSegmentEnabledStates">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<boolean value="YES"/>
-									<boolean value="YES"/>
-									<boolean value="YES"/>
-								</object>
-								<object class="NSMutableArray" key="IBSegmentContentOffsets">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<string>{0, 0}</string>
-									<string>{0, 0}</string>
-									<string>{0, 0}</string>
-								</object>
-								<object class="NSMutableArray" key="IBSegmentImages">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<object class="NSNull" id="4"/>
-									<reference ref="4"/>
-									<reference ref="4"/>
-								</object>
-							</object>
-						</object>
 						<string key="NSFrameSize">{500, 44}</string>
 						<reference key="NSSuperview" ref="574806177"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="605221075"/>
+						<reference key="NSNextKeyView"/>
 						<reference key="IBUIBackgroundColor" ref="1022567284"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 						<object class="NSMutableArray" key="IBUIItems">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBUIBarButtonItem" id="792117766">
-								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-								<reference key="IBUICustomView" ref="605221075"/>
-								<reference key="IBUIToolbar" ref="1033442698"/>
-							</object>
 							<object class="IBUIBarButtonItem" id="360280060">
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 								<reference key="IBUIToolbar" ref="1033442698"/>
 								<int key="IBUISystemItemIdentifier">5</int>
 							</object>
-							<object class="IBUIBarButtonItem" id="221340591">
-								<string key="IBUITitle">Upload</string>
+							<object class="IBUIBarButtonItem" id="1052404542">
+								<string key="IBUITitle">Item</string>
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 								<int key="IBUIStyle">1</int>
 								<reference key="IBUIToolbar" ref="1033442698"/>
@@ -473,6 +421,14 @@
 					</object>
 					<int key="connectionID">46</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">pagerBarItem</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="1052404542"/>
+					</object>
+					<int key="connectionID">50</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -509,36 +465,15 @@
 						<reference key="object" ref="1033442698"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="792117766"/>
 							<reference ref="360280060"/>
-							<reference ref="221340591"/>
+							<reference ref="1052404542"/>
 						</object>
 						<reference key="parent" ref="574806177"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">8</int>
-						<reference key="object" ref="792117766"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="605221075"/>
-						</object>
-						<reference key="parent" ref="1033442698"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">9</int>
 						<reference key="object" ref="360280060"/>
 						<reference key="parent" ref="1033442698"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">10</int>
-						<reference key="object" ref="221340591"/>
-						<reference key="parent" ref="1033442698"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">7</int>
-						<reference key="object" ref="605221075"/>
-						<reference key="parent" ref="792117766"/>
-						<string key="objectName">Segmented Control - All Photos, My Uploads, Bookmarks</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">17</int>
@@ -605,6 +540,11 @@
 						<reference key="object" ref="583703705"/>
 						<reference key="parent" ref="292828924"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">49</int>
+						<reference key="object" ref="1052404542"/>
+						<reference key="parent" ref="1033442698"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -613,7 +553,6 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>-1.CustomClassName</string>
 					<string>-2.CustomClassName</string>
-					<string>10.IBPluginDependency</string>
 					<string>11.IBPluginDependency</string>
 					<string>12.IBPluginDependency</string>
 					<string>13.IBPluginDependency</string>
@@ -627,17 +566,15 @@
 					<string>4.IBEditorWindowLastContentRect</string>
 					<string>4.IBPluginDependency</string>
 					<string>45.IBPluginDependency</string>
+					<string>49.IBPluginDependency</string>
 					<string>5.CustomClassName</string>
 					<string>5.IBPluginDependency</string>
-					<string>7.IBPluginDependency</string>
-					<string>7.IUISegmentedControlInspectorSelectedSegmentMetadataKey</string>
 					<string>9.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>FacebookMediaDetailViewController</string>
 					<string>UIResponder</string>
-					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -651,10 +588,9 @@
 					<string>{{84, 793}, {500, 500}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>KGOToolbar</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-					<integer value="0"/>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				</object>
 			</object>
@@ -670,7 +606,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">46</int>
+			<int key="maxID">56</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -745,6 +681,9 @@
 							<string>_tableView</string>
 							<string>actionToolbarRoot</string>
 							<string>actionsToolbar</string>
+							<string>backSegmentedButton</string>
+							<string>backSegmentedControl</string>
+							<string>pagerBarItem</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -758,6 +697,9 @@
 							<string>UITableView</string>
 							<string>UIView</string>
 							<string>KGOToolbar</string>
+							<string>KGOSegmentedControl</string>
+							<string>KGOSegmentedControl</string>
+							<string>UIBarButtonItem</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -774,6 +716,9 @@
 							<string>_tableView</string>
 							<string>actionToolbarRoot</string>
 							<string>actionsToolbar</string>
+							<string>backSegmentedButton</string>
+							<string>backSegmentedControl</string>
+							<string>pagerBarItem</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -817,11 +762,39 @@
 								<string key="name">actionsToolbar</string>
 								<string key="candidateClassName">KGOToolbar</string>
 							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">backSegmentedButton</string>
+								<string key="candidateClassName">KGOSegmentedControl</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">backSegmentedControl</string>
+								<string key="candidateClassName">KGOSegmentedControl</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">pagerBarItem</string>
+								<string key="candidateClassName">UIBarButtonItem</string>
+							</object>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/FacebookMediaDetailViewController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">KGOSegmentedControl</string>
+					<string key="superclassName">KGOTabbedControl</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/KGOSegmentedControl.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">KGOTabbedControl</string>
+					<string key="superclassName">UIView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/KGOTabbedControl.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -879,6 +852,6 @@
 				<string>{16, 16}</string>
 			</object>
 		</object>
-		<string key="IBCocoaTouchPluginVersion">300</string>
+		<string key="IBCocoaTouchPluginVersion">301</string>
 	</data>
 </archive>
