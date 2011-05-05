@@ -3,6 +3,7 @@
 #import "KGOEventContactInfo.h"
 #import "KGOAttendeeWrapper.h"
 #import "CoreDataManager.h"
+#import "Note.h"
 
 @implementation ScheduleEventWrapper
 
@@ -114,6 +115,8 @@
     // registration info
     NSDictionary *registrationInfo = [dictionary dictionaryForKey:@"registration"];
     if (registrationInfo) {
+        [userInfo setObject:[NSNumber numberWithBool:YES] forKey:@"registrationRequired"];
+        
         if ([registrationInfo boolForKey:@"registered"]) {
             [userInfo setObject:[NSNumber numberWithBool:YES] forKey:@"registered"];
         }
@@ -125,6 +128,9 @@
         if (value) {
             [userInfo setObject:value forKey:@"regURL"];
         }
+        
+    } else {
+        [userInfo setObject:[NSNumber numberWithBool:NO] forKey:@"registrationRequired"];
     }
     
     self.userInfo = userInfo;
@@ -145,6 +151,11 @@
     return [self.userInfo objectForKey:@"building"];
 }
 
+- (BOOL)registrationRequired
+{
+    return [self.userInfo boolForKey:@"registrationRequired"];
+}
+
 - (BOOL)isRegistered
 {
     return [self.userInfo boolForKey:@"registered"];
@@ -163,6 +174,13 @@
 - (NSString *)foursquareID
 {
     return [self.userInfo objectForKey:@"foursquareID"];
+}
+
+- (Note *)note
+{
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@ AND eventIdentifier = %@", self.title, self.identifier];
+    Note *note = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:pred] lastObject];
+    return note;
 }
 
 @end

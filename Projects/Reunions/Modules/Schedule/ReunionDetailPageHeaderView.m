@@ -122,7 +122,7 @@
             return;
         }
         
-        if ([event registrationURL] && ![event isBookmarked]) {
+        if ([event registrationRequired] && ![event isBookmarked]) {
             UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
                                                                  message:@"Bookmarking this event will only add it to your personal schedule.  You will still need to register for it to attend."
                                                                 delegate:self

@@ -192,8 +192,13 @@
     }
     */
     
-    [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:oldIndexPath, indexPath, nil]
-                     withRowAnimation:UITableViewRowAnimationNone];
+    if (oldIndexPath) {
+        [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:oldIndexPath, indexPath, nil]
+                         withRowAnimation:UITableViewRowAnimationNone];
+    } else {
+        [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                         withRowAnimation:UITableViewRowAnimationNone];
+    }
     [tableView scrollToRowAtIndexPath:scrollToIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
@@ -275,6 +280,8 @@
         [cell.bookmarkView setImage:image forState:UIControlStateNormal];
     }
     
+    cell.notesButton.hidden = (cellType != ScheduleCellSelected && ![event note]);
+    
     if (cellType == ScheduleCellLastInTable || cellType == ScheduleCellSelected) {
         ScheduleDetailTableView *tableView = [self tableViewForCellType:cellType];
         tableView.event = event;
@@ -303,10 +310,8 @@
         mapView.delegate = tableView;
         
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-
-    } else {
-        cell.selectionStyle = UITableViewCellSelectionStyleGray;
     }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
 }

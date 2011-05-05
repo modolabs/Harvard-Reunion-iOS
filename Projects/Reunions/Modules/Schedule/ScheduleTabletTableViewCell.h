@@ -24,6 +24,7 @@ typedef enum {
 @property (nonatomic, retain) ScheduleEventWrapper *event;
 @property ScheduleCellType scheduleCellType;
 @property (nonatomic, readonly) UIButton *bookmarkView;
+@property (nonatomic, readonly) UIButton *notesButton;
 @property (nonatomic) BOOL isFirstInSection;
 @property (nonatomic, assign) UIViewController *parentViewController;
 

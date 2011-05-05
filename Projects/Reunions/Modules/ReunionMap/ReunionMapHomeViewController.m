@@ -13,14 +13,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    if (_mapBorder) {
-        _mapBorder.layer.cornerRadius = 4;
-    }
-    
-    self.title = self.mapModule.shortName;
-    
-    _mapView.mapType = [[NSUserDefaults standardUserDefaults] integerForKey:MapTypePreference];
-    
     // region and annotations may be set before _mapView was set up
     if (self.annotations.count) {
         [_mapView addAnnotations:self.annotations];
@@ -31,24 +23,9 @@
         [_mapView centerAndZoomToDefaultRegion];
     }
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapTypeDidChange:) name:MapTypePreferenceChanged object:nil];
-    
-    [self setupToolbarButtons];
-    if (_toolbarDropShadow) {
-        UIImage *image = [[KGOTheme sharedTheme] backgroundImageForSearchBarDropShadow];
-        if (image) {
-            _toolbarDropShadow.image = image;
-        }
-    }
-    
     // set up search bar
-    _searchBar.placeholder = NSLocalizedString(@"Map Search Placeholder", nil);
-	_searchController = [[KGOSearchDisplayController alloc] initWithSearchBar:_searchBar delegate:self contentsController:self];
-    if (self.searchTerms) {
-        _searchBar.text = self.searchTerms;
-    }
-    if (self.searchOnLoad) {
-        [_searchController executeSearch:self.searchTerms params:self.searchParams];
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+        _searchController.showsSearchOverlay = NO;
     }
 
     if (_didSetRegion) {
