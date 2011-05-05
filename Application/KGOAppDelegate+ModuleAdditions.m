@@ -171,6 +171,11 @@
     return [_modulesByTag objectForKey:aTag];
 }
 
+- (KGOModule *)visibleModule
+{
+    return _visibleModule;
+}
+
 // this should never be called on the home module.
 - (BOOL)showPage:(NSString *)pageName forModuleTag:(NSString *)moduleTag params:(NSDictionary *)params {
     BOOL didShow = NO;
