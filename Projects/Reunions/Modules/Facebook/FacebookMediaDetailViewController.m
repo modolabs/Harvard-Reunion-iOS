@@ -601,7 +601,12 @@ ToolbarButtonTags;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    // Return YES for supported orientations
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        return YES;
+    } else {
+        return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    }
 }
     
 - (void)displayPost {
