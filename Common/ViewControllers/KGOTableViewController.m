@@ -1,6 +1,7 @@
 #import "KGOTableViewController.h"
 #import "KGOTheme.h"
 #import "KGOSearchDisplayController.h"
+#import "Foundation+KGOAdditions.h"
 
 #define GROUPED_SECTION_HEADER_VPADDING 24
 #define PLAIN_SECTION_HEADER_VPADDING 5.0f
@@ -169,6 +170,8 @@
         _tableViews = [[NSMutableArray alloc] initWithObjects:_currentTableView, nil];
 		_currentContentBuffer = [NSMutableDictionary dictionary];
 		_cellContentBuffers = [[NSMutableArray alloc] initWithObjects:_currentContentBuffer, nil];
+        
+        _lastCachedRow = _lastCachedSection = 0;
 	}
 	return self;
 }
@@ -183,6 +186,8 @@
 		_cellContentBuffers = [[NSMutableArray alloc] init];
 		_currentContentBuffer = nil;
 		_currentTableView = nil;
+
+        _lastCachedRow = _lastCachedSection = 0;
 	}
 	return self;
 }
@@ -197,6 +202,8 @@
 		_cellContentBuffers = [[NSMutableArray alloc] init];
 		_currentContentBuffer = nil;
 		_currentTableView = nil;
+
+        _lastCachedRow = _lastCachedSection = 0;
     }
     return self;
 }
@@ -347,6 +354,19 @@
     return nil;
 }
 
+- (BOOL)removeCachedViewsInSection:(NSInteger)section row:(NSInteger)row
+{
+    DLog(@"removing %d %d", section, row);
+    NSString *key = [NSString stringWithFormat:@"%d.%d", section, row];
+    if ([_currentContentBuffer objectForKey:key] != nil) {
+        [_currentContentBuffer removeObjectForKey:key];
+        DLog(@"removed %d %d", section, row);
+        
+        return YES;
+    }
+    return NO;
+}
+
 - (NSArray *)tableView:tableView cachedViewsForCellAtIndexPath:(NSIndexPath *)indexPath {
     
     if (!self.caching) {
@@ -361,11 +381,65 @@
 		_currentContentBuffer = [self contentBufferForTableView:tableView];
 		_currentTableView = tableView;
 	}
-	
+    
     NSString *key = [NSString stringWithFormat:@"%d.%d", indexPath.section, indexPath.row];
     NSArray *views = [_currentContentBuffer objectForKey:key];
     if (!views) {
         id<KGOTableViewDataSource> dataSource = [self dataSourceForTableView:tableView];
+        
+        // clear the buffer if we're too far away from where we last cached
+        // e.g. if the tableview is long, we will have cached cells at the very end
+        // from heightForRowAtIndexPath by the time we start calling
+        // cellForRowAtIndexPath at the beginning
+        NSInteger maxCells = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) ? MAX_CELL_BUFFER_IPHONE : MAX_CELL_BUFFER_IPAD;
+        NSInteger maxCellsInBuffer = 2 * maxCells + 1;
+        
+        KGOSign sign = KGOSignZero;
+        
+        if (_lastCachedSection == indexPath.section) { // most common
+            if (abs(indexPath.row - _lastCachedRow) > maxCellsInBuffer) {
+                DLog(@"%d %d %@", _lastCachedSection, _lastCachedRow, indexPath);
+                [_currentContentBuffer removeAllObjects];
+            }
+            sign = KGOGetIntegerSign(indexPath.row - _lastCachedRow);
+            
+        } else if (_lastCachedSection > indexPath.section) { // second most common for use case mentioned above
+            sign = KGOSignNegative;
+            
+            if (_lastCachedRow > maxCells) {
+                [_currentContentBuffer removeAllObjects];
+                
+            } else {
+                NSInteger numRowsBetween = _lastCachedRow + 1;
+                for (int i = _lastCachedSection; i > indexPath.section; i--) {
+                    numRowsBetween += [dataSource tableView:tableView numberOfRowsInSection:i];
+                    if (numRowsBetween > maxCells) {
+                        [_currentContentBuffer removeAllObjects];
+                        break;
+                    }
+                }
+            }
+            
+        } else { // can't think of a use case for this
+            sign = KGOSignPositive;
+            
+            NSInteger rowsInSection = [dataSource tableView:tableView numberOfRowsInSection:_lastCachedSection];
+            NSInteger numRowsBetween = rowsInSection - _lastCachedRow;
+            if (numRowsBetween > maxCells) {
+                [_currentContentBuffer removeAllObjects];
+                
+            } else {
+                for (int i = _lastCachedSection; i < indexPath.section; i++) {
+                    numRowsBetween += [dataSource tableView:tableView numberOfRowsInSection:i];
+                    if (numRowsBetween > maxCells) {
+                        [_currentContentBuffer removeAllObjects];
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // retrieve cached views.
 		if ([dataSource respondsToSelector:@selector(tableView:viewsForCellAtIndexPath:)]) {
 			views = [dataSource tableView:tableView viewsForCellAtIndexPath:indexPath];
 		}
@@ -376,57 +450,63 @@
         [_currentContentBuffer setObject:views forKey:key];
         
         // clear the buffer if we've added too many things to it
-        NSInteger maxCells = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) ? MAX_CELL_BUFFER_IPHONE : MAX_CELL_BUFFER_IPAD;
-        while (_currentContentBuffer.count > maxCells * 2 + 1) {
+        NSInteger numSections = 1;
+        if ([dataSource respondsToSelector:@selector(numberOfSectionsInTableView:)]) {
+            numSections = [dataSource numberOfSectionsInTableView:tableView];
+        }
+        
+        DLog(@"%d", _currentContentBuffer.count);
+        if (_currentContentBuffer.count > maxCellsInBuffer) {
             
-            BOOL (^removeFromCellBuffer)(NSInteger, NSInteger) = ^(NSInteger section, NSInteger row) {
-                NSString *key = [NSString stringWithFormat:@"%d.%d", section, row];
-                if ([_currentContentBuffer objectForKey:key] != nil) {
-                    [_currentContentBuffer removeObjectForKey:key];
-                    return YES;
-                }
-                return NO;
-            };
-            
-            BOOL didRemove = NO;
-            NSInteger section;
-            NSInteger startRow = indexPath.row - maxCells - 1;
-            // clear out any cached cell data more than maxCells back
-            for (section = indexPath.section; section >= 0; section--) {
-                if (startRow >= 0) {
-                    didRemove = removeFromCellBuffer(section, startRow);
-                    if (didRemove) {
-                        break;
+            if (sign == KGOSignPositive) {
+                // clear cached cells before current cell
+                NSInteger startRow = indexPath.row - maxCells - 1;
+                NSInteger section = indexPath.section;
+                while (startRow < 0 && section >= 0) {
+                    section--;
+                    if (section >= 0) {
+                        startRow += [dataSource tableView:tableView numberOfRowsInSection:section] - 1;
                     }
-                } else if (section > 0) {
-                    NSInteger numRows = [self tableView:tableView numberOfRowsInSection:section - 1];
-                    startRow = numRows + startRow - 1;
                 }
-            }
-            
-            if (!didRemove) {
-                // clear out cached cell data more than maxCells forward
-                startRow = indexPath.row + maxCells;
-                NSInteger numSections = [self numberOfSectionsInTableView:tableView];
-                for (section = indexPath.section; section < numSections; section++) {
-                    NSInteger numRowsInCurrentSection = [self tableView:tableView numberOfRowsInSection:indexPath.section];
-                    if (startRow <= numRowsInCurrentSection) {
-                        didRemove = removeFromCellBuffer(section, startRow);
-                        if (didRemove) {
-                            break;
+                
+                while (startRow >= 0 && section >= 0 && [self removeCachedViewsInSection:section row:startRow]) {
+                    startRow--;
+                    if (startRow < 0) {
+                        section--;
+                        if (section >= 0) {
+                            startRow = [dataSource tableView:tableView numberOfRowsInSection:section] - 1;
                         }
-                    } else {
-                        startRow -= numRowsInCurrentSection;
                     }
                 }
-            }
-            
-            if(!didRemove && (_currentContentBuffer.count > maxCells * 2 + 1)) {
-                // over the limit but unable to remove from caceh
-                // so just clear it all
-                [_currentContentBuffer removeAllObjects];
+                
+            } else {
+                // clear cached cells after current cell
+                NSInteger startRow = indexPath.row + maxCells;
+                NSInteger section = indexPath.section;
+                NSInteger numRows = [dataSource tableView:tableView numberOfRowsInSection:section];
+                while (startRow >= numRows && section < numSections) {
+                    startRow -= numRows;
+                    section++;
+                    if (section < numSections) {
+                        numRows = [dataSource tableView:tableView numberOfRowsInSection:section];
+                    }
+                }
+                
+                while (startRow < numRows && section < numSections && [self removeCachedViewsInSection:section row:startRow]) {
+                    startRow++;
+                    if (startRow >= numRows) {
+                        startRow = 0;
+                        section++;
+                        if (section < numSections) {
+                            numRows = [dataSource tableView:tableView numberOfRowsInSection:section];
+                        }
+                    }
+                }
             }
         }
+        
+        _lastCachedSection = indexPath.section;
+        _lastCachedRow = indexPath.row;
 
     }
     return views;
@@ -512,12 +592,11 @@
     return cell;
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return [[self dataSourceForTableView:tableView] numberOfSectionsInTableView:tableView];
-}
-
+// implementing this only because it is required by the protocol
+// but it will never be called because the table view's dataSource property
+// is not us but either a search display controller or table view controller
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return [[self dataSourceForTableView:tableView] tableView:tableView numberOfRowsInSection:section]; 
+    return 0;
 }
 
 #pragma mark UITableViewDelegate methods

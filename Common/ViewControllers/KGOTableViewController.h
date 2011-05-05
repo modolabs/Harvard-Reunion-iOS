@@ -87,6 +87,9 @@ typedef void (^CellManipulator)(UITableViewCell *);
 	
 	UITableView *_currentTableView;
     NSMutableDictionary *_currentContentBuffer;
+    
+    NSInteger _lastCachedSection;
+    NSInteger _lastCachedRow;
 
     id<KGOTableViewDataSource> _dataSource;
 }
@@ -115,5 +118,6 @@ typedef void (^CellManipulator)(UITableViewCell *);
 
 - (void)reloadDataForTableView:(UITableView *)tableView;
 - (void)decacheTableView:(UITableView *)tableView;
+- (BOOL)removeCachedViewsInSection:(NSInteger)section row:(NSInteger)row;
 
 @end
