@@ -485,7 +485,12 @@
         if (!view) {
             view = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationIdentifier] autorelease];
             view.canShowCallout = YES;
-            view.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+            
+            KGONavigationStyle navStyle = [KGO_SHARED_APP_DELEGATE() navigationStyle];
+            if (navStyle != KGONavigationStyleTabletSidebar) {
+                // TODO: not all annotations will want to do this
+                view.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+            }
         }
     } else if ([annotation conformsToProtocol:@protocol(KGOSearchResult)]) {
         id<KGOSearchResult> aResult = (id<KGOSearchResult>)annotation;
@@ -554,7 +559,9 @@
 {
     NSInteger searchResultAnnotationCount = mapView.selectedAnnotations.count;
     for (id<MKAnnotation> anAnnotation in mapView.selectedAnnotations) {
-        if (![anAnnotation conformsToProtocol:@protocol(KGOSearchResult)]) {
+        if (view.annotation == anAnnotation // this is what was deselected
+            || ![anAnnotation conformsToProtocol:@protocol(KGOSearchResult)] // we don't count annotations not provided by us
+        ) {
             searchResultAnnotationCount--;
         }
     }

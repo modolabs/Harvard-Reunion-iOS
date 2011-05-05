@@ -258,7 +258,13 @@
         theSearchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		theSearchBar.alpha = 0.0;
         if (!searchController) {
-            searchController = [[KGOSearchDisplayController alloc] initWithSearchBar:theSearchBar delegate:self contentsController:self];
+            searchController = [[KGOSearchDisplayController alloc] initWithSearchBar:theSearchBar
+                                                                            delegate:self
+                                                                  contentsController:self];
+
+            if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+                searchController.showsSearchOverlay = NO;
+            }
         }
 		[self.view addSubview:theSearchBar];
 	}
