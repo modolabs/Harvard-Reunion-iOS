@@ -1,11 +1,3 @@
-//
-//  NotesUnselectedTableViewCell.h
-//  Reunions
-//
-//  Created by Muhammad J Amjad on 4/15/11.
-//  Copyright 2011 ModoLabs Inc. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 #import "NotesTextView.h"
 
@@ -16,10 +8,6 @@ typedef enum {
 } NotesCellType;
 
 @interface NotesUnselectedTableViewCell : UITableViewCell {
-    
-    UIView *_fakeCardBorder;
-    UIView *_fakeBehindCardBorder;
-    UIImageView *_fakeTopOfNextCell;
     
     NotesCellType notesCellType;
     
