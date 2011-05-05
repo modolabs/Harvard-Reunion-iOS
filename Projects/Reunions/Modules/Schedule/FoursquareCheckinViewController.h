@@ -20,6 +20,6 @@
 @property(nonatomic) NSInteger checkedInUserCount;
 @property(nonatomic, retain) ScheduleDetailTableView *parentTableView;
 
-- (void)checkinButtonPressed:(id)sender;
+ - (void)showCheckinDialog:(id)sender;
 
 @end

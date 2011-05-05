@@ -73,7 +73,7 @@
 			<key>bold</key>
 			<true/>
 			<key>color</key>
-			<string>#FFFFFF</string>
+			<string>#ccc8c2</string>
 			<key>size</key>
 			<integer>-1</integer>
 		</dict>

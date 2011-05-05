@@ -4,6 +4,7 @@
 #import "MITThumbnailView.h"
 #import "KGOTheme.h"
 #import "UIKit+KGOAdditions.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
 #import "ScheduleDetailTableView.h"
 #import "KGOSocialMediaController.h"
 
@@ -19,7 +20,6 @@
     self.eventTitle = nil;
     self.venue = nil;
     [_button release];
-    [_textField release];
     [super dealloc];
 }
 
@@ -38,20 +38,27 @@
     [super viewDidLoad];
     
     CGFloat width = self.tableView.frame.size.width - 20;
+    UIColor *labelColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
+    CGFloat y = 0;
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+        y = 50;
+        labelColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySectionHeader];
+    }
     
     UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
     CGSize size = [self.eventTitle sizeWithFont:font
                               constrainedToSize:CGSizeMake(width, font.lineHeight * 4)
                                   lineBreakMode:UILineBreakModeTailTruncation];
-    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 10, width, size.height)] autorelease];
+    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 10 + y, width, size.height)] autorelease];
     label.text = self.eventTitle;
     label.font = font;
     label.numberOfLines = 4;
     label.lineBreakMode = UILineBreakModeTailTruncation;
-    label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
+    label.textColor = labelColor;
     label.backgroundColor = [UIColor clearColor];
     
-    UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, label.frame.size.height + 20)] autorelease];
+    UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, label.frame.size.height + 20 + y)] autorelease];
+    
     [view addSubview:label];
 
     self.tableView.autoresizesSubviews = YES;
@@ -89,7 +96,25 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        return YES;
+    } else {
+        return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    }
+}
+
+- (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+        // navigation bar is fake, just stick it in the header view
+        UIButton *button = (UIButton *)[self.tableView.tableHeaderView viewWithTag:201];
+        if (button) {
+            // reposition button now that header frame has resized
+            CGRect frame = button.frame;
+            frame.origin.x = self.tableView.tableHeaderView.frame.size.width - frame.size.width - 10;
+            button.frame = frame;
+
+        }
+    }
 }
 
 #pragma mark
@@ -108,26 +133,58 @@
     [self presentModalViewController:navC animated:YES];
 }
 
-- (void)checkinButtonPressed:(id)sender
-{
-    [[[KGOSocialMediaController foursquareService] foursquareEngine] checkinVenue:self.venue
-                                                                         delegate:self
-                                                                          message:_textField.text];
-}
-
 // here we are relying on the fact that venueCheckinStatusReceived is called
 // before didReceiveCheckins so we don't have to reload the table twice
 - (void)venueCheckinStatusReceived:(BOOL)status forVenue:(NSString *)aVenue
 {
     self.isCheckedIn = status;
     
-    if (self.isCheckedIn) {
-        self.navigationItem.rightBarButtonItem = nil;
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+        // navigation bar is fake, just stick it in the header view
+        UIButton *button = (UIButton *)[self.tableView.tableHeaderView viewWithTag:201];
+        
+        if (!self.isCheckedIn) {
+            if (!button) {
+                button = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+                button.tag = 201;
+                
+                UIImage *image = [UIImage imageWithPathName:@"common/toolbar-button"];
+                UIImage *pressedImage = [UIImage imageWithPathName:@"common/toolbar-button-pressed"];
+                [button setBackgroundImage:[image stretchableImageWithLeftCapWidth:10 topCapHeight:0]
+                                  forState:UIControlStateNormal];
+                [button setBackgroundImage:[pressedImage stretchableImageWithLeftCapWidth:10 topCapHeight:0]
+                                  forState:UIControlStateHighlighted];
+
+                button.titleLabel.font = [UIFont boldSystemFontOfSize:[UIFont smallSystemFontSize]];
+                button.titleLabel.textColor = [UIColor whiteColor];
+                
+                NSString *title = NSLocalizedString(@"Check in Here", nil);
+                CGSize size = [title sizeWithFont:button.titleLabel.font];
+                CGRect frame = CGRectMake(0, 7, size.width + 20, image.size.height);
+                frame.origin.x = self.tableView.tableHeaderView.frame.size.width - frame.size.width - 10;
+                button.frame = frame;
+                [button setTitle:title forState:UIControlStateNormal];
+                
+                [button addTarget:self.parentViewController
+                           action:@selector(showCheckinDialog:)
+                 forControlEvents:UIControlEventTouchUpInside];
+                
+                [self.tableView.tableHeaderView addSubview:button];
+            }
+        } else if (button) {
+            [button removeFromSuperview];
+            [button release];
+        }
+        
     } else {
-        self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Check in Here"
-                                                                                   style:UIBarButtonItemStyleDone
-                                                                                  target:self
-                                                                                  action:@selector(showCheckinDialog:)] autorelease];
+        if (self.isCheckedIn) {
+            self.navigationItem.rightBarButtonItem = nil;
+        } else {
+            self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Check in Here"
+                                                                                       style:UIBarButtonItemStyleDone
+                                                                                      target:self
+                                                                                      action:@selector(showCheckinDialog:)] autorelease];
+        }
     }
     
     [self.parentTableView venueCheckinStatusReceived:status forVenue:aVenue];
