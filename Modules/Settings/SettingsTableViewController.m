@@ -48,10 +48,12 @@ static NSString * const KGOSettingsSocialMedia = @"SocialMedia";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    _availableUserSettings = [[[KGO_SHARED_APP_DELEGATE() appConfig] objectForKey:@"UserSettings"] retain];
+    KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
+    
+    _availableUserSettings = [[[appDelegate appConfig] objectForKey:@"UserSettings"] retain];
     _setUserSettings = [[[NSUserDefaults standardUserDefaults] objectForKey:KGOUserPreferencesKey] retain];
     if (!_setUserSettings) {
-        NSDictionary *defaultUserSettings = [[KGO_SHARED_APP_DELEGATE() appConfig] objectForKey:@"DefaultUserSettings"];
+        NSDictionary *defaultUserSettings = [[appDelegate appConfig] objectForKey:@"DefaultUserSettings"];
         if (defaultUserSettings) {
             _setUserSettings = [defaultUserSettings copy];
         }
@@ -78,6 +80,13 @@ static NSString * const KGOSettingsSocialMedia = @"SocialMedia";
             return NSOrderedDescending;
         }
     }] retain];
+    
+    if ([appDelegate navigationStyle] == KGONavigationStyleTabletSidebar) {
+        CGRect frame = self.tableView.frame;
+        frame.origin.y += 44;
+        frame.size.height -= 44;
+        self.tableView.frame = frame;
+    }
     
     self.tableView.rowHeight += 16; // room for subtitle
     
