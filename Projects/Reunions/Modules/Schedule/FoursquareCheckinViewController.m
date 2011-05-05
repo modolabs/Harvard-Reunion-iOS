@@ -103,6 +103,20 @@
     }
 }
 
+- (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+        // navigation bar is fake, just stick it in the header view
+        UIButton *button = (UIButton *)[self.tableView.tableHeaderView viewWithTag:201];
+        if (button) {
+            // reposition button now that header frame has resized
+            CGRect frame = button.frame;
+            frame.origin.x = self.tableView.tableHeaderView.frame.size.width - frame.size.width - 10;
+            button.frame = frame;
+
+        }
+    }
+}
+
 #pragma mark
 
 - (void)showCheckinDialog:(id)sender
