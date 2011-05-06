@@ -16,6 +16,12 @@
     UIViewController *vc = nil;
     if ([pageName isEqualToString:LocalPathPageNameHome]) {
         vc = [[[StoryListViewController alloc] init] autorelease];
+        
+        if ([params objectForKey:@"category"]) {
+            NewsCategory *category = [params objectForKey:@"category"];
+            [(StoryListViewController *)vc setActiveCategoryId:category.category_id];
+        }
+        
     } else if([pageName isEqualToString:LocalPathPageNameDetail]) {
         vc = [[[StoryDetailViewController alloc] init] autorelease];
         
@@ -32,6 +38,10 @@
             [(StoryDetailViewController *)vc setInitialIndexPath:indexPath];
             
             [(StoryDetailViewController *)vc setMultiplePages:YES];
+        }
+        
+        if ([params objectForKey:@"category"]) {
+            [(StoryDetailViewController *)vc setCategory:[params objectForKey:@"category"]];
         }
     }
     return vc;

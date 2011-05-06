@@ -23,7 +23,7 @@
 
 @implementation StoryDetailViewController
 
-@synthesize newsController, story, stories, storyView, multiplePages;
+@synthesize newsController, story, stories, storyView, multiplePages, category;
 
 - (void)loadView {
     [super loadView]; // surprisingly necessary empty call to super due to the way memory warnings work
@@ -172,7 +172,11 @@
 }
 
 - (void)goHome:(id)sender {
-    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome forModuleTag:NewsTag params:nil];
+    NSDictionary *params = nil;
+    if (self.category) {
+        params = [NSDictionary dictionaryWithObject:self.category forKey:@"category"];
+    }
+    [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome forModuleTag:NewsTag params:params];
 }
      
 - (UIButton *)toolbarCloseButton {
@@ -212,6 +216,7 @@
 	[storyView release];
     self.story = nil;
     self.stories = nil;
+    self.category = nil;
     [initialIndexPath release];
     [super dealloc];
 }

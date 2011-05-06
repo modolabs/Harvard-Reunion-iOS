@@ -38,6 +38,8 @@
 - (void)releaseSearchBar;
 - (void)hideSearchBar;
 
+- (NewsCategory *)activeCategory;
+
 @end
 
 @implementation StoryListViewController
@@ -186,8 +188,10 @@
 #pragma mark NewsDataManager delegate methods
 - (void)categoriesUpdated:(NSArray *)newCategories {
     self.categories = newCategories;
-    NewsCategory *category = [self.categories objectAtIndex:0];
-    self.activeCategoryId = category.category_id;
+    if (![self activeCategory]) {
+        NewsCategory *category = [self.categories objectAtIndex:0];
+        self.activeCategoryId = category.category_id;
+    }
     [self setupNavScroller];
 
     // now that we have categories load the stories
@@ -221,9 +225,10 @@
 
 	// highlight active category
     if (self.categories.count) {
-        NewsCategory *firstCategory = [self.categories objectAtIndex:0];
+        NewsCategory *defaultCategory = self.activeCategory;
+        
         for (NSInteger i = 0; i < navScrollView.numberOfButtons; i++) {
-            if ([[navScrollView buttonTitleAtIndex:i] isEqualToString:firstCategory.title]) {
+            if ([[navScrollView buttonTitleAtIndex:i] isEqualToString:defaultCategory.title]) {
                 [navScrollView selectButtonAtIndex:i];
                 break;
             }
@@ -647,6 +652,8 @@
             NSMutableDictionary *params = [NSMutableDictionary dictionary];
             [params setObject:indexPath forKey:@"indexPath"];
             [params setObject:self.stories forKey:@"stories"];
+            [params setObject:[self activeCategory] forKey:@"category"];
+            
             [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail forModuleTag:NewsTag params:params];
         } else {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:story.link]];
@@ -654,6 +661,19 @@
 	}
 }
 
+- (NewsCategory *)activeCategory {
+    if (!self.activeCategoryId) {
+        return [self.categories objectAtIndex:0];
+    }
+    
+    for (NewsCategory *category in self.categories) {
+        if([category.category_id isEqualToString:self.activeCategoryId]) {
+            return category;
+        }
+    }
+    
+    return nil;
+}
 
 #pragma mark KGOSearchDisplayDelegate
 - (BOOL)searchControllerShouldShowSuggestions:(KGOSearchDisplayController *)controller {
