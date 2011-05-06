@@ -536,14 +536,14 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
             break;
         }
         case kMyUploadsSegment:
-        {
-            NSString *uploaderIdentifier = 
-            [[[KGOSocialMediaController facebookService] currentFacebookUser]
-             identifier];
-            
+        {            
             self.currentFilterBlock =
             [[
               ^(FacebookPhoto *photo) {
+                  NSString *uploaderIdentifier = 
+                  [[[KGOSocialMediaController facebookService] currentFacebookUser]
+                   identifier];
+                  
                   NSString *photoOwner = [[photo owner] identifier];
                   return [photoOwner isEqualToString:uploaderIdentifier];
               } 
@@ -570,6 +570,10 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
             break;
     } 
     self.scrollView.contentOffset = CGPointMake(0, 0);
+}
+
+- (void)refreshMedia {
+    [self refreshPhotos];
 }
 
 #pragma mark Photo upload

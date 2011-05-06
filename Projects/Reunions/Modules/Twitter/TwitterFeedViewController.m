@@ -59,7 +59,7 @@
     [self dismissModalViewControllerAnimated:YES];
      [twitterModule performSelector:@selector(requestStatusUpdates:) withObject:nil afterDelay:10];
     
-    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Twitter" action:@"Tweet" label:twitterModule.hashtag];
+    [[AnalyticsWrapper sharedWrapper] trackGroupAction:@"Twitter Post" label:twitterModule.hashtag];
 }
 
 - (void)controllerFailedToTweet:(TwitterViewController *)controller

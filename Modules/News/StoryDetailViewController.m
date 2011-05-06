@@ -133,7 +133,7 @@
 			} else if ([[url path] rangeOfString:@"share" options:NSBackwardsSearch].location != NSNotFound) {
                 shareController.actionSheetTitle = @"Share article with a friend";
                 shareController.shareTitle = story.title;
-                shareController.shareBody = story.body;
+                shareController.shareBody = story.summary;
                 shareController.shareURL = story.link;
 				[shareController shareInView:self.view];
 			}
