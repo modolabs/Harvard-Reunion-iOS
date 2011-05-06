@@ -50,18 +50,15 @@
     NSString *action = nil;
     NSString *label = nil;
     if (self.profileID) {
-        action = @"Post";
-        label = [NSString stringWithFormat:@"facebook profile id: %@", self.profileID];
+        action = @"Facebook Post";
+        label = self.profileID;
         
     } else {
-        action = @"Comment";
-        if ([self.post isKindOfClass:[FacebookPhoto class]]) {
-            label = @"photo comment";
-        } else if ([self.post isKindOfClass:[FacebookVideo class]]) {
-            label = @"video comment";
-        }
+        action = @"Facebook Comment";
+        label = self.post.identifier;
     }
-    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Facebook" action:action label:label];
+    
+    [[AnalyticsWrapper sharedWrapper] trackGroupAction:action label:label];
 }
 
 - (IBAction)cancelButtonPressed:(id)sender {

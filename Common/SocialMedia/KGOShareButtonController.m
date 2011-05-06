@@ -107,9 +107,8 @@
                                 nil];
         
         [[KGOSocialMediaController facebookService] shareOnFacebook:params];
-        
-        // TODO: this can't record if the user taps cancel; the listener is in
-        // KGOFacebookService
+
+        // facebook will return success even if the user taps cancel
         [[AnalyticsWrapper sharedWrapper] trackGroupAction:@"Facebook Share" label:self.shareURL];
 
 	} else if ([method isEqualToString:KGOSocialMediaTypeTwitter]) {

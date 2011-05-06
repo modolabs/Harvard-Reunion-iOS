@@ -378,7 +378,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 		[alert release];
 	}
     
-    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Bump" action:@"Bump" label:nil];
+    [[AnalyticsWrapper sharedWrapper] trackGroupAction:@"Bump" label:nil];
     
     // Start the session over.
     [self setUpBump];    
