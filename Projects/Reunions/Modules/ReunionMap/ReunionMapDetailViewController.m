@@ -49,7 +49,7 @@
         _scrollView.bounces = NO;
         [_scrollView addSubview:self.tableView];
         _scrollView.delegate = self;
-        _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, _scrollView.frame.size.height + 1);
+        _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, 500 + self.tableView.frame.size.height);
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.showsHorizontalScrollIndicator = NO;
         _scrollView.clipsToBounds = NO;
@@ -68,7 +68,7 @@
         CGRect buttonFrame = CGRectZero;
         buttonFrame.size = image.size;
         buttonFrame.origin.x = _scrollView.frame.size.width - image.size.width + 5;
-        buttonFrame.origin.y = IPAD_TABLEVIEW_ORIGIN_Y - 7;
+        buttonFrame.origin.y = IPAD_TABLEVIEW_ORIGIN_Y - image.size.height + 5;
         closeButton.frame = buttonFrame;
         closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
         KGOSidebarFrameViewController *homescreen = (KGOSidebarFrameViewController *)[KGO_SHARED_APP_DELEGATE() homescreen];
@@ -277,6 +277,9 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+    // make sure at least 400px of the table height is visible
+    [_scrollView scrollRectToVisible:CGRectMake(0, 500, 1, 400) animated:YES];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -311,7 +314,7 @@
     //frame.origin.x = _scrollView.frame.size.width - floor(closeButton.frame.size.width / 2);
     //closeButton.frame = frame;
     
-    _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, 500 + height);
+    _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, IPAD_TABLEVIEW_ORIGIN_Y + height);
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
