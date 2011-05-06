@@ -6,6 +6,14 @@
 #import "KGOTheme.h"
 #import "KGOSegmentedControl.h"
 #import "KGOToolbar.h"
+#import "FacebookModule.h"
+#import "KGOAppDelegate+ModuleAdditions.h"
+#import "ReunionHomeModule.h"
+
+NSString * const OldDesktopGroupURL = @"http://www.facebook.com/group.php?gid=";
+NSString * const NewDesktopGroupURL = @"http://www.facebook.com/home.php?sk=group_";
+//NSString * const OLD_MOBILE_GROUP_URL = @"http://m.facebook.com/group.php?gid=";
+//NSString * const NEW_MOBILE_GROUP_URL = @"http://m.facebook.com/home.php?sk=group_";
 
 @implementation FacebookMediaViewController
 
@@ -21,7 +29,20 @@
 }
 
 - (IBAction)loginButtonPressed:(UIButton *)sender {
-    [[KGOSocialMediaController facebookService] signin];
+    if (![[KGOSocialMediaController facebookService] isSignedIn]) {
+        [[KGOSocialMediaController facebookService] signin];
+    } else {
+        FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+        ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
+        if (![fbModule isMemberOfFBGroup]) {
+            NSString *urlBase = [homeModule fbGroupIsOld] ? OldDesktopGroupURL : NewDesktopGroupURL;
+            NSString *urlString = [NSString stringWithFormat:@"%@%@", urlBase, [homeModule fbGroupID]];
+            NSURL *url = [NSURL URLWithString:urlString];
+            if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                [[UIApplication sharedApplication] openURL:url];
+            }
+        }
+    }
 }
 
 - (IBAction)uploadButtonPressed:(id)sender {
@@ -118,12 +139,17 @@
 
 - (void)facebookDidLogin:(NSNotification *)aNotification
 {
-    [self hideLoginViewAnimated:YES];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(facebookDidLogout:)
-                                                 name:FacebookDidLogoutNotification
-                                               object:nil];
+    FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+    if ([fbModule isMemberOfFBGroup]) {
+        [self hideLoginViewAnimated:YES];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(facebookDidLogout:)
+                                                     name:FacebookDidLogoutNotification
+                                                   object:nil];
+    } else {
+        [self setupLoginStatusStrings];
+    }
 }
 
 - (void)facebookDidLogout:(NSNotification *)aNotification
@@ -164,20 +190,38 @@
     self.subheadToolbar.backgroundImage = [UIImage imageWithPathName:@"common/subheadbar_background"];
 }
 
+- (void)setupLoginStatusStrings
+{
+    FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+    if ([[KGOSocialMediaController facebookService] isSignedIn] && ![fbModule isMemberOfFBGroup]) {
+        _loginHintLabel.text = @"Oops! It looks like you’re not a member of the Modo Reunion Test group in Facebook. Tap the button below to open the Facebook web page in a new browser, then join the group. When you've successfully joined, return to this web page to view the group's posts.";
+        [_loginButton setTitle:@"Open facebook.com" forState:UIControlStateNormal];
+        
+    } else {
+        _loginHintLabel.text = NSLocalizedString(@"Photos and videos are posted to the Facebook group page for each class. To view and comment on them, you must sign into Facebook, and you must be a member of the class Facebook group.", nil);
+        [_loginButton setTitle:@"Sign in to Facebook" forState:UIControlStateNormal];
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
-    _loginHintLabel.text = NSLocalizedString(@"Photos and videos are posted to the Facebook group page for each class. To view and comment on them, you must sign into Facebook, and you must be a member of the class Facebook group.", nil);
-    [_loginButton setTitle:@"Sign in to Facebook" forState:UIControlStateNormal];
     UIImage *image = [[UIImage imageWithPathName:@"common/red-button.png"] stretchableImageWithLeftCapWidth:10 topCapHeight:10];
     [_loginButton setBackgroundImage:image forState:UIControlStateNormal];
+    [self setupLoginStatusStrings];
 
-    if ([[KGOSocialMediaController facebookService] isSignedIn]) {
+    FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+    if ([[KGOSocialMediaController facebookService] isSignedIn] && [fbModule isMemberOfFBGroup]) {
+        _loginHintLabel.hidden = YES;
+        _loginButton.hidden = YES;
+        
         [self facebookDidLogin:nil];
     } else {
+        self.subheadToolbar.hidden = YES;
+        
         [self facebookDidLogout:nil];
     }
 
