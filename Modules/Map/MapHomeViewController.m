@@ -18,7 +18,7 @@
 
 @implementation MapHomeViewController
 
-@synthesize searchTerms, searchOnLoad, searchParams, mapModule;
+@synthesize searchTerms, searchOnLoad, searchParams, mapModule, selectedPopover;
 
 - (void)mapTypeDidChange:(NSNotification *)aNotification {
     _mapView.mapType = [[aNotification object] integerValue];
@@ -60,19 +60,29 @@
 	indoorMode = NO;
 	NSArray *items = nil;
 	UIBarButtonItem *spacer = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
+    
+    [_browseBarButtonItem release];
+    _browseBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_browseButton];
+
+    [_bookmarksBarButtonItem release];
+    _bookmarksBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_bookmarksButton];
+
+    [_settingsBarButtonItem release];
+    _settingsBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_settingsButton];
+    
 	if (indoorMode) {
 		items = [NSArray arrayWithObjects:
                  [[[UIBarButtonItem alloc] initWithCustomView:_infoButton] autorelease], spacer,
-                 [[[UIBarButtonItem alloc] initWithCustomView:_browseButton] autorelease], spacer,
-                 [[[UIBarButtonItem alloc] initWithCustomView:_bookmarksButton] autorelease], spacer,
-                 [[[UIBarButtonItem alloc] initWithCustomView:_settingsButton] autorelease],
+                 _browseBarButtonItem, spacer,
+                 _bookmarksBarButtonItem, spacer,
+                 _settingsBarButtonItem,
                  nil];
 	} else {
 		items = [NSArray arrayWithObjects:
                  [[[UIBarButtonItem alloc] initWithCustomView:_locateUserButton] autorelease], spacer,
-                 [[[UIBarButtonItem alloc] initWithCustomView:_browseButton] autorelease], spacer,
-                 [[[UIBarButtonItem alloc] initWithCustomView:_bookmarksButton] autorelease], spacer,
-                 [[[UIBarButtonItem alloc] initWithCustomView:_settingsButton] autorelease],
+                 _browseBarButtonItem, spacer,
+                 _bookmarksBarButtonItem, spacer,
+                 _settingsBarButtonItem,
                  nil];
 	}
     
@@ -245,16 +255,30 @@
     categoryVC.categoryEntityName = MapCategoryEntityName;
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"parentCategory = nil AND browsable = YES"];
     NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"sortOrder" ascending:YES]];
-    categoryVC.categories = [[CoreDataManager sharedManager] objectsForEntity:MapCategoryEntityName matchingPredicate:pred sortDescriptors:sortDescriptors];
-    categoryVC.categoriesRequest = [self.mapModule subcategoriesRequestForCategory:nil delegate:categoryVC];
-    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:categoryVC] autorelease];
-    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                           target:self
-                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
-    categoryVC.navigationItem.rightBarButtonItem = item;
-    navC.modalPresentationStyle = UIModalPresentationFormSheet;
-    navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
-    [self presentModalViewController:navC animated:YES];
+    categoryVC.categories = [[CoreDataManager sharedManager] objectsForEntity:MapCategoryEntityName
+                                                            matchingPredicate:pred
+                                                              sortDescriptors:sortDescriptors];
+    categoryVC.categoriesRequest = [self.mapModule subcategoriesRequestForCategory:nil
+                                                                          delegate:categoryVC];
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:categoryVC] autorelease];
+        UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                               target:self
+                                                                               action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+        categoryVC.navigationItem.rightBarButtonItem = item;
+        navC.modalPresentationStyle = UIModalPresentationFormSheet;
+        navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
+        [self presentModalViewController:navC animated:YES];
+
+    } else {
+        [self dismissPopoverAnimated:YES];
+        self.selectedPopover = [[[UIPopoverController alloc] initWithContentViewController:categoryVC] autorelease];
+        self.selectedPopover.delegate = self;
+        [self.selectedPopover presentPopoverFromBarButtonItem:_browseBarButtonItem
+                                     permittedArrowDirections:UIPopoverArrowDirectionUp
+                                                     animated:YES];
+    }
 }
 
 - (IBAction)bookmarksButtonPressed {
@@ -265,25 +289,45 @@
     vc.bookmarkedItems = array;
     vc.searchResultsDelegate = self;
 
-    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
-    navC.modalPresentationStyle = UIModalPresentationFormSheet;
-    navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
-    [self presentModalViewController:navC animated:YES];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+        navC.modalPresentationStyle = UIModalPresentationFormSheet;
+        navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
+        [self presentModalViewController:navC animated:YES];
+        
+    } else {
+        [self dismissPopoverAnimated:YES];
+        self.selectedPopover = [[[UIPopoverController alloc] initWithContentViewController:vc] autorelease];
+        self.selectedPopover.delegate = self;
+        [self.selectedPopover presentPopoverFromBarButtonItem:_bookmarksBarButtonItem
+                                     permittedArrowDirections:UIPopoverArrowDirectionUp
+                                                     animated:YES];
+    }
 }
 
 - (IBAction)settingsButtonPressed {
 	MapSettingsViewController *vc = [[[MapSettingsViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
     vc.title = NSLocalizedString(@"Map Settings", nil);
     vc.view.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
-
-    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
-    UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                           target:self
-                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
-    vc.navigationItem.rightBarButtonItem = item;
-    navC.modalPresentationStyle = UIModalPresentationFormSheet;
-    navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
-    [self presentModalViewController:navC animated:YES];
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+        UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                               target:self
+                                                                               action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+        vc.navigationItem.rightBarButtonItem = item;
+        navC.modalPresentationStyle = UIModalPresentationFormSheet;
+        navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
+        [self presentModalViewController:navC animated:YES];
+        
+    } else {
+        [self dismissPopoverAnimated:YES];
+        self.selectedPopover = [[[UIPopoverController alloc] initWithContentViewController:vc] autorelease];
+        self.selectedPopover.delegate = self;
+        [self.selectedPopover presentPopoverFromBarButtonItem:_settingsBarButtonItem
+                                     permittedArrowDirections:UIPopoverArrowDirectionUp
+                                                     animated:YES];
+    }
 }
 
 - (IBAction)locateUserButtonPressed
@@ -305,6 +349,19 @@
         
     } else {
         [_locationManager startUpdatingLocation];
+    }
+}
+
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+{
+    self.selectedPopover = nil;
+}
+
+- (void)dismissPopoverAnimated:(BOOL)animated;
+{
+    if (self.selectedPopover) {
+        [self.selectedPopover dismissPopoverAnimated:YES];
+        self.selectedPopover = nil;
     }
 }
 
@@ -358,6 +415,7 @@
                                                    otherButtonTitles:nil] autorelease];
         [alertView show];
         
+        _mapView.showsUserLocation = NO;
         _locateUserButton.enabled = NO;
     }
 }

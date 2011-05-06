@@ -36,15 +36,12 @@ NSString * const ScheduleTag = @"schedule";
             }
             
             if ([topVC isKindOfClass:[MapHomeViewController class]]) {
-                [(MapHomeViewController *)topVC setAnnotations:annotations];
-                
-            } else {
-                return [self modulePage:LocalPathPageNameHome params:params];
-            }
-            
-            if ([topVC isKindOfClass:[MapHomeViewController class]]) {
-                [(MapHomeViewController *)topVC setAnnotations:annotations];
-                return nil;
+                MapHomeViewController *mapVC = (MapHomeViewController *)topVC;
+                [mapVC setAnnotations:annotations];
+                if (mapVC.selectedPopover) {
+                    [mapVC dismissPopoverAnimated:YES];
+                    return nil;
+                }
                 
             } else {
                 return [self modulePage:LocalPathPageNameHome params:params];
