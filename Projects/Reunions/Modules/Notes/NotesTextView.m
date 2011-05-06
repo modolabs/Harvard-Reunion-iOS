@@ -8,6 +8,7 @@
 
 #import "NotesTextView.h"
 #import "KGOTheme.h"
+#import "UIKit+KGOAdditions.h"
 #import "CoreDataManager.h"
 #import "MITMailComposeController.h"
 
@@ -30,7 +31,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         UIImage *shareButtonImage = [UIImage imageWithPathName:@"common/share.png"];
-        UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/subheadbar_button.png"];
+        UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/delete.png"];
         
         CGFloat buttonX = self.frame.size.width - deleteButtonImage.size.width - shareButtonImage.size.width - 20;
         CGFloat buttonY = 10;
@@ -76,7 +77,7 @@
         UIButton * deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
         deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
         [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
-        [deleteButton setImage:[UIImage imageWithPathName:@"common/subheadbar_button.png"] forState:UIControlStateHighlighted];
+        [deleteButton setImage:[UIImage imageWithPathName:@"common/delete_pressed.png"] forState:UIControlStateHighlighted];
         
         [deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         
@@ -109,9 +110,9 @@
         if (nil == detailsView) {
             
             detailsView = [[UITextView alloc] initWithFrame:CGRectMake(10, 
-                                                                       titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 10, 
+                                                                       titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 15, 
                                                                        self.frame.size.width - 10, 
-                                                                       self.frame.size.height - titleTextLabel.frame.size.height - detailTextLabel.frame.size.height - 25)];
+                                                                       self.frame.size.height - titleTextLabel.frame.size.height - detailTextLabel.frame.size.height - 15)];
             detailsView.delegate = self;
             detailsView.backgroundColor = [UIColor clearColor];
             detailsView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
