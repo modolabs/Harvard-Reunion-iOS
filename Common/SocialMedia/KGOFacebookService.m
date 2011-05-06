@@ -258,21 +258,30 @@ NSString * const FacebookUsernameKey = @"FBUsername";
 
 #pragma mark Dialog
 
-- (void)shareOnFacebook:(NSString *)attachment prompt:(NSString *)prompt {
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:attachment forKey:@"attachment"];
-    
-	if (prompt) {
-		[params setObject:prompt forKey:@"user_message_prompt"];
-	}
-    
+- (void)shareOnFacebook:(NSDictionary *)params {
+    NSMutableDictionary *mutableParams = [params mutableCopy];
     [self startup];
-    [_facebook dialog:@"feed" andParams:params andDelegate:self];
+    [_facebook dialog:@"feed" andParams:mutableParams andDelegate:self];
 }
 
 // FBDialogDelegate
-// these two methods are called at the very end of the FBDialog chain.
-// other success/error messages may be sent before these.
+
+- (void)dialog:(FBDialog *)dialog didFailWithError:(NSError *)error
+{
+    DLog(@"dialogFailedWithError: %@", error);
+}
+
+- (void)dialogCompleteWithUrl:(NSURL *)url
+{
+    DLog(@"dialogCompleteWithURL: %@", url);
+}
+
+- (void)dialogDidNotCompleteWithUrl:(NSURL *)url
+{
+    DLog(@"dialogDidNotCompleteWithURL: %@", url);
+}
+
+// these two methods are called at the end
 
 - (void)dialogDidComplete:(FBDialog *)dialog {
     DLog(@"published successfully");

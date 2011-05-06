@@ -16,17 +16,19 @@ typedef enum {
 	NSDictionary *_preferences;
     KGOAnalyticsProvider _provider;
 
+    NSString *_trackingGroup;
 }
 
 + (AnalyticsWrapper *)sharedWrapper;
 - (void)shutdown;
 
-// this will change
 - (void)setup;
 
-// these will probably change
 - (void)trackPageview:(NSString *)pageID;
 - (void)trackEvent:(NSString *)event action:(NSString *)action label:(NSString *)label;
+
+- (NSString *)trackingGroup; // for use when users are segmented into groups
+- (void)trackGroupAction:(NSString *)action label:(NSString *)label;
 
 @property KGOAnalyticsProvider provider;
 
