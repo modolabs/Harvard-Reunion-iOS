@@ -73,6 +73,11 @@
     return _container;
 }
 
+- (UIViewController *)detailViewController
+{
+    return _detailViewController;
+}
+
 - (void)showDetailViewController:(UIViewController *)viewController
 {
     if (_detailViewController) {
@@ -81,21 +86,20 @@
     
     _detailViewController = [viewController retain];
     [_detailViewController viewWillAppear:YES];
-    _detailViewController.view.frame = CGRectMake(self.view.bounds.size.width - DETAIL_VIEW_WIDTH,
-                                                  self.view.bounds.size.height,
-                                                  DETAIL_VIEW_WIDTH,
-                                                  _container.frame.size.height - 44);
+    CGRect frame = CGRectMake(self.view.bounds.size.width - DETAIL_VIEW_WIDTH - 5,
+                              self.view.bounds.size.height,
+                              DETAIL_VIEW_WIDTH,
+                              _container.frame.size.height - 44);
+    
+    _detailViewController.view.frame = frame;
     _detailViewController.view.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
 
     [self.view addSubview:_detailViewController.view];
-
-    CGRect afterFrame = CGRectMake(self.view.bounds.size.width - DETAIL_VIEW_WIDTH,
-                                   _container.frame.origin.y + 44,
-                                   DETAIL_VIEW_WIDTH,
-                                   _container.frame.size.height - 44);
+    
+    frame.origin.y = _container.frame.origin.y + 44;
 
     [UIView animateWithDuration:0.4 animations:^(void) {
-        _detailViewController.view.frame = afterFrame;
+        _detailViewController.view.frame = frame;
     } completion:^(BOOL finished) {
         [_detailViewController viewDidAppear:YES];
     }];

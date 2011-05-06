@@ -11,7 +11,7 @@
 
 @implementation ScheduleTabletTableViewCell
 
-@synthesize event, isFirstInSection, parentViewController;
+@synthesize event, isFirstInSection, isAfterSelected, parentViewController;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -21,7 +21,7 @@
         self.contentMode = UIViewContentModeRedraw;
         
         UIImage *image = [UIImage imageWithPathName:@"common/bookmark-ribbon-on"];
-        CGRect frame = CGRectMake(self.frame.size.width - 40, -2, image.size.width, image.size.height);
+        CGRect frame = CGRectMake(self.frame.size.width - 80, -2, image.size.width, image.size.height);
         
         _bookmarkView = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
         _bookmarkView.frame = frame;
@@ -31,7 +31,7 @@
         UIImage *notesImage = [UIImage imageWithPathName:@"modules/schedule/list-note.png"];
         _notesButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
         [_notesButton addTarget:self action:@selector(noteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        _notesButton.frame = CGRectMake(self.frame.size.width - 90, 0, notesImage.size.width, notesImage.size.height);
+        _notesButton.frame = CGRectMake(self.frame.size.width - 130, 0, notesImage.size.width, notesImage.size.height);
         _notesButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
         [self.contentView addSubview:_notesButton];
         
@@ -98,20 +98,21 @@
     // i have not figured out why the table view cells
     // end up being so much narrower than their frame
     CGRect textLabelFrame = self.textLabel.frame;
-    textLabelFrame.origin.x = -11;
+    textLabelFrame.origin.x = 10;
+    textLabelFrame.size.width = self.bounds.size.width - 30;
     
     CGRect detailLabelFrame = self.detailTextLabel.frame;
-    detailLabelFrame.origin.x = -11;
-
-    [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+    detailLabelFrame.origin.x = 10;
+    detailLabelFrame.size.width = self.bounds.size.width - 30;
     
+    // make sure textLabel and detailTextLabel are still positioned at the top
+    CGFloat gap = detailLabelFrame.origin.y - textLabelFrame.origin.y;
+    textLabelFrame.origin.y = 10;
+    detailLabelFrame.origin.y = textLabelFrame.origin.y + gap;
+    
+    [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+
     if (self.scheduleCellType == ScheduleCellLastInTable || self.scheduleCellType == ScheduleCellSelected) {
-        
-        // make sure textLabel and detailTextLabel are still positioned at the top
-        CGFloat gap = detailLabelFrame.origin.y - textLabelFrame.origin.y;
-        textLabelFrame.origin.y = 10;
-        detailLabelFrame.origin.y = textLabelFrame.origin.y + gap;
-        
         // activate bookmark view
         if ([self.event isRegistered]) { // must always be bookmarked
             [_bookmarkView addTarget:self action:@selector(refuseToRemoveBookmark:) forControlEvents:UIControlEventTouchUpInside];
@@ -173,7 +174,7 @@
     // http://stackoverflow.com/questions/1331632/uitableviewcell-rounded-corners-and-clip-subviews
     CGFloat radius = 8;
     
-    CGFloat minx = CGRectGetMinX(rect) + 10;
+    CGFloat minx = CGRectGetMinX(rect);
     CGFloat midx = CGRectGetMidX(rect);
     CGFloat maxx = CGRectGetMaxX(rect) - 10;
     CGFloat miny = CGRectGetMinY(rect);
@@ -184,25 +185,27 @@
     if (self.isFirstInSection) {
         CGFloat components[4] = { 12.0/255.0, 10.0/255.0, 9.0/255.0, 1.0 };
         CGContextSetFillColor(context, components);
-        CGRect innerRect = CGRectMake(minx, miny, maxx-minx, maxy-miny);
-        CGContextFillRect(context, innerRect);
-        
-    } else {
-        CGFloat components[4] = { 216.0/255.0, 217.0/255.0, 216.0/255.0, 1.0 };
-        CGContextSetFillColor(context, components);
         CGRect innerRect = CGRectMake(minx, miny, maxx-minx, midy-miny);
         CGContextFillRect(context, innerRect);
         
-        // stroke the sides.
-        CGFloat borderComponents[4] = { 0.3, 0.3, 0.3, 1 };
-        CGContextSetStrokeColor(context, borderComponents);
+    } else {
+        if (self.isAfterSelected) {
+            CGFloat components[4] = { 1.0, 1.0, 1.0, 1.0 };
+            CGContextSetFillColor(context, components);
+        } else {
+            CGFloat components[4] = { 216.0/255.0, 217.0/255.0, 216.0/255.0, 1.0 };
+            CGContextSetFillColor(context, components);
+        }
+        CGRect innerRect = CGRectMake(minx, miny, maxx-minx, midy-miny);
+        CGContextFillRect(context, innerRect);
         
+        // stroke the sides.        
         CGContextMoveToPoint(context, minx, miny);
-        CGContextAddLineToPoint(context, minx, maxy);
+        CGContextAddLineToPoint(context, minx, midy);
         CGContextStrokePath(context);
         
         CGContextMoveToPoint(context, maxx, miny);
-        CGContextAddLineToPoint(context, maxx, maxy);
+        CGContextAddLineToPoint(context, maxx, midy);
         CGContextStrokePath(context);
     }
 
@@ -384,7 +387,7 @@
 
 @implementation ScheduleTabletSectionHeaderCell
 
-@synthesize isFirst;
+@synthesize isFirst, isAfterSelected;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -401,7 +404,8 @@
     [super layoutSubviews];
     
     CGRect frame = self.textLabel.frame;
-    frame.origin.x = -10;
+    frame.origin.x = 10;
+    frame.size.width = self.bounds.size.width - 30;
     self.textLabel.frame = frame;
 }
 
@@ -418,7 +422,7 @@
     
     CGFloat radius = 8;
     
-    CGFloat minx = CGRectGetMinX(rect) + 10;
+    CGFloat minx = CGRectGetMinX(rect);
     CGFloat midx = CGRectGetMidX(rect);
     CGFloat maxx = CGRectGetMaxX(rect) - 10;
     CGFloat miny = CGRectGetMinY(rect);
@@ -427,20 +431,24 @@
     
     if (!self.isFirst) {
         // fill out what looks like a continuation of the cell above
-        CGRect innerRect = CGRectMake(minx, miny, maxx-minx, maxy-miny);
+        CGRect innerRect = CGRectMake(minx, miny, maxx-minx, midy-miny);
 
-        CGFloat components[4] = { 216.0/255.0, 217.0/255.0, 216.0/255.0, 1.0 };
-        CGContextSetFillColor(context, components);
+        if (self.isAfterSelected) {
+            CGFloat components[4] = { 1.0, 1.0, 1.0, 1.0 };
+            CGContextSetFillColor(context, components);
+        } else {
+            CGFloat components[4] = { 216.0/255.0, 217.0/255.0, 216.0/255.0, 1.0 };
+            CGContextSetFillColor(context, components);
+        }
         CGContextFillRect(context, innerRect);
         
         // stroke the sides.
-        components[0] = components[1] = components[2] = 0.3;
         CGContextMoveToPoint(context, minx, miny);
-        CGContextAddLineToPoint(context, minx, maxy);
+        CGContextAddLineToPoint(context, minx, midy);
         CGContextStrokePath(context);
         
         CGContextMoveToPoint(context, maxx, miny);
-        CGContextAddLineToPoint(context, maxx, maxy);
+        CGContextAddLineToPoint(context, maxx, midy);
         CGContextStrokePath(context);
     }
     

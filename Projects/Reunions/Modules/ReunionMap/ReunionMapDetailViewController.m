@@ -11,6 +11,11 @@
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "CoreDataManager.h"
 #import <QuartzCore/QuartzCore.h>
+#import "UIKit+KGOAdditions.h"
+#import "KGOSidebarFrameViewController.h"
+
+#define IPAD_TABLEVIEW_ORIGIN_Y 500
+#define CLOSE_BUTTON_TAG 15
 
 @implementation ReunionMapDetailViewController
 
@@ -47,16 +52,31 @@
         _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, _scrollView.frame.size.height + 1);
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.showsHorizontalScrollIndicator = NO;
+        _scrollView.clipsToBounds = NO;
         
         CGRect frame = self.tableView.frame;
-        frame.origin.y = 500;
+        frame.origin.y = IPAD_TABLEVIEW_ORIGIN_Y;
         self.tableView.frame = frame;
         self.tableView.layer.cornerRadius = 5;
         self.tableView.backgroundColor = [UIColor whiteColor];
         self.tableView.scrollEnabled = NO;
         
+        UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        closeButton.tag = CLOSE_BUTTON_TAG;
+        UIImage *image = [UIImage imageWithPathName:@"common/window-close-button"];
+        [closeButton setImage:image forState:UIControlStateNormal];
+        CGRect buttonFrame = CGRectZero;
+        buttonFrame.size = image.size;
+        buttonFrame.origin.x = _scrollView.frame.size.width - image.size.width + 5;
+        buttonFrame.origin.y = IPAD_TABLEVIEW_ORIGIN_Y - 7;
+        closeButton.frame = buttonFrame;
+        closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+        KGOSidebarFrameViewController *homescreen = (KGOSidebarFrameViewController *)[KGO_SHARED_APP_DELEGATE() homescreen];
+        [closeButton addTarget:homescreen action:@selector(hideDetailViewController) forControlEvents:UIControlEventTouchUpInside];
+        
         [self.view addSubview:_scrollView];
         [_scrollView addSubview:self.tableView];
+        [_scrollView addSubview:closeButton];
 
     } else {
         [self.view addSubview:self.tableView];
@@ -285,6 +305,12 @@
         height += rect.origin.y - lastOriginY;
         height += rect.size.height;
     }
+
+    //UIView *closeButton = [_scrollView viewWithTag:CLOSE_BUTTON_TAG];
+    //CGRect frame = closeButton.frame;
+    //frame.origin.x = _scrollView.frame.size.width - floor(closeButton.frame.size.width / 2);
+    //closeButton.frame = frame;
+    
     _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, 500 + height);
 }
 
