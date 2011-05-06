@@ -36,6 +36,13 @@ NSString * const AboutSectionsPrefKey = @"AboutSections";
     UIView *footerView = [[[UIView alloc] initWithFrame:footerLabel.frame] autorelease];
     [footerView addSubview:footerLabel];
     self.tableView.tableFooterView = footerView;
+    
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+        CGRect frame = self.tableView.frame;
+        frame.origin.y += 44;
+        frame.size.height -= 44;
+        self.tableView.frame = frame;
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -56,9 +63,13 @@ NSString * const AboutSectionsPrefKey = @"AboutSections";
 {
     if (indexPath.section < _paragraphs.count) {
         NSString *text = [_paragraphs objectAtIndex:indexPath.section];
+        // i have no idea what the grouped table view margins are, except that 
+        // they are "much wider on the ipad" (35px is what i measured)
+        // http://stackoverflow.com/questions/5290057/how-to-get-calculate-margin-width-of-grouped-uitableview-on-ipad-or-iphone
+        CGFloat tableMargin = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 35 : 10;
         UILabel *label = [UILabel multilineLabelWithText:text
                                                     font:[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText]
-                                                   width:tableView.frame.size.width - 40];
+                                                   width:tableView.frame.size.width - (tableMargin + 10) * 2]; // 10px internal padding
         label.frame = CGRectMake(10, 10, label.frame.size.width, label.frame.size.height);
         return [NSArray arrayWithObject:label];
 
@@ -177,6 +188,12 @@ NSString * const AboutSectionsPrefKey = @"AboutSections";
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    [self decacheTableView:self.tableView];
+    [self.tableView reloadData]; // we don't have much data so we can call this frequently
+}
+
 #pragma mark -
 
 - (void)dealloc {
@@ -197,7 +214,7 @@ NSString * const AboutSectionsPrefKey = @"AboutSections";
 - (void)request:(KGORequest *)request didReceiveResult:(id)result {
     self.request = nil;
     
-    NSLog(@"%@", [result description]);
+    DLog(@"%@", [result description]);
     
     NSDictionary *resultDict = (NSDictionary *)result;
     [_paragraphs release];
