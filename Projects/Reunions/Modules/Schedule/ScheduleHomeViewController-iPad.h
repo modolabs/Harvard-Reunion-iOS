@@ -13,6 +13,9 @@
     MKMapView *_mapViewForSelectedCell;
     MKMapView *_mapViewForLastCell;
     
+    UIView *_mapContainerViewForSelectedCell;
+    UIView *_mapContainerViewForLastCell;
+    
     ScheduleDetailTableView *_tableViewForSelectedCell;
     ScheduleDetailTableView *_tableViewForLastCell;
 

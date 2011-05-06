@@ -26,6 +26,7 @@ typedef enum {
 @property (nonatomic, readonly) UIButton *bookmarkView;
 @property (nonatomic, readonly) UIButton *notesButton;
 @property (nonatomic) BOOL isFirstInSection;
+@property (nonatomic) BOOL isAfterSelected;
 @property (nonatomic, assign) UIViewController *parentViewController;
 
 - (void)addBookmark:(id)sender;
@@ -43,6 +44,7 @@ typedef enum {
 }
 
 @property (nonatomic) BOOL isFirst;
+@property (nonatomic) BOOL isAfterSelected;
 
 @end
 

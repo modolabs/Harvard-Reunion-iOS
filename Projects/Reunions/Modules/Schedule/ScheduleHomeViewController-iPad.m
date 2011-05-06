@@ -10,15 +10,19 @@
 #import "KGOSidebarFrameViewController.h"
 #import "MapHomeViewController.h"
 
+#define COLLAPSED_CELL_HEIGHT 58
 #define EXPANDED_CELL_HEIGHT 500
 #define LAST_CELL_HEIGHT EXPANDED_CELL_HEIGHT + 30
 
-#define MAP_WIDTH_PORTRAIT 255
-#define MAP_WIDTH_LANDSCAPE 325
+#define MAP_WIDTH_PORTRAIT 285
+#define MAP_WIDTH_LANDSCAPE 332
+
+#define SCHEDULE_DETAIL_WIDTH_PORTRAIT 302
+#define SCHEDULE_DETAIL_WIDTH_LANDSCAPE 350
 
 @interface ScheduleHomeViewController_iPad (Private)
 
-- (MKMapView *)mapViewForCellType:(ScheduleCellType)cellType;
+- (UIView *)mapContainerViewForCellType:(ScheduleCellType)cellType;
 - (ScheduleDetailTableView *)tableViewForCellType:(ScheduleCellType)cellType;
 
 @end
@@ -38,6 +42,8 @@
 {
     [_mapViewForLastCell release];
     [_mapViewForSelectedCell release];
+    [_mapContainerViewForLastCell release];
+    [_mapContainerViewForSelectedCell release];
     [_tableViewForSelectedCell release];
     [_tableViewForLastCell release];
     [super dealloc];
@@ -56,9 +62,10 @@
 {
     CGRect frame = self.view.frame;
     frame.origin.y = _tabstrip.frame.size.height;
+    frame.size.height -= _tabstrip.frame.size.height;
     
     // ignore style parameter
-    self.tableView = [[[UITableView alloc] initWithFrame:frame style:UITableViewStyleGrouped] autorelease];
+    self.tableView = [[[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain] autorelease];
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.backgroundView = nil;
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
@@ -71,6 +78,11 @@
     self.tableView.layer.shadowOffset = CGSizeMake(1, 0);
     self.tableView.layer.shadowRadius = 1;
     self.tableView.layer.shadowOpacity = 0.75;
+    
+    self.tableView.tableHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 10)] autorelease];
+    self.tableView.tableHeaderView.backgroundColor = [UIColor clearColor];
+    
+    self.tableView.autoresizesSubviews = YES;
     
     [self addTableView:self.tableView withDataSource:self];
 }
@@ -171,6 +183,7 @@
     } else {
         scrollToIndexPath = [NSIndexPath indexPathForRow:_selectedRow - 2 inSection:0];
     }
+    
     /*
     UITableViewRowAnimation animation = UITableViewRowAnimationNone;
     
@@ -194,6 +207,7 @@
     }
     */
     
+
     if (oldIndexPath) {
         [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:oldIndexPath, indexPath, nil]
                          withRowAnimation:UITableViewRowAnimationNone];
@@ -201,6 +215,19 @@
         [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
                          withRowAnimation:UITableViewRowAnimationNone];
     }
+    
+    // Update row after previously selected row to get little curvy bits updated
+    if (oldSelectedRow != NSNotFound && oldSelectedRow < _cellData.count - 1) {
+        [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:oldSelectedRow+1 inSection:0]]
+                         withRowAnimation:UITableViewRowAnimationNone];
+    }
+
+    // Update row after selected row to get little curvy bits updated
+    if (_selectedRow < _cellData.count - 1) {
+        [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:_selectedRow+1 inSection:0]]
+                         withRowAnimation:UITableViewRowAnimationNone];
+    }
+
     [tableView scrollToRowAtIndexPath:scrollToIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
@@ -212,7 +239,15 @@
 {
     id currentCellData = [_cellData objectAtIndex:indexPath.row];
     if ([currentCellData isKindOfClass:[NSString class]]) {
-        static NSString *sectionHeaderCellID = @"Header";
+        BOOL isFirst = NO;
+        BOOL isAfterSelected = NO;
+        if (indexPath.row == 0) {
+            isFirst = YES;
+        } else if ((indexPath.row - 1) == _selectedRow) {
+            isAfterSelected = YES;
+        }
+
+        NSString *sectionHeaderCellID = [NSString stringWithFormat:@"Header%@%@", isFirst ? @"1" : @"0", isAfterSelected ? @"1" : @"0"];
         ScheduleTabletSectionHeaderCell *cell = (ScheduleTabletSectionHeaderCell *)[tableView dequeueReusableCellWithIdentifier:sectionHeaderCellID];
         
         if (!cell) {
@@ -220,10 +255,8 @@
                                                            reuseIdentifier:sectionHeaderCellID] autorelease];
         }
         
-        if (indexPath.row == 0) {
-            cell.isFirst = YES;
-        }
-        
+        cell.isFirst = isFirst;
+        cell.isAfterSelected = isAfterSelected;
         cell.textLabel.text = (NSString *)currentCellData;
         cell.textLabel.textColor = [UIColor whiteColor];
         cell.textLabel.font = [UIFont boldSystemFontOfSize:15];
@@ -241,12 +274,16 @@
     }
     
     BOOL isFirstInSection = NO;
+    BOOL isAfterSelected = NO;
     if (indexPath.row > 0) {
         id previousCellData = [_cellData objectAtIndex:indexPath.row - 1];
         isFirstInSection = [previousCellData isKindOfClass:[NSString class]];
+        if ((indexPath.row - 1) == _selectedRow) {
+            isAfterSelected = YES;
+        }
     }
     
-    NSString *cellIdentifier = [NSString stringWithFormat:@"%d.%@", cellType, isFirstInSection ? @"1" : @"0"];
+    NSString *cellIdentifier = [NSString stringWithFormat:@"%d.%@%@", cellType, isFirstInSection ? @"1" : @"0", isAfterSelected ? @"1" : @"0"];
     ScheduleTabletTableViewCell *cell = (ScheduleTabletTableViewCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     
     if (!cell) {
@@ -255,6 +292,7 @@
     }
     
     cell.isFirstInSection = isFirstInSection;
+    cell.isAfterSelected = isAfterSelected;
     cell.parentViewController = self;
     
     ScheduleEventWrapper *event = [_cellData objectAtIndex:indexPath.row];
@@ -289,7 +327,9 @@
         tableView.event = event;
         [cell.contentView addSubview:tableView];
         
-        MKMapView *mapView = [self mapViewForCellType:cellType];
+        UIView *mapContainerView = [self mapContainerViewForCellType:cellType];
+        MKMapView *mapView = (MKMapView *)[mapContainerView viewWithTag:(cellType == ScheduleCellSelected) ? SELECTED_MAP_TAG : LAST_MAP_TAG];
+        
         if (event.coordinate.latitude) {
             // we only need to check one assuming there will not
             // be any events on the equator
@@ -298,10 +338,11 @@
         } else {
             [mapView centerAndZoomToDefaultRegion];
         }
-        [cell.contentView addSubview:mapView];
+        
+        [cell.contentView addSubview:mapContainerView];
         
         if (mapView.annotations.count) {
-            UIControl *control = [[[UIControl alloc] initWithFrame:mapView.frame] autorelease];
+            UIControl *control = [[[UIControl alloc] initWithFrame:mapContainerView.frame] autorelease];
             control.backgroundColor = [UIColor clearColor];
             [cell.contentView addSubview:control];
             [control addTarget:self action:@selector(mapViewTapped:) forControlEvents:UIControlEventTouchUpInside];
@@ -324,15 +365,25 @@
     BOOL needsInitialize = NO;
     if (cellType == ScheduleCellSelected) {
         if (!_tableViewForSelectedCell) {
-            _tableViewForSelectedCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(-18, 50, 302, EXPANDED_CELL_HEIGHT - 60)
+            CGFloat width = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
+            UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
+            if (UIInterfaceOrientationIsLandscape(homescreen.interfaceOrientation)) {
+                width = SCHEDULE_DETAIL_WIDTH_LANDSCAPE;
+            }
+            _tableViewForSelectedCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(0, 50, width, EXPANDED_CELL_HEIGHT - 50)
                                                                                  style:UITableViewStyleGrouped];
             needsInitialize = YES;
         }
         tableView = _tableViewForSelectedCell;
-        
+
     } else if (cellType == ScheduleCellLastInTable) {
         if (!_tableViewForLastCell) {
-            _tableViewForLastCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(-18, 50, 302, LAST_CELL_HEIGHT - 60)
+            CGFloat width = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
+            UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
+            if (UIInterfaceOrientationIsLandscape(homescreen.interfaceOrientation)) {
+                width = SCHEDULE_DETAIL_WIDTH_LANDSCAPE;
+            }
+            _tableViewForLastCell = [[ScheduleDetailTableView alloc] initWithFrame:CGRectMake(0, 50, width, LAST_CELL_HEIGHT - 50)
                                                                              style:UITableViewStyleGrouped];
             needsInitialize = YES;
         }
@@ -353,40 +404,57 @@
 }
 
 
-- (MKMapView *)mapViewForCellType:(ScheduleCellType)cellType
+- (UIView *)mapContainerViewForCellType:(ScheduleCellType)cellType
 {
     MKMapView *mapView = nil;
+    UIView *containerView = nil;
     if (cellType == ScheduleCellSelected) {
         if (!_mapViewForSelectedCell) {
             CGFloat width = MAP_WIDTH_PORTRAIT;
+            CGFloat x = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
             UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
             if (UIInterfaceOrientationIsLandscape(homescreen.interfaceOrientation)) {
                 width = MAP_WIDTH_LANDSCAPE;
+                x = SCHEDULE_DETAIL_WIDTH_LANDSCAPE;
             }
-            _mapViewForSelectedCell = [[MKMapView alloc] initWithFrame:CGRectMake(290, 60, width, EXPANDED_CELL_HEIGHT - 80)];
+            _mapContainerViewForSelectedCell = [[UIView alloc] initWithFrame:CGRectMake(x, 60, width, EXPANDED_CELL_HEIGHT - 70)];
+            _mapViewForSelectedCell = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, width, EXPANDED_CELL_HEIGHT - 70)];
             _mapViewForSelectedCell.userInteractionEnabled = NO;
             _mapViewForSelectedCell.tag = SELECTED_MAP_TAG;
         }
+        containerView = _mapContainerViewForSelectedCell;
         mapView = _mapViewForSelectedCell;
         
     } else if (cellType == ScheduleCellLastInTable) {
         if (!_mapViewForLastCell) {
             CGFloat width = MAP_WIDTH_PORTRAIT;
+            CGFloat x = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
             UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
             if (UIInterfaceOrientationIsLandscape(homescreen.interfaceOrientation)) {
                 width = MAP_WIDTH_LANDSCAPE;
+                x = SCHEDULE_DETAIL_WIDTH_LANDSCAPE;
             }
-            _mapViewForLastCell = [[MKMapView alloc] initWithFrame:CGRectMake(290, 60, 255, LAST_CELL_HEIGHT - 80)];
+            _mapContainerViewForLastCell = [[UIView alloc] initWithFrame:CGRectMake(x, 60, width, LAST_CELL_HEIGHT - 70)];
+            _mapViewForLastCell = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, width, LAST_CELL_HEIGHT - 70)];
             _mapViewForLastCell.userInteractionEnabled = NO;
             _mapViewForLastCell.tag = LAST_MAP_TAG;
         }
+        containerView = _mapContainerViewForLastCell;
         mapView = _mapViewForLastCell;
     }
     
     [mapView removeFromSuperview];
     [mapView removeAnnotations:[mapView annotations]];
+    mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
-    return mapView;
+    containerView.layer.cornerRadius = 5.0;
+    containerView.layer.borderColor = [[UIColor grayColor] CGColor];
+    containerView.layer.borderWidth = 1.0;
+    containerView.clipsToBounds = YES;
+    containerView.autoresizesSubviews = YES;
+    [containerView addSubview:mapView];
+   
+    return containerView;
 }
 
 - (void)mapViewTapped:(id)sender
@@ -462,7 +530,12 @@
         return EXPANDED_CELL_HEIGHT;
     }
     
-    return tableView.rowHeight;
+    return COLLAPSED_CELL_HEIGHT;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return nil;
 }
 
 #pragma mark - View lifecycle
@@ -497,18 +570,46 @@
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    CGRect selectedFrame = _mapViewForSelectedCell.frame;
-    CGRect lastFrame = _mapViewForLastCell.frame;
     UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
+    
+    // set table view and its container
+    CGRect tableViewSelectedFrame = _tableViewForSelectedCell.frame;
+    CGRect tableViewLastFrame = _tableViewForLastCell.frame;
+    
     if (UIInterfaceOrientationIsPortrait(homescreen.interfaceOrientation)) {
-        selectedFrame.size.width = MAP_WIDTH_PORTRAIT;
-        lastFrame.size.width = MAP_WIDTH_PORTRAIT;
+        tableViewSelectedFrame.size.width = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
+        tableViewLastFrame.size.width = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
+        
     } else {
-        selectedFrame.size.width = MAP_WIDTH_LANDSCAPE;
-        lastFrame.size.width = MAP_WIDTH_LANDSCAPE;
+        tableViewSelectedFrame.size.width = SCHEDULE_DETAIL_WIDTH_LANDSCAPE;
+        tableViewLastFrame.size.width = SCHEDULE_DETAIL_WIDTH_LANDSCAPE;
     }
-    _mapViewForSelectedCell.frame = selectedFrame;
-    _mapViewForLastCell.frame = lastFrame;
+
+    // Set map view and its container
+    CGRect mapContainerViewSelectedFrame = _mapContainerViewForSelectedCell.frame;
+    CGRect mapContainerViewLastFrame = _mapContainerViewForLastCell.frame;
+    
+    if (UIInterfaceOrientationIsPortrait(homescreen.interfaceOrientation)) {
+        mapContainerViewSelectedFrame.size.width = MAP_WIDTH_PORTRAIT;
+        mapContainerViewSelectedFrame.origin.x = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
+
+        mapContainerViewLastFrame.size.width = MAP_WIDTH_PORTRAIT;
+        mapContainerViewLastFrame.origin.x = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
+        
+    } else {
+        mapContainerViewSelectedFrame.size.width = MAP_WIDTH_LANDSCAPE;
+        mapContainerViewSelectedFrame.origin.x = SCHEDULE_DETAIL_WIDTH_LANDSCAPE;
+
+        mapContainerViewLastFrame.size.width = MAP_WIDTH_LANDSCAPE;
+        mapContainerViewLastFrame.origin.x = SCHEDULE_DETAIL_WIDTH_LANDSCAPE;
+    }
+    _tableViewForSelectedCell.frame = tableViewSelectedFrame;
+    _tableViewForLastCell.frame = tableViewLastFrame;
+    [_tableViewForSelectedCell reloadData];
+    [_tableViewForLastCell reloadData];
+    
+    _mapContainerViewForSelectedCell.frame = mapContainerViewSelectedFrame;
+    _mapContainerViewForLastCell.frame = mapContainerViewLastFrame;
 }
 
 @end
