@@ -486,7 +486,11 @@ static NSString * const FromLibraryOption = @"From photo library";
         [self showUploadPhotoController:UIImagePickerControllerSourceTypePhotoLibrary];
     }
 }
-     
+    
+- (BOOL)implementsUpload {
+    return YES;
+}
+
 - (void)imagePickerController:(UIImagePickerController *)picker 
 didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
@@ -592,7 +596,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
             self.photoPickerPopover.contentViewController = picker;
         }
         
-        [self.photoPickerPopover presentPopoverFromBarButtonItem:_uploadButton
+        [self.photoPickerPopover presentPopoverFromBarButtonItem:_uploadBarButtonItem
                                         permittedArrowDirections:UIPopoverArrowDirectionAny 
                                                         animated:YES];
 

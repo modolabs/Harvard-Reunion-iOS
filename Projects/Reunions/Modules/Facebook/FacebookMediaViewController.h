@@ -22,7 +22,8 @@ FacebookMediaSegmentIndexes;
     IBOutlet UIButton *_loginButton; // login or open facebook
     
     // ipad views
-    IBOutlet UIBarButtonItem *_uploadButton;
+    IBOutlet UIBarButtonItem *_uploadBarButtonItem;
+    IBOutlet UIButton *_uploadButton;
 
     NSString *_gid; // facebook group id
     
@@ -32,6 +33,8 @@ FacebookMediaSegmentIndexes;
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender;
 - (IBAction)loginButtonPressed:(UIButton *)sender;
 - (IBAction)uploadButtonPressed:(id)sender;
+
+- (BOOL)implementsUpload;
 
 - (void)showLoginViewAnimated:(BOOL)animated;
 - (void)hideLoginViewAnimated:(BOOL)animated;

@@ -298,6 +298,11 @@ ToolbarButtonTags;
     return nil;
 }
 
+- (NSString *)closeButtonName {
+    NSAssert(NO, @"must override method closeButtonName");
+    return nil;
+}
+
 - (IBAction)bookmarkButtonPressed:(UIBarButtonItem *)sender {
     [self restoreToolbars:nil];
     
@@ -402,6 +407,12 @@ ToolbarButtonTags;
     } else {
         pagerBarItem.customView = pager;
     }
+    
+    if (backButton) {
+        UIImage *toolbarButtonImage = [[UIImage imageWithPathName:@"common/toolbar-button.png"] stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+        [backButton setBackgroundImage:toolbarButtonImage forState:UIControlStateNormal];
+        [backButton setTitle:[self closeButtonName] forState:UIControlStateNormal];
+    } 
          
     if (!_mediaView) {
         CGRect frame = self.view.bounds;
