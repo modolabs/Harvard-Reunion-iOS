@@ -27,6 +27,7 @@
 @property (nonatomic, readonly) NSArray *widgetViews;
 @property (nonatomic) NSTimeInterval animationDuration;
 @property (nonatomic, readonly) UIView *container;
+@property (nonatomic, readonly) UIViewController *detailViewController;
 
 - (void)showViewController:(UIViewController *)viewController;
 - (void)showDetailViewController:(UIViewController *)viewController;

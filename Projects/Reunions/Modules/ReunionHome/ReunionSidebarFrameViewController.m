@@ -131,6 +131,7 @@
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [_hiddenRotatingWidgets release];
     _hiddenRotatingWidgets = [[NSMutableArray alloc] init];
 
     for (KGOHomeScreenWidget *aWidget in [self widgetViews]) {
@@ -152,6 +153,9 @@
     }
     [_hiddenRotatingWidgets release];
     _hiddenRotatingWidgets = nil;
+    
+    [self.view bringSubviewToFront:self.container];
+    [self.view bringSubviewToFront:self.detailViewController.view];
 }
 
 @end
