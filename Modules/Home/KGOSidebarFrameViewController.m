@@ -3,7 +3,6 @@
 #import "KGOModule.h"
 #import "UIKit+KGOAdditions.h"
 #import "KGOHomeScreenWidget.h"
-#import <QuartzCore/QuartzCore.h>
 
 #define SIDEBAR_WIDTH 161
 #define TOPBAR_HEIGHT 51
@@ -65,21 +64,6 @@
                 
                 [_visibleViewController viewDidAppear:YES];
             }];
-            
-            
-            
-            
-            /*
-            [_visibleViewController.view removeFromSuperview];
-            [_visibleViewController viewDidDisappear:NO];
-            
-            [_visibleViewController release];
-            _visibleViewController = [viewController retain];
-            
-            [_visibleViewController viewWillAppear:NO];
-            _visibleViewController.view.frame = CGRectMake(0, 0, _container.frame.size.width, _container.frame.size.height);
-            [_container addSubview:viewController.view];
-            */
         }
     }
 }
@@ -97,19 +81,18 @@
     
     _detailViewController = [viewController retain];
     [_detailViewController viewWillAppear:YES];
-    _detailViewController.view.frame = CGRectMake(self.view.bounds.size.width - 20,
-                                                  self.view.bounds.size.height - 20,
-                                                  10,
-                                                  10);
-    _detailViewController.view.layer.cornerRadius = 5;
+    _detailViewController.view.frame = CGRectMake(self.view.bounds.size.width - DETAIL_VIEW_WIDTH,
+                                                  self.view.bounds.size.height,
+                                                  DETAIL_VIEW_WIDTH,
+                                                  _container.frame.size.height - 44);
     _detailViewController.view.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
 
     [self.view addSubview:_detailViewController.view];
 
-    CGRect afterFrame = CGRectMake(self.view.bounds.size.width - DETAIL_VIEW_WIDTH - 10,
-                                   self.view.bounds.size.height - DETAIL_VIEW_HEIGHT - 10,
+    CGRect afterFrame = CGRectMake(self.view.bounds.size.width - DETAIL_VIEW_WIDTH,
+                                   _container.frame.origin.y + 44,
                                    DETAIL_VIEW_WIDTH,
-                                   DETAIL_VIEW_HEIGHT);
+                                   _container.frame.size.height - 44);
 
     [UIView animateWithDuration:0.4 animations:^(void) {
         _detailViewController.view.frame = afterFrame;
@@ -125,10 +108,8 @@
     _outgoingDetailViewController = _detailViewController;
     _detailViewController = nil;
     
-    CGRect afterFrame = CGRectMake(self.view.bounds.size.width - 20,
-                                   self.view.bounds.size.height - 20,
-                                   10,
-                                   10);
+    CGRect afterFrame = _outgoingDetailViewController.view.frame;
+    afterFrame.origin.y = self.view.bounds.size.height;
     
     [UIView animateWithDuration:0.4 animations:^(void) {
         _outgoingDetailViewController.view.frame = afterFrame;
@@ -256,7 +237,7 @@
 {
     for (UIView *aView in _sidebar.subviews) {
         if ([aView isKindOfClass:[SpringboardIcon class]] && [(SpringboardIcon *)aView module] == module) {
-            [self highlightIcon:aView];
+            [self highlightIcon:(SpringboardIcon *)aView];
         }
     }
 }
@@ -356,7 +337,7 @@
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {    
-    [self refreshWidgets];
+    //[self refreshWidgets];
     
     [_visibleViewController didRotateFromInterfaceOrientation:fromInterfaceOrientation];
 }

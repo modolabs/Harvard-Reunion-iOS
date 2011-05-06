@@ -10,9 +10,9 @@
 @class KGOPlacemark, KGOHTMLTemplate;
 
 // not subclassing MapDetailViewController b/c we don't want a tabbed view
-@interface ReunionMapDetailViewController : UITableViewController <KGODetailPagerDelegate,
+@interface ReunionMapDetailViewController : UIViewController <KGODetailPagerDelegate,
 UIWebViewDelegate, KGODetailPageHeaderDelegate, MITThumbnailDelegate,
-KGORequestDelegate> {
+KGORequestDelegate, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate> {
     
     ReunionMapDetailHeaderView *_headerView;
 
@@ -25,11 +25,16 @@ KGORequestDelegate> {
     KGORequest *_placemarkInfoRequest;
     NSString *_imageURL;
     UIImage *_image;
+    
+    UITableView *_tableView;
+    UIScrollView *_scrollView;
+    CGFloat _currentTableWidth;
 }
 
 //@property(nonatomic, retain) KGOPlacemark *placemark;
 @property(nonatomic, retain) id<MKAnnotation, KGOSearchResult> annotation;
 @property(nonatomic, retain) KGODetailPager *pager;
+@property(nonatomic, retain) UITableView *tableView;
 
 - (void)loadDetailSection;
 
