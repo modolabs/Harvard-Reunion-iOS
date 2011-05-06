@@ -101,18 +101,18 @@
             CGRect frame = aWidget.frame;
             frame.origin.y = self.view.bounds.size.height - frame.size.height - 100;
             if (UIInterfaceOrientationIsPortrait([self interfaceOrientation])) {
-                frame.origin.x = 4;
+                frame.origin.x = 3;
             } else {
-                frame.origin.x = self.view.bounds.size.width - frame.size.width - 10;
+                frame.origin.x = self.view.bounds.size.width - frame.size.width - 4;
             }
             aWidget.frame = frame;
             
         } else if ([aWidget.module isKindOfClass:[FacebookModule class]]) {
             CGRect frame = aWidget.frame;            
             if (UIInterfaceOrientationIsPortrait([self interfaceOrientation])) {
-                frame.origin.x = frame.size.width + 4;
+                frame.origin.x = frame.size.width + 3;
             } else {
-                frame.origin.x = self.view.bounds.size.width - frame.size.width - 10;
+                frame.origin.x = self.view.bounds.size.width - frame.size.width - 5;
             }
             frame.origin.y = self.view.bounds.size.height - frame.size.height;
             aWidget.frame = frame;
@@ -120,9 +120,9 @@
         } else if ([aWidget.module isKindOfClass:[TwitterModule class]]) {
             CGRect frame = aWidget.frame;
             if (UIInterfaceOrientationIsPortrait([self interfaceOrientation])) {
-                frame.origin.x = 3;
+                frame.origin.x = 2;
             } else {
-                frame.origin.x = self.view.bounds.size.width - frame.size.width * 2 - 12;
+                frame.origin.x = self.view.bounds.size.width - frame.size.width * 2 - 6;
             }
             frame.origin.y = self.view.bounds.size.height - frame.size.height;
             aWidget.frame = frame;
