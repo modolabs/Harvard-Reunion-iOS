@@ -205,6 +205,7 @@
     
     navScrollView = [[KGOScrollingTabstrip alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44.0) delegate:self buttonTitles:nil];
     navScrollView.delegate = self;
+    navScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     [self.view addSubview:navScrollView];
     [self setupNavScrollButtons];
 }
