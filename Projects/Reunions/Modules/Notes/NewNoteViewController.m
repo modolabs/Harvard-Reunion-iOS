@@ -84,7 +84,7 @@
     
     UIImage *printButtonImage = [UIImage imageWithPathName:@"common/unread-message.png"];
     UIImage *shareButtonImage = [UIImage imageWithPathName:@"common/share.png"];
-    UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/subheadbar_button.png"];
+    UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/delete.png"];
     
     CGFloat buttonX = self.width - deleteButtonImage.size.width - shareButtonImage.size.width - printButtonImage.size.width - 27;
     CGFloat buttonY = 5;
@@ -111,7 +111,7 @@
     UIButton * deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
     deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
     [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
-    [deleteButton setImage:[UIImage imageWithPathName:@"common/subheadbar_button.png"] forState:UIControlStateHighlighted];
+    [deleteButton setImage:[UIImage imageWithPathName:@"common/delete_pressed.png"] forState:UIControlStateHighlighted];
     
     [deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
