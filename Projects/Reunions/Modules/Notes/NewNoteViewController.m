@@ -61,11 +61,17 @@
 {
     [super loadView];
     
+    UIImage *shareButtonImage = [UIImage imageWithPathName:@"common/share.png"];
+    UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/delete.png"];
+    
+    CGFloat buttonX = self.width - deleteButtonImage.size.width - shareButtonImage.size.width - 20;
+    CGFloat buttonY = 10;
+    
     UIFont *fontTitle = [UIFont fontWithName:@"Georgia" size:18];;
     CGSize titleSize = [self.titleText sizeWithFont:fontTitle];
-    UILabel * titleTextLabel = [[[UILabel alloc] initWithFrame:CGRectMake(5, 5,
-                                                                          self.width - 150,
-                                                                          titleSize.height + 5.0)] autorelease];
+    UILabel * titleTextLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, 10,
+                                                                          buttonX - 20,
+                                                                          titleSize.height + 5)] autorelease];
     titleTextLabel.text = self.titleText;
     titleTextLabel.font = fontTitle;
     titleTextLabel.textColor = [UIColor blackColor];
@@ -73,30 +79,14 @@
     
     UIFont *fontDetail = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
     CGSize detailSize = [self.dateText sizeWithFont:fontTitle];
-    UILabel * detailTextLabel = [[[UILabel alloc] initWithFrame:CGRectMake(5,
+    UILabel * detailTextLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10,
                                                                            titleTextLabel.frame.size.height + 5,
-                                                                           self.width - 150,
-                                                                           detailSize.height + 5.0)] autorelease];
+                                                                           buttonX - 20,
+                                                                           detailSize.height + 5)] autorelease];
     detailTextLabel.text = self.dateText;
     detailTextLabel.font = fontDetail;
     detailTextLabel.textColor = [UIColor grayColor];
     detailTextLabel.backgroundColor = [UIColor clearColor];
-    
-    UIImage *printButtonImage = [UIImage imageWithPathName:@"common/unread-message.png"];
-    UIImage *shareButtonImage = [UIImage imageWithPathName:@"modules/notes/share.png"];
-    UIImage *deleteButtonImage = [UIImage imageWithPathName:@"modules/notes/delete.png"];
-    
-    CGFloat buttonX = self.width - deleteButtonImage.size.width - shareButtonImage.size.width - printButtonImage.size.width - 27;
-    CGFloat buttonY = 5;
-    
-    printButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    printButton.frame = CGRectMake(buttonX, buttonY, printButtonImage.size.width, printButtonImage.size.height);
-    [printButton setImage:printButtonImage forState:UIControlStateNormal];
-    [printButton setImage:[UIImage imageWithPathName:@"common/unread-message.png"] forState:UIControlStateHighlighted];
-    
-    [printButton addTarget:self action:@selector(printButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    
-    buttonX += printButtonImage.size.width + 5;
     
     UIButton * shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
     shareButton.frame = CGRectMake(buttonX, buttonY, shareButtonImage.size.width, shareButtonImage.size.height);
@@ -118,7 +108,6 @@
     
     [self.view addSubview:titleTextLabel];
     [self.view addSubview:detailTextLabel];
-    //[self.view addSubview:printButton];
     [self.view addSubview:shareButton];
     [self.view addSubview:deleteButton];
     
@@ -138,10 +127,10 @@
     
     if (nil == textView) {
         
-        textView = [[UITextView alloc] initWithFrame:CGRectMake(9, 
+        textView = [[UITextView alloc] initWithFrame:CGRectMake(10, 
                                                                 titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 15, 
-                                                                self.width - 25, 
-                                                                self.height - titleTextLabel.frame.size.height - detailTextLabel.frame.size.height - 25)];
+                                                                self.width - 10, 
+                                                                self.height - titleTextLabel.frame.size.height - detailTextLabel.frame.size.height - 15)];
         textView.backgroundColor = [UIColor clearColor];
         
         NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", self.titleText];
@@ -163,19 +152,6 @@
 -(NSString *) textViewString {
     return textView.text;
 }
-
--(void) printButtonPressed: (id) sender {
-    
-    NSString * noteTitle = self.titleText;
-    
-    if (nil == self.eventIdentifier)
-        noteTitle = [NSString stringWithFormat:@"Note: %@", [Note noteTitleFromDetails:self.textViewString]];
-    
-    NSString * textToPrint = [NSString stringWithFormat:@"%@:\n\n%@", titleText, self.textViewString];
-    
-    [Note printContent:textToPrint jobTitle:noteTitle fromButton:printButton parentView:self.view delegate:self];
-}
-
 
 -(void) shareButtonPressed: (id) sender {
     
@@ -221,20 +197,9 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    
-    if (interfaceOrientation == UIInterfaceOrientationPortrait)
-        return true;
-    
-    else if (interfaceOrientation == UIInterfaceOrientationLandscapeLeft)
-        return true;
-    
-    else if (interfaceOrientation == UIInterfaceOrientationLandscapeRight)
-        return true;
-    
-    else
-        return false;
-    
-    //return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    // Return YES for supported orientations
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    || (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 #pragma mark
