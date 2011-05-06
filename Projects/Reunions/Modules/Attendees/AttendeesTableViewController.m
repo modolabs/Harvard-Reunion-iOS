@@ -158,7 +158,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
             tableY = 44;
         }
         
-        CGRect frame = CGRectMake(0, tableY, self.view.frame.size.width, self.view.frame.size.height - viewHeight);
+        CGRect frame = CGRectMake(0, tableY, self.view.frame.size.width, self.view.frame.size.height - tableY);
         self.tableView = [[[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain] autorelease];
         self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         self.tableView.dataSource = self;
