@@ -375,6 +375,8 @@
         _noteViewController = nil;
     }
     [self.parentViewController dismissModalViewControllerAnimated:YES];
+    
+    [self setNeedsLayout];
 }
 
 @end
