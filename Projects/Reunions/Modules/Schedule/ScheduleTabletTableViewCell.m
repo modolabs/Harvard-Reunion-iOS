@@ -48,7 +48,6 @@
     [self.event addBookmark];
     [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-on"] forState:UIControlStateNormal];
     [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-    //[_bookmarkView removeTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
     [_bookmarkView addTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
 }
 
@@ -75,7 +74,6 @@
     [self.event removeBookmark];
     [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-off"] forState:UIControlStateNormal];
     [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-    //[_bookmarkView removeTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
     if ([self.event registrationRequired]) {
         [_bookmarkView addTarget:self action:@selector(attemptToAddBookmark:) forControlEvents:UIControlEventTouchUpInside];
     } else {
@@ -105,7 +103,7 @@
     CGRect detailLabelFrame = self.detailTextLabel.frame;
     detailLabelFrame.origin.x = -11;
 
-    [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventTouchUpInside];
+    [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
     
     if (self.scheduleCellType == ScheduleCellLastInTable || self.scheduleCellType == ScheduleCellSelected) {
         
@@ -127,6 +125,9 @@
         } else { // not bookmarked, no registration
             [_bookmarkView addTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
         }
+        
+        ScheduleDetailTableView *tableView = (ScheduleDetailTableView *)[self.contentView viewWithTag:TABLE_TAG];
+        [tableView flashScrollIndicators];
     }
     
     // activate note view

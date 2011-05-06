@@ -590,6 +590,7 @@ ToolbarButtonTags;
             self.tableView.frame = tableViewFrame;
         }
         _mediaView.fixedPreviewHeight = 0;
+        [_tableView performSelector:@selector(setTableHeaderView:) withObject:_tableView.tableHeaderView afterDelay:0.1];
     }
 }
 
@@ -650,9 +651,10 @@ ToolbarButtonTags;
     [_comments release];
     _comments = [[self.post.comments sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] retain];
     
-    _tableView.tableHeaderView = _tableView.tableHeaderView;
     [_tableView reloadData];
-    
+    [_tableView performSelector:@selector(setTableHeaderView:) withObject:_tableView.tableHeaderView afterDelay:0.1];
+    _tableView.tableHeaderView = _tableView.tableHeaderView;
+
     // update the toolbar button status
     UIButton *likeButton = [self buttonForTag:kToolbarLikeButtonTag];
     likeButton.selected = [self currentUserLikesThisPost];
