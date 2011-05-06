@@ -24,6 +24,7 @@
 @implementation StoryDetailViewController
 
 @synthesize newsController, story, stories, storyView, multiplePages, category;
+@synthesize dataManager;
 
 - (void)loadView {
     [super loadView]; // surprisingly necessary empty call to super due to the way memory warnings work
@@ -165,7 +166,7 @@
             if ([[url path] rangeOfString:@"bookmark" options:NSBackwardsSearch].location != NSNotFound) {
 				// toggle bookmarked state
                 BOOL newBookmarkState = [self.story.bookmarked boolValue] ? NO : YES;
-                [[NewsDataManager sharedManager] story:self.story bookmarked:newBookmarkState];
+                [self.dataManager story:self.story bookmarked:newBookmarkState];
 			} else if ([[url path] rangeOfString:@"share" options:NSBackwardsSearch].location != NSNotFound) {
                 shareController.actionSheetTitle = @"Share article with a friend";
                 shareController.shareTitle = story.title;

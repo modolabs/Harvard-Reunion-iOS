@@ -5,7 +5,6 @@
 
 @implementation NewsModule
 
-@synthesize storyListChannelController;
 #pragma mark Navigation
 
 - (NSArray *)registeredPageNames {
@@ -16,6 +15,7 @@
     UIViewController *vc = nil;
     if ([pageName isEqualToString:LocalPathPageNameHome]) {
         vc = [[[StoryListViewController alloc] init] autorelease];
+        [(StoryListViewController *)vc setDataManager:[self dataManager]];
         
         if ([params objectForKey:@"category"]) {
             NewsCategory *category = [params objectForKey:@"category"];
@@ -24,6 +24,7 @@
         
     } else if([pageName isEqualToString:LocalPathPageNameDetail]) {
         vc = [[[StoryDetailViewController alloc] init] autorelease];
+        [(StoryDetailViewController *)vc setDataManager:[self dataManager]];
         
         if ([params objectForKey:@"story"]) { // show only one story
             NewsStory *story = [params objectForKey:@"story"];
@@ -45,6 +46,10 @@
         }
     }
     return vc;
+}
+
+- (NewsDataManager *)dataManager {
+    return [NewsDataManager sharedManager];
 }
 
 - (NSArray *)objectModelNames {
