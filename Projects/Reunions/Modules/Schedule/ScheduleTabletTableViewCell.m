@@ -112,10 +112,6 @@
         textLabelFrame.origin.y = 10;
         detailLabelFrame.origin.y = textLabelFrame.origin.y + gap;
         
-        // leave room for notes/bookmark icons
-        textLabelFrame.size.width = self.frame.size.width - 130;
-        detailLabelFrame.size.width = self.frame.size.width - 130;
-        
         // activate bookmark view
         if ([self.event isRegistered]) { // must always be bookmarked
             [_bookmarkView addTarget:self action:@selector(refuseToRemoveBookmark:) forControlEvents:UIControlEventTouchUpInside];
@@ -142,6 +138,12 @@
         [_notesButton setImage:[UIImage imageWithPathName:@"modules/schedule/list-note-off.png"] forState:UIControlStateNormal];
     }
 
+    if (!_notesButton.hidden) {
+        // leave room for notes/bookmark icons
+        textLabelFrame.size.width = self.frame.size.width - 150;
+        detailLabelFrame.size.width = self.frame.size.width - 150;
+    }
+    
     self.textLabel.frame = textLabelFrame;
     self.detailTextLabel.frame = detailLabelFrame;
 }
