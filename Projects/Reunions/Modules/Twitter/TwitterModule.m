@@ -187,7 +187,7 @@
             _lastUpdate = [date retain];
             self.chatBubble.hidden = NO;
             self.chatBubbleTitleLabel.text = title;
-            self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:@"%@ at %@", user, [date agoString]];
+            self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:@"%@ %@", user, [date agoString]];
             self.chatBubbleThumbnail.imageURL = imageURL;
             [self.chatBubbleThumbnail loadImage];
             [[NSNotificationCenter defaultCenter] postNotificationName:TwitterStatusDidUpdateNotification object:nil];

@@ -104,13 +104,13 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         
         KGOHomeScreenViewController *homeVC = (KGOHomeScreenViewController *)[appDelegate homescreen];
         CGRect bounds = homeVC.springboardFrame;
-        
+
         if (isTablet) {
             numberOfLinesForSubtitle = 2;
-            frame = CGRectMake(5, bounds.size.height - BUBBLE_HEIGHT_SIDEBAR - BUTTON_HEIGHT_IPAD, 150, BUBBLE_HEIGHT_SIDEBAR);
-            bubbleView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height - caratView.frame.size.height);
-            CGFloat x = floor(self.chatBubbleCaratOffset * bubbleView.frame.size.width - caratView.frame.size.width / 2 + LEFT_SHADOW_WIDTH);
-            caratView.frame = CGRectMake(x, bubbleView.frame.size.height - BOTTOM_SHADOW_HEIGHT,
+            frame = CGRectMake(5, bounds.size.height - BUBBLE_HEIGHT_SIDEBAR - BUTTON_HEIGHT_IPAD, 153, BUBBLE_HEIGHT_SIDEBAR);
+            bubbleView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height + 11);
+            CGFloat x = floor(self.chatBubbleCaratOffset * bubbleView.frame.size.width - caratView.frame.size.width/2 + LEFT_SHADOW_WIDTH - 5);
+            caratView.frame = CGRectMake(x, bubbleView.frame.origin.y + bubbleView.frame.size.height - BOTTOM_SHADOW_HEIGHT,
                                          caratView.frame.size.width,
                                          caratView.frame.size.height);
         } else {
@@ -156,13 +156,14 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
             frame.size.width = frame.size.height;
             _chatBubbleThumbnail = [[[MITThumbnailView alloc] initWithFrame:frame] autorelease];
             [_chatBubble addSubview:_chatBubbleThumbnail];
-            frame.origin.x += frame.size.width + 10;
+            frame.origin.x += frame.size.width + 5;
+            frame.origin.y -= 11;
             frame.size.width = oldWidth - frame.size.width - 10;
         }
         
         _chatBubbleSubtitleLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
         _chatBubbleSubtitleLabel.numberOfLines = numberOfLinesForSubtitle;
-        _chatBubbleSubtitleLabel.font = [UIFont systemFontOfSize:12];
+        _chatBubbleSubtitleLabel.font = [UIFont systemFontOfSize:11];
         _chatBubbleSubtitleLabel.textColor = [UIColor colorWithWhite:0.3 alpha:1];
         _chatBubbleSubtitleLabel.backgroundColor = [UIColor clearColor];
         [_chatBubble addSubview:_chatBubbleSubtitleLabel];
@@ -174,7 +175,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
     KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
     KGONavigationStyle navStyle = [appDelegate navigationStyle];
     KGOHomeScreenViewController *homeVC = (KGOHomeScreenViewController *)[appDelegate homescreen];
-    CGRect frame = _chatBubble.frame;
+    CGRect frame =  _chatBubble.frame;
     CGRect bounds = homeVC.springboardFrame;
     if (navStyle == KGONavigationStyleTabletSidebar) {
         frame.origin.y = bounds.size.height - BUBBLE_HEIGHT_SIDEBAR - BUTTON_HEIGHT_IPAD;
@@ -228,7 +229,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         [button setImage:self.buttonImage forState:UIControlStateNormal];
         [button setTitle:self.labelText forState:UIControlStateNormal];
         button.titleLabel.font = [UIFont systemFontOfSize:12.5];
-        button.titleLabel.numberOfLines = 2;
+        button.titleLabel.numberOfLines = 3;
         button.titleLabel.lineBreakMode = UILineBreakModeWordWrap;
         button.titleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
         button.titleLabel.layer.shadowOffset = CGSizeMake(0, 1);
@@ -249,8 +250,8 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
     if (navStyle == KGONavigationStyleTabletSidebar) {
         CGFloat sidePadding = floor((button.frame.size.width - self.buttonImage.size.width) / 2);
         button.titleLabel.textAlignment = UITextAlignmentCenter;
-        button.imageEdgeInsets = UIEdgeInsetsMake(0, sidePadding, self.buttonImage.size.height, sidePadding);
-        button.titleEdgeInsets = UIEdgeInsetsMake(self.buttonImage.size.height + 10, -self.buttonImage.size.width, 0, 0);
+        button.imageEdgeInsets = UIEdgeInsetsMake(-12, sidePadding, self.buttonImage.size.height, sidePadding);
+        button.titleEdgeInsets = UIEdgeInsetsMake(self.buttonImage.size.height + 10, -self.buttonImage.size.width + 2, 0, 2);
         
     } else {
         CGSize maxSize = CGSizeMake(button.frame.size.width - self.buttonImage.size.width - 15, button.frame.size.height);
@@ -310,7 +311,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         UIViewController *feedVC = [[[[self feedViewControllerClass] alloc] initWithStyle:UITableViewStylePlain] autorelease];
         _modalFeedController = [[UINavigationController alloc] initWithRootViewController:feedVC];
         
-        feedVC.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+        feedVC.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                                  target:self
                                                                                                  action:@selector(hideModalFeedController:)] autorelease];
         
