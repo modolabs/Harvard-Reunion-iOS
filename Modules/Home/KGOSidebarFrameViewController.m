@@ -92,7 +92,7 @@
                               _container.frame.size.height - 44);
     
     _detailViewController.view.frame = frame;
-    _detailViewController.view.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
+    _detailViewController.view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin;
 
     [self.view addSubview:_detailViewController.view];
     
