@@ -13,6 +13,8 @@
 #define EXPANDED_CELL_HEIGHT 500
 #define LAST_CELL_HEIGHT EXPANDED_CELL_HEIGHT + 30
 
+#define MAP_WIDTH_PORTRAIT 255
+#define MAP_WIDTH_LANDSCAPE 325
 
 @interface ScheduleHomeViewController_iPad (Private)
 
@@ -356,7 +358,12 @@
     MKMapView *mapView = nil;
     if (cellType == ScheduleCellSelected) {
         if (!_mapViewForSelectedCell) {
-            _mapViewForSelectedCell = [[MKMapView alloc] initWithFrame:CGRectMake(290, 60, 255, EXPANDED_CELL_HEIGHT - 80)];
+            CGFloat width = MAP_WIDTH_PORTRAIT;
+            UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
+            if (UIInterfaceOrientationIsLandscape(homescreen.interfaceOrientation)) {
+                width = MAP_WIDTH_LANDSCAPE;
+            }
+            _mapViewForSelectedCell = [[MKMapView alloc] initWithFrame:CGRectMake(290, 60, width, EXPANDED_CELL_HEIGHT - 80)];
             _mapViewForSelectedCell.userInteractionEnabled = NO;
             _mapViewForSelectedCell.tag = SELECTED_MAP_TAG;
         }
@@ -364,6 +371,11 @@
         
     } else if (cellType == ScheduleCellLastInTable) {
         if (!_mapViewForLastCell) {
+            CGFloat width = MAP_WIDTH_PORTRAIT;
+            UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
+            if (UIInterfaceOrientationIsLandscape(homescreen.interfaceOrientation)) {
+                width = MAP_WIDTH_LANDSCAPE;
+            }
             _mapViewForLastCell = [[MKMapView alloc] initWithFrame:CGRectMake(290, 60, 255, LAST_CELL_HEIGHT - 80)];
             _mapViewForLastCell.userInteractionEnabled = NO;
             _mapViewForLastCell.tag = LAST_MAP_TAG;
@@ -487,12 +499,13 @@
 {
     CGRect selectedFrame = _mapViewForSelectedCell.frame;
     CGRect lastFrame = _mapViewForLastCell.frame;
-    if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation)) {
-        selectedFrame.size.width = 255;
-        lastFrame.size.width = 255;
+    UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
+    if (UIInterfaceOrientationIsPortrait(homescreen.interfaceOrientation)) {
+        selectedFrame.size.width = MAP_WIDTH_PORTRAIT;
+        lastFrame.size.width = MAP_WIDTH_PORTRAIT;
     } else {
-        selectedFrame.size.width = 400;
-        lastFrame.size.width = 400;
+        selectedFrame.size.width = MAP_WIDTH_LANDSCAPE;
+        lastFrame.size.width = MAP_WIDTH_LANDSCAPE;
     }
     _mapViewForSelectedCell.frame = selectedFrame;
     _mapViewForLastCell.frame = lastFrame;
