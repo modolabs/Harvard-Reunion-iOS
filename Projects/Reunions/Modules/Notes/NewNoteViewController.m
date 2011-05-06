@@ -91,7 +91,7 @@
     UIButton * shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
     shareButton.frame = CGRectMake(buttonX, buttonY, shareButtonImage.size.width, shareButtonImage.size.height);
     [shareButton setImage:shareButtonImage forState:UIControlStateNormal];
-    [shareButton setImage:[UIImage imageWithPathName:@"common/share_pressed.png"] forState:UIControlStateHighlighted];
+    [shareButton setImage:[UIImage imageWithPathName:@"modules/notes/share_pressed.png"] forState:UIControlStateHighlighted];
     
     [shareButton addTarget:self action:@selector(shareButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -101,7 +101,7 @@
     UIButton * deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
     deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
     [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
-    [deleteButton setImage:[UIImage imageWithPathName:@"common/delete_pressed.png"] forState:UIControlStateHighlighted];
+    [deleteButton setImage:[UIImage imageWithPathName:@"modules/notes/delete_pressed.png"] forState:UIControlStateHighlighted];
     
     [deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     

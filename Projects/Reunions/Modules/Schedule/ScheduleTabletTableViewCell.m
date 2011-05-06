@@ -31,7 +31,7 @@
         UIImage *notesImage = [UIImage imageWithPathName:@"modules/schedule/list-note.png"];
         _notesButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
         [_notesButton addTarget:self action:@selector(noteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        _notesButton.frame = CGRectMake(self.frame.size.width - 100, 0, notesImage.size.width, notesImage.size.height);
+        _notesButton.frame = CGRectMake(self.frame.size.width - 90, 0, notesImage.size.width, notesImage.size.height);
         _notesButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
         [self.contentView addSubview:_notesButton];
         
@@ -138,6 +138,12 @@
         [_notesButton setImage:[UIImage imageWithPathName:@"modules/schedule/list-note-off.png"] forState:UIControlStateNormal];
     }
 
+    if (!_notesButton.hidden) {
+        // leave room for notes/bookmark icons
+        textLabelFrame.size.width = self.frame.size.width - 150;
+        detailLabelFrame.size.width = self.frame.size.width - 150;
+    }
+    
     self.textLabel.frame = textLabelFrame;
     self.detailTextLabel.frame = detailLabelFrame;
 }
@@ -369,6 +375,8 @@
         _noteViewController = nil;
     }
     [self.parentViewController dismissModalViewControllerAnimated:YES];
+    
+    [self setNeedsLayout];
 }
 
 @end
