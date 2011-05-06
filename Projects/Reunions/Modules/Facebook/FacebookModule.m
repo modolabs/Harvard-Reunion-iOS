@@ -220,6 +220,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
                     self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:
                                                          @"%@ %@", user.name,
                                                          [_lastMessageDate agoString]];
+                    self.chatBubbleThumbnail.imageData = nil;
                     self.chatBubbleThumbnail.imageURL = [[KGOSocialMediaController facebookService] imageURLForGraphObject:user.identifier];
                     [self.chatBubbleThumbnail loadImage];
                     self.chatBubbleTitleLabel.text = message;

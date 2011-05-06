@@ -31,7 +31,7 @@
         UIImage *notesImage = [UIImage imageWithPathName:@"modules/schedule/list-note.png"];
         _notesButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
         [_notesButton addTarget:self action:@selector(noteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        _notesButton.frame = CGRectMake(self.frame.size.width - 100, 0, notesImage.size.width, notesImage.size.height);
+        _notesButton.frame = CGRectMake(self.frame.size.width - 90, 0, notesImage.size.width, notesImage.size.height);
         _notesButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
         [self.contentView addSubview:_notesButton];
         
@@ -111,6 +111,10 @@
         CGFloat gap = detailLabelFrame.origin.y - textLabelFrame.origin.y;
         textLabelFrame.origin.y = 10;
         detailLabelFrame.origin.y = textLabelFrame.origin.y + gap;
+        
+        // leave room for notes/bookmark icons
+        textLabelFrame.size.width = self.frame.size.width - 130;
+        detailLabelFrame.size.width = self.frame.size.width - 130;
         
         // activate bookmark view
         if ([self.event isRegistered]) { // must always be bookmarked
