@@ -136,6 +136,16 @@
                                                object:nil];
 }
 
+- (void)refreshMyMedia {
+    if(_filterControl.selectedSegmentIndex == kMyUploadsSegment) {
+        [self refreshMedia];
+    }
+}
+
+- (void)refreshMedia {
+    NSAssert(NO, @"refreshMedia must been overridden");
+}
+
 #pragma mark - View lifecycle
 
 - (void)loadView
@@ -180,6 +190,8 @@
         [_uploadButton removeFromSuperview];
     }
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMyMedia) name:FacebookDidGetSelfInfoNotification object:nil];
+    
     [pool release];
 }
 
@@ -195,6 +207,7 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }

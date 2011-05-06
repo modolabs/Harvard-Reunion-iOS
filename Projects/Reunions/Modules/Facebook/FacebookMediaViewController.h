@@ -42,6 +42,9 @@ FacebookMediaSegmentIndexes;
 - (void)facebookDidLogout:(NSNotification *)aNotification;
 - (void)facebookDidLogin:(NSNotification *)aNotification;
 
+- (void)refreshMyMedia; // used to indicate that facebook has returned the current user id info
+- (void)refreshMedia;
+
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) KGOToolbar *subheadToolbar;
 
