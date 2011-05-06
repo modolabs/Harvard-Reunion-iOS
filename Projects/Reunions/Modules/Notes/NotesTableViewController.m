@@ -33,7 +33,6 @@
     self.view.backgroundColor = [UIColor clearColor];
 
     if (self) {
-        
         NSString * newNoteText = NSLocalizedString(@"New Note", nil);
         NSString * emailAllText = NSLocalizedString(@"Email All Notes", nil);
         NSString * printAllText = NSLocalizedString(@"Print All Notes", nil);
@@ -296,20 +295,9 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    
-    if (interfaceOrientation == UIInterfaceOrientationPortrait)
-        return true;
-    
-    else if (interfaceOrientation == UIInterfaceOrientationLandscapeLeft)
-        return true;
-    
-    else if (interfaceOrientation == UIInterfaceOrientationLandscapeRight)
-        return true;
-    
-    else
-        return false;
-    
-    //return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    // Return YES for supported orientations
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    || (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 #pragma mark
@@ -370,13 +358,16 @@
         cell.tableView = self.tableView;
         cell.notesCellType = NotesCellSelected;
 
-        notesTextView = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 13, 500) 
+        notesTextView = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 8, 500) 
                                                     titleText:noteTitle
                                                    detailText:[Note dateToDisplay:note.date]
                                                      noteText:noteText
-                                                         note: note
-                                               firstResponder: !firstView
+                                                         note:note
+                                               firstResponder:!firstView
                                                      dateFont:cell.detailTextLabel.font] autorelease];
+        notesTextView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        notesTextView.autoresizesSubviews = YES;
+        
         notesTextView.delegate = self;
         cell.detailsView = notesTextView;
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
@@ -415,7 +406,7 @@
     
     if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)) {
         
-        NotesTextView * temp = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 13, 500) 
+        NotesTextView * temp = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 8, 500) 
                                                                     titleText:noteTitle
                                                                    detailText:[Note dateToDisplay:note.date]
                                                                      noteText:noteText

@@ -441,6 +441,10 @@ VideosViewTags;
     //[self showUploadPhotoController:sender];
 }
 
+- (void)refreshMedia {
+    [self syncVideoThumbnailsToGrid];
+}
+
 - (IBAction)filterValueChanged:(UISegmentedControl *)sender {
     switch (sender.selectedSegmentIndex) {
         case kAllMediaObjectsSegment:
@@ -449,14 +453,14 @@ VideosViewTags;
             break;
         }
         case kMyUploadsSegment:
-        {
-            NSString *uploaderIdentifier = 
-            [[KGOSocialMediaController facebookService] 
-             currentFacebookUser].identifier;
-            
+        {            
             self.currentFilterBlock = 
             [[
               ^(FacebookVideo *video) {
+                  NSString *uploaderIdentifier = 
+                  [[KGOSocialMediaController facebookService] 
+                   currentFacebookUser].identifier;
+                  
                   NSString *ownerIdentifier = [[video owner] identifier];
                   if ([uploaderIdentifier isEqualToString:ownerIdentifier]) {
                       return YES;
