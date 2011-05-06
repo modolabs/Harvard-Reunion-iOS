@@ -221,6 +221,10 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     return @"video";
 }
 
+- (NSString *)closeButtonName {
+    return @"Videos";
+}
+
 - (BOOL)hideToolbarsInLandscape {
     return NO;
 }

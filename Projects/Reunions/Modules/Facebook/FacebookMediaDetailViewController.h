@@ -25,6 +25,7 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
     IBOutlet KGOToolbar *actionsToolbar;
     IBOutlet UIView *actionToolbarRoot;
     IBOutlet UIBarButtonItem *pagerBarItem;
+    IBOutlet UIButton *backButton;
     
     UITapGestureRecognizer *_tapRecognizer;
     
@@ -51,6 +52,7 @@ KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
 - (NSString *)identifierForBookmark;
 - (NSString *)mediaTypeForBookmark;
 - (NSString *)mediaTypeHumanReadableName;
+- (NSString *)closeButtonName;
 
 - (void)displayPost;
 - (NSString *)postTitle;

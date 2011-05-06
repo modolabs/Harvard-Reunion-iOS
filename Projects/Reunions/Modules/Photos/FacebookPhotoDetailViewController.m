@@ -153,6 +153,10 @@
     return @"photo";
 }
 
+- (NSString *)closeButtonName {
+    return @"Photos";
+}
+
 - (BOOL)hideToolbarsInLandscape {
     return YES;
 }
