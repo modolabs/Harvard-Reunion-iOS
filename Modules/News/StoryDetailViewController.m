@@ -129,11 +129,19 @@
 	NSString *isBookmarked = ([self.story.bookmarked boolValue]) ? @"on" : @"";
 	
     NSMutableDictionary *values = [NSMutableDictionary dictionary];
+    NSString *maxWidth;
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        maxWidth = @"140";
+    } else {
+        maxWidth = @"320";
+    }
+    
     [values setValue:story.title forKey:@"TITLE"];
     [values setValue:story.author forKey:@"AUTHOR"];
     [values setValue:isBookmarked forKey:@"BOOKMARKED"];
     [values setValue:postDate forKey:@"DATE"];
     [values setValue:thumbnailURL forKey:@"THUMBNAIL_URL"];
+    [values setValue:maxWidth forKey:@"THUMBNAIL_MAX_WIDTH"];
     [values setValue:story.body forKey:@"BODY"];
     [values setValue:story.summary forKey:@"DEK"];
     
