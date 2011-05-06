@@ -55,7 +55,7 @@
 
 - (void)loadTableViewWithStyle:(UITableViewStyle)style
 {
-    CGRect frame = self.view.frame;
+    CGRect frame = self.view.bounds;
     if (!_datePager.hidden && [_datePager isDescendantOfView:self.view]) {
         frame.origin.y += _datePager.frame.size.height;
         frame.size.height -= _datePager.frame.size.height;

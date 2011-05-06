@@ -30,35 +30,33 @@
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
-    self.view.backgroundColor = [UIColor clearColor];
 
     if (self) {
-        
         NSString * newNoteText = NSLocalizedString(@"New Note", nil);
         NSString * emailAllText = NSLocalizedString(@"Email All Notes", nil);
-        NSString * printAllText = NSLocalizedString(@"Print All Notes", nil);
+        //NSString * printAllText = NSLocalizedString(@"Print All Notes", nil);
         
         UIButton * newNoteButton = [self customButtonWithText:newNoteText xOffset:0 yOffset:5];
         UIButton * emailAllButton = [self customButtonWithText:emailAllText xOffset:newNoteButton.frame.size.width + 15 yOffset: 5];
-        printAllButton = [self customButtonWithText:printAllText 
-                                                       xOffset:newNoteButton.frame.size.width + emailAllButton.frame.size.width + 30 
-                                                       yOffset: 5];
+        //printAllButton = [self customButtonWithText:printAllText 
+        //                                               xOffset:newNoteButton.frame.size.width + emailAllButton.frame.size.width + 30 
+        //                                               yOffset: 5];
         
         [newNoteButton addTarget:self action:@selector(newNoteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [emailAllButton addTarget:self action:@selector(emailAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        [printAllButton addTarget:self action:@selector(printAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        //[printAllButton addTarget:self action:@selector(printAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         
         [self.view addSubview:newNoteButton];
         [self.view addSubview:emailAllButton];
-        //[self.view addSubview:printAllButton];
-        
-        CGRect frame = self.view.frame;
-        
-        frame.origin.y += 44;
-        frame.size.height -= 44;
         
         [self.tableView removeFromSuperview];
+        
+        self.view.backgroundColor = [UIColor clearColor];
+        CGRect frame = self.view.bounds;
+        frame.origin.y += 44;
+        frame.size.height -= 44;
         self.tableView = [self addTableViewWithFrame:frame style:style];
+        
         self.tableView.backgroundColor = [UIColor clearColor];
         self.tableView.backgroundView = nil;
         self.tableView.separatorColor = [UIColor clearColor];
@@ -145,20 +143,22 @@
     UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                            target:self
                                                                            action:@selector(dismissModalViewControllerAnimated:)] autorelease];
-    
     tempVC.navigationItem.rightBarButtonItem = item;
+    
+    item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                                                           target:tempVC
+                                                                           action:@selector(deleteButtonPressed:)] autorelease];
+    tempVC.navigationItem.leftBarButtonItem = item;
  
     navC.modalPresentationStyle =  UIModalPresentationFormSheet;
+    navC.navigationBar.barStyle = UIBarStyleBlack;
     [self presentModalViewController:navC animated:YES];
-    navC.navigationBar.tintColor = [UIColor blackColor];
     navC.view.userInteractionEnabled = YES;
 
     CGRect frame = navC.view.superview.frame;
     frame.size.width = NEWNOTE_WIDTH;
     navC.view.superview.frame = frame;
     //navC.view.superview.frame = CGRectMake(NEWNOTE_XOFFSET, NEWNOTE_YOFFSET, NEWNOTE_WIDTH, NEWNOTE_HEIGHT);//it's important to do this after presentModalViewController
-
-
 }
 
 -(void) saveNotesState {
@@ -296,20 +296,9 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    
-    if (interfaceOrientation == UIInterfaceOrientationPortrait)
-        return true;
-    
-    else if (interfaceOrientation == UIInterfaceOrientationLandscapeLeft)
-        return true;
-    
-    else if (interfaceOrientation == UIInterfaceOrientationLandscapeRight)
-        return true;
-    
-    else
-        return false;
-    
-    //return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    // Return YES for supported orientations
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    || (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 #pragma mark
@@ -370,13 +359,16 @@
         cell.tableView = self.tableView;
         cell.notesCellType = NotesCellSelected;
 
-        notesTextView = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 13, 500) 
+        notesTextView = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 8, 500) 
                                                     titleText:noteTitle
                                                    detailText:[Note dateToDisplay:note.date]
                                                      noteText:noteText
-                                                         note: note
-                                               firstResponder: !firstView
+                                                         note:note
+                                               firstResponder:!firstView
                                                      dateFont:cell.detailTextLabel.font] autorelease];
+        notesTextView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        notesTextView.autoresizesSubviews = YES;
+        
         notesTextView.delegate = self;
         cell.detailsView = notesTextView;
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
@@ -415,7 +407,7 @@
     
     if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)) {
         
-        NotesTextView * temp = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 13, 500) 
+        NotesTextView * temp = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 8, 500) 
                                                                     titleText:noteTitle
                                                                    detailText:[Note dateToDisplay:note.date]
                                                                      noteText:noteText
