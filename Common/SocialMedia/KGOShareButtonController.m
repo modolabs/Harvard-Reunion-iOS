@@ -100,17 +100,16 @@
                                                        delegate:self];
 
 	} else if ([method isEqualToString:KGOSocialMediaTypeFacebook]) {
-        NSString *attachment = [NSString stringWithFormat:
-                                @"{\"name\":\"%@\","
-                                "\"href\":\"%@\","
-                                "\"description\":\"%@\"}",
-                                self.shareTitle, self.shareURL, self.shareBody];
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                self.shareTitle, @"name",
+                                self.shareBody, @"description",
+                                self.shareURL, @"link",
+                                nil];
         
-        [[KGOSocialMediaController facebookService] shareOnFacebook:attachment prompt:nil];
-        
-        // TODO: this can't record if the user taps cancel; the listener is in
-        // KGOFacebookService
-        [[AnalyticsWrapper sharedWrapper] trackEvent:@"Share" action:@"Facebook" label:nil];
+        [[KGOSocialMediaController facebookService] shareOnFacebook:params];
+
+        // facebook will return success even if the user taps cancel
+        [[AnalyticsWrapper sharedWrapper] trackGroupAction:@"Facebook Share" label:self.shareURL];
 
 	} else if ([method isEqualToString:KGOSocialMediaTypeTwitter]) {
 		TwitterViewController *twitterVC = [[[TwitterViewController alloc] initWithNibName:@"TwitterViewController"
@@ -132,7 +131,7 @@
 {
     [self.contentsController dismissModalViewControllerAnimated:YES];
     
-    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Share" action:@"Email" label:nil];
+    [[AnalyticsWrapper sharedWrapper] trackGroupAction:@"Email Share" label:self.shareURL];
 }
 
 
@@ -148,7 +147,7 @@
     [self.contentsController dismissModalViewControllerAnimated:YES];
 
     // will do nothing if no analytics provider is configured
-    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Share" action:@"Twitter" label:nil];
+    [[AnalyticsWrapper sharedWrapper] trackGroupAction:@"Twitter Share" label:self.shareURL];
 }
 
 - (void)controllerFailedToTweet:(TwitterViewController *)controller
@@ -157,7 +156,7 @@
 
     // record the attempt.
     // will do nothing if no analytics provider is configured
-    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Share" action:@"Twitter" label:nil];
+    [[AnalyticsWrapper sharedWrapper] trackGroupAction:@"Twitter Share" label:self.shareURL];
 }
 
 #pragma mark -

@@ -54,8 +54,8 @@
         
         CGRect frame = self.view.frame;
         
-        frame.origin.y += newNoteButton.frame.size.height + 15;
-        frame.size.height -= newNoteButton.frame.size.height + 15;
+        frame.origin.y += 44;
+        frame.size.height -= 44;
         
         [self.tableView removeFromSuperview];
         self.tableView = [self addTableViewWithFrame:frame style:style];
@@ -370,13 +370,13 @@
         cell.tableView = self.tableView;
         cell.notesCellType = NotesCellSelected;
 
-        notesTextView = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 500) 
-                                                          titleText:noteTitle
-                                                                   detailText:[Note dateToDisplay:note.date]
-                                                                    noteText:noteText
-                                                                   note: note
-                                                               firstResponder: !firstView
-                                                         dateFont:cell.detailTextLabel.font] autorelease];
+        notesTextView = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 13, 500) 
+                                                    titleText:noteTitle
+                                                   detailText:[Note dateToDisplay:note.date]
+                                                     noteText:noteText
+                                                         note: note
+                                               firstResponder: !firstView
+                                                     dateFont:cell.detailTextLabel.font] autorelease];
         notesTextView.delegate = self;
         cell.detailsView = notesTextView;
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
@@ -415,7 +415,7 @@
     
     if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)) {
         
-        NotesTextView * temp = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 500) 
+        NotesTextView * temp = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 13, 500) 
                                                                     titleText:noteTitle
                                                                    detailText:[Note dateToDisplay:note.date]
                                                                      noteText:noteText

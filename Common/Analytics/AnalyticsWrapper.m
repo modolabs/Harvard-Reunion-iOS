@@ -1,6 +1,9 @@
 #import "AnalyticsWrapper.h"
 #import "KGOAppDelegate.h"
 
+#import "KGOAppDelegate+ModuleAdditions.h"
+#import "ReunionHomeModule.h"
+
 @implementation AnalyticsWrapper
 
 @synthesize provider = _provider;
@@ -12,6 +15,20 @@ static AnalyticsWrapper *s_sharedWrapper = nil;
         s_sharedWrapper = [[AnalyticsWrapper alloc] init];
     }
     return s_sharedWrapper;
+}
+
+- (NSString *)trackingGroup
+{
+    if (!_trackingGroup) {
+        ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
+        _trackingGroup = [[NSString stringWithFormat:@"%dth Reunion", [homeModule reunionNumber]] retain];
+    }
+    return _trackingGroup;
+}
+
+- (void)trackGroupAction:(NSString *)action label:(NSString *)label
+{
+    [self trackEvent:[self trackingGroup] action:action label:label];
 }
 
 - (id)init {

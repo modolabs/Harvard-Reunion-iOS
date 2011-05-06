@@ -69,10 +69,9 @@
                                           toFacebookProfile:self.profile
                                                     message:self.caption
                                                    delegate:self.parentVC];
-    
-    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Facebook"
-                                          action:@"Photo upload"
-                                           label:[NSString stringWithFormat:@"facebook profile id: %@", self.profile]];
+
+    [[AnalyticsWrapper sharedWrapper] trackGroupAction:@"Facebook Upload"
+                                                 label:self.profile];
 }
 
 - (IBAction)captionButtonPressed:(UIButton *)sender {

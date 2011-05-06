@@ -202,7 +202,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     backgroundView.backgroundColor = [UIColor whiteColor];
     backgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        backgroundView.frame = CGRectMake(0, 49, self.view.bounds.size.width, self.view.bounds.size.height - 51);
+        backgroundView.frame = CGRectMake(0, 44, self.view.bounds.size.width, self.view.bounds.size.height - 44);
     }
     [self.view addSubview:backgroundView];
             
@@ -284,13 +284,14 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 }
 */
 
-/*
+
 // Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations.
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-*/
+ - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+ {
+     // Return YES for supported orientations
+     return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+        || (interfaceOrientation == UIInterfaceOrientationPortrait);
+ }
 
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
@@ -377,7 +378,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 		[alert release];
 	}
     
-    [[AnalyticsWrapper sharedWrapper] trackEvent:@"Bump" action:@"Bump" label:nil];
+    [[AnalyticsWrapper sharedWrapper] trackGroupAction:@"Bump" label:nil];
     
     // Start the session over.
     [self setUpBump];    
