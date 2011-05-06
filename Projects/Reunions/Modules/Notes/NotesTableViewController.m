@@ -375,10 +375,9 @@
                                                                    detailText:[Note dateToDisplay:note.date]
                                                                     noteText:noteText
                                                                    note: note
-                                                               firstResponder: !firstView] autorelease];
+                                                               firstResponder: !firstView
+                                                         dateFont:cell.detailTextLabel.font] autorelease];
         notesTextView.delegate = self;
-
-        
         cell.detailsView = notesTextView;
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         
@@ -395,6 +394,7 @@
         
         cell.tableView = self.tableView;
         cell.notesCellType = NotesCellTypeOther;
+        cell.textLabel.font = [UIFont fontWithName:@"Georgia" size:18];
         cell.textLabel.text = noteTitle;
         cell.detailTextLabel.text = [Note dateToDisplay:note.date];
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
@@ -420,7 +420,8 @@
                                                                    detailText:[Note dateToDisplay:note.date]
                                                                      noteText:noteText
                                                                          note: note
-                                                               firstResponder: !firstView] autorelease];
+                                                               firstResponder: !firstView
+                                                                    dateFont:nil] autorelease];
         
         return temp.frame.size.height;
     }

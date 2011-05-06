@@ -37,7 +37,7 @@
 
 @property(nonatomic, assign) UIViewController <NotesTextViewDelegate> *delegate;
 
-- (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) dateText noteText: (NSString *) noteText note:(Note *) savedNote firstResponder:(BOOL) firstResponder;
+- (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) dateText noteText: (NSString *) noteText note:(Note *) savedNote firstResponder:(BOOL) firstResponder dateFont:(UIFont *) font;
 
 -(void) saveNote;
 

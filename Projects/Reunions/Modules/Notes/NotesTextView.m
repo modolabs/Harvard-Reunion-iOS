@@ -20,7 +20,7 @@
 @implementation NotesTextView
 @synthesize delegate;
 
-- (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) dateText noteText: (NSString *) noteText note:(Note *) savedNote firstResponder:(BOOL) firstResponder
+- (id)initWithFrame:(CGRect)frame titleText:(NSString * ) titleText detailText: (NSString *) dateText noteText: (NSString *) noteText note:(Note *) savedNote firstResponder:(BOOL) firstResponder dateFont:(UIFont *) font
 {
     if (frame.size.height < 500)
         frame.size.height = 500;
@@ -30,9 +30,9 @@
     
     self = [super initWithFrame:frame];
     if (self) {
-        UIFont *fontTitle = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
+        UIFont *fontTitle = [UIFont fontWithName:@"Georgia" size:18];//[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
         CGSize titleSize = [titleText sizeWithFont:fontTitle];
-        UILabel * titleTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 5, self.frame.size.width - 130, titleSize.height + 5.0)];
+        UILabel * titleTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 5, self.frame.size.width - 150, titleSize.height + 5.0)];
         titleTextLabel.text = titleText;
         titleTextLabel.font = fontTitle;
         titleTextLabel.numberOfLines = 1;
@@ -40,21 +40,29 @@
         titleTextLabel.textColor = [UIColor blackColor];
         titleTextLabel.backgroundColor = [UIColor clearColor];
         
-        UIFont *fontDetail = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentSubtitle];
-        CGSize detailSize = [dateText sizeWithFont:fontTitle];
-        UILabel * detailTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, titleTextLabel.frame.size.height + 10, self.frame.size.width - 130, detailSize.height + 5.0)];
+        CGSize detailSize;
+        
+        UIFont *fontDetail = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
+        
+        if (nil != font){
+            if (([dateText sizeWithFont:font]).height > 0)
+                fontDetail = font;
+           
+        }
+         detailSize = [dateText sizeWithFont:fontDetail];
+        UILabel * detailTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, titleTextLabel.frame.size.height + 5, self.frame.size.width - 150, detailSize.height + 5.0)];
         detailTextLabel.text = dateText;
         detailTextLabel.font = fontDetail;
         detailTextLabel.numberOfLines = 1;
         detailTextLabel.lineBreakMode = UILineBreakModeTailTruncation;
-        detailTextLabel.textColor = [UIColor blackColor];
+        detailTextLabel.textColor = [UIColor grayColor];
         detailTextLabel.backgroundColor = [UIColor clearColor];
         
         UIImage *printButtonImage = [UIImage imageWithPathName:@"common/unread-message.png"];
         UIImage *shareButtonImage = [UIImage imageWithPathName:@"common/share.png"];
          UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/subheadbar_button.png"];
         
-        CGFloat buttonX = self.frame.size.width - deleteButtonImage.size.width - shareButtonImage.size.width - printButtonImage.size.width - 20;
+        CGFloat buttonX = self.frame.size.width - deleteButtonImage.size.width - shareButtonImage.size.width - printButtonImage.size.width - 27;
         CGFloat buttonY = 5;
         
         printButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
@@ -95,7 +103,7 @@
         if (image){
             sectionDivider = [[UIImageView alloc] initWithImage:[image stretchableImageWithLeftCapWidth:0 topCapHeight:0]];
             sectionDivider.frame = CGRectMake(15, 
-                                              titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 15, 
+                                              titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 10, 
                                               self.frame.size.width, 
                                               4);
             
@@ -106,9 +114,9 @@
         
         if (nil == detailsView) {
             
-            detailsView = [[UITextView alloc] initWithFrame:CGRectMake(0, 
-                                                                       titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 25, 
-                                                                       self.frame.size.width, 
+            detailsView = [[UITextView alloc] initWithFrame:CGRectMake(9, 
+                                                                       titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 15, 
+                                                                       self.frame.size.width - 25, 
                                                                        self.frame.size.height - titleTextLabel.frame.size.height - detailTextLabel.frame.size.height - 25)];
             detailsView.delegate = self;
             detailsView.backgroundColor = [UIColor clearColor];

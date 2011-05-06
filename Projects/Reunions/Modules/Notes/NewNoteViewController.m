@@ -61,32 +61,32 @@
 {
     [super loadView];
     
-    UIFont *fontTitle = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
+    UIFont *fontTitle = [UIFont fontWithName:@"Georgia" size:18];;
     CGSize titleSize = [self.titleText sizeWithFont:fontTitle];
     UILabel * titleTextLabel = [[[UILabel alloc] initWithFrame:CGRectMake(5, 5,
-                                                                          self.width - 130,
+                                                                          self.width - 150,
                                                                           titleSize.height + 5.0)] autorelease];
     titleTextLabel.text = self.titleText;
     titleTextLabel.font = fontTitle;
     titleTextLabel.textColor = [UIColor blackColor];
     titleTextLabel.backgroundColor = [UIColor clearColor];
     
-    UIFont *fontDetail = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentSubtitle];
+    UIFont *fontDetail = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListSubtitle];
     CGSize detailSize = [self.dateText sizeWithFont:fontTitle];
     UILabel * detailTextLabel = [[[UILabel alloc] initWithFrame:CGRectMake(5,
-                                                                           titleTextLabel.frame.size.height + 10,
-                                                                           self.width - 130,
+                                                                           titleTextLabel.frame.size.height + 5,
+                                                                           self.width - 150,
                                                                            detailSize.height + 5.0)] autorelease];
     detailTextLabel.text = self.dateText;
     detailTextLabel.font = fontDetail;
-    detailTextLabel.textColor = [UIColor blackColor];
+    detailTextLabel.textColor = [UIColor grayColor];
     detailTextLabel.backgroundColor = [UIColor clearColor];
     
     UIImage *printButtonImage = [UIImage imageWithPathName:@"common/unread-message.png"];
     UIImage *shareButtonImage = [UIImage imageWithPathName:@"common/share.png"];
     UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/subheadbar_button.png"];
     
-    CGFloat buttonX = self.width - deleteButtonImage.size.width - shareButtonImage.size.width - printButtonImage.size.width - 20;
+    CGFloat buttonX = self.width - deleteButtonImage.size.width - shareButtonImage.size.width - printButtonImage.size.width - 27;
     CGFloat buttonY = 5;
     
     printButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -127,7 +127,7 @@
     if (image){
         sectionDivider = [[UIImageView alloc] initWithImage:[image stretchableImageWithLeftCapWidth:0 topCapHeight:0]];
         sectionDivider.frame = CGRectMake(15, 
-                                          titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 15, 
+                                          titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 10, 
                                           self.width, 
                                           4);
         
@@ -138,9 +138,9 @@
     
     if (nil == textView) {
         
-        textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 
-                                                                titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 25, 
-                                                                self.width, 
+        textView = [[UITextView alloc] initWithFrame:CGRectMake(9, 
+                                                                titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 15, 
+                                                                self.width - 25, 
                                                                 self.height - titleTextLabel.frame.size.height - detailTextLabel.frame.size.height - 25)];
         textView.backgroundColor = [UIColor clearColor];
         

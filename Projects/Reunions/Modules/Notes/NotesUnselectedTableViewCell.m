@@ -1,6 +1,7 @@
 #import "NotesUnselectedTableViewCell.h"
 #import "UIKit+KGOAdditions.h"
 #import <QuartzCore/QuartzCore.h>
+#import "KGOTheme.h"
 
 @implementation NotesUnselectedTableViewCell
 @synthesize tableView;
