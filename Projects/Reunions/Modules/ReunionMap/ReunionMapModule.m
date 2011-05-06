@@ -14,7 +14,7 @@ NSString * const ScheduleTag = @"schedule";
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
     
     if ([pageName isEqualToString:LocalPathPageNameDetail]) {
-        ReunionMapDetailViewController *detailVC = [[[ReunionMapDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+        ReunionMapDetailViewController *detailVC = [[[ReunionMapDetailViewController alloc] init] autorelease];
         
         KGOPlacemark *detailItem = [params objectForKey:@"detailItem"];
         if (detailItem) {

@@ -10,12 +10,13 @@
 #import "Foundation+KGOAdditions.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "CoreDataManager.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation ReunionMapDetailViewController
 
 //@synthesize placemark,
-@synthesize annotation, pager;
-
+@synthesize annotation, pager, tableView = _tableView;
+/*
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -23,6 +24,43 @@
         // Custom initialization
     }
     return self;
+}
+*/
+
+- (void)loadView
+{
+    [super loadView];
+    
+    _currentTableWidth = 0;
+    
+    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+        _scrollView = [[[UIScrollView alloc] initWithFrame:self.view.bounds] autorelease];
+        _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _scrollView.bounces = NO;
+        [_scrollView addSubview:self.tableView];
+        _scrollView.delegate = self;
+        _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, _scrollView.frame.size.height + 1);
+        _scrollView.showsVerticalScrollIndicator = NO;
+        _scrollView.showsHorizontalScrollIndicator = NO;
+        
+        CGRect frame = self.tableView.frame;
+        frame.origin.y = 500;
+        self.tableView.frame = frame;
+        self.tableView.layer.cornerRadius = 5;
+        self.tableView.backgroundColor = [UIColor whiteColor];
+        self.tableView.scrollEnabled = NO;
+        
+        [self.view addSubview:_scrollView];
+        [_scrollView addSubview:self.tableView];
+
+    } else {
+        [self.view addSubview:self.tableView];
+    }
 }
 
 - (void)dealloc
@@ -237,6 +275,24 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+- (void)updateScrollView
+{
+    NSInteger count = [self numberOfSectionsInTableView:self.tableView];
+    CGFloat height = 0;
+    CGFloat lastOriginY = 0;
+    for (NSInteger i = 0; i < count; i++) {
+        CGRect rect = [self.tableView rectForSection:i];
+        height += rect.origin.y - lastOriginY;
+        height += rect.size.height;
+    }
+    _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, 500 + height);
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    [self updateScrollView];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -249,6 +305,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (_currentTableWidth && _currentTableWidth != tableView.frame.size.width) {
+        [self loadDetailSection];
+    }
+    _currentTableWidth = tableView.frame.size.width;
+    
     return 1;
 }
 
@@ -297,7 +358,14 @@
             
             CGFloat y = _thumbView.frame.origin.y + _thumbView.frame.size.height;
             if (y > 11) {
-                _webView.frame = CGRectMake(10, y + 10, _webView.frame.size.width, _webView.frame.size.height);
+                CGFloat desiredWebViewWidth = tableView.frame.size.width - 40;
+                CGFloat actualWebViewWidth = _webView.frame.size.width;
+                _webView.frame = CGRectMake(10, y + 10, desiredWebViewWidth, _webView.frame.size.height);
+                if (actualWebViewWidth != desiredWebViewWidth) {
+                    NSDictionary *replacements = [NSDictionary dictionaryWithObjectsAndKeys:_placemarkInfo, @"BODY", nil];
+                    NSString *string = [_htmlTemplate stringWithReplacements:replacements];
+                    [_webView loadHTMLString:string baseURL:nil];
+                }
             }
         }
 
