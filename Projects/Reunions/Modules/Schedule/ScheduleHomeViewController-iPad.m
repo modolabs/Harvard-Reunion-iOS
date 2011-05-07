@@ -22,8 +22,8 @@
 
 @interface ScheduleHomeViewController_iPad (Private)
 
-- (UIView *)mapContainerViewForCellType:(ScheduleCellType)cellType;
-- (ScheduleDetailTableView *)tableViewForCellType:(ScheduleCellType)cellType;
+- (UIView *)mapContainerViewForCell:(ScheduleTabletTableViewCell *)cell;
+- (ScheduleDetailTableView *)tableViewForCell:(ScheduleTabletTableViewCell *)cell;
 
 @end
 
@@ -247,7 +247,7 @@
             isAfterSelected = YES;
         }
 
-        NSString *sectionHeaderCellID = [NSString stringWithFormat:@"Header%@%@", isFirst ? @"1" : @"0", isAfterSelected ? @"1" : @"0"];
+        NSString *sectionHeaderCellID = [NSString stringWithFormat:@"Header_%@%@", isFirst ? @"1" : @"0", isAfterSelected ? @"1" : @"0"];
         ScheduleTabletSectionHeaderCell *cell = (ScheduleTabletSectionHeaderCell *)[tableView dequeueReusableCellWithIdentifier:sectionHeaderCellID];
         
         if (!cell) {
@@ -264,17 +264,17 @@
         return cell;
     }
     
-    ScheduleCellType cellType = ScheduleCellTypeOther;
-    
-    if (indexPath.row == _selectedRow) {
-        cellType = ScheduleCellSelected;
-        
-    } else if (indexPath.row == _cellData.count - 1) {
-        cellType = ScheduleCellLastInTable;
-    }
-    
+    BOOL isLast = NO;
+    BOOL isSelected = NO;
     BOOL isFirstInSection = NO;
     BOOL isAfterSelected = NO;
+
+    if (indexPath.row == _selectedRow) {
+        isSelected = YES;
+    } 
+    if (indexPath.row == _cellData.count - 1) {
+        isLast = YES;
+    }
     if (indexPath.row > 0) {
         id previousCellData = [_cellData objectAtIndex:indexPath.row - 1];
         isFirstInSection = [previousCellData isKindOfClass:[NSString class]];
@@ -283,7 +283,7 @@
         }
     }
     
-    NSString *cellIdentifier = [NSString stringWithFormat:@"%d.%@%@", cellType, isFirstInSection ? @"1" : @"0", isAfterSelected ? @"1" : @"0"];
+    NSString *cellIdentifier = [NSString stringWithFormat:@"Cell_%@%@%@", isLast ? @"1" : @"0", isSelected ? @"1" : @"0", isFirstInSection ? @"1" : @"0", isAfterSelected ? @"1" : @"0"];
     ScheduleTabletTableViewCell *cell = (ScheduleTabletTableViewCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     
     if (!cell) {
@@ -291,13 +291,14 @@
                                                    reuseIdentifier:cellIdentifier] autorelease];
     }
     
+    cell.isLast = isLast;
+    cell.isSelected = isSelected;
     cell.isFirstInSection = isFirstInSection;
     cell.isAfterSelected = isAfterSelected;
     cell.parentViewController = self;
     
     ScheduleEventWrapper *event = [_cellData objectAtIndex:indexPath.row];
     
-    cell.scheduleCellType = cellType;
     cell.event = event;
     
     cell.textLabel.text = event.title;
@@ -308,7 +309,7 @@
         cell.bookmarkView.hidden = NO;
         image = [UIImage imageWithPathName:@"common/bookmark-ribbon-on"];
         
-    } else if (cellType == ScheduleCellSelected) {
+    } else if (cell.isSelected) {
         cell.bookmarkView.hidden = NO;
         image = [UIImage imageWithPathName:@"common/bookmark-ribbon-off"];
         
@@ -320,15 +321,15 @@
         [cell.bookmarkView setImage:image forState:UIControlStateNormal];
     }
     
-    cell.notesButton.hidden = (cellType != ScheduleCellSelected && ![event note]);
+    cell.notesButton.hidden = (!cell.isSelected && ![event note]);
     
-    if (cellType == ScheduleCellLastInTable || cellType == ScheduleCellSelected) {
-        ScheduleDetailTableView *tableView = [self tableViewForCellType:cellType];
+    if (cell.isLast || cell.isSelected) {
+        ScheduleDetailTableView *tableView = [self tableViewForCell:cell];
         tableView.event = event;
         [cell.contentView addSubview:tableView];
         
-        UIView *mapContainerView = [self mapContainerViewForCellType:cellType];
-        MKMapView *mapView = (MKMapView *)[mapContainerView viewWithTag:(cellType == ScheduleCellSelected) ? SELECTED_MAP_TAG : LAST_MAP_TAG];
+        UIView *mapContainerView = [self mapContainerViewForCell:cell];
+        MKMapView *mapView = (MKMapView *)[mapContainerView viewWithTag:(cell.isSelected) ? SELECTED_MAP_TAG : LAST_MAP_TAG];
         
         if (event.coordinate.latitude) {
             // we only need to check one assuming there will not
@@ -359,11 +360,11 @@
     return cell;
 }
 
-- (ScheduleDetailTableView *)tableViewForCellType:(ScheduleCellType)cellType
+- (ScheduleDetailTableView *)tableViewForCell:(ScheduleTabletTableViewCell *)cell
 {
     ScheduleDetailTableView *tableView = nil;
     BOOL needsInitialize = NO;
-    if (cellType == ScheduleCellSelected) {
+    if (cell.isSelected) {
         if (!_tableViewForSelectedCell) {
             CGFloat width = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
             UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
@@ -376,7 +377,7 @@
         }
         tableView = _tableViewForSelectedCell;
 
-    } else if (cellType == ScheduleCellLastInTable) {
+    } else if (cell.isLast) {
         if (!_tableViewForLastCell) {
             CGFloat width = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
             UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
@@ -404,11 +405,11 @@
 }
 
 
-- (UIView *)mapContainerViewForCellType:(ScheduleCellType)cellType
+- (UIView *)mapContainerViewForCell:(ScheduleTabletTableViewCell *)cell
 {
     MKMapView *mapView = nil;
     UIView *containerView = nil;
-    if (cellType == ScheduleCellSelected) {
+    if (cell.isSelected) {
         if (!_mapViewForSelectedCell) {
             CGFloat width = MAP_WIDTH_PORTRAIT;
             CGFloat x = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
@@ -425,7 +426,7 @@
         containerView = _mapContainerViewForSelectedCell;
         mapView = _mapViewForSelectedCell;
         
-    } else if (cellType == ScheduleCellLastInTable) {
+    } else if (cell.isLast) {
         if (!_mapViewForLastCell) {
             CGFloat width = MAP_WIDTH_PORTRAIT;
             CGFloat x = SCHEDULE_DETAIL_WIDTH_PORTRAIT;

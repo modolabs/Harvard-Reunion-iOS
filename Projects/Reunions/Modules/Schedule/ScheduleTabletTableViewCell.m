@@ -112,7 +112,7 @@
     
     [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
 
-    if (self.scheduleCellType == ScheduleCellLastInTable || self.scheduleCellType == ScheduleCellSelected) {
+    if (self.isLast || self.isSelected) {
         // activate bookmark view
         if ([self.event isRegistered]) { // must always be bookmarked
             [_bookmarkView addTarget:self action:@selector(refuseToRemoveBookmark:) forControlEvents:UIControlEventTouchUpInside];
@@ -212,7 +212,7 @@
     // draw our own cell
     CGContextBeginPath(context);
     
-    if (self.scheduleCellType == ScheduleCellSelected) {
+    if (self.isSelected) {
         CGFloat components[4] = { 1, 1, 1, 1 };
         CGContextSetFillColor(context, components);
     } else if (self.highlighted) {
@@ -223,7 +223,7 @@
         CGContextSetFillColor(context, components);
     }
     
-    if (self.scheduleCellType == ScheduleCellLastInTable) {
+    if (self.isLast) {
         // draw rounded corners on four sides
         CGContextMoveToPoint(context, minx, midy);
         CGContextAddArcToPoint(context, minx, miny, midx, miny, radius);
@@ -243,7 +243,7 @@
     CGContextClip(context);
     CGContextFillRect(context, rect);
     
-    if (self.scheduleCellType == ScheduleCellLastInTable) {
+    if (self.isLast) {
         // stroke entire border
         CGContextMoveToPoint(context, minx, midy);
         CGContextAddArcToPoint(context, minx, miny, midx, miny, radius);
@@ -275,15 +275,29 @@
     return _notesButton;
 }
 
-- (ScheduleCellType)scheduleCellType
+- (BOOL)isLast
 {
-    return _scheduleCellType;
+    return _isLast;
 }
 
-- (void)setScheduleCellType:(ScheduleCellType)scheduleCellType
+- (void)setIsLast:(BOOL)isLast
 {
-    if (scheduleCellType != _scheduleCellType) {
-        _scheduleCellType = scheduleCellType;
+    if (isLast != _isLast) {
+        _isLast = isLast;
+        
+        [self setNeedsLayout];
+    }
+}
+
+- (BOOL)isSelected
+{
+    return _isSelected;
+}
+
+- (void)setIsSelected:(BOOL)isSelected
+{
+    if (isSelected != _isSelected) {
+        _isSelected = isSelected;
         
         [self setNeedsLayout];
     }
