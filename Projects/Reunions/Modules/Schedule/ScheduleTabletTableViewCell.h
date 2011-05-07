@@ -1,12 +1,6 @@
 #import <UIKit/UIKit.h>
 #import "NewNoteViewController.h"
 
-typedef enum {
-    ScheduleCellTypeOther,
-    ScheduleCellLastInTable,
-    ScheduleCellSelected
-} ScheduleCellType;
-
 @class ScheduleEventWrapper;
 
 @interface ScheduleTabletTableViewCell : UITableViewCell <UIAlertViewDelegate, NotesModalViewDelegate> {
@@ -16,13 +10,16 @@ typedef enum {
     UIButton *_bookmarkView;
     UIButton *_notesButton;
     
-    ScheduleCellType _scheduleCellType;
+    BOOL _isLast;
+    BOOL _isSelected;
+    
     NewNoteViewController *_noteViewController;
 
 }
 
 @property (nonatomic, retain) ScheduleEventWrapper *event;
-@property ScheduleCellType scheduleCellType;
+@property BOOL isLast;
+@property BOOL isSelected;
 @property (nonatomic, readonly) UIButton *bookmarkView;
 @property (nonatomic, readonly) UIButton *notesButton;
 @property (nonatomic) BOOL isFirstInSection;
