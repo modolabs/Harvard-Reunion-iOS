@@ -10,6 +10,7 @@
 #import "MITThumbnailView.h"
 #import "KGOHomeScreenViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import "FacebookModule.h"
 
 #define TWITTER_BUTTON_WIDTH_IPHONE 120
 #define TWITTER_BUTTON_HEIGHT_IPHONE 51
@@ -185,14 +186,23 @@
         if (!_lastUpdate || [_lastUpdate compare:date] == NSOrderedAscending) {
             [_lastUpdate release];
             _lastUpdate = [date retain];
-            self.chatBubble.hidden = NO;
-            self.chatBubbleTitleLabel.text = title;
-            self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:@"%@ %@", user, [date agoString]];
-            self.chatBubbleThumbnail.imageURL = imageURL;
-            [self.chatBubbleThumbnail loadImage];
-            [[NSNotificationCenter defaultCenter] postNotificationName:TwitterStatusDidUpdateNotification object:nil];
+            
+            FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+            if (![fbModule lastFeedUpdate] || [_lastUpdate compare:[fbModule lastFeedUpdate]] == NSOrderedDescending) {            
+                self.chatBubble.hidden = NO;
+                self.chatBubbleTitleLabel.text = title;
+                self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:@"%@ %@", user, [date agoString]];
+                self.chatBubbleThumbnail.imageURL = imageURL;
+                [self.chatBubbleThumbnail loadImage];
+                [[NSNotificationCenter defaultCenter] postNotificationName:TwitterStatusDidUpdateNotification object:nil];
+            }
         }
     }
+}
+
+- (NSDate *)lastFeedUpdate
+{
+    return _lastUpdate;
 }
 
 - (void)twitterSearch:(TwitterSearch *)twitterSearch didFailWithError:(NSError *)error {

@@ -1,5 +1,9 @@
 #import "MicroblogModule.h"
 
+
+extern NSString * const OldDesktopGroupURL;
+extern NSString * const NewDesktopGroupURL;
+
 extern NSString * const FacebookGroupReceivedNotification;
 extern NSString * const FacebookFeedDidUpdateNotification;
 

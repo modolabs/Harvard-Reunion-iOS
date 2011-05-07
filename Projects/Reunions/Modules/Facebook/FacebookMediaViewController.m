@@ -10,11 +10,6 @@
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "ReunionHomeModule.h"
 
-NSString * const OldDesktopGroupURL = @"http://www.facebook.com/group.php?gid=";
-NSString * const NewDesktopGroupURL = @"http://www.facebook.com/home.php?sk=group_";
-//NSString * const OLD_MOBILE_GROUP_URL = @"http://m.facebook.com/group.php?gid=";
-//NSString * const NEW_MOBILE_GROUP_URL = @"http://m.facebook.com/home.php?sk=group_";
-
 @implementation FacebookMediaViewController
 
 @synthesize scrollView = _scrollView;

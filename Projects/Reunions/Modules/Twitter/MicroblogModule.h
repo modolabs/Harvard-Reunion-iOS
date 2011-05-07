@@ -31,6 +31,8 @@ extern NSString * const TwitterStatusDidUpdateNotification;
 - (void)hideModalFeedController:(id)sender;
 - (void)willShowModalFeedController;
 
+- (NSDate *)lastFeedUpdate;
+
 @property(nonatomic, retain) UIImage *buttonImage;
 @property(nonatomic, retain) NSString *labelText;
 

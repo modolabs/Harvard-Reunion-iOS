@@ -4,6 +4,7 @@
 #import "KGOSidebarFrameViewController.h"
 #import "ReunionHomeViewController.h"
 #import "ReunionSidebarFrameViewController.h"
+#import "CoreDataManager.h"
 
 NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
 
@@ -30,11 +31,11 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
 - (NSDictionary *)homeScreenConfig
 {
     if (!_homeScreenConfig) {
-        _homeScreenConfig = [[[NSUserDefaults standardUserDefaults] objectForKey:HomeScreenConfigPrefKey] retain];
-        if (!_homeScreenConfig) {
+        //_homeScreenConfig = [[[NSUserDefaults standardUserDefaults] objectForKey:HomeScreenConfigPrefKey] retain];
+        //if (!_homeScreenConfig) {
             _request = [[KGORequestManager sharedManager] requestWithDelegate:self module:@"home" path:@"config" params:nil];
             [_request connect];
-        }
+        //}
     }
     return _homeScreenConfig;
 }
@@ -75,8 +76,15 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
 {
     NSLog(@"received home config: %@", result);
     
+    NSString *reunionYear = [[[self reunionYear] copy] autorelease];
+    
     [_homeScreenConfig release];
     _homeScreenConfig = [result retain];
+    
+    NSString *newReunionYear = [self reunionYear];
+    if (reunionYear && ![reunionYear isEqualToString:newReunionYear]) {
+        [[CoreDataManager sharedManager] deleteStore];
+    }
     
     // TODO: only save to defaults if we have persistent logins
     //[[NSUserDefaults standardUserDefaults] setObject:result forKey:HomeScreenConfigPrefKey];

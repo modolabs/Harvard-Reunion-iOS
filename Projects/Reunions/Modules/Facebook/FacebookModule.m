@@ -9,8 +9,12 @@
 #import "ReunionHomeModule.h"
 #import "FacebookFeedViewController.h"
 #import "KGORequestManager.h"
+#import "TwitterModule.h"
 
 #define FACEBOOK_STATUS_POLL_FREQUENCY 60
+
+NSString * const OldDesktopGroupURL = @"http://www.facebook.com/group.php?gid=";
+NSString * const NewDesktopGroupURL = @"http://www.facebook.com/home.php?sk=group_";
 
 static NSString * const FacebookGroupIsMemberKey = @"FacebookGroupMember";
 
@@ -211,21 +215,25 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
                     lastUpdate = [FacebookModule dateFromRFC3339DateTimeString:dateString];
                 }
                 
-                // TODO: if we confirm that this is later than the twitter update, hide twitter's chatbubble
                 if (lastUpdate && [lastUpdate compare:_lastMessageDate] == NSOrderedDescending) {
                     [_lastMessageDate release];
                     _lastMessageDate = [lastUpdate retain];
-
-                    self.chatBubble.hidden = NO;
-                    self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:
-                                                         @"%@ %@", user.name,
-                                                         [_lastMessageDate agoString]];
-                    self.chatBubbleThumbnail.imageData = nil;
-                    self.chatBubbleThumbnail.imageURL = [[KGOSocialMediaController facebookService] imageURLForGraphObject:user.identifier];
-                    [self.chatBubbleThumbnail loadImage];
-                    self.chatBubbleTitleLabel.text = message;
                     
-                    [[NSNotificationCenter defaultCenter] postNotificationName:FacebookStatusDidUpdateNotification object:nil];
+                    TwitterModule *twitterModule = (TwitterModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"twitter"];
+                    if (![twitterModule lastFeedUpdate]
+                        || [_lastMessageDate compare:[twitterModule lastFeedUpdate]] == NSOrderedDescending
+                    ) {
+                        self.chatBubble.hidden = NO;
+                        self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:
+                                                             @"%@ %@", user.name,
+                                                             [_lastMessageDate agoString]];
+                        self.chatBubbleThumbnail.imageData = nil;
+                        self.chatBubbleThumbnail.imageURL = [[KGOSocialMediaController facebookService] imageURLForGraphObject:user.identifier];
+                        [self.chatBubbleThumbnail loadImage];
+                        self.chatBubbleTitleLabel.text = message;
+                        
+                        [[NSNotificationCenter defaultCenter] postNotificationName:FacebookStatusDidUpdateNotification object:nil];
+                    }
 
                     break;
                 }
@@ -234,6 +242,11 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
         
         [[NSNotificationCenter defaultCenter] postNotificationName:FacebookFeedDidUpdateNotification object:self];
     }
+}
+
+- (NSDate *)lastFeedUpdate
+{
+    return _lastMessageDate;
 }
 
 #pragma mark -
