@@ -152,6 +152,9 @@
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
     [super setHighlighted:highlighted animated:animated];
+    
+    if (self.isSelected)
+        return;
 
     if (highlighted) {
         self.textLabel.textColor = [UIColor whiteColor];
