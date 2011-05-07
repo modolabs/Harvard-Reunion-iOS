@@ -89,7 +89,9 @@
         [_placemarkInfoRequest cancel];
     }
 
+    _webView.delegate = nil;
     [_webView release];
+    _thumbView.delegate = nil;
     [_thumbView release];
     [_htmlTemplate release];
     [_placemarkInfo release];
