@@ -61,8 +61,8 @@
 {
     [super loadView];
     
-    UIImage *shareButtonImage = [UIImage imageWithPathName:@"common/share.png"];
-    UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/delete.png"];
+    UIImage *shareButtonImage = [UIImage imageWithPathName:@"modules/notes/share.png"];
+    UIImage *deleteButtonImage = [UIImage imageWithPathName:@"modules/notes/delete.png"];
     
     CGFloat buttonX = self.width - deleteButtonImage.size.width - shareButtonImage.size.width - 20;
     CGFloat buttonY = 10;
