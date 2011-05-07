@@ -38,7 +38,6 @@ NSString * const NewsTagBody            = @"body";
 
 @synthesize storiesRequest;
 @synthesize searchRequests;
-@synthesize firstSearchResultReceived;
 
 + (NewsDataManager *)sharedManager {
 	static NewsDataManager *s_sharedManager = nil;
@@ -157,7 +156,6 @@ NSString * const NewsTagBody            = @"body";
             aCategory.nextSeekId = [NSNumber numberWithInt:0];
             [newCategories addObject:aCategory];
         }
-        [[CoreDataManager sharedManager] saveData];
         
         
         return REQUEST_CATEGORIES_CHANGED;
@@ -297,7 +295,6 @@ NSString * const NewsTagBody            = @"body";
         safeCategoryObject.moreStories = [resultDict objectForKey:@"moreStories"];
         safeCategoryObject.nextSeekId = [NSNumber numberWithInt:(start + limit)];
         safeCategoryObject.lastUpdated = [NSDate date];
-        [[CoreDataManager sharedManager] saveData];
         return [stories count];
     } copy] autorelease];
     
@@ -314,7 +311,15 @@ NSString * const NewsTagBody            = @"body";
     for (KGORequest *request in self.searchRequests) {
         [request cancel];
     }
-    self.firstSearchResultReceived = NO;
+    // remove all old search results
+    for (NewsStory *story in [self fetchLatestSearchResultsFromCoreData]) {
+        if(![story.bookmarked boolValue] && ([story.categories count] == 0)) {
+            [[CoreDataManager sharedManager] deleteObject:story];
+        } else {
+            story.searchResult = [NSNumber numberWithInt:0];
+        }
+    }
+    [[CoreDataManager sharedManager] saveData];
     self.searchRequests = [NSMutableSet setWithCapacity:1];
     
     NSArray *categories = [self fetchCategoriesFromCoreData];
@@ -329,27 +334,12 @@ NSString * const NewsTagBody            = @"body";
                                                                           params:params];
         request.expectedResponseType = [NSArray class];
         request.handler = [[^(id stories) {
-        
-            if(!self.firstSearchResultReceived) {
-                NSLog(@"for categoryID=%@ and first=%i", [params objectForKey:@"categoryID"], self.firstSearchResultReceived);
-                
-                // remove all old search results
-                for (NewsStory *story in [self fetchLatestSearchResultsFromCoreData]) {
-                    if(![story.bookmarked boolValue] && ([story.categories count] == 0)) {
-                        [[CoreDataManager sharedManager] deleteObject:story];
-                    } else {
-                        story.searchResult = [NSNumber numberWithInt:0];
-                    }
-                }
-                self.firstSearchResultReceived = YES;
-            } 
             
             for (NSDictionary *storyDict in stories) {
                 NewsStory *story =[self storyWithDictionary:storyDict]; 
                 story.searchResult = [NSNumber numberWithInt:1];
             }
         
-            [[CoreDataManager sharedManager] saveData];
             return [stories count];
         } copy] autorelease];                               
         

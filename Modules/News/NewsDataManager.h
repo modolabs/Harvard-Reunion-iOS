@@ -51,6 +51,5 @@ typedef NSString* NewsCategoryId;
 
 @property (nonatomic, retain) KGORequest *storiesRequest;
 @property (nonatomic, retain) NSMutableSet *searchRequests;
-@property (assign) BOOL firstSearchResultReceived;
 
 @end
