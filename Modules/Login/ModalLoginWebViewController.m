@@ -48,6 +48,11 @@
 {
     if ([[KGORequestManager sharedManager] isUserLoggedIn]) {
         [self.parentViewController dismissModalViewControllerAnimated:YES];
+        
+        [self.parentViewController performSelector:@selector(dismissModalViewControllerAnimated:)
+                                        withObject:nil
+                                        afterDelay:1];
+
     } else {
         [super webView:webView didFailLoadWithError:error];
     }

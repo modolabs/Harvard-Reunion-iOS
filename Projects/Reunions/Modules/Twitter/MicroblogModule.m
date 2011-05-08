@@ -8,6 +8,7 @@
 #import "MITThumbnailView.h"
 #import "Foundation+KGOAdditions.h"
 #import <QuartzCore/QuartzCore.h>
+#import "ReunionSidebarFrameViewController.h"
 
 // dimensions
 #define BUTTON_WIDTH_IPHONE 122
@@ -289,6 +290,11 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 {
 }
 
+- (NSDate *)lastFeedUpdate
+{
+    return nil;
+}
+
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params
 {
     UIViewController *vc = nil;
@@ -316,27 +322,35 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
                                                                                                  action:@selector(hideModalFeedController:)] autorelease];
         
         CGRect frame = self.chatBubble.frame;
-        frame.size.height -= 15;
+        //frame.size.height -= 15;
+        frame.size.height += 2; // cheat to make frame line up with bubble
         _modalFeedController.view.frame = frame;
         
-        feedVC.view.layer.cornerRadius = 6;
         _modalFeedController.view.layer.cornerRadius = 6;
+        _modalFeedController.view.clipsToBounds = YES;
         
         CGRect screenFrame = [(KGOHomeScreenViewController *)homescreen springboardFrame];
         CGFloat bottom = frame.origin.y + frame.size.height;
         CGFloat top = 48;
-        frame = CGRectMake(10, top, screenFrame.size.width - 20, bottom - top);
+        frame = CGRectMake(8,
+                           top,
+                           screenFrame.size.width - 8 * 2,
+                           bottom - top);
         
         _scrim = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenFrame.size.width, screenFrame.size.height)];
+        _scrim.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _scrim.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
         _scrim.alpha = 0;
+        
+        _scrim.tag = FEED_VIEW_CONTROLLER_SCRIM_TAG;
+        _modalFeedController.view.tag = FEED_VIEW_CONTROLLER_TAG;
         
         [homescreen.view addSubview:_scrim];
         [homescreen.view addSubview:_modalFeedController.view];
         
         // remove this temporarily to avoid animation artifacts
-        UIBarButtonItem *item = feedVC.navigationItem.rightBarButtonItem;
-        feedVC.navigationItem.rightBarButtonItem = nil;
+        //UIBarButtonItem *item = feedVC.navigationItem.rightBarButtonItem;
+        //feedVC.navigationItem.rightBarButtonItem = nil;
         
         __block UIViewController *blockFeedVC = feedVC;
         [UIView animateWithDuration:0.4 animations:^(void) {
@@ -344,7 +358,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
             _scrim.alpha = 1;
             
         } completion:^(BOOL finished) {
-            blockFeedVC.navigationItem.rightBarButtonItem = item;
+            //blockFeedVC.navigationItem.rightBarButtonItem = item;
             blockFeedVC.navigationItem.title = [self feedViewControllerTitle];
         }];
     }
@@ -359,7 +373,8 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 - (void)hideModalFeedController:(id)sender
 {
     CGRect frame = self.chatBubble.frame;
-    frame.size.height -= 15;
+    //frame.size.height -= 15;
+    frame.size.height += 2; // cheat to make frame line up with bubble
     
     [UIView animateWithDuration:0.4 animations:^(void) {
         _modalFeedController.view.frame = frame;

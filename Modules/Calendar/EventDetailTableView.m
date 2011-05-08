@@ -315,7 +315,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-    if ([cellData isKindOfClass:[NSDictionary class]]) {    
+    if ([cellData isKindOfClass:[NSDictionary class]]) {
         NSString *accessory = [cellData objectForKey:@"accessory"];
         NSURL *url = nil;
         NSString *urlString = [cellData objectForKey:@"url"];
@@ -325,22 +325,22 @@
         
         if (url && [[UIApplication sharedApplication] canOpenURL:url]) {
             [[UIApplication sharedApplication] openURL:url];
-            [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
         } else if ([accessory isEqualToString:KGOAccessoryTypeEmail]) {
-            if ([self.viewController isKindOfClass:[CalendarDetailViewController class]]) {
-                CalendarDetailViewController *detailVC = (CalendarDetailViewController *)self.viewController;
-                [detailVC presentMailControllerWithEmail:[cellData objectForKey:@"subtitle"]
-                                                 subject:nil
-                                                    body:nil
-                                                delegate:self];
-            }
+            [self.viewController presentMailControllerWithEmail:[cellData objectForKey:@"subtitle"]
+                                                        subject:nil
+                                                           body:nil
+                                                       delegate:self];
             
         } else if ([accessory isEqualToString:KGOAccessoryTypeMap]) {
             NSArray *annotations = [NSArray arrayWithObject:_event];
             NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:annotations, @"annotations", nil];
             [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome forModuleTag:MapTag params:params];
         }
+
+        // strangely the cell stays selected with only the first row...
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
     }
 }
 

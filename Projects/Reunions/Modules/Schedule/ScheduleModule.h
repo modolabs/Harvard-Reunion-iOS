@@ -4,6 +4,6 @@
     
 }
 
-- (void)didLogout:(NSNotification *)aNotification;
+- (void)refreshDataManager:(NSNotification *)aNotification;
 
 @end

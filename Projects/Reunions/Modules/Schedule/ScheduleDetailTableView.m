@@ -194,7 +194,7 @@
             title = [NSString stringWithFormat:@"You%@ are here", othersString, nil];
             
         } else {
-            title = @"foursquare checkin";
+            title = @"foursquare check-in";
         }
     }
     

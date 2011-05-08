@@ -30,8 +30,8 @@
     
     self = [super initWithFrame:frame];
     if (self) {
-        UIImage *shareButtonImage = [UIImage imageWithPathName:@"common/share.png"];
-        UIImage *deleteButtonImage = [UIImage imageWithPathName:@"common/delete.png"];
+        UIImage *shareButtonImage = [UIImage imageWithPathName:@"modules/notes/share.png"];
+        UIImage *deleteButtonImage = [UIImage imageWithPathName:@"modules/notes/delete.png"];
         
         CGFloat buttonX = self.frame.size.width - deleteButtonImage.size.width - shareButtonImage.size.width - 20;
         CGFloat buttonY = 10;
@@ -67,7 +67,7 @@
         UIButton * shareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
         shareButton.frame = CGRectMake(buttonX, buttonY, shareButtonImage.size.width, shareButtonImage.size.height);
         [shareButton setImage:shareButtonImage forState:UIControlStateNormal];
-        [shareButton setImage:[UIImage imageWithPathName:@"common/share_pressed.png"] forState:UIControlStateHighlighted];
+        [shareButton setImage:[UIImage imageWithPathName:@"modules/notes/share_pressed.png"] forState:UIControlStateHighlighted];
 
         [shareButton addTarget:self action:@selector(shareButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         
@@ -77,7 +77,7 @@
         UIButton * deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
         deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
         [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
-        [deleteButton setImage:[UIImage imageWithPathName:@"common/delete_pressed.png"] forState:UIControlStateHighlighted];
+        [deleteButton setImage:[UIImage imageWithPathName:@"modules/notes/delete_pressed.png"] forState:UIControlStateHighlighted];
         
         [deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         

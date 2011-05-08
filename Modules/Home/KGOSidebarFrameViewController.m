@@ -92,7 +92,7 @@
                               _container.frame.size.height - 44);
     
     _detailViewController.view.frame = frame;
-    _detailViewController.view.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
+    _detailViewController.view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin;
 
     [self.view addSubview:_detailViewController.view];
     
@@ -234,7 +234,19 @@
 
 - (CGRect)springboardFrame
 {
-    return self.view.frame;
+    CGFloat currentWidth = self.view.bounds.size.width;
+    CGFloat currentHeight = self.view.bounds.size.height;
+
+    CGFloat longerDimension = fmaxf(currentWidth, currentHeight);
+    CGFloat shorterDimension = fminf(currentWidth, currentHeight);
+    
+    if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation)) {
+        return CGRectMake(0, 0, shorterDimension, longerDimension);
+    } else if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+        return CGRectMake(0, 0, longerDimension, shorterDimension);
+    }
+    
+    return self.view.bounds;
 }
 
 - (void)highlightIconForModule:(KGOModule *)module
@@ -265,22 +277,6 @@
 - (void)buttonPressed:(id)sender {
     [super buttonPressed:sender];
     [self highlightIcon:sender];
-    /*
-    SpringboardIcon *anIcon = (SpringboardIcon *)sender;
-    
-    UIFont *font = [self moduleLabelFontLarge];
-    NSString *boldName = [NSString stringWithFormat:@"%@-Bold", [font fontName]];
-    UIFont *boldFont = [UIFont fontWithName:boldName size:[font pointSize]];
-    if (boldFont) {
-        anIcon.titleLabel.font = boldFont;
-    }
-    
-    for (UIView *aView in [_sidebar subviews]) {
-        if (aView != sender && [aView isKindOfClass:[SpringboardIcon class]]) {
-            [(SpringboardIcon *)aView titleLabel].font = font;
-        }
-    }
-     */
 }
 
 - (void)viewDidUnload

@@ -45,6 +45,8 @@ FacebookMediaSegmentIndexes;
 - (void)refreshMyMedia; // used to indicate that facebook has returned the current user id info
 - (void)refreshMedia;
 
+- (void)setupLoginStatusStrings;
+
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) KGOToolbar *subheadToolbar;
 

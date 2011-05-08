@@ -33,36 +33,53 @@
 
 #pragma mark - View lifecycle
 
+#define TITLE_LABEL_TAG 304
+
+- (void)updateTableViewHeader
+{
+    UILabel *label = nil;
+    UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
+    CGFloat width = self.tableView.frame.size.width - 20;
+    CGSize size = [self.eventTitle sizeWithFont:font
+                              constrainedToSize:CGSizeMake(width, font.lineHeight * 4)
+                                  lineBreakMode:UILineBreakModeTailTruncation];
+    
+    if (!self.tableView.tableHeaderView) {
+        UIColor *labelColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
+        if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+            labelColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySectionHeader];
+        }
+        
+        label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 10, width, size.height)] autorelease];
+        label.tag = TITLE_LABEL_TAG;
+        label.text = self.eventTitle;
+        label.font = font;
+        label.numberOfLines = 4;
+        label.lineBreakMode = UILineBreakModeTailTruncation;
+        label.textColor = labelColor;
+        label.backgroundColor = [UIColor clearColor];
+        
+        UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, label.frame.size.height + 20)] autorelease];
+        view.backgroundColor = [UIColor clearColor];
+        [view addSubview:label];
+        
+        self.tableView.tableHeaderView = view;       
+    } else {
+        label = (UILabel *)[self.tableView.tableHeaderView viewWithTag:TITLE_LABEL_TAG];
+        label.frame = CGRectMake(10, 10, width, size.height);
+        self.tableView.tableHeaderView.frame = CGRectMake(0, 0, self.tableView.frame.size.width, label.frame.size.height + 20);
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    CGFloat width = self.tableView.frame.size.width - 20;
-    UIColor *labelColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
-    CGFloat y = 0;
     if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
-        y = 50;
-        labelColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertySectionHeader];
+        CGRect frame = self.tableView.frame;
+        frame.origin.y = 44;
+        self.tableView.frame = frame;
     }
-    
-    UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
-    CGSize size = [self.eventTitle sizeWithFont:font
-                              constrainedToSize:CGSizeMake(width, font.lineHeight * 4)
-                                  lineBreakMode:UILineBreakModeTailTruncation];
-    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 10 + y, width, size.height)] autorelease];
-    label.text = self.eventTitle;
-    label.font = font;
-    label.numberOfLines = 4;
-    label.lineBreakMode = UILineBreakModeTailTruncation;
-    label.textColor = labelColor;
-    label.backgroundColor = [UIColor clearColor];
-    
-    UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, label.frame.size.height + 20 + y)] autorelease];
-    
-    [view addSubview:label];
-
-    self.tableView.autoresizesSubviews = YES;
-    self.tableView.tableHeaderView = view;
     
     [[[KGOSocialMediaController foursquareService] foursquareEngine] checkUserStatusForVenue:self.venue
                                                                                     delegate:self];
@@ -80,6 +97,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    [self updateTableViewHeader];
     [super viewDidAppear:animated];
 }
 
@@ -106,14 +124,17 @@
 - (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
         // navigation bar is fake, just stick it in the header view
-        UIButton *button = (UIButton *)[self.tableView.tableHeaderView viewWithTag:201];
+        UIButton *button = (UIButton *)[self.view viewWithTag:201];
         if (button) {
             // reposition button now that header frame has resized
             CGRect frame = button.frame;
-            frame.origin.x = self.tableView.tableHeaderView.frame.size.width - frame.size.width - 10;
+            frame.origin.x = self.view.frame.size.width - frame.size.width - 10;
             button.frame = frame;
 
         }
+        
+        [self.tableView reloadData];
+        [self updateTableViewHeader];
     }
 }
 
@@ -141,7 +162,7 @@
     
     if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
         // navigation bar is fake, just stick it in the header view
-        UIButton *button = (UIButton *)[self.tableView.tableHeaderView viewWithTag:201];
+        UIButton *button = (UIButton *)[self.view viewWithTag:201];
         
         if (!self.isCheckedIn) {
             if (!button) {
@@ -161,7 +182,7 @@
                 NSString *title = NSLocalizedString(@"Check in Here", nil);
                 CGSize size = [title sizeWithFont:button.titleLabel.font];
                 CGRect frame = CGRectMake(0, 7, size.width + 20, image.size.height);
-                frame.origin.x = self.tableView.tableHeaderView.frame.size.width - frame.size.width - 10;
+                frame.origin.x = self.view.bounds.size.width - frame.size.width - 10;
                 button.frame = frame;
                 [button setTitle:title forState:UIControlStateNormal];
                 
@@ -169,7 +190,7 @@
                            action:@selector(showCheckinDialog:)
                  forControlEvents:UIControlEventTouchUpInside];
                 
-                [self.tableView.tableHeaderView addSubview:button];
+                [self.view addSubview:button];
             }
         } else if (button) {
             [button removeFromSuperview];
@@ -321,6 +342,15 @@
     if (self.checkinMessage) {
         if (section == 0) {
             CGFloat width = tableView.frame.size.width - 40;
+            if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+                UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
+                if (UIInterfaceOrientationIsPortrait(homescreen.interfaceOrientation)) {
+                    width -= 52;
+                } else {
+                    width -= 66;
+                }
+            }
+            
             UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
             UILabel *label = [UILabel multilineLabelWithText:self.checkinMessage
                                                         font:font
@@ -329,6 +359,7 @@
             frame.origin.x = 10;
             frame.origin.y = 10;
             label.frame = frame;
+            label.backgroundColor = [UIColor clearColor];
 
             return [NSArray arrayWithObject:label];
         }
@@ -366,6 +397,15 @@
 
     
     CGFloat width = tableView.frame.size.width - thumb.frame.size.width - 75; // padding and accessory
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+        UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
+        if (UIInterfaceOrientationIsPortrait(homescreen.interfaceOrientation)) {
+            width -= 52;
+        } else {
+            width -= 66;
+        }
+    }
+    
     UIFont *titleFont = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyNavListTitle];
     UILabel *titleLabel = [UILabel multilineLabelWithText:title
                                                      font:titleFont

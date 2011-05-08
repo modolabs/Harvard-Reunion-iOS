@@ -170,6 +170,7 @@
         _tableViews = [[NSMutableArray alloc] initWithObjects:_currentTableView, nil];
 		_currentContentBuffer = [NSMutableDictionary dictionary];
 		_cellContentBuffers = [[NSMutableArray alloc] initWithObjects:_currentContentBuffer, nil];
+        _currentTableWidth = 0;
         
         _lastCachedRow = _lastCachedSection = 0;
 	}
@@ -186,6 +187,7 @@
 		_cellContentBuffers = [[NSMutableArray alloc] init];
 		_currentContentBuffer = nil;
 		_currentTableView = nil;
+        _currentTableWidth = 0;
 
         _lastCachedRow = _lastCachedSection = 0;
 	}
@@ -202,6 +204,7 @@
 		_cellContentBuffers = [[NSMutableArray alloc] init];
 		_currentContentBuffer = nil;
 		_currentTableView = nil;
+        _currentTableWidth = 0;
 
         _lastCachedRow = _lastCachedSection = 0;
     }
@@ -607,6 +610,14 @@
 */
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    // UITableView will call this early on since it needs heights for the whole
+    // table before it can start drawing, so we put this check here
+    CGFloat width = tableView.frame.size.width;
+    if (_currentTableWidth && width != _currentTableWidth) {
+        [self decacheTableView:tableView];
+    }
+    _currentTableWidth = width;
+    
     CGFloat height = 0;
     
     id<KGOTableViewDataSource> dataSource = [self dataSourceForTableView:tableView];

@@ -86,6 +86,7 @@ typedef void (^CellManipulator)(UITableViewCell *);
 	NSMutableArray *_cellContentBuffers;
 	
 	UITableView *_currentTableView;
+    CGFloat _currentTableWidth; // decache when width changes
     NSMutableDictionary *_currentContentBuffer;
     
     NSInteger _lastCachedSection;

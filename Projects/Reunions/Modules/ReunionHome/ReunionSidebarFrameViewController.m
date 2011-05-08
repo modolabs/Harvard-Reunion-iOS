@@ -156,6 +156,16 @@
     
     [self.view bringSubviewToFront:self.container];
     [self.view bringSubviewToFront:self.detailViewController.view];
+    
+    UIView *scrim = [self.view viewWithTag:FEED_VIEW_CONTROLLER_SCRIM_TAG];
+    if (scrim) {
+        [self.view bringSubviewToFront:scrim];
+    }
+    
+    UIView *feedView = [self.view viewWithTag:FEED_VIEW_CONTROLLER_TAG];
+    if (feedView) {
+        [self.view bringSubviewToFront:feedView];
+    }
 }
 
 @end
