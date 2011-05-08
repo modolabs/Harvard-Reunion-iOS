@@ -1,5 +1,6 @@
 
 #import "NewsDataManager.h"
+#import "NewsDataManager+Protected.h"
 #import "CoreDataManager.h"
 
 #define REQUEST_CATEGORIES_CHANGED 1
@@ -25,7 +26,6 @@ NSString * const NewsTagBody            = @"body";
 
 @interface NewsDataManager (Private)
 
-- (NSArray *)fetchCategoriesFromCoreData;
 - (NewsCategory *)fetchCategoryFromCoreData:(NewsCategoryId)categoryID;
 - (void)updateCategoriesFromNetwork;
 - (void)loadStoriesFromServerForCategory:(NewsCategory *)category loadMore:(BOOL)loadMore;
@@ -322,7 +322,7 @@ NSString * const NewsTagBody            = @"body";
     [[CoreDataManager sharedManager] saveData];
     self.searchRequests = [NSMutableSet setWithCapacity:1];
     
-    NSArray *categories = [self fetchCategoriesFromCoreData];
+    NSArray *categories = [self searchableCategories];
     for(NewsCategory *category in categories) {
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
         [params setObject:searchTerms forKey:@"q"];
@@ -349,6 +349,10 @@ NSString * const NewsTagBody            = @"body";
     }
 }
     
+- (NSArray *)searchableCategories {
+    return [self fetchCategoriesFromCoreData];
+}
+
 - (NSArray *)fetchLatestSearchResultsFromCoreData {
     NSPredicate *predicate = nil;
     NSSortDescriptor *relevanceSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"searchResult" ascending:YES];

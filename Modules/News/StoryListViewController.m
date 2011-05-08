@@ -44,6 +44,7 @@
 
 @implementation StoryListViewController
 
+@synthesize dataManager;
 @synthesize stories;
 @synthesize categories;
 @synthesize activeCategoryId;
@@ -86,14 +87,14 @@
 
     [self setupActivityIndicator];
     
-    [[NewsDataManager sharedManager] registerDelegate:self];
-    [[NewsDataManager sharedManager] requestCategories];
+    [self.dataManager registerDelegate:self];
+    [self.dataManager requestCategories];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 	if (showingBookmarks) {
-		self.stories = [[NewsDataManager sharedManager] bookmarkedStories];
+		self.stories = [self.dataManager bookmarkedStories];
         
         // we might want to do something special if all bookmarks are gone
         // but i am skeptical
@@ -195,7 +196,7 @@
     [self setupNavScroller];
 
     // now that we have categories load the stories
-    [[NewsDataManager sharedManager] requestStoriesForCategory:self.activeCategoryId loadMore:NO forceRefresh:NO]; 
+    [self.dataManager requestStoriesForCategory:self.activeCategoryId loadMore:NO forceRefresh:NO]; 
 }
 
 #pragma mark -
@@ -382,19 +383,19 @@
 		showingBookmarks = NO;
         
         // makes request to server if no request has been made this session
-        [[NewsDataManager sharedManager] requestStoriesForCategory:self.activeCategoryId loadMore:NO forceRefresh:NO];
+        [self.dataManager requestStoriesForCategory:self.activeCategoryId loadMore:NO forceRefresh:NO];
     }
 }
 
 - (void)switchToBookmarks {
-    self.stories = [[NewsDataManager sharedManager] bookmarkedStories];
+    self.stories = [self.dataManager bookmarkedStories];
     showingBookmarks = YES;
     [self reloadDataForTableView:storyTable];
 }
 
 - (void)refresh:(id)sender {    
     if (!showingBookmarks) {
-        [[NewsDataManager sharedManager] requestStoriesForCategory:self.activeCategoryId loadMore:NO forceRefresh:YES];
+        [self.dataManager requestStoriesForCategory:self.activeCategoryId loadMore:NO forceRefresh:YES];
         return;
     }
 }
@@ -483,7 +484,7 @@
             n = self.stories.count;
             
             if(!showingBookmarks) {
-                NSInteger moreStories = [[NewsDataManager sharedManager] loadMoreStoriesQuantityForCategoryId:activeCategoryId];
+                NSInteger moreStories = [self.dataManager loadMoreStoriesQuantityForCategoryId:activeCategoryId];
                 // don't show "load x more" row if
                 if (moreStories > 0 ) { // category has more stories
                     n += 1; // + 1 for the "Load more articles..." row
@@ -497,13 +498,13 @@
 - (CellManipulator)tableView:(UITableView *)tableView manipulatorForCellAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == self.stories.count) {
 
-        NSInteger loadMoreQuantity = [[NewsDataManager sharedManager] loadMoreStoriesQuantityForCategoryId:self.activeCategoryId];
+        NSInteger loadMoreQuantity = [self.dataManager loadMoreStoriesQuantityForCategoryId:self.activeCategoryId];
 
         NSString *title = [NSString stringWithFormat:@"Load %d more articles...", loadMoreQuantity];
         UIColor *textColor;
         
         //
-        if (![[NewsDataManager sharedManager] busy]) { // disable when a load is already in progress
+        if (![self.dataManager busy]) { // disable when a load is already in progress
             textColor = [UIColor colorWithHexString:@"#1A1611"]; // enable
         } else {
             textColor = [UIColor colorWithHexString:@"#999999"]; // disable
@@ -629,13 +630,13 @@
 }
 
 - (void)thumbnail:(MITThumbnailView *)thumbnail didLoadData:(NSData *)data {
-    [[NewsDataManager sharedManager] saveImageData:data url:thumbnail.imageURL];
+    [self.dataManager saveImageData:data url:thumbnail.imageURL];
 }
 
 - (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	if(indexPath.row == self.stories.count) {
-        if(![[NewsDataManager sharedManager] busy]) {
-            [[NewsDataManager sharedManager] requestStoriesForCategory:self.activeCategoryId loadMore:YES forceRefresh:NO];
+        if(![self.dataManager busy]) {
+            [self.dataManager requestStoriesForCategory:self.activeCategoryId loadMore:YES forceRefresh:NO];
         }
 	} else {
         //if (self.featuredStory != nil  // we have a featured story

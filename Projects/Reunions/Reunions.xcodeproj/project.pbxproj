@@ -15,6 +15,8 @@
 		3A82708D103DAA2400BB4109 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A82708C103DAA2400BB4109 /* SystemConfiguration.framework */; };
 		3AA219501039D74700DB7637 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA2194F1039D74700DB7637 /* CoreData.framework */; };
 		4463CCB210D6F5750048CA83 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4463CCB110D6F5750048CA83 /* CoreLocation.framework */; };
+		4B0BD5101374C1FC008745BE /* ReunionNewsModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B0BD50F1374C1FC008745BE /* ReunionNewsModule.m */; };
+		4B0BD51A1374C3B7008745BE /* ReunionNewsDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B0BD5191374C3B7008745BE /* ReunionNewsDataManager.m */; };
 		4B1153CB135243D40097DAD9 /* MediaContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B1153CA135243D40097DAD9 /* MediaContainerView.m */; };
 		4B5B40B31350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B5B40B21350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib */; };
 		4BD36E0A134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BD36E09134FF128001F5BB5 /* FacebookMediaViewController-iPad.xib */; };
@@ -298,6 +300,11 @@
 		3A82708C103DAA2400BB4109 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = ../../../../../System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SOURCE_ROOT; };
 		3AA2194F1039D74700DB7637 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		4463CCB110D6F5750048CA83 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		4B0BD50E1374C1F1008745BE /* ReunionNewsModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReunionNewsModule.h; path = ReunionNews/ReunionNewsModule.h; sourceTree = "<group>"; };
+		4B0BD50F1374C1FC008745BE /* ReunionNewsModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ReunionNewsModule.m; path = ReunionNews/ReunionNewsModule.m; sourceTree = "<group>"; };
+		4B0BD5111374C36A008745BE /* ReunionNewsDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReunionNewsDataManager.h; path = ReunionNews/ReunionNewsDataManager.h; sourceTree = "<group>"; };
+		4B0BD5191374C3B7008745BE /* ReunionNewsDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ReunionNewsDataManager.m; path = ReunionNews/ReunionNewsDataManager.m; sourceTree = "<group>"; };
+		4B0BD51B13774053008745BE /* NewsDataManager+Protected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NewsDataManager+Protected.h"; sourceTree = "<group>"; };
 		4B1153C9135243D40097DAD9 /* MediaContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaContainerView.h; sourceTree = "<group>"; };
 		4B1153CA135243D40097DAD9 /* MediaContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaContainerView.m; sourceTree = "<group>"; };
 		4B5B40B21350232F00BF70E1 /* FacebookMediaDetailViewController-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "FacebookMediaDetailViewController-iPad.xib"; sourceTree = "<group>"; };
@@ -813,6 +820,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		4B0BD50D1374C1B0008745BE /* ReunionNews */ = {
+			isa = PBXGroup;
+			children = (
+				4B0BD5191374C3B7008745BE /* ReunionNewsDataManager.m */,
+				4B0BD5111374C36A008745BE /* ReunionNewsDataManager.h */,
+				4B0BD50F1374C1FC008745BE /* ReunionNewsModule.m */,
+				4B0BD50E1374C1F1008745BE /* ReunionNewsModule.h */,
+			);
+			name = ReunionNews;
+			sourceTree = "<group>";
+		};
 		566BEA7F13654404008520DF /* Notes */ = {
 			isa = PBXGroup;
 			children = (
@@ -894,6 +912,7 @@
 				EB46A155134CBFBA005796E4 /* ReunionHome */,
 				EB46A14E134CB1F6005796E4 /* Attendees */,
 				EB469E7E134B6F5D005796E4 /* ReunionMap */,
+				4B0BD50D1374C1B0008745BE /* ReunionNews */,
 				EBE2CCC11344C8920037546A /* Foursquare */,
 				EB9DDFF613416C5000598644 /* Schedule */,
 				EB03390B1340E47B00ACF2BB /* Calendar */,
@@ -1021,6 +1040,7 @@
 				EB03393C1340E47D00ACF2BB /* Model */,
 				EB0339451340E47D00ACF2BB /* NewsDataManager.h */,
 				EB0339461340E47D00ACF2BB /* NewsDataManager.m */,
+				4B0BD51B13774053008745BE /* NewsDataManager+Protected.h */,
 				EB0339471340E47D00ACF2BB /* NewsModule.h */,
 				EB0339481340E47D00ACF2BB /* NewsModule.m */,
 				EB0339491340E47D00ACF2BB /* StoryDetailViewController.h */,
@@ -2000,6 +2020,8 @@
 				EB163928136B7E3B003C69E2 /* ReunionMapDetailHeaderView.m in Sources */,
 				A1D5187F136DE8B6009ADBB5 /* FoursquareAddCheckinViewController.m in Sources */,
 				EBE725EA13722745009C5769 /* ReunionMapHomeViewController.m in Sources */,
+				4B0BD5101374C1FC008745BE /* ReunionNewsModule.m in Sources */,
+				4B0BD51A1374C3B7008745BE /* ReunionNewsDataManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

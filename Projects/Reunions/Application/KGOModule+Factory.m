@@ -8,7 +8,7 @@
 #import "FacebookModule.h"
 #import "FoursquareModule.h"
 #import	"ReunionMapModule.h"
-#import "NewsModule.h"
+#import "ReunionNewsModule.h"
 #import "PeopleModule.h"
 #import "PhotosModule.h"
 #import "ReunionHomeModule.h"
@@ -74,7 +74,7 @@
         module = [[[ReunionMapModule alloc] initWithDictionary:args] autorelease];
     
     else if ([className isEqualToString:@"NewsModule"])
-        module = [[[NewsModule alloc] initWithDictionary:args] autorelease];
+        module = [[[ReunionNewsModule alloc] initWithDictionary:args] autorelease];
     
     else if ([className isEqualToString:@"PeopleModule"])
         module = [[[PeopleModule alloc] initWithDictionary:args] autorelease];
