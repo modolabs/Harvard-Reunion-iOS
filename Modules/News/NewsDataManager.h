@@ -35,6 +35,8 @@ typedef NSString* NewsCategoryId;
 
 - (void) search:(NSString *)searchTerms;
 
+- (NSArray *)searchableCategories;
+
 - (void)registerDelegate:(id<NewsDataDelegate>)delegate;
 
 - (void)unregisterDelegate:(id<NewsDataDelegate>)delegate;

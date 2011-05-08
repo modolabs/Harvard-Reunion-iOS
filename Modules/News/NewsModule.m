@@ -66,8 +66,8 @@
     
     self.searchDelegate = delegate;
     
-    [[NewsDataManager sharedManager] registerDelegate:self];
-    [[NewsDataManager sharedManager] search:searchText];
+    [self.dataManager registerDelegate:self];
+    [self.dataManager search:searchText];
 }
 
 - (void) searchResults:(NSArray *)results forSearchTerms:(NSString *)searchTerms {
