@@ -153,6 +153,7 @@
 
 - (BOOL)registrationRequired
 {
+    NSLog(@"%@", self.userInfo);
     return [self.userInfo boolForKey:@"registrationRequired"];
 }
 

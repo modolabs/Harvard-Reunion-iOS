@@ -140,9 +140,13 @@
     }
 
     if (!_notesButton.hidden) {
-        // leave room for notes/bookmark icons
+        // leave room for notes icons
         textLabelFrame.size.width = self.frame.size.width - 150;
         detailLabelFrame.size.width = self.frame.size.width - 150;
+    } else if (!_bookmarkView.hidden) {
+        // leave room for bookmark icons
+        textLabelFrame.size.width = self.frame.size.width - 90;
+        detailLabelFrame.size.width = self.frame.size.width - 90;
     }
     
     self.textLabel.frame = textLabelFrame;

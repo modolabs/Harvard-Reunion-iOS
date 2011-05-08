@@ -144,7 +144,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 
         _chatBubbleTitleLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
         _chatBubbleTitleLabel.numberOfLines = 0;
-        _chatBubbleTitleLabel.text = NSLocalizedString(@"Loading...", nil);
+        _chatBubbleTitleLabel.text = NSLocalizedString(@"No updates found.", nil);
         _chatBubbleTitleLabel.font = [UIFont systemFontOfSize:13];
         _chatBubbleTitleLabel.backgroundColor = [UIColor clearColor];
         [_chatBubble addSubview:_chatBubbleTitleLabel];
