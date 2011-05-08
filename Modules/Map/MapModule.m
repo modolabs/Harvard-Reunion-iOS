@@ -207,12 +207,8 @@ NSString * const MapTypePreferenceChanged = @"MapTypeChanged";
         }
         
         KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
-        
         UIViewController *topVC = [appDelegate visibleViewController];
-        if (topVC.modalViewController) {
-            [topVC dismissModalViewControllerAnimated:YES];
-        }
-        
+
         KGONavigationStyle navStyle = [appDelegate navigationStyle];
         if (navStyle == KGONavigationStyleTabletSidebar) {
             KGOSidebarFrameViewController *homescreen = (KGOSidebarFrameViewController *)[appDelegate homescreen];
