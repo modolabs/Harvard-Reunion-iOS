@@ -163,6 +163,10 @@ NSString * const ScheduleTag = @"schedule";
                     ScheduleEventWrapper *event = [[[ScheduleEventWrapper alloc] initWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:placemark.identifier, @"id", nil]] autorelease];
                     event.coordinate = placemark.coordinate;
                     event.title = placemark.title;
+                    NSInteger start = [aResult integerForKey:@"start"];
+                    if (start) {
+                        event.startDate = [NSDate dateWithTimeIntervalSince1970:start];
+                    }
                     [event saveToCoreData];
                     [searchResults addObject:event];
                 } else {
