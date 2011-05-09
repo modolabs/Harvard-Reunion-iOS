@@ -57,6 +57,7 @@ connectionIdentifier:(NSString *)theIdentifier requestType:(MGTwitterRequestType
 
 - (void)dealloc
 {
+    [dateFormatter release];
     [parser release];
     [parsedObjects release];
     [xml release];
@@ -112,11 +113,12 @@ connectionIdentifier:(NSString *)theIdentifier requestType:(MGTwitterRequestType
     } else if ([elementName isEqualToString:@"created_at"]) {
        // Change date-string into an NSDate.
 		// NSLog(@"%@", [currentNode objectForKey:elementName]);
-		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-		[dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
-		dateFormatter.dateFormat = @"EEE MMM dd HH:mm:ss +0000 yyyy";
+        if (!dateFormatter) {
+            dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
+            dateFormatter.dateFormat = @"EEE MMM dd HH:mm:ss +0000 yyyy";
+        }
 		NSDate *creationDate = [dateFormatter dateFromString:[currentNode objectForKey:elementName]];
-		[dateFormatter release];
         if (creationDate) {
             [currentNode setObject:creationDate forKey:elementName];
         }

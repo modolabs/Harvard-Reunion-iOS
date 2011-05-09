@@ -19,6 +19,7 @@
     NSXMLParser *parser;
     __weak NSMutableDictionary *currentNode;
     NSString *lastOpenedElement;
+    NSDateFormatter *dateFormatter;
 }
 
 + (id)parserWithXML:(NSData *)theXML delegate:(NSObject *)theDelegate 
