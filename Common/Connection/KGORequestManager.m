@@ -4,6 +4,7 @@
 #import "CoreDataManager.h"
 #import "Reachability.h"
 #import "KGOModule.h"
+#import "ReunionHomeModule.h" // TODO: remove from kurogo
 
 NSString * const HelloRequestDidCompleteNotification = @"HelloDidComplete";
 NSString * const HelloRequestDidFailNotification = @"HelloDidFail";
@@ -94,19 +95,23 @@ NSString * const KGODidLogoutNotification = @"LogoutComplete";
     
 	NSString *title = nil;
 	NSString *message = nil;
+    BOOL canRetry = NO;
 	
 	switch ([error code]) {
 		case KGORequestErrorBadRequest: case KGORequestErrorUnreachable:
 			title = NSLocalizedString(@"Connection Failed", nil);
 			message = NSLocalizedString(@"Could not connect to server. Please try again later.", nil);
+            canRetry = YES;
 			break;
 		case KGORequestErrorDeviceOffline:
 			title = NSLocalizedString(@"Connection Failed", nil);
 			message = NSLocalizedString(@"Please check your Internet connection and try again.", nil);
+            canRetry = YES;
 			break;
 		case KGORequestErrorTimeout:
 			title = NSLocalizedString(@"Connection Timed Out", nil);
 			message = NSLocalizedString(@"Server is taking too long to respond. Please try again later.", nil);
+            canRetry = YES;
 			break;
 		case KGORequestErrorForbidden:
 			title = NSLocalizedString(@"Unauthorized Request", nil);
@@ -122,6 +127,7 @@ NSString * const KGODidLogoutNotification = @"LogoutComplete";
 		case KGORequestErrorBadResponse: case KGORequestErrorOther:
 			title = NSLocalizedString(@"Connection Failed", nil);
 			message = NSLocalizedString(@"Problem connecting to server. Please try again later.", nil);
+            canRetry = YES;
 			break;
 		case KGORequestErrorServerMessage:
 			title = [[error userInfo] objectForKey:@"title"];
@@ -138,11 +144,16 @@ NSString * const KGODidLogoutNotification = @"LogoutComplete";
             _retryRequest = [request retain];
         }
         
+        NSString *retryOption = nil;
+        if (canRetry) {
+            retryOption = NSLocalizedString(@"Retry", nil);
+        }
+        
 		UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:title
                                                              message:message
                                                             delegate:delegate
                                                    cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
-                                                   otherButtonTitles:NSLocalizedString(@"Retry", nil), nil] autorelease];
+                                                   otherButtonTitles:retryOption, nil] autorelease];
 		[alertView show];
 	}
 }
@@ -164,6 +175,18 @@ NSString * const KGODeviceTokenKey = @"KGODeviceToken";
 
 - (void)registerNewDeviceToken
 {
+    // TODO: reunion stuff, does not go into kurogo
+    ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
+    if (![homeModule reunionYear]) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:KGODidLoginNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(registerNewDeviceToken)
+                                                     name:KGODidLoginNotification
+                                                   object:nil];
+        return;
+    }
+    // end of reunion stuff
+    
     if (!self.devicePushToken) {
         DLog(@"cannot register nil device token");
         return;
@@ -191,6 +214,7 @@ NSString * const KGODeviceTokenKey = @"KGODeviceToken";
                   self.devicePushPassKey, @"pass_key",
                   @"ios", @"platform",
                   hex, @"device_token",
+                  [homeModule reunionYear], @"year", // TODO: remove for kurogo
                   nil];
         
         // TODO: do something safer than hard coding "push" as the module tag
@@ -203,6 +227,7 @@ NSString * const KGODeviceTokenKey = @"KGODeviceToken";
         params = [NSDictionary dictionaryWithObjectsAndKeys:
                   @"ios", @"platform",
                   hex, @"device_token",
+                  [homeModule reunionYear], @"year", // TODO: remove for kurogo
                   nil];
         
         // TODO: do something safer than hard coding "push" as the module tag
@@ -420,6 +445,7 @@ NSString * const KGODeviceTokenKey = @"KGODeviceToken";
         // make more sense.
         NSString *title = [userInfo stringForKey:@"title" nilIfEmpty:YES];
         if ([title isEqualToString:@"Unauthorized"] && ![self isUserLoggedIn]) {
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:KGODidLoginNotification object:nil];
             [[NSNotificationCenter defaultCenter] addObserver:self
                                                      selector:@selector(registerNewDeviceToken)
                                                          name:KGODidLoginNotification

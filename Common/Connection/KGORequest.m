@@ -120,6 +120,7 @@ NSString * const KGORequestErrorDomain = @"com.modolabs.KGORequest.ErrorDomain";
         [_connection cancel];
         [_connection release];
         _connection = nil;
+        [KGO_SHARED_APP_DELEGATE() hideNetworkActivityIndicator];
         [self release];
     }
 }
@@ -127,8 +128,12 @@ NSString * const KGORequestErrorDomain = @"com.modolabs.KGORequest.ErrorDomain";
 - (void)dealloc {
 	self.delegate = nil;
 	[_data release];
-	[_connection cancel];
-	[_connection release];
+    if (_connection) {
+        DLog(@"Warning: KGORequest is not retained but has a connection reference. This should never happen.");
+        [_connection cancel];
+        [_connection release];
+        [KGO_SHARED_APP_DELEGATE() hideNetworkActivityIndicator];
+    }
 	self.url = nil;
 	self.module = nil;
 	self.path = nil;
@@ -293,6 +298,12 @@ NSString * const KGORequestErrorDomain = @"com.modolabs.KGORequest.ErrorDomain";
 }
 
 - (void)terminateWithErrorCode:(KGORequestErrorCode)errCode userInfo:(NSDictionary *)userInfo {
+    if (self.url) {
+        NSMutableDictionary *mutableUserInfo = [[userInfo mutableCopy] autorelease];
+        [mutableUserInfo setObject:[self.url absoluteString] forKey:@"url"];
+        userInfo = [NSDictionary dictionaryWithDictionary:mutableUserInfo];
+    }
+    
 	NSError *kgoError = [NSError errorWithDomain:KGORequestErrorDomain code:errCode userInfo:userInfo];
 	if ([self.delegate respondsToSelector:@selector(request:didFailWithError:)]) {
 		[self.delegate request:self didFailWithError:kgoError];
