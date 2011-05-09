@@ -93,10 +93,6 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 }
 
 - (void)startPollingStatusUpdates {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(hideChatBubble:)
-                                                 name:TwitterStatusDidUpdateNotification
-                                               object:nil];
     
     if (!_statusPoller) {
         NSLog(@"scheduling timer...");
@@ -276,6 +272,11 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
         } else {
             self.chatBubbleCaratOffset = 0.25;
         }
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(hideChatBubble:)
+                                                     name:TwitterStatusDidUpdateNotification
+                                                   object:nil];
     }
     return self;
 }

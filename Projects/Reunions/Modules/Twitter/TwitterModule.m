@@ -58,6 +58,11 @@
         } else {
             self.chatBubbleCaratOffset = 0.75;
         }
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(hideChatBubble:)
+                                                     name:FacebookStatusDidUpdateNotification
+                                                   object:nil];
     }
     return self;
 }
@@ -124,11 +129,6 @@
 - (void)startPollingStatusUpdates
 {
     [[KGOSocialMediaController twitterService] startup];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(hideChatBubble:)
-                                                 name:FacebookStatusDidUpdateNotification
-                                               object:nil];
     
     if (!_twitterSearch) {
          // avoid warning about ConnectionWrapper which has the same signature
