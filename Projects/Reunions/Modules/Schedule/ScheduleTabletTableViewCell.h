@@ -26,10 +26,9 @@
 @property (nonatomic) BOOL isAfterSelected;
 @property (nonatomic, assign) UIViewController *parentViewController;
 
-- (void)addBookmark:(id)sender;
+- (void)addBookmark;
 - (void)attemptToAddBookmark:(id)sender;
-- (void)removeBookmark:(id)sender;
-- (void)refuseToRemoveBookmark:(id)sender;
+- (void)attemptToRemoveBookmark:(id)sender;
 
 - (void)noteButtonPressed:(id)sender;
 

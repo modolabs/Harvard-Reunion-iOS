@@ -43,52 +43,53 @@
     return self;
 }
 
-- (void)addBookmark:(id)sender;
+- (void)addBookmark;
 {
     [self.event addBookmark];
     [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-on"] forState:UIControlStateNormal];
     [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-    [_bookmarkView addTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
+    [_bookmarkView addTarget:self action:@selector(attemptToRemoveBookmark:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)attemptToAddBookmark:(id)sender
 {
-    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
-                                                         message:@"Bookmarking this event will only add it to your personal schedule.  You will still need to register for it to attend."
-                                                        delegate:self
-                                               cancelButtonTitle:@"OK"
-                                               otherButtonTitles:nil] autorelease];
-    alertView.tag = BOOKMARK_OK_ALERTVIEW;
-    [alertView show];
+    if ([self.event registrationRequired]) {
+        UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
+                                                             message:@"Bookmarking this event will only add it to your personal schedule.  You will still need to register for it to attend."
+                                                            delegate:self
+                                                   cancelButtonTitle:@"OK"
+                                                   otherButtonTitles:nil] autorelease];
+        alertView.tag = BOOKMARK_OK_ALERTVIEW;
+        [alertView show];
+        
+    } else {
+        [self addBookmark];
+    }
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag == BOOKMARK_OK_ALERTVIEW) {
-        [self addBookmark:nil];
+        [self addBookmark];
     }
 }
 
-- (void)removeBookmark:(id)sender
-{
-    [self.event removeBookmark];
-    [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-off"] forState:UIControlStateNormal];
-    [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-    if ([self.event registrationRequired]) {
-        [_bookmarkView addTarget:self action:@selector(attemptToAddBookmark:) forControlEvents:UIControlEventTouchUpInside];
+- (void)attemptToRemoveBookmark:(id)sender
+    {
+    if ([self.event isRegistered]) {
+        UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
+                                                             message:@"Events you have registered for cannot be removed from your schedule."
+                                                            delegate:nil
+                                                   cancelButtonTitle:@"OK"
+                                                   otherButtonTitles:nil] autorelease];
+        [alertView show];
+        
     } else {
-        [_bookmarkView addTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
+        [self.event removeBookmark];
+        [_bookmarkView setImage:[UIImage imageWithPathName:@"common/bookmark-ribbon-off"] forState:UIControlStateNormal];
+        [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+        [_bookmarkView addTarget:self action:@selector(attemptToAddBookmark:) forControlEvents:UIControlEventTouchUpInside];
     }
-}
-
-- (void)refuseToRemoveBookmark:(id)sender
-{
-    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
-                                                         message:@"Events you have registered for cannot be removed from your schedule."
-                                                        delegate:nil
-                                               cancelButtonTitle:@"OK"
-                                               otherButtonTitles:nil] autorelease];
-    [alertView show];
 }
 
 - (void)layoutSubviews
@@ -114,22 +115,18 @@
 
     if (self.isLast || self.isSelected) {
         // activate bookmark view
-        if ([self.event isRegistered]) { // must always be bookmarked
-            [_bookmarkView addTarget:self action:@selector(refuseToRemoveBookmark:) forControlEvents:UIControlEventTouchUpInside];
+        if ([self.event isRegistered] || [self.event isBookmarked]) { // bookmarked or registered (handler checks)
+            [_bookmarkView addTarget:self action:@selector(attemptToRemoveBookmark:) forControlEvents:UIControlEventTouchUpInside];
             
-        } else if ([self.event isBookmarked]) {
-            [_bookmarkView addTarget:self action:@selector(removeBookmark:) forControlEvents:UIControlEventTouchUpInside];
-            
-        } else if ([self.event registrationRequired]) { // not bookmarked, registration required
+        } else { // not bookmarked (handler checks registration)
             [_bookmarkView addTarget:self action:@selector(attemptToAddBookmark:) forControlEvents:UIControlEventTouchUpInside];
-            
-        } else { // not bookmarked, no registration
-            [_bookmarkView addTarget:self action:@selector(addBookmark:) forControlEvents:UIControlEventTouchUpInside];
         }
-        
+                
         ScheduleDetailTableView *tableView = (ScheduleDetailTableView *)[self.contentView viewWithTag:TABLE_TAG];
         [tableView flashScrollIndicators];
     }
+    _bookmarkView.userInteractionEnabled = self.isSelected;
+    _notesButton.userInteractionEnabled = self.isSelected;
     
     // activate note view
     if ([self.event note]) {
