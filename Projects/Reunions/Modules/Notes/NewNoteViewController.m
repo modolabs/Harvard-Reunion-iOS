@@ -153,11 +153,6 @@
     
 }
 
-- (void)textViewDidChange:(UITextView *)aTextView
-{
-    self.navigationItem.leftBarButtonItem.enabled = (textView.text.length == 0);
-}
-
 -(NSString *) textViewString {
     return textView.text;
 }
