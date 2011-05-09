@@ -463,20 +463,18 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger section = indexPath.section;
-    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
     if (_foursquareVenue) {
-        if (section == 0) {
-            [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        if (indexPath.section == 0) {
             [self foursquareButtonPressed:nil];
             return;
         }
-        section--;
+        indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section - 1];
     }
 
-    id cellData = [[_sections objectAtIndex:section] objectAtIndex:indexPath.row];
+    id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     if ([cellData isKindOfClass:[NSDictionary class]]) {
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
         
         NSString *accessory = [cellData objectForKey:@"accessory"];
         if ([accessory isEqualToString:KGOAccessoryTypeChevron]) {
