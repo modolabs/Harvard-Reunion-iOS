@@ -129,6 +129,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 - (void)requestGroupOrStartPolling {
     _lastMessageDate = [[NSDate distantPast] retain];
+    _memberOfFBGroupKnown = NO;
     if (!_gid || ![self isMemberOfFBGroup]) {
         if (!_requestingGroups) {
             _requestingGroups = [[KGOSocialMediaController facebookService] requestFacebookGraphPath:@"me/groups"
@@ -173,18 +174,20 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     //BOOL foundGroup = NO;
     DLog(@"%@", data);
     
+    
     for (id aGroup in data) {
         // TODO: get group names from server
         if ([[aGroup objectForKey:@"id"] isEqualToString:_gid]) {
             //foundGroup = YES;
             [[NSUserDefaults standardUserDefaults] setObject:_gid forKey:FacebookGroupIsMemberKey];
             [[NSUserDefaults standardUserDefaults] synchronize];
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:FacebookGroupReceivedNotification object:self];
 
             [self startPollingStatusUpdates];
         }
     }
+    
+    _memberOfFBGroupKnown = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:FacebookGroupReceivedNotification object:self];
 }
 
 - (NSArray *)latestFeedPosts {
@@ -303,6 +306,11 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 {
     NSString *belongingGroup = [[NSUserDefaults standardUserDefaults] objectForKey:FacebookGroupIsMemberKey];
     return [belongingGroup isEqualToString:_gid];
+}
+
+- (BOOL)isMemberOfFBGroupKnown 
+{
+    return _memberOfFBGroupKnown;
 }
 
 #pragma mark -

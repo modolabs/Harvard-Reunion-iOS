@@ -44,6 +44,7 @@ FacebookMediaSegmentIndexes;
 
 - (void)refreshMyMedia; // used to indicate that facebook has returned the current user id info
 - (void)refreshMedia;
+- (void)groupLoginInfoReceived:(NSNotification *)notification;
 
 - (void)setupLoginStatusStrings;
 
