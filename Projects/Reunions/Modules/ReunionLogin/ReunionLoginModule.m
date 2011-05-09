@@ -170,19 +170,24 @@
         size = [text sizeWithFont:font];
     }
 
-    CGFloat y;
-    UILabel *yearLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 4, size.width, size.height)] autorelease];
+    CGFloat y = 4;
+    if (navStyle == KGONavigationStyleTabletSidebar) {
+        y += 10;
+    }
+    
+    UILabel *yearLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, y, size.width, size.height)] autorelease];
     yearLabel.text = text;
     yearLabel.font = font;
-    y = size.height + 4;
     
     // reunion number superscript
     text = @"th";
     font = [UIFont fontWithName:@"Georgia" size:18];
     size = [text sizeWithFont:font];
-    UILabel *yearSupLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 9, size.width, size.height)] autorelease];
+    UILabel *yearSupLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, y + 5, size.width, size.height)] autorelease];
     yearSupLabel.text = text;
     yearSupLabel.font = font;
+    
+    y += yearLabel.frame.size.height;
     
     // position above two elements
     CGFloat x = floor((imageView.frame.size.width - yearLabel.frame.size.width - yearSupLabel.frame.size.width) / 2);
@@ -213,7 +218,7 @@
     if (navStyle == KGONavigationStylePortlet) {
         frame.origin.x = springboardFrame.size.width - frame.size.width - 2;
     } else {
-        frame.origin.x = 36;
+        frame.origin.x = 16;
     }
     KGOHomeScreenWidget *widget = [[[KGOHomeScreenWidget alloc] initWithFrame:frame] autorelease];
     
