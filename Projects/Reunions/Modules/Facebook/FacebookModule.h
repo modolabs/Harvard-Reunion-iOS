@@ -16,6 +16,7 @@ extern NSString * const FacebookFeedDidUpdateNotification;
     NSDate *_lastMessageDate;
     
     BOOL _requestingGroups;
+    BOOL _memberOfFBGroupKnown;
 }
 
 // code from http://developer.apple.com/library/ios/#qa/qa2010/qa1480.html
@@ -38,6 +39,7 @@ extern NSString * const FacebookFeedDidUpdateNotification;
 @property(nonatomic, readonly) NSString *groupID;
 
 - (BOOL)isMemberOfFBGroup;
+- (BOOL)isMemberOfFBGroupKnown;
 
 #pragma mark Bookmarking support
 + (NSString *)bookmarkKeyForMediaType:(NSString *)mediaType;

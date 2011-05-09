@@ -157,6 +157,16 @@
                                                object:nil];
 }
 
+- (void)groupLoginInfoReceived:(NSNotification *)notification {
+    FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+    if([fbModule isMemberOfFBGroup]) {
+        [self hideLoginViewAnimated:YES];
+    } else {
+        [self setupLoginStatusStrings];
+    }
+    
+}
+
 - (void)refreshMyMedia {
     if(_filterControl.selectedSegmentIndex == kMyUploadsSegment) {
         [self refreshMedia];
@@ -188,10 +198,14 @@
 - (void)setupLoginStatusStrings
 {
     FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
-    if ([[KGOSocialMediaController facebookService] isSignedIn] && ![fbModule isMemberOfFBGroup]) {
-        _loginHintLabel.text = @"Oops! It looks like you’re not a member of the Modo Reunion Test group in Facebook. Tap the button below to open the Facebook web page in a new browser, then join the group. When you've successfully joined, return to this web page to view the group's posts.";
-        [_loginButton setTitle:@"Open facebook.com" forState:UIControlStateNormal];
-        
+    if ([[KGOSocialMediaController facebookService] isSignedIn]) {
+        if(![fbModule isMemberOfFBGroupKnown]) {
+            _loginHintLabel.text = @"Please wait. Loading Facebook Group...";
+            [_loginButton setTitle:@"Open facebook.com" forState:UIControlStateNormal];
+        } else if(![fbModule isMemberOfFBGroup]) {
+            _loginHintLabel.text = @"Oops! It appears you’re not a member of your classes Facebook group. Tap the button below to open the Facebook web page, then join the group. When you've successfully joined, return to this web page to view the group's posts.";
+            [_loginButton setTitle:@"Open facebook.com" forState:UIControlStateNormal];
+        }
     } else {
         _loginHintLabel.text = NSLocalizedString(@"Photos and videos are posted to the Facebook group page for each class. To view and comment on them, you must sign into Facebook, and you must be a member of the class Facebook group.", nil);
         [_loginButton setTitle:@"Sign in to Facebook" forState:UIControlStateNormal];
@@ -228,19 +242,24 @@
     } else {
         [_uploadButton removeFromSuperview];
     }
-    
+ 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMyMedia) name:FacebookDidGetSelfInfoNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupLoginInfoReceived:) name:FacebookGroupReceivedNotification object:nil];
     
     [pool release];
 }
 
 - (void)viewWillAppear:(BOOL)animated
-{
+{    
     if ([[KGOSocialMediaController facebookService] isSignedIn]) {
         [self facebookDidLogin:nil];
     } else {
         [self facebookDidLogout:nil];
     }
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)viewDidUnload
