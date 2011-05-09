@@ -336,7 +336,7 @@
     NSString * noteTitle = note.title;
     NSString * noteText = note.details;
     
-    if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)) {
+    if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath) || indexPath.row == notesArray.count - 1) {
         static NSString *CellIdentifier = @"CellNotesSelected";
         
         NotesUnselectedTableViewCell *cell = (NotesUnselectedTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -349,19 +349,22 @@
         cell.notesCellType = NotesCellSelected;
         
         [notesTextView release];
-        notesTextView = [[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 8, 500) 
+
+        // textview starts a little left of default cell title
+        CGRect textViewFrame = CGRectMake(2, 0, self.view.frame.size.width - 4, 500);
+        notesTextView = [[NotesTextView alloc] initWithFrame:textViewFrame
                                                     titleText:noteTitle
                                                    detailText:[Note dateToDisplay:note.date]
                                                      noteText:noteText
                                                          note:note
-                                               firstResponder:!firstView
+                                               firstResponder:NO //!firstView
                                                      dateFont:cell.detailTextLabel.font];
         notesTextView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         notesTextView.autoresizesSubviews = YES;
         
         notesTextView.delegate = self;
         cell.detailsView = notesTextView;
-        cell.selectionStyle = UITableViewCellSelectionStyleGray;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
         return cell;
         
@@ -395,9 +398,9 @@
     NSString * noteTitle = note.title;
     NSString * noteText = note.details;
     
-    if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)) {
+    if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath) || indexPath.row == notesArray.count - 1) {
         
-        NotesTextView * temp = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 8, 500) 
+        NotesTextView * temp = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 4, 500) 
                                                                     titleText:noteTitle
                                                                    detailText:[Note dateToDisplay:note.date]
                                                                      noteText:noteText
@@ -423,12 +426,12 @@
     if (nil != notesArray) {
         selectedNote = [[notesArray objectAtIndex:indexPath.row] retain];
     }
-    
-    [selectedRowIndexPath release];
+
+    NSIndexPath *oldIndexPath = [selectedRowIndexPath autorelease];
     selectedRowIndexPath = [indexPath retain];
     
-    [self.tableView reloadData];
-    
+    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:selectedRowIndexPath, oldIndexPath, nil]
+                          withRowAnimation:UITableViewRowAnimationNone];
     [self.tableView scrollToRowAtIndexPath:selectedRowIndexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
 
 }

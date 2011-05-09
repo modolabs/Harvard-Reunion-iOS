@@ -58,14 +58,7 @@
 {
     [super layoutSubviews];
     
-    NSLog(@"%@ %@", self.textLabel.text, self);
-    
-    CGRect frame = self.frame;
-    frame.size.width = self.tableView.frame.size.width - 8;
-    
-    
     if (notesCellType == NotesCellTypeOther){
-        //self.backgroundColor = [UIColor colorWithHexString:@"DBD9D8"];
         self.textLabel.backgroundColor = [UIColor clearColor];
         self.textLabel.numberOfLines = 1;
         self.textLabel.lineBreakMode = UILineBreakModeTailTruncation;
@@ -76,18 +69,8 @@
         self.detailTextLabel.backgroundColor = [UIColor clearColor];
         self.detailTextLabel.numberOfLines = 1;
         self.detailTextLabel.lineBreakMode = UILineBreakModeTailTruncation;
-        
-        frame.origin.x = 8;
-        //frame.size.height += 10;
-        
-        self.frame = frame;
-        
-        //UIImage *image = nil;
-        //image = [UIImage imageWithPathName:@"common/bar-drop-shadow"];
 
     } else if (notesCellType == NotesCellSelected) {
-        self.frame = frame;
-        
         for (UIView * aView in self.subviews){
             
             if ([aView isKindOfClass:[NotesTextView class]]){
