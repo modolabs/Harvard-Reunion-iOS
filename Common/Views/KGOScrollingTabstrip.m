@@ -322,6 +322,13 @@
 	}
 }
 
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    if(_scrollView) {
+        [self scrollViewDidScroll:_scrollView];
+    }
+}
+
 - (void)dealloc {
     [_contentView release];
     [_scrollView release];
