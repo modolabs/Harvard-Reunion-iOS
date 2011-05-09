@@ -111,9 +111,9 @@
         
         if (nil == detailsView) {
             
-            detailsView = [[UITextView alloc] initWithFrame:CGRectMake(10, 
+            detailsView = [[UITextView alloc] initWithFrame:CGRectMake(0, 
                                                                        titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 15, 
-                                                                       self.frame.size.width - 10, 
+                                                                       self.frame.size.width, 
                                                                        self.frame.size.height - titleTextLabel.frame.size.height - detailTextLabel.frame.size.height - 15)];
             detailsView.delegate = self;
             detailsView.backgroundColor = [UIColor clearColor];
