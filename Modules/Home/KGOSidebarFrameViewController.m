@@ -7,7 +7,7 @@
 #define SIDEBAR_WIDTH 161
 #define TOPBAR_HEIGHT 51
 
-#define DETAIL_VIEW_WIDTH 318
+#define DETAIL_VIEW_WIDTH 340
 #define DETAIL_VIEW_HEIGHT 460
 
 @interface KGOSidebarFrameViewController (Private)

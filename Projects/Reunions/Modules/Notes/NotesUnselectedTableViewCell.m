@@ -82,8 +82,8 @@
         
         self.frame = frame;
         
-        UIImage *image = nil;
-        image = [UIImage imageWithPathName:@"common/bar-drop-shadow"];
+        //UIImage *image = nil;
+        //image = [UIImage imageWithPathName:@"common/bar-drop-shadow"];
 
     } else if (notesCellType == NotesCellSelected) {
         self.frame = frame;

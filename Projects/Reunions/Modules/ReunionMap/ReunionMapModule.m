@@ -7,6 +7,7 @@
 #import "ScheduleDataManager.h"
 #import "KGOMapCategory.h"
 #import "ScheduleEventWrapper.h"
+#import "ReunionMapTabletDetailController.h"
 
 NSString * const EventMapCategoryName = @"event"; // this is what the mobile web gives us
 NSString * const ScheduleTag = @"schedule";
@@ -16,21 +17,27 @@ NSString * const ScheduleTag = @"schedule";
 - (UIViewController *)modulePage:(NSString *)pageName params:(NSDictionary *)params {
     
     if ([pageName isEqualToString:LocalPathPageNameDetail]) {
-        ReunionMapDetailViewController *detailVC = [[[ReunionMapDetailViewController alloc] init] autorelease];
+        KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
+        ReunionMapDetailViewController *detailVC = nil;
+        if ([appDelegate navigationStyle] == KGONavigationStyleTabletSidebar) {
+            detailVC = [[[ReunionMapTabletDetailController alloc] init] autorelease];
+        } else {
+            detailVC = [[[ReunionMapDetailViewController alloc] init] autorelease];
+        }
         
         KGOPlacemark *detailItem = [params objectForKey:@"detailItem"];
         if (detailItem) {
             NSArray *annotations = [NSArray arrayWithObject:detailItem];
             NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:annotations, @"annotations", nil];
             
-            UIViewController *topVC = [KGO_SHARED_APP_DELEGATE() visibleViewController];
+            UIViewController *topVC = [appDelegate visibleViewController];
             if (topVC.modalViewController) {
                 [topVC dismissModalViewControllerAnimated:YES];
             }
             
-            KGONavigationStyle navStyle = [KGO_SHARED_APP_DELEGATE() navigationStyle];
+            KGONavigationStyle navStyle = [appDelegate navigationStyle];
             if (navStyle == KGONavigationStyleTabletSidebar) {
-                KGOSidebarFrameViewController *homescreen = (KGOSidebarFrameViewController *)[KGO_SHARED_APP_DELEGATE() homescreen];
+                KGOSidebarFrameViewController *homescreen = (KGOSidebarFrameViewController *)[appDelegate homescreen];
                 topVC = homescreen.visibleViewController;
                 if (topVC.modalViewController) {
                     [topVC dismissModalViewControllerAnimated:YES];

@@ -245,6 +245,8 @@
 		EBA2865610E07E140003BA01 /* PeopleSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EBA2865510E07E140003BA01 /* PeopleSearchViewController.m */; };
 		EBAA866B12F72A4600B743C3 /* libSFHFKeychainUtils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EBAA860D12F728CE00B743C3 /* libSFHFKeychainUtils.a */; };
 		EBB120AD1338104B00A4BD1D /* ModalLoginWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EBB120AC1338104B00A4BD1D /* ModalLoginWebViewController.m */; };
+		EBC6890E13783B4100FE50EA /* ReunionMapTabletDetailController.m in Sources */ = {isa = PBXBuildFile; fileRef = EBC6890D13783B4100FE50EA /* ReunionMapTabletDetailController.m */; };
+		EBC6897713785B8000FE50EA /* ReunionMapTabletHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = EBC6897613785B7F00FE50EA /* ReunionMapTabletHeaderView.m */; };
 		EBE2CCB813441DE90037546A /* KGOTabbedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = EBE2CCB713441DE90037546A /* KGOTabbedControl.m */; };
 		EBE2CCBB13441E940037546A /* KGODetailPageHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = EBE2CCBA13441E940037546A /* KGODetailPageHeaderView.m */; };
 		EBE2CCBE13441EB10037546A /* KGOBookmarksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EBE2CCBD13441EB10037546A /* KGOBookmarksViewController.m */; };
@@ -722,6 +724,10 @@
 		EBAA9F6210FFAB8B003379A5 /* PeopleDataModel 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "PeopleDataModel 5.xcdatamodel"; sourceTree = "<group>"; };
 		EBB120AB1338104B00A4BD1D /* ModalLoginWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModalLoginWebViewController.h; sourceTree = "<group>"; };
 		EBB120AC1338104B00A4BD1D /* ModalLoginWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ModalLoginWebViewController.m; sourceTree = "<group>"; };
+		EBC6890C13783B4100FE50EA /* ReunionMapTabletDetailController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReunionMapTabletDetailController.h; sourceTree = "<group>"; };
+		EBC6890D13783B4100FE50EA /* ReunionMapTabletDetailController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionMapTabletDetailController.m; sourceTree = "<group>"; };
+		EBC6897513785B7F00FE50EA /* ReunionMapTabletHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReunionMapTabletHeaderView.h; sourceTree = "<group>"; };
+		EBC6897613785B7F00FE50EA /* ReunionMapTabletHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReunionMapTabletHeaderView.m; sourceTree = "<group>"; };
 		EBCA123210CEF3C400577C5D /* PeopleSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeopleSearchViewController.h; sourceTree = "<group>"; };
 		EBE2CCB613441DE90037546A /* KGOTabbedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGOTabbedControl.h; sourceTree = "<group>"; };
 		EBE2CCB713441DE90037546A /* KGOTabbedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGOTabbedControl.m; sourceTree = "<group>"; };
@@ -1343,6 +1349,10 @@
 				EB163927136B7E3B003C69E2 /* ReunionMapDetailHeaderView.m */,
 				EBE725E813722745009C5769 /* ReunionMapHomeViewController.h */,
 				EBE725E913722745009C5769 /* ReunionMapHomeViewController.m */,
+				EBC6890C13783B4100FE50EA /* ReunionMapTabletDetailController.h */,
+				EBC6890D13783B4100FE50EA /* ReunionMapTabletDetailController.m */,
+				EBC6897513785B7F00FE50EA /* ReunionMapTabletHeaderView.h */,
+				EBC6897613785B7F00FE50EA /* ReunionMapTabletHeaderView.m */,
 			);
 			path = ReunionMap;
 			sourceTree = "<group>";
@@ -2022,6 +2032,8 @@
 				EBE725EA13722745009C5769 /* ReunionMapHomeViewController.m in Sources */,
 				4B0BD5101374C1FC008745BE /* ReunionNewsModule.m in Sources */,
 				4B0BD51A1374C3B7008745BE /* ReunionNewsDataManager.m in Sources */,
+				EBC6890E13783B4100FE50EA /* ReunionMapTabletDetailController.m in Sources */,
+				EBC6897713785B8000FE50EA /* ReunionMapTabletHeaderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

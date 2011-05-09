@@ -67,16 +67,10 @@
     // TODO: dont' hard code timeout value
     NSPredicate *timeoutPredicate = [NSPredicate predicateWithFormat:@"lastUpdate < %@", [NSDate dateWithTimeIntervalSinceNow:-3600]];
     id event = [[[CoreDataManager sharedManager] objectsForEntity:KGOEntityNameEvent matchingPredicate:timeoutPredicate] lastObject];
-    if (event) {
-        return success;
-    }
-    
-    // TODO: use a timeout value to decide whether or not to check for update
-    if ([[KGORequestManager sharedManager] isReachable]) {
-        if(_groupsRequest) {
-            return success;
-        }
+    if (!event && oldGroups) {
+        success = YES;
         
+    } else if ([[KGORequestManager sharedManager] isReachable] && !_groupsRequest) {
         _groupsRequest = [[KGORequestManager sharedManager] requestWithDelegate:self module:self.moduleTag path:@"categories" params:nil];
         _groupsRequest.expectedResponseType = [NSDictionary class];
         [_groupsRequest connect];

@@ -259,7 +259,7 @@ NSString * const FacebookUsernameKey = @"FBUsername";
 #pragma mark Dialog
 
 - (void)shareOnFacebook:(NSDictionary *)params {
-    NSMutableDictionary *mutableParams = [params mutableCopy];
+    NSMutableDictionary *mutableParams = [[params mutableCopy] autorelease];
     [self startup];
     [_facebook dialog:@"feed" andParams:mutableParams andDelegate:self];
 }

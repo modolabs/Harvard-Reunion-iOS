@@ -19,10 +19,6 @@
     }
     
     self.view.backgroundColor = [UIColor clearColor];
-
-    //if (!_myEvents) {
-    //    _myEvents = [[NSMutableDictionary alloc] init];
-    //}
 }
 
 - (void)viewDidLoad
@@ -34,8 +30,6 @@
 - (void)dealloc
 {
     self.dataManager.delegate = nil;
-    //[_myEvents release];
-    //_myEvents = nil;
     [super dealloc];
 }
 

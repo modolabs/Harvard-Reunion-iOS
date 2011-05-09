@@ -114,18 +114,6 @@
     [self.view addSubview:shareButton];
     [self.view addSubview:deleteButton];
     
-    UIImage * image = [UIImage imageWithPathName:@"modules/schedule/faketop-above-selection.png"];
-    UIImageView * sectionDivider;
-    if (image){
-        sectionDivider = [[UIImageView alloc] initWithImage:[image stretchableImageWithLeftCapWidth:0 topCapHeight:0]];
-        sectionDivider.frame = CGRectMake(15, 
-                                          titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 10, 
-                                          self.width, 
-                                          4);
-        
-        [self.view addSubview:sectionDivider];
-    }
-    
     
     
     if (nil == textView) {
