@@ -23,4 +23,6 @@
 
 - (void)mapViewTapped:(id)sender;
 
+@property(nonatomic, retain) ScheduleEventWrapper *preselectedEvent;
+
 @end

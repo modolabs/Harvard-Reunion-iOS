@@ -816,4 +816,9 @@ ToolbarButtonTags;
     return cell;
 }
 
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if (UIInterfaceOrientationIsLandscape(displayedOrientation)) {
+        scrollView.contentOffset = CGPointZero;
+    }
+}
 @end

@@ -63,12 +63,6 @@ VideosViewTags;
             [self requestVideosFromFeed];                     
         }
     }
-    else {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(getGroupVideos)
-                                                     name:FacebookGroupReceivedNotification
-                                                   object:nil];
-    }
 }
 
 - (void)requestVideosFromFeed {    
@@ -154,6 +148,11 @@ VideosViewTags;
     _videos = [[NSMutableArray alloc] init];
     _displayedVideos = [[NSMutableArray alloc] init];
     _videoIDs = [[NSMutableSet alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(getGroupVideos)
+                                                 name:FacebookGroupReceivedNotification
+                                               object:nil];
 }
 
 /*
@@ -423,9 +422,12 @@ VideosViewTags;
 {
     [super facebookDidLogin:aNotification];
     
-    [self getGroupVideos];
-    [self syncVideoThumbnailsToGrid];
-    [self requestVideosFromFeed];
+    FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+    if([fbModule isMemberOfFBGroup]) {
+        [self getGroupVideos];
+        [self syncVideoThumbnailsToGrid];
+        [self requestVideosFromFeed];
+    }
 }
 
 - (void)facebookDidLogout:(NSNotification *)aNotification

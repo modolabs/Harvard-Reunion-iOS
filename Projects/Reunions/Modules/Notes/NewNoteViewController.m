@@ -42,6 +42,8 @@
 
 - (void)dealloc
 {
+    [deleteButton release];
+    [textView release];
     [super dealloc];
 }
 
@@ -98,13 +100,14 @@
     
     buttonX += shareButtonImage.size.width + 5;
     
-    UIButton * deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
-    [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
-    [deleteButton setImage:[UIImage imageWithPathName:@"modules/notes/delete_pressed.png"] forState:UIControlStateHighlighted];
-    
-    [deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    
+    if (!deleteButton) {
+        deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+        deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
+        [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
+        [deleteButton setImage:[UIImage imageWithPathName:@"modules/notes/delete_pressed.png"] forState:UIControlStateHighlighted];
+        
+        [deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    }
     
     [self.view addSubview:titleTextLabel];
     [self.view addSubview:detailTextLabel];
@@ -131,6 +134,7 @@
                                                                 titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 15, 
                                                                 self.width - 10, 
                                                                 self.height - titleTextLabel.frame.size.height - detailTextLabel.frame.size.height - 15)];
+        textView.delegate = self;
         textView.backgroundColor = [UIColor clearColor];
         
         NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", self.titleText];
@@ -147,6 +151,11 @@
     
      self.view.backgroundColor = [UIColor colorWithHexString:@"eee4b8"];
     
+}
+
+- (void)textViewDidChange:(UITextView *)aTextView
+{
+    self.navigationItem.leftBarButtonItem.enabled = (textView.text.length == 0);
 }
 
 -(NSString *) textViewString {
@@ -169,14 +178,16 @@
 
 - (void) deleteButtonPressed: (id) sender {
     
-    UIActionSheet * deleteActionSheet = [[UIActionSheet alloc] initWithTitle:@"Are you sure you want to delete the note?" 
-                                                                    delegate:self 
-                                                           cancelButtonTitle:nil
-                                                      destructiveButtonTitle:@"Delete" 
-                                                           otherButtonTitles:@"Cancel", nil];
-    
-    [deleteActionSheet showInView:self.view];
-    [deleteActionSheet release];
+    if (sender == deleteButton) {
+        UIActionSheet * deleteActionSheet = [[UIActionSheet alloc] initWithTitle:@"Are you sure you want to delete the note?" 
+                                                                        delegate:self 
+                                                               cancelButtonTitle:nil
+                                                          destructiveButtonTitle:@"Delete" 
+                                                               otherButtonTitles:@"Cancel", nil];
+        
+        [deleteActionSheet showFromRect:deleteButton.frame inView:self.view animated:YES];
+        [deleteActionSheet release];
+    }
 }
 
 

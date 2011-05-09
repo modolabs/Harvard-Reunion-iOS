@@ -124,12 +124,7 @@ static NSString * const FromLibraryOption = @"From photo library";
             }
         }
 
-    } else {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(getGroupPhotos)
-                                                     name:FacebookGroupReceivedNotification
-                                                   object:nil];
-    }
+    } 
 }
 
 // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
@@ -192,6 +187,11 @@ static NSString * const FromLibraryOption = @"From photo library";
     _icons = [[NSMutableArray alloc] init];
     _photosByID = [[NSMutableDictionary alloc] init];
     _displayedPhotos = [[NSMutableArray alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(getGroupPhotos)
+                                                 name:FacebookGroupReceivedNotification
+                                               object:nil];
 }
 
 - (void)facebookDidLogin:(NSNotification *)aNotification
@@ -199,7 +199,11 @@ static NSString * const FromLibraryOption = @"From photo library";
     [super facebookDidLogin:aNotification];
     
     [self loadThumbnailsFromCache];
-    [self getGroupPhotos];
+    
+    FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+    if([fbModule isMemberOfFBGroup]) {
+        [self getGroupPhotos];
+    }
     
     self.navigationItem.rightBarButtonItem = 
     [[[UIBarButtonItem alloc] 

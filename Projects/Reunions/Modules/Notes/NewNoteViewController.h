@@ -28,12 +28,13 @@
 #endif
 
 
-@interface NewNoteViewController : UIViewController <UIActionSheetDelegate, MFMailComposeViewControllerDelegate, UIPrintInteractionControllerDelegate>{
+@interface NewNoteViewController : UIViewController <UIActionSheetDelegate,
+MFMailComposeViewControllerDelegate, UIPrintInteractionControllerDelegate,
+UITextViewDelegate> {
     
-    UIView * titleView;
     UITextView * textView;
     
-    UIButton * printButton;
+    UIButton *deleteButton;
     
 }
 

@@ -28,6 +28,9 @@
 @end
 
 @implementation ScheduleHomeViewController_iPad
+
+@synthesize preselectedEvent;
+
 /*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -46,6 +49,7 @@
     [_mapContainerViewForSelectedCell release];
     [_tableViewForSelectedCell release];
     [_tableViewForLastCell release];
+    self.preselectedEvent = nil;
     [super dealloc];
 }
 
@@ -99,9 +103,10 @@
     [_cellData release];
     _cellData = [[NSMutableArray alloc] init];
     
+    _selectedRow = NSNotFound;
+
     if (events.count) {
         // TODO: make sure this set of events is what we last requested
-        NSMutableDictionary *eventsBySection = [NSMutableDictionary dictionary];
         NSMutableArray *sectionTitles = [NSMutableArray array];
         NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"startDate" ascending:YES]];
         NSArray *sortedEvents = [events sortedArrayUsingDescriptors:sortDescriptors];
@@ -122,25 +127,22 @@
             [formatter setDateStyle:NSDateFormatterNoStyle];
             [formatter setTimeStyle:NSDateFormatterNoStyle];
         }
-        
+
         for (KGOEventWrapper *event in sortedEvents) {
             NSString *title = [formatter stringFromDate:event.startDate];
-            NSMutableArray *eventsForCurrentSection = [eventsBySection objectForKey:title];
-            if (!eventsForCurrentSection) {
-                eventsForCurrentSection = [NSMutableArray array];
-                [eventsBySection setObject:eventsForCurrentSection forKey:title];
+            if (![sectionTitles containsObject:title]) {
                 [sectionTitles addObject:title];
+                [_cellData addObject:title];
             }
-            [eventsForCurrentSection addObject:event];
-        }
-        
-        for (NSString *sectionTitle in sectionTitles) {
-            [_cellData addObject:sectionTitle];
-            [_cellData addObjectsFromArray:[eventsBySection objectForKey:sectionTitle]];
+            [_cellData addObject:event];
+            
+            if (self.preselectedEvent && [event.identifier isEqualToString:self.preselectedEvent.identifier]) {
+                _selectedRow = _cellData.count - 1;
+            }
+            DLog(@"added new event %@ %@ %@ %d %d",
+                 event.title, event.identifier, self.preselectedEvent.identifier, _cellData.count, _selectedRow);
         }
     }
-
-    _selectedRow = NSNotFound;
     
     [_loadingView stopAnimating];
     self.tableView.hidden = NO;
@@ -160,6 +162,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    self.preselectedEvent = nil;
     
     if (indexPath.row == _selectedRow) {
         return;
@@ -342,14 +345,6 @@
         
         [cell.contentView addSubview:mapContainerView];
         
-        if (mapView.annotations.count) {
-            UIControl *control = [[[UIControl alloc] initWithFrame:mapContainerView.frame] autorelease];
-            control.backgroundColor = [UIColor clearColor];
-            [cell.contentView addSubview:control];
-            [control addTarget:self action:@selector(mapViewTapped:) forControlEvents:UIControlEventTouchUpInside];
-            control.tag = mapView.tag;
-        }
-
         tableView.mapView = mapView;
         mapView.delegate = tableView;
         
@@ -409,8 +404,12 @@
 {
     MKMapView *mapView = nil;
     UIView *containerView = nil;
+    
+    BOOL isNew = NO; // yes if the view does not exist and has not been laid out yet
+    
     if (cell.isSelected) {
         if (!_mapViewForSelectedCell) {
+            isNew = YES;
             CGFloat width = MAP_WIDTH_PORTRAIT;
             CGFloat x = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
             UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
@@ -420,7 +419,6 @@
             }
             _mapContainerViewForSelectedCell = [[UIView alloc] initWithFrame:CGRectMake(x, 60, width, EXPANDED_CELL_HEIGHT - 70)];
             _mapViewForSelectedCell = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, width, EXPANDED_CELL_HEIGHT - 70)];
-            _mapViewForSelectedCell.userInteractionEnabled = NO;
             _mapViewForSelectedCell.tag = SELECTED_MAP_TAG;
         }
         containerView = _mapContainerViewForSelectedCell;
@@ -428,6 +426,7 @@
         
     } else if (cell.isLast) {
         if (!_mapViewForLastCell) {
+            isNew = YES;
             CGFloat width = MAP_WIDTH_PORTRAIT;
             CGFloat x = SCHEDULE_DETAIL_WIDTH_PORTRAIT;
             UIViewController *homescreen = [KGO_SHARED_APP_DELEGATE() homescreen];
@@ -437,24 +436,33 @@
             }
             _mapContainerViewForLastCell = [[UIView alloc] initWithFrame:CGRectMake(x, 60, width, LAST_CELL_HEIGHT - 70)];
             _mapViewForLastCell = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, width, LAST_CELL_HEIGHT - 70)];
-            _mapViewForLastCell.userInteractionEnabled = NO;
             _mapViewForLastCell.tag = LAST_MAP_TAG;
         }
         containerView = _mapContainerViewForLastCell;
         mapView = _mapViewForLastCell;
     }
     
-    [mapView removeFromSuperview];
-    [mapView removeAnnotations:[mapView annotations]];
-    mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    if (isNew) {
+        mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        mapView.userInteractionEnabled = NO;
+        
+        containerView.layer.cornerRadius = 5.0;
+        containerView.layer.borderColor = [[UIColor grayColor] CGColor];
+        containerView.layer.borderWidth = 1.0;
+        containerView.clipsToBounds = YES;
+        containerView.autoresizesSubviews = YES;
+        [containerView addSubview:mapView];
+        
+        UIControl *control = [[[UIControl alloc] initWithFrame:containerView.bounds] autorelease];
+        control.backgroundColor = [UIColor clearColor];
+        [control addTarget:self action:@selector(mapViewTapped:) forControlEvents:UIControlEventTouchUpInside];
+        control.tag = mapView.tag;
+        [containerView addSubview:control];
+        
+    } else {
+        [mapView removeAnnotations:[mapView annotations]];
+    }
     
-    containerView.layer.cornerRadius = 5.0;
-    containerView.layer.borderColor = [[UIColor grayColor] CGColor];
-    containerView.layer.borderWidth = 1.0;
-    containerView.clipsToBounds = YES;
-    containerView.autoresizesSubviews = YES;
-    [containerView addSubview:mapView];
-   
     return containerView;
 }
 
@@ -469,12 +477,14 @@
             mapView = _mapViewForLastCell;
         }
         
+        if (!mapView.annotations.count) { // unknown location -- nothing to select on map
+            return;
+        }
+        
         CGRect outsideFrame = self.view.bounds;
         outsideFrame.origin = CGPointMake(18, 60);
         outsideFrame.size.width -= 32;
         outsideFrame.size.height -= 80;
-        //outsideFrame = [self.view convertRect:outsideFrame toView:mapView.superview];
-        
         
         MKCoordinateRegion outsideRegion = [mapView convertRect:outsideFrame toRegionFromView:self.view];
         NSArray *startRegion = [NSArray arrayWithObjects:
