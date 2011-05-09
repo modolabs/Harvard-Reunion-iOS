@@ -12,7 +12,7 @@
 // not subclassing MapDetailViewController b/c we don't want a tabbed view
 @interface ReunionMapDetailViewController : UIViewController <KGODetailPagerDelegate,
 UIWebViewDelegate, KGODetailPageHeaderDelegate, MITThumbnailDelegate,
-KGORequestDelegate, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate> {
+KGORequestDelegate, UITableViewDelegate, UITableViewDataSource> {
     
     ReunionMapDetailHeaderView *_headerView;
 
@@ -27,15 +27,18 @@ KGORequestDelegate, UITableViewDelegate, UITableViewDataSource, UIScrollViewDele
     UIImage *_image;
     
     UITableView *_tableView;
-    UIScrollView *_scrollView;
-    CGFloat _currentTableWidth;
+    
+    NSInteger _googleSection;
+    NSInteger _eventSection;
+    NSInteger _detailSection;
 }
 
-//@property(nonatomic, retain) KGOPlacemark *placemark;
+@property(nonatomic, retain) KGOPlacemark *placemark;
 @property(nonatomic, retain) id<MKAnnotation, KGOSearchResult> annotation;
 @property(nonatomic, retain) KGODetailPager *pager;
 @property(nonatomic, retain) UITableView *tableView;
 
 - (void)loadDetailSection;
+- (void)loadAnnotationContent;
 
 @end

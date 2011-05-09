@@ -15,12 +15,9 @@
 #import "KGOSidebarFrameViewController.h"
 #import "KGOCalendar.h"
 
-#define IPAD_TABLEVIEW_ORIGIN_Y 500
-#define CLOSE_BUTTON_TAG 15
-
 @implementation ReunionMapDetailViewController
 
-//@synthesize placemark,
+@synthesize placemark;
 @synthesize annotation, pager, tableView = _tableView;
 /*
 - (id)initWithStyle:(UITableViewStyle)style
@@ -37,51 +34,10 @@
 {
     [super loadView];
     
-    _currentTableWidth = 0;
-    
-    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+    self.tableView = [[[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped] autorelease];
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    
-    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
-        _scrollView = [[[UIScrollView alloc] initWithFrame:self.view.bounds] autorelease];
-        _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        _scrollView.bounces = NO;
-        [_scrollView addSubview:self.tableView];
-        _scrollView.delegate = self;
-        _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, 500 + self.tableView.frame.size.height);
-        _scrollView.showsVerticalScrollIndicator = NO;
-        _scrollView.showsHorizontalScrollIndicator = NO;
-        _scrollView.clipsToBounds = NO;
-        
-        CGRect frame = self.tableView.frame;
-        frame.origin.y = IPAD_TABLEVIEW_ORIGIN_Y;
-        self.tableView.frame = frame;
-        self.tableView.layer.cornerRadius = 5;
-        self.tableView.backgroundColor = [UIColor whiteColor];
-        self.tableView.scrollEnabled = NO;
-        
-        UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        closeButton.tag = CLOSE_BUTTON_TAG;
-        UIImage *image = [UIImage imageWithPathName:@"common/window-close-button"];
-        [closeButton setImage:image forState:UIControlStateNormal];
-        CGRect buttonFrame = CGRectZero;
-        buttonFrame.size = image.size;
-        buttonFrame.origin.x = _scrollView.frame.size.width - image.size.width + 5;
-        buttonFrame.origin.y = IPAD_TABLEVIEW_ORIGIN_Y - image.size.height + 5;
-        closeButton.frame = buttonFrame;
-        closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
-        KGOSidebarFrameViewController *homescreen = (KGOSidebarFrameViewController *)[KGO_SHARED_APP_DELEGATE() homescreen];
-        [closeButton addTarget:homescreen action:@selector(hideDetailViewController) forControlEvents:UIControlEventTouchUpInside];
-        
-        [self.view addSubview:_scrollView];
-        [_scrollView addSubview:self.tableView];
-        [_scrollView addSubview:closeButton];
-
-    } else {
-        [self.view addSubview:self.tableView];
-    }
 }
 
 - (void)dealloc
@@ -92,11 +48,14 @@
 
     _webView.delegate = nil;
     [_webView release];
+
     _thumbView.delegate = nil;
     [_thumbView release];
+    
     [_htmlTemplate release];
     [_placemarkInfo release];
     
+    self.placemark = nil;
     self.annotation = nil;
     self.pager = nil;
     
@@ -128,13 +87,16 @@
     _imageURL = nil;
     
     if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
-        KGOPlacemark *placemark = (KGOPlacemark *)self.annotation;
-        if ([placemark.category.identifier isEqualToString:EventMapCategoryName]) {
-            KGOEvent *storedEvent = [KGOEvent eventWithID:placemark.identifier];
+        self.placemark = (KGOPlacemark *)self.annotation;
+        if ([self.placemark.category.identifier isEqualToString:EventMapCategoryName]) {
+            KGOEvent *storedEvent = [KGOEvent eventWithID:self.placemark.identifier];
             if (storedEvent) {
                 self.annotation = [[ScheduleEventWrapper alloc] initWithKGOEvent:storedEvent];
             }
         }
+        
+    } else {
+        self.placemark = nil;
     }
     
     // set up webview
@@ -148,21 +110,30 @@
     }
     
     if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
-        KGOPlacemark *placemark = (KGOPlacemark *)self.annotation;
-        _placemarkInfo = [placemark.info copy];
-        _imageURL = [placemark.photoURL copy];
-        _image = [[UIImage imageWithData:placemark.photo] retain];
+        _eventSection = NSNotFound;
+        _googleSection = 0;
+        _detailSection = 1;
+        
+        _placemarkInfo = [self.placemark.info copy];
+        _imageURL = [self.placemark.photoURL copy];
+        _image = [[UIImage imageWithData:self.placemark.photo] retain];
         
     } else if ([self.annotation isKindOfClass:[ScheduleEventWrapper class]]) {
+        _eventSection = 0;
+        _googleSection = 1;
+        _detailSection = 2;
+        
         NSString *placemarkID = [(ScheduleEventWrapper *)self.annotation placemarkID];
         if (placemarkID) {
             NSPredicate *pred = [NSPredicate predicateWithFormat:@"identifier = %@", placemarkID];
             NSArray *matches = [[CoreDataManager sharedManager] objectsForEntity:KGOPlacemarkEntityName matchingPredicate:pred];
             if (matches.count) {
-                KGOPlacemark *placemark = [matches objectAtIndex:0];
-                _placemarkInfo = [placemark.info copy];
-                _imageURL = [placemark.photoURL copy];
-                _image = [[UIImage imageWithData:placemark.photo] retain];
+                if (!self.placemark) {
+                    self.placemark = [matches objectAtIndex:0];
+                }
+                _placemarkInfo = [self.placemark.info copy];
+                _imageURL = [self.placemark.photoURL copy];
+                _image = [[UIImage imageWithData:self.placemark.photo] retain];
                 
             } else {            
                 NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:placemarkID, @"q", nil];
@@ -180,9 +151,11 @@
 
 - (void)loadDetailSection
 {
-    
     if (_placemarkInfo) {
         NSDictionary *replacements = [NSDictionary dictionaryWithObjectsAndKeys:_placemarkInfo, @"BODY", nil];
+        if (!_htmlTemplate) {
+            _htmlTemplate = [[KGOHTMLTemplate templateWithPathName:@"modules/map/detail.html"] retain];
+        }
         NSString *string = [_htmlTemplate stringWithReplacements:replacements];
         [_webView loadHTMLString:string baseURL:nil];
     }
@@ -218,7 +191,7 @@
 }
 
 - (void)pager:(KGODetailPager*)pager showContentForPage:(id<KGOSearchResult>)content {
-    if ([content isKindOfClass:[KGOPlacemark class]]) {
+    if ([content conformsToProtocol:@protocol(MKAnnotation)] && [content conformsToProtocol:@protocol(KGOSearchResult)]) {
         self.annotation = (id<MKAnnotation, KGOSearchResult>)content;
         _headerView.detailItem = self.annotation;
         [self loadAnnotationContent];
@@ -237,9 +210,9 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-    self.view.backgroundColor = [UIColor clearColor];
-
+    [self.view addSubview:self.tableView];
+    self.tableView.backgroundColor = [UIColor clearColor];
+    
     [self loadAnnotationContent]; // load annotation before inspecting it
     
     if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
@@ -259,10 +232,6 @@
     }
     _headerView.detailItem = self.annotation;
     self.tableView.tableHeaderView = _headerView;
-    
-    if (!_htmlTemplate) {
-        _htmlTemplate = [[KGOHTMLTemplate templateWithPathName:@"modules/map/detail.html"] retain];
-    }
 }
 
 - (void)viewDidUnload
@@ -275,14 +244,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-    // make sure at least 400px of the table height is visible
-    [_scrollView scrollRectToVisible:CGRectMake(0, 500, 1, 400) animated:YES];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -301,30 +262,6 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
-- (void)updateScrollView
-{
-    NSInteger count = [self numberOfSectionsInTableView:self.tableView];
-    CGFloat height = 0;
-    CGFloat lastOriginY = 0;
-    for (NSInteger i = 0; i < count; i++) {
-        CGRect rect = [self.tableView rectForSection:i];
-        height += rect.origin.y - lastOriginY;
-        height += rect.size.height;
-    }
-
-    //UIView *closeButton = [_scrollView viewWithTag:CLOSE_BUTTON_TAG];
-    //CGRect frame = closeButton.frame;
-    //frame.origin.x = _scrollView.frame.size.width - floor(closeButton.frame.size.width / 2);
-    //closeButton.frame = frame;
-    
-    _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, IPAD_TABLEVIEW_ORIGIN_Y + height);
-}
-
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-{
-    [self updateScrollView];
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -337,20 +274,13 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (_currentTableWidth && _currentTableWidth != tableView.frame.size.width) {
-        [self loadDetailSection];
-    }
-    _currentTableWidth = tableView.frame.size.width;
-    
     return 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat height = tableView.rowHeight;
-    if ((indexPath.section == 1 && [self.annotation isKindOfClass:[KGOPlacemark class]])
-        || indexPath.section == 2
-    ) {
+    if (indexPath.section == _detailSection) {
         height = _webView.frame.size.height + 20;
         if (_thumbView) {
             height += _thumbView.frame.size.height + 10;
@@ -368,12 +298,12 @@
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier] autorelease];
     }
     
-    if (indexPath.section == 0 && [self.annotation isKindOfClass:[ScheduleEventWrapper class]]) {
+    if (indexPath.section == _eventSection) {
         cell.textLabel.text = @"More event info";
         cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:KGOAccessoryTypeChevron];
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         
-    } else if (indexPath.section == 0 || (indexPath.section == 1 && [self.annotation isKindOfClass:[ScheduleEventWrapper class]])) {
+    } else if (indexPath.section == _googleSection) {
         cell.textLabel.text = @"View Location in Google Maps";
         cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:KGOAccessoryTypeExternal];
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
@@ -413,7 +343,7 @@
 {
     NSString *search = nil;
     
-    if (indexPath.section == 0 && [self.annotation isKindOfClass:[ScheduleEventWrapper class]]) {
+    if (indexPath.section == _eventSection) {
         // more info
         NSIndexPath *currentIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         NSString *sectionID = @"aSectionID"; // usually this is date strings
@@ -450,8 +380,7 @@
             [appDelegate showPage:LocalPathPageNameHome forModuleTag:@"schedule" params:params];
         }
         
-    } else if (indexPath.section == 0 || (indexPath.section == 1 && [self.annotation isKindOfClass:[ScheduleEventWrapper class]])) {
-        // google maps
+    } else if (_googleSection) {
         
         if (self.annotation.coordinate.latitude || self.annotation.coordinate.longitude) {
             search = [NSString stringWithFormat:@"%.5f,%.5f", self.annotation.coordinate.latitude, self.annotation.coordinate.longitude];
@@ -490,22 +419,17 @@
 
 - (void)thumbnail:(MITThumbnailView *)thumbnail didLoadData:(NSData *)data
 {
-    if ([self.annotation isKindOfClass:[KGOPlacemark class]]) {
-        KGOPlacemark *placemark = (KGOPlacemark *)self.annotation;
+    if ([thumbnail.imageURL isEqualToString:self.placemark.photoURL]) {
+        self.placemark.photo = data;
         
-        if ([thumbnail.imageURL isEqualToString:placemark.photoURL]) {
-            placemark.photo = data;
-            
-            UIImage *image = [UIImage imageWithData:data];
-            CGFloat maxWidth = self.view.frame.size.width - 40;
-            CGFloat ratio = maxWidth / image.size.width;
-            CGRect frame = thumbnail.frame;
-            frame.size = CGSizeMake(floor(ratio * image.size.width), floor(ratio * image.size.height));
-            thumbnail.frame = frame;
-            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1]
-                          withRowAnimation:UITableViewRowAnimationNone];
-        }
-        
+        UIImage *image = [UIImage imageWithData:data];
+        CGFloat maxWidth = self.view.frame.size.width - 40;
+        CGFloat ratio = maxWidth / image.size.width;
+        CGRect frame = thumbnail.frame;
+        frame.size = CGSizeMake(floor(ratio * image.size.width), floor(ratio * image.size.height));
+        thumbnail.frame = frame;
+        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:_detailSection]
+                      withRowAnimation:UITableViewRowAnimationNone];
     }
 }
 
@@ -517,10 +441,10 @@
     for (NSDictionary *aDictionary in results) {
         NSString *identifer = [aDictionary stringForKey:@"id" nilIfEmpty:YES];
         if ([identifer isEqualToString:self.annotation.identifier]) {
-            KGOPlacemark *placemark = [KGOPlacemark placemarkWithDictionary:aDictionary];
-            DLog(@"i am a placemark: %@", placemark);
-            _placemarkInfo = [placemark.info copy];
-            _imageURL = [placemark.photoURL copy];
+            self.placemark = [KGOPlacemark placemarkWithDictionary:aDictionary];
+            DLog(@"i am a placemark: %@", self.placemark);
+            _placemarkInfo = [self.placemark.info copy];
+            _imageURL = [self.placemark.photoURL copy];
             [self loadDetailSection];
             [self.tableView reloadData];
         }

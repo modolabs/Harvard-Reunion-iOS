@@ -638,12 +638,24 @@
 
 - (id<KGOSearchResult>)pager:(KGODetailPager *)pager contentForPageAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [self.annotations objectAtIndex:indexPath.row];
+    NSMutableArray *displayables = [NSMutableArray array];
+    for (id<MKAnnotation> anAnnotation in _mapView.annotations) {
+        if ([anAnnotation conformsToProtocol:@protocol(KGOSearchResult)]) {
+            [displayables addObject:anAnnotation];
+        }
+    }
+    return [displayables objectAtIndex:indexPath.row];
 }
 
 - (NSInteger)pager:(KGODetailPager *)pager numberOfPagesInSection:(NSInteger)section
 {
-    return self.annotations.count;
+    NSInteger count = 0;
+    for (id<MKAnnotation> anAnnotation in _mapView.annotations) {
+        if ([anAnnotation conformsToProtocol:@protocol(KGOSearchResult)]) {
+            count++;
+        }
+    }
+    return count;
 }
 
 #pragma mark SearchDisplayDelegate

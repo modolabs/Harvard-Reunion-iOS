@@ -68,6 +68,14 @@
         CGFloat y = LABEL_PADDING;
         if (_titleLabel) {
             y += _titleLabel.frame.size.height + LABEL_PADDING;
+            
+            CGRect buttonFrame = _bookmarkButton.frame;
+            buttonFrame.origin.y = y;
+            _bookmarkButton.frame = buttonFrame;
+            
+            buttonFrame = _shareButton.frame;
+            buttonFrame.origin.y = y;
+            _shareButton.frame = buttonFrame;
         }
         _subtitleLabel.frame = CGRectMake(LABEL_PADDING, y, maxWidth, textSize.height);
         subtitleHeight = _subtitleLabel.frame.size.height + LABEL_PADDING;

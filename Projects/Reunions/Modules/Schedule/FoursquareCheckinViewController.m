@@ -166,7 +166,7 @@
         
         if (!self.isCheckedIn) {
             if (!button) {
-                button = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+                button = [UIButton buttonWithType:UIButtonTypeCustom];
                 button.tag = 201;
                 
                 UIImage *image = [UIImage imageWithPathName:@"common/toolbar-button"];
@@ -194,7 +194,6 @@
             }
         } else if (button) {
             [button removeFromSuperview];
-            [button release];
         }
         
     } else {

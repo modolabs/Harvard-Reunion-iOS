@@ -21,7 +21,7 @@ static AnalyticsWrapper *s_sharedWrapper = nil;
 {
     if (!_trackingGroup) {
         ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
-        _trackingGroup = [[NSString stringWithFormat:@"%dth Reunion", [homeModule reunionNumber]] retain];
+        _trackingGroup = [[NSString stringWithFormat:@"%@th Reunion", [homeModule reunionNumber]] retain];
     }
     return _trackingGroup;
 }

@@ -20,6 +20,7 @@
 @dynamic bookmarked;
 @dynamic category;
 @dynamic photoURL;
+@dynamic userInfo;
 
 #pragma mark KGOSearchResult, MKAnnotation
 
@@ -70,6 +71,15 @@
         // for each field item, may not be robust
         itemTemplate.templateString = @"<li><strong>__label__: </strong>__title__</li>";
         self.info = [NSString stringWithFormat:@"<ul>%@</ul>", [itemTemplate stringWithMultiReplacements:descriptionInfo]];
+        
+        // TODO: reunion-specific field
+        self.userInfo = [NSKeyedArchiver archivedDataWithRootObject:descriptionInfo];
+        for (NSDictionary *aDict in descriptionInfo) {
+            if ([[aDict objectForKey:@"label"] isEqualToString:@"Address"]) {
+                self.street = [aDict objectForKey:@"title"];
+            }
+        }
+        
     }
     
     CLLocationDegrees lat = [dictionary floatForKey:@"lat"];
