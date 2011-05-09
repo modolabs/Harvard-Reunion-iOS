@@ -133,9 +133,20 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 }
 
 + (NSString *)nameFromAddressBookDict:(NSDictionary *)serializedRecord {
-    return [NSString stringWithFormat:@"%@ %@",
-            [serializedRecord objectForKey:@"kABPersonFirstNameProperty"],
-            [serializedRecord objectForKey:@"kABPersonLastNameProperty"]];    
+    NSString *name = @"";
+    NSString *firstName = [serializedRecord objectForKey:@"kABPersonFirstNameProperty"];
+    NSString *lastName = [serializedRecord objectForKey:@"kABPersonLastNameProperty"];
+    
+    if (firstName) {
+        name = firstName;
+    }
+    if (firstName && lastName) {
+        name = [name stringByAppendingString:@" "];
+    }
+    if (lastName) {
+        name = [name stringByAppendingString:lastName];
+    }
+    return name;   
 }
 
 #pragma mark Bump UI
