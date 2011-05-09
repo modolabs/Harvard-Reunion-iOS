@@ -446,6 +446,8 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 - (void)peoplePickerNavigationControllerDidCancel:
 (ABPeoplePickerNavigationController *)peoplePicker {
     [[self peoplePickerOwner] dismissModalViewControllerAnimated:YES];
+    [[BumpAPI sharedInstance] endSession];
+    [self setUpBump];
 }
 
 - (BOOL)peoplePickerNavigationController:
