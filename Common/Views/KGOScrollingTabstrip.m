@@ -219,6 +219,7 @@
             _rightScrollButton = [UIButton buttonWithType:UIButtonTypeCustom];
             _rightScrollButton.frame = imageFrame;
             _rightScrollButton.hidden = NO;
+            _rightScrollButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
             [_rightScrollButton setImage:rightScrollImage forState:UIControlStateNormal];
             [_rightScrollButton addTarget:self action:@selector(sideButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         }
