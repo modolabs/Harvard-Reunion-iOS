@@ -188,6 +188,11 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     }
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+    [self.player stop];
+}
+
 - (void)viewDidUnload
 {
     self.loadingCurtainImage = nil;

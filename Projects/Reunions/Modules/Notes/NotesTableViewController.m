@@ -144,11 +144,6 @@
                                                                            action:@selector(saveAndDismiss)] autorelease];
     tempVC.navigationItem.rightBarButtonItem = item;
     
-    item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                                                                           target:self
-                                                                           action:@selector(deleteNoteWithoutSaving)] autorelease];
-    tempVC.navigationItem.leftBarButtonItem = item;
- 
     navC.modalPresentationStyle =  UIModalPresentationFormSheet;
     navC.navigationBar.barStyle = UIBarStyleBlack;
     [self presentModalViewController:navC animated:YES];

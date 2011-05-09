@@ -58,40 +58,46 @@
             buttonTitle = @"Sign in to Facebook";
             
         } else  {
-            warning = @"Oops! It looks like you’re not a member of the Modo Reunion Test group in Facebook. Tap the button below to open the Facebook web page in a new browser, then join the group. When you've successfully joined, return to this web page to view the group's posts.";
+            ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
+            warning = [NSString stringWithFormat:@"Oops! It looks like you’re not a member of the %@ group in Facebook.  Tap the link below to open the Facebook web page in a new browser, then join the group.  When you've successfully joined, return to this web page to view the group's posts.\n\nDue to limitations in Facebook's mobile web site, you may need to visit the desktop website to join the group.", [homeModule fbGroupName]];
             buttonTitle = @"Open facebook.com";
         }
         
         self.tableView.hidden = YES;
         
+        BOOL morePadding = ![[KGOSocialMediaController facebookService] isSignedIn] || UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
         UILabel *label = (UILabel *)[self.view viewWithTag:34];
+        CGFloat labelWidth = self.view.bounds.size.width - 40;
+        if (morePadding) {
+            labelWidth -= 40;
+        }
         if (!label) {
             
             UIFont *font = [UIFont systemFontOfSize:17];
             label = [UILabel multilineLabelWithText:warning
                                                font:font
-                                              width:self.view.frame.size.width - 100];
+                                              width:labelWidth];
             label.tag = 34;
             label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
             label.textAlignment = UITextAlignmentCenter;
             label.textColor = [UIColor whiteColor];
-            CGRect frame = label.frame;
-            frame.origin.x = floor((self.view.frame.size.width - label.frame.size.width) / 2);
-            frame.origin.y = 50;
-            label.frame = frame;
             [self.view addSubview:label];
 
         } else {
             label.text = warning;
-
-            CGRect frame = label.frame;
-            CGSize size = [label.text sizeWithFont:label.font
-                                 constrainedToSize:CGSizeMake(self.view.frame.size.width - 100, 1000)];
-            frame.size = size;
-            frame.origin.x = floor((self.view.frame.size.width - label.frame.size.width) / 2);
-            
-            label.frame = frame;
         }
+        CGRect frame = label.frame;
+        CGSize size = [label.text sizeWithFont:label.font
+                             constrainedToSize:CGSizeMake(labelWidth, label.font.lineHeight * 20)];
+        frame.size.width = labelWidth;
+        frame.size.height = size.height;
+        frame.origin.x = floor((self.view.bounds.size.width - labelWidth) / 2);
+        frame.origin.y = 20;
+        if (morePadding) {
+            frame.origin.y += 20;
+        }
+        label.frame = frame;
+        
         
         UIButton *button = (UIButton *)[self.view viewWithTag:67];
         if (!button) {
@@ -100,20 +106,23 @@
             UIImage *image = [[UIImage imageWithPathName:@"common/red-button.png"] stretchableImageWithLeftCapWidth:10 topCapHeight:10];
             [button setBackgroundImage:image forState:UIControlStateNormal];
             [button setTitle:buttonTitle forState:UIControlStateNormal];
-            CGRect frame = CGRectZero;
-            frame.size = CGSizeMake(160, 40);
-            frame.origin.x = floor((self.view.frame.size.width - frame.size.width) / 2);
-            frame.origin.y = label.frame.origin.y + label.frame.size.height + 40;
-            button.frame = frame;
             [button addTarget:self action:@selector(facebookButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-            button.titleLabel.font = [UIFont boldSystemFontOfSize:13];
+            button.titleLabel.font = [UIFont boldSystemFontOfSize:15];
+            button.frame = CGRectMake(floor((self.view.bounds.size.width - 170) / 2), 0, 170, 55);
+            button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
             [self.view addSubview:button];
             
         } else {
             [button setTitle:buttonTitle forState:UIControlStateNormal];
-            
         }
+        frame = button.frame;
+        frame.origin.y = label.frame.origin.y + label.frame.size.height + 20;
+        if (morePadding) {
+            frame.origin.y += 20;
+        }
+        button.frame = frame;
         
+        self.view.autoresizesSubviews = YES;
         self.navigationItem.rightBarButtonItem = nil;
     }
     

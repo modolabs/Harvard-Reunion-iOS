@@ -234,7 +234,6 @@
     [tableView scrollToRowAtIndexPath:scrollToIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
-#define TABLE_TAG 1
 #define SELECTED_MAP_TAG 2
 #define LAST_MAP_TAG 3
 
@@ -389,7 +388,7 @@
     if (needsInitialize) {
         tableView.backgroundColor = [UIColor clearColor];
         tableView.backgroundView = nil;
-        tableView.tag = TABLE_TAG;
+        tableView.tag = DETAILS_VIEW_TAG;
         tableView.dataManager = self.dataManager;
         tableView.viewController = [KGO_SHARED_APP_DELEGATE() visibleViewController];
     }
@@ -446,6 +445,7 @@
         mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         mapView.userInteractionEnabled = NO;
         
+        containerView.tag = MAP_VIEW_TAG;
         containerView.layer.cornerRadius = 5.0;
         containerView.layer.borderColor = [[UIColor grayColor] CGColor];
         containerView.layer.borderWidth = 1.0;

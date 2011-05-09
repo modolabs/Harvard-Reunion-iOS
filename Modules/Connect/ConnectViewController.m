@@ -62,6 +62,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     [bumpObject configActionMessage:
      @"Bump with another app user to get started."];
     [bumpObject requestSession];
+    contactReceived = NO;
 }
 
 #pragma mark Address book
@@ -112,6 +113,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 {
     // Ask about adding person sent to us to address book.
     if (self.incomingABRecordDict) {
+        contactReceived = YES;
         NSString *alertQuestion = 
         [NSString stringWithFormat:@"Do you want to add %@ to your Contacts?",
          [[self class] nameFromAddressBookDict:self.incomingABRecordDict]];
@@ -131,9 +133,20 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 }
 
 + (NSString *)nameFromAddressBookDict:(NSDictionary *)serializedRecord {
-    return [NSString stringWithFormat:@"%@ %@",
-            [serializedRecord objectForKey:@"kABPersonFirstNameProperty"],
-            [serializedRecord objectForKey:@"kABPersonLastNameProperty"]];    
+    NSString *name = @"";
+    NSString *firstName = [serializedRecord objectForKey:@"kABPersonFirstNameProperty"];
+    NSString *lastName = [serializedRecord objectForKey:@"kABPersonLastNameProperty"];
+    
+    if (firstName) {
+        name = firstName;
+    }
+    if (firstName && lastName) {
+        name = [name stringByAppendingString:@" "];
+    }
+    if (lastName) {
+        name = [name stringByAppendingString:lastName];
+    }
+    return name;   
 }
 
 #pragma mark Bump UI
@@ -343,10 +356,15 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 
 - (void)bumpSessionStartedWith:(Bumper*)otherBumper{
     NSLog(@"Bump session started.");
-//    [self showPicker];
+    [self showPicker];
 }
 
 - (void)bumpSessionEnded:(BumpSessionEndReason)reason {
+    if(contactReceived) {
+        // no need to show error messege
+        return;
+    }
+    
 	NSString *alertText;
 	switch (reason) {
 		case END_OTHER_USER_QUIT:
@@ -385,6 +403,10 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 }
 
 - (void)bumpSessionFailedToStart:(BumpSessionStartFailedReason)reason {
+    if (contactReceived) {
+        // no need to show error message
+        return;
+    }
 	
 	NSString *alertText;
 	switch (reason) {
@@ -424,6 +446,8 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 - (void)peoplePickerNavigationControllerDidCancel:
 (ABPeoplePickerNavigationController *)peoplePicker {
     [[self peoplePickerOwner] dismissModalViewControllerAnimated:YES];
+    [[BumpAPI sharedInstance] endSession];
+    [self setUpBump];
 }
 
 - (BOOL)peoplePickerNavigationController:
@@ -470,7 +494,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
             default:
                 // Said yes to connect.
                 [[BumpAPI sharedInstance] confirmMatch:YES];
-                [self showPicker];
+                //[self showPicker];
                 break;
         }
     }

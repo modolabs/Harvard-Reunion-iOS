@@ -1,6 +1,9 @@
 #import <UIKit/UIKit.h>
 #import "NewNoteViewController.h"
 
+#define MAP_VIEW_TAG 556
+#define DETAILS_VIEW_TAG 557
+
 @class ScheduleEventWrapper;
 
 @interface ScheduleTabletTableViewCell : UITableViewCell <UIAlertViewDelegate, NotesModalViewDelegate> {
@@ -26,10 +29,9 @@
 @property (nonatomic) BOOL isAfterSelected;
 @property (nonatomic, assign) UIViewController *parentViewController;
 
-- (void)addBookmark:(id)sender;
+- (void)addBookmark;
 - (void)attemptToAddBookmark:(id)sender;
-- (void)removeBookmark:(id)sender;
-- (void)refuseToRemoveBookmark:(id)sender;
+- (void)attemptToRemoveBookmark:(id)sender;
 
 - (void)noteButtonPressed:(id)sender;
 
