@@ -30,10 +30,9 @@
 
 @interface NewNoteViewController : UIViewController <UIActionSheetDelegate, MFMailComposeViewControllerDelegate, UIPrintInteractionControllerDelegate>{
     
-    UIView * titleView;
     UITextView * textView;
     
-    UIButton * printButton;
+    UIButton *deleteButton;
     
 }
 

@@ -11,7 +11,7 @@
 #import "UIKit+KGOAdditions.h"
 #import "CoreDataManager.h"
 #import "MITMailComposeController.h"
-
+#import "NotesTableViewController.h"
 
 #define MIN_HEIGHT = 250
 #define MAX_HEIGHT = 350;
@@ -38,7 +38,7 @@
         
         UIFont *fontTitle = [UIFont fontWithName:@"Georgia" size:18];//[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
         CGSize titleSize = [titleText sizeWithFont:fontTitle];
-        UILabel * titleTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, buttonX - 20, titleSize.height + 5)];
+        UILabel * titleTextLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, 10, buttonX - 20, titleSize.height + 5)] autorelease];
         titleTextLabel.text = titleText;
         titleTextLabel.font = fontTitle;
         titleTextLabel.numberOfLines = 1;
@@ -56,7 +56,7 @@
            
         }
          detailSize = [dateText sizeWithFont:fontDetail];
-        UILabel * detailTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, titleTextLabel.frame.size.height + 8, buttonX - 20, detailSize.height + 5)];
+        UILabel * detailTextLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, titleTextLabel.frame.size.height + 8, buttonX - 20, detailSize.height + 5)] autorelease];
         detailTextLabel.text = dateText;
         detailTextLabel.font = fontDetail;
         detailTextLabel.numberOfLines = 1;
@@ -64,7 +64,7 @@
         detailTextLabel.textColor = [UIColor grayColor];
         detailTextLabel.backgroundColor = [UIColor clearColor];
         
-        UIButton * shareButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+        UIButton * shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
         shareButton.frame = CGRectMake(buttonX, buttonY, shareButtonImage.size.width, shareButtonImage.size.height);
         [shareButton setImage:shareButtonImage forState:UIControlStateNormal];
         [shareButton setImage:[UIImage imageWithPathName:@"modules/notes/share_pressed.png"] forState:UIControlStateHighlighted];
@@ -74,12 +74,14 @@
        
         buttonX += shareButtonImage.size.width + 5;
         
-        UIButton * deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
-        deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
-        [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
-        [deleteButton setImage:[UIImage imageWithPathName:@"modules/notes/delete_pressed.png"] forState:UIControlStateHighlighted];
-        
-        [deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        if (!deleteButton) {
+            deleteButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+            deleteButton.frame = CGRectMake(buttonX, buttonY, deleteButtonImage.size.width, deleteButtonImage.size.height);
+            [deleteButton setImage:deleteButtonImage forState:UIControlStateNormal];
+            [deleteButton setImage:[UIImage imageWithPathName:@"modules/notes/delete_pressed.png"] forState:UIControlStateHighlighted];
+            
+            [deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        }
         
         titleTextLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
         detailTextLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
@@ -96,7 +98,7 @@
         UIImage * image = [UIImage imageWithPathName:@"modules/schedule/faketop-above-selection.png"];
         UIImageView * sectionDivider;
         if (image){
-            sectionDivider = [[UIImageView alloc] initWithImage:[image stretchableImageWithLeftCapWidth:0 topCapHeight:0]];
+            sectionDivider = [[[UIImageView alloc] initWithImage:[image stretchableImageWithLeftCapWidth:0 topCapHeight:0]] autorelease];
             sectionDivider.frame = CGRectMake(15, 
                                               titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 10, 
                                               self.frame.size.width, 
@@ -137,7 +139,7 @@
     }
     return self;
 }
-
+/*
 -(void) printButtonPressed: (id) sender {
     
     NSString * titleText = [Note noteTitleFromDetails:detailsView.text];
@@ -149,7 +151,7 @@
     
     [Note printContent:textToPrint jobTitle:titleText fromButton:printButton parentView:self delegate:self];
 }
-
+*/
 -(void) shareButtonPressed: (id) sender {
     
     NSString * emailSubject = note.title;
@@ -172,13 +174,16 @@
                                                       destructiveButtonTitle:@"Delete" 
                                                            otherButtonTitles:@"Cancel", nil];
     
-    [deleteActionSheet showInView:self];
+    [deleteActionSheet showFromRect:deleteButton.frame inView:self animated:YES];
     [deleteActionSheet release];
 }
 
 
 - (void)dealloc
 {
+    [deleteButton release];
+    [detailsView release];
+    self.delegate = nil;
     [super dealloc];
 }
 
@@ -206,16 +211,25 @@
     
 }
 
+- (void)textViewDidChange:(UITextView *)textView
+{
+    if ([self.delegate isKindOfClass:[NewNoteViewController class]]) {
+        self.delegate.navigationItem.leftBarButtonItem.enabled = (textView.text.length != 0);
+    }
+}
+
 #pragma mark
 #pragma mark MFMailComposeViewControllerDelegate
 
 - (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     
-    if ([self.delegate respondsToSelector:@selector(dismissModalViewControllerAnimated:andReload:)])
-        [self.delegate dismissModalViewControllerAnimated:YES andReload:NO];
+    if ([self.delegate isKindOfClass:[NotesTableViewController class]]) {
+        NotesTableViewController *notesTVC = (NotesTableViewController *)self.delegate;
+        [notesTVC saveNotesState];
+        [notesTVC reloadNotes];
+    }
     
-    else
-        [self.delegate dismissModalViewControllerAnimated:YES];
+    [self.delegate dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark

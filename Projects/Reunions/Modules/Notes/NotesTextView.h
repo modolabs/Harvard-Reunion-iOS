@@ -25,14 +25,15 @@
 
 @interface NotesTextView : UIView <UIActionSheetDelegate, UITextViewDelegate, MFMailComposeViewControllerDelegate, UIPrintInteractionControllerDelegate>{
     
-    UIView * titleView;
+    //UIView * titleView;
     UITextView * detailsView;
     Note * note;
     BOOL becomeFirstResponder;
     
     UIViewController <NotesTextViewDelegate> *delegate;
     
-    UIButton * printButton;
+    //UIButton * printButton;
+    UIButton *deleteButton;
 }
 
 @property(nonatomic, assign) UIViewController <NotesTextViewDelegate> *delegate;
