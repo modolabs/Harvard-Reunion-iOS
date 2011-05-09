@@ -147,6 +147,18 @@
     [_loadingView stopAnimating];
     self.tableView.hidden = NO;
     [self reloadDataForTableView:self.tableView];
+    
+    if (_selectedRow != NSNotFound) {
+        NSIndexPath *scrollToIndexPath = nil;
+        if (_selectedRow == 0) {
+            scrollToIndexPath = [NSIndexPath indexPathForRow:_selectedRow inSection:0];
+        } else if (_selectedRow == 1) {
+            scrollToIndexPath = [NSIndexPath indexPathForRow:_selectedRow - 1 inSection:0];
+        } else {
+            scrollToIndexPath = [NSIndexPath indexPathForRow:_selectedRow - 2 inSection:0];
+        }
+        [self.tableView scrollToRowAtIndexPath:scrollToIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
 }
 
 #pragma mark table view methods
