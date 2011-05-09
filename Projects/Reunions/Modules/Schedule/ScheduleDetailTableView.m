@@ -56,9 +56,11 @@
 
 - (void)refreshFoursquareCell
 {
-    //[self beginUpdates];
-    [self reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
-    //[self endUpdates];
+    // Don't try to reload a single section because on the iPad it may not have a section 0
+    // if the cards are mid-switch
+    [self beginUpdates];
+    [self reloadData];
+    [self endUpdates];
 }
 
 - (void)venueCheckinStatusReceived:(BOOL)status forVenue:(NSString *)venue
