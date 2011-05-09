@@ -514,6 +514,7 @@ ToolbarButtonTags;
             }
         }
         completion:^(BOOL finished) {
+            self.tableView.contentOffset = CGPointZero;
             if([self hideToolbarsInLandscape]) {
                 [_mediaView addGestureRecognizer:self.tapRecoginizer];
             }
