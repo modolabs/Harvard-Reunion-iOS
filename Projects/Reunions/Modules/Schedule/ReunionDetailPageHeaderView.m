@@ -9,7 +9,7 @@
 #define LABEL_SPACING 10
 #define LABEL_VMARGIN 17
 #define LABEL_HMARGIN 10
-#define MAX_TITLE_LINES 3
+#define MAX_TITLE_LINES 4
 #define MAX_SUBTITLE_LINES 5
 
 - (void)layoutSubviews
@@ -25,6 +25,8 @@
         CGSize constraintSize = CGSizeMake(labelWidth, _titleLabel.font.lineHeight * MAX_TITLE_LINES);
         CGSize textSize = [_titleLabel.text sizeWithFont:_titleLabel.font constrainedToSize:constraintSize];
         _titleLabel.frame = CGRectMake(LABEL_HMARGIN, LABEL_VMARGIN, labelWidth, textSize.height);
+        _titleLabel.numberOfLines = MAX_TITLE_LINES;
+        _titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
         _titleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
         _titleLabel.layer.shadowOffset = CGSizeMake(0, 1);
         _titleLabel.layer.shadowOpacity = 0.5;
