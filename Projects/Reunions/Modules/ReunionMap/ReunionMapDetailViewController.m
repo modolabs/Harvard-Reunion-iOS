@@ -13,6 +13,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "UIKit+KGOAdditions.h"
 #import "KGOSidebarFrameViewController.h"
+#import "KGOCalendar.h"
 
 #define IPAD_TABLEVIEW_ORIGIN_Y 500
 #define CLOSE_BUTTON_TAG 15
@@ -419,14 +420,35 @@
         NSArray *events = [NSArray arrayWithObject:self.annotation];
         NSDictionary *eventsBySection = [NSDictionary dictionaryWithObject:events forKey:sectionID];
         NSArray *sections = [NSArray arrayWithObject:sectionID];
+
+        KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
         
-        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                                currentIndexPath, @"currentIndexPath",
-                                eventsBySection, @"eventsBySection",
-                                sections, @"sections",
-                                nil];
-        [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameDetail forModuleTag:@"schedule" params:params];
-        
+        if (![appDelegate navigationStyle] == KGONavigationStyleTabletSidebar) {
+            NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    currentIndexPath, @"currentIndexPath",
+                                    eventsBySection, @"eventsBySection",
+                                    sections, @"sections",
+                                    nil];
+            [appDelegate showPage:LocalPathPageNameDetail forModuleTag:@"schedule" params:params];
+            
+        } else {
+            ScheduleEventWrapper *event = (ScheduleEventWrapper *)self.annotation;
+            KGOCalendar *foundCategory = nil;
+            for (KGOCalendar *aCalendar in event.calendars) {
+                foundCategory = aCalendar;
+                if (![foundCategory.identifier isEqualToString:@"all"]) {
+                    break;
+                }
+            }
+            
+            NSMutableDictionary *params = [NSMutableDictionary dictionary];
+            if (foundCategory) {
+                [params setObject:foundCategory forKey:@"calendar"];
+            }
+            [params setObject:event forKey:@"selectedEvent"];
+
+            [appDelegate showPage:LocalPathPageNameHome forModuleTag:@"schedule" params:params];
+        }
         
     } else if (indexPath.section == 0 || (indexPath.section == 1 && [self.annotation isKindOfClass:[ScheduleEventWrapper class]])) {
         // google maps
@@ -496,7 +518,7 @@
         NSString *identifer = [aDictionary stringForKey:@"id" nilIfEmpty:YES];
         if ([identifer isEqualToString:self.annotation.identifier]) {
             KGOPlacemark *placemark = [KGOPlacemark placemarkWithDictionary:aDictionary];
-            NSLog(@"i am a placemark: %@", placemark);
+            DLog(@"i am a placemark: %@", placemark);
             _placemarkInfo = [placemark.info copy];
             _imageURL = [placemark.photoURL copy];
             [self loadDetailSection];

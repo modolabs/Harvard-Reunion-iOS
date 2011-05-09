@@ -74,9 +74,11 @@ enum {
         [backgroundImageView setImage:[UIImage imageNamed:@"common/linkback-bar"]];
         _dismissView = backgroundImageView;
         
-        UIImage *buttonImage = [UIImage imageNamed:@"common/toolbar-button"];
-        UIImage *buttomImagePressed = [UIImage imageNamed:@"common/toolbar-button-pressed"];
-        
+        UIImage *buttonImage = [[UIImage imageNamed:@"common/toolbar-button"] 
+                                 stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+        UIImage *buttomImagePressed = [[UIImage imageNamed:@"common/toolbar-button-pressed"] 
+                                        stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+        ;
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
         button.titleLabel.textColor = [UIColor whiteColor];
         //button.layer.borderColor = [[UIColor colorWithWhite:0.2 alpha:1] CGColor];

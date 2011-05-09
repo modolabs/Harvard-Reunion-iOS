@@ -347,7 +347,7 @@
     _noteViewController.navigationItem.rightBarButtonItem = item;
     
     navC.modalPresentationStyle =  UIModalPresentationFormSheet;
-    navC.navigationBar.tintColor = [UIColor blackColor];
+    navC.navigationBar.barStyle = UIBarStyleBlack;
     [self.parentViewController presentModalViewController:navC animated:YES];
     
     CGRect frame = navC.view.superview.frame;

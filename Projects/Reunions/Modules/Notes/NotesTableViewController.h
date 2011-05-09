@@ -19,7 +19,7 @@
     
     BOOL firstView;
     
-    UIButton *printAllButton;
+    //UIButton *printAllButton;
     
     NotesTextView * notesTextView;
     
@@ -33,7 +33,7 @@
 - (void) reloadNotes;
 - (void) saveNotesState;
 
-- (void) dismissModalViewControllerAnimated:(BOOL)animated andReload:(BOOL) reload;
+- (void)saveAndDismiss;
 
 // called from the modal view (new note), upon delete
 -(void) deleteNoteWithoutSaving;

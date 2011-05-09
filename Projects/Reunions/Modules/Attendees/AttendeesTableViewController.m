@@ -75,7 +75,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     NSDictionary *userDict = [[[KGORequestManager sharedManager] sessionInfo] dictionaryForKey:@"user"];
     NSString *username = [userDict stringForKey:@"name" nilIfEmpty:YES];
     if (!username) {
-        listTitle = @"In order to see the list of attendees you must sign in";
+        listTitle = @"In order to see the list of attendees, you must sign in.";
     } else {
         listTitle = self.eventTitle;
     }
@@ -84,58 +84,24 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     CGFloat viewHeight = font.lineHeight + 24;
     
     UILabel *label = nil;
-    UIView *labelContainer = [self.view viewWithTag:200];
     UIButton *signoutButton = (UIButton *)[self.view viewWithTag:100];
     
-    if (labelContainer) {
-        label = (UILabel *)[labelContainer viewWithTag:10];
-        
-    } else {
-        CGRect titleFrame;
-        if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
-            titleFrame = CGRectMake(0.0, 50, self.view.bounds.size.width, viewHeight);
-            viewHeight += 50;
-        } else {
-            titleFrame = CGRectMake(0.0, 0.0, self.view.bounds.size.width, viewHeight);
-        }
-        labelContainer = [[[UIView alloc] initWithFrame:titleFrame] autorelease];
-        labelContainer.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
-        labelContainer.tag = 200;
-        [labelContainer addSubview:label];
-        [self.view addSubview:labelContainer];
-    }
-    
     if (!label) {
-        label = [UILabel multilineLabelWithText:listTitle font:font width:self.view.bounds.size.width - 20];
-        label.frame = CGRectMake(10, 17, label.frame.size.width, label.frame.size.height);
+        font = [UIFont systemFontOfSize:17];
+        label = [UILabel multilineLabelWithText:listTitle
+                                           font:font
+                                          width:self.view.frame.size.width - 100];
         label.tag = 10;
-        
+        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        label.textAlignment = UITextAlignmentCenter;
         label.layer.shadowColor = [[UIColor blackColor] CGColor];
         label.layer.shadowOffset = CGSizeMake(0, 1);
         label.layer.shadowOpacity = 0.75;
         label.layer.shadowRadius = 1;
-        
-        if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
-            label.textColor = [UIColor whiteColor];
-        } else {
-            label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyContentTitle];
-        }
-        
-        [labelContainer addSubview:label];
+        label.textColor = [UIColor whiteColor];
+    }
 
-    } else {
-        CGSize size = [listTitle sizeWithFont:label.font constrainedToSize:CGSizeMake(self.view.bounds.size.width - 20, 100)];
-        label.frame = CGRectMake(10, 17, size.width, size.height);
-        label.text = listTitle;
-    }
     
-    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] != KGONavigationStyleTabletSidebar) {
-        viewHeight = label.frame.size.height + 34;
-    }
-    
-    CGRect frame = labelContainer.frame;
-    frame.size.height = viewHeight;
-    labelContainer.frame = frame;
     
     if (username) {
         if (!self.attendees) {
@@ -173,17 +139,37 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
         }
         
     } else {
+        CGRect frameForLabel = CGRectZero;
+        frameForLabel.size = CGSizeMake(self.view.frame.size.width - 100, 100);
+        frameForLabel.origin.x = floor((self.view.frame.size.width - label.frame.size.width) / 2);
+        frameForLabel.origin.y = 100;
+        label.frame = frameForLabel;
+        
         if (!signoutButton) {
+            
             signoutButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            signoutButton.frame = CGRectMake(0, labelContainer.frame.origin.y + labelContainer.frame.size.height + 10, 100, 31);
-            signoutButton.titleLabel.textAlignment = UITextAlignmentLeft;
             signoutButton.tag = 100;
-            [signoutButton setTitle:@"Sign in >" forState:UIControlStateNormal];
+            UIImage *image = [[UIImage imageWithPathName:@"common/red-button.png"]
+                              stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+            signoutButton.titleLabel.font = [UIFont boldSystemFontOfSize:17];
             [signoutButton addTarget:[KGORequestManager sharedManager]
                               action:@selector(logoutKurogoServer)
                     forControlEvents:UIControlEventTouchUpInside];
-            [self.view addSubview:signoutButton];
+            signoutButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+            
+            [signoutButton setBackgroundImage:image forState:UIControlStateNormal];
+            [signoutButton setTitle:@"Sign in" forState:UIControlStateNormal];
         }
+        
+        CGRect frameForButton = CGRectZero;
+        frameForButton.size = CGSizeMake(120, 40);
+        frameForButton.origin.x = floor((self.view.frame.size.width - frameForButton.size.width) / 2);
+        frameForButton.origin.y = label.frame.origin.y + label.frame.size.height + 20;
+        signoutButton.frame = frameForButton;
+        
+        [self.view addSubview:label];
+        [self.view addSubview:signoutButton];
+        
         
         if (self.tableView) {
             [_tableView removeFromSuperview];

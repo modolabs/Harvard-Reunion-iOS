@@ -21,10 +21,11 @@
 @implementation NotesTableViewController
 
 - (void) reloadNotes {
-    if (nil != notesArray)
-        [notesArray release];
-    
+    [notesArray release];
     notesArray = [[[CoreDataManager sharedManager] objectsForEntity:NotesEntityName matchingPredicate:nil] retain];
+    
+    [selectedRowIndexPath release];
+    selectedRowIndexPath = [[NSIndexPath indexPathForRow:notesArray.count -1 inSection:0] retain];
 }
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -91,7 +92,7 @@
     
     return aButton;
 }
-
+/*
 - (void) printAllButtonPressed: (id) sender {
     [self saveNotesState];
     [self reloadNotes];
@@ -106,7 +107,7 @@
     
     [Note printContent:notesBody jobTitle:@"Harvard Reunion: All notes" fromButton:printAllButton parentView:self.view delegate:self];
 }
-
+*/
 - (void) emailAllButtonPressed: (id) sender {
     
     [self saveNotesState];
@@ -126,30 +127,23 @@
 
 - (void)newNoteButtonPressed:(id)sender {
     
-    if (nil != tempVC)
-        [tempVC release];
-    
     NSDate * noteDate = [NSDate date];
-    tempVC = [[[NewNoteViewController alloc] initWithTitleText:@"<Empty Note>" 
-                                                          date: noteDate               
-                                                   andDateText:[Note dateToDisplay:noteDate]
-                                                    eventId:nil
+    [tempVC release];
+    tempVC = [[NewNoteViewController alloc] initWithTitleText:@"<Empty Note>" 
+                                                         date: noteDate               
+                                                  andDateText:[Note dateToDisplay:noteDate]
+                                                      eventId:nil
                                                     viewWidth:NEWNOTE_WIDTH 
-                                                    viewHeight:NEWNOTE_HEIGHT] retain];
+                                                   viewHeight:NEWNOTE_HEIGHT];
     tempVC.viewControllerBackground = self;
                                        
     UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:tempVC] autorelease];
     
     UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                            target:self
-                                                                           action:@selector(dismissModalViewControllerAnimated:)] autorelease];
+                                                                           action:@selector(saveAndDismiss)] autorelease];
     tempVC.navigationItem.rightBarButtonItem = item;
     
-    item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                                                                           target:tempVC
-                                                                           action:@selector(deleteButtonPressed:)] autorelease];
-    tempVC.navigationItem.leftBarButtonItem = item;
- 
     navC.modalPresentationStyle =  UIModalPresentationFormSheet;
     navC.navigationBar.barStyle = UIBarStyleBlack;
     [self presentModalViewController:navC animated:YES];
@@ -187,32 +181,23 @@
     }
 }
 
-- (void) dismissModalViewControllerAnimated:(BOOL)animated {
-    
-    [self dismissModalViewControllerAnimated:animated andReload:YES];
-    
-}
-
-- (void) dismissModalViewControllerAnimated:(BOOL)animated andReload:(BOOL) reload {
-    
+- (void)saveAndDismiss
+{
     [self saveNotesState];
     [self reloadNotes];
     
-    if (reload == YES) {
-        if (nil != selectedRowIndexPath)
-            [selectedRowIndexPath release];
+    [selectedRowIndexPath release];
+    selectedRowIndexPath = [[NSIndexPath indexPathForRow:notesArray.count -1 inSection:0] retain];
+
+    [selectedNote release];
+    selectedNote = [[notesArray objectAtIndex:notesArray.count -1] retain];
     
-        if (nil != selectedNote)
-            [selectedNote release];
+    [self.tableView reloadData];
     
-        selectedRowIndexPath = [[NSIndexPath indexPathForRow:notesArray.count -1 inSection:0] retain];
-        selectedNote = [[notesArray objectAtIndex:notesArray.count -1] retain];
-        [self.tableView reloadData];
-    }
-    
+    [tempVC release];
     tempVC = nil;
     
-    [super dismissModalViewControllerAnimated:YES];
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark
@@ -220,7 +205,7 @@
 
 - (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     
-    [super dismissModalViewControllerAnimated:YES];
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 
@@ -229,11 +214,15 @@
 
 -(void) deleteNoteWithoutSaving {
     
-    [super dismissModalViewControllerAnimated:YES];
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)dealloc
 {
+    [tempVC release];
+    [notesArray release];
+    [selectedRowIndexPath release];
+    [notesTextView release];
     [super dealloc];
 }
 
@@ -358,14 +347,15 @@
         
         cell.tableView = self.tableView;
         cell.notesCellType = NotesCellSelected;
-
-        notesTextView = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 8, 500) 
+        
+        [notesTextView release];
+        notesTextView = [[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 8, 500) 
                                                     titleText:noteTitle
                                                    detailText:[Note dateToDisplay:note.date]
                                                      noteText:noteText
                                                          note:note
                                                firstResponder:!firstView
-                                                     dateFont:cell.detailTextLabel.font] autorelease];
+                                                     dateFont:cell.detailTextLabel.font];
         notesTextView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         notesTextView.autoresizesSubviews = YES;
         
@@ -434,8 +424,8 @@
         selectedNote = [[notesArray objectAtIndex:indexPath.row] retain];
     }
     
-    selectedRowIndexPath = indexPath;
-
+    [selectedRowIndexPath release];
+    selectedRowIndexPath = [indexPath retain];
     
     [self.tableView reloadData];
     
