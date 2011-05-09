@@ -92,7 +92,6 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
                                            font:font
                                           width:self.view.frame.size.width - 100];
         label.tag = 10;
-    }
         label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         label.textAlignment = UITextAlignmentCenter;
         label.layer.shadowColor = [[UIColor blackColor] CGColor];
@@ -100,6 +99,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
         label.layer.shadowOpacity = 0.75;
         label.layer.shadowRadius = 1;
         label.textColor = [UIColor whiteColor];
+    }
 
     
     
@@ -155,15 +155,17 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
             [signoutButton addTarget:[KGORequestManager sharedManager]
                               action:@selector(logoutKurogoServer)
                     forControlEvents:UIControlEventTouchUpInside];
+            signoutButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
             
             [signoutButton setBackgroundImage:image forState:UIControlStateNormal];
             [signoutButton setTitle:@"Sign in" forState:UIControlStateNormal];
-            CGRect frameForButton = CGRectZero;
-            frameForButton.size = CGSizeMake(120, 40);
-            frameForButton.origin.x = (self.view.frame.size.width - frameForButton.size.width)/2;
-            frameForButton.origin.y = label.frame.origin.y + label.frame.size.height + 20;
-            signoutButton.frame = frameForButton;
         }
+        
+        CGRect frameForButton = CGRectZero;
+        frameForButton.size = CGSizeMake(120, 40);
+        frameForButton.origin.x = floor((self.view.frame.size.width - frameForButton.size.width) / 2);
+        frameForButton.origin.y = label.frame.origin.y + label.frame.size.height + 20;
+        signoutButton.frame = frameForButton;
         
         [self.view addSubview:label];
         [self.view addSubview:signoutButton];
