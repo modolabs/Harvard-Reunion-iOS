@@ -211,13 +211,6 @@
     
 }
 
-- (void)textViewDidChange:(UITextView *)textView
-{
-    if ([self.delegate isKindOfClass:[NewNoteViewController class]]) {
-        self.delegate.navigationItem.leftBarButtonItem.enabled = (textView.text.length != 0);
-    }
-}
-
 #pragma mark
 #pragma mark MFMailComposeViewControllerDelegate
 

@@ -128,6 +128,7 @@
 - (void)newNoteButtonPressed:(id)sender {
     
     NSDate * noteDate = [NSDate date];
+    [tempVC release];
     tempVC = [[NewNoteViewController alloc] initWithTitleText:@"<Empty Note>" 
                                                          date: noteDate               
                                                   andDateText:[Note dateToDisplay:noteDate]
@@ -223,6 +224,7 @@
 
 - (void)dealloc
 {
+    [tempVC release];
     [notesArray release];
     [selectedRowIndexPath release];
     [notesTextView release];

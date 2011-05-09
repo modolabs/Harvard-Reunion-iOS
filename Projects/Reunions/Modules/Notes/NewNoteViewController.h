@@ -28,7 +28,9 @@
 #endif
 
 
-@interface NewNoteViewController : UIViewController <UIActionSheetDelegate, MFMailComposeViewControllerDelegate, UIPrintInteractionControllerDelegate>{
+@interface NewNoteViewController : UIViewController <UIActionSheetDelegate,
+MFMailComposeViewControllerDelegate, UIPrintInteractionControllerDelegate,
+UITextViewDelegate> {
     
     UITextView * textView;
     

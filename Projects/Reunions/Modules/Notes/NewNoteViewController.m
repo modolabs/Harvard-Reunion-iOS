@@ -134,6 +134,7 @@
                                                                 titleTextLabel.frame.size.height + detailTextLabel.frame.size.height + 15, 
                                                                 self.width - 10, 
                                                                 self.height - titleTextLabel.frame.size.height - detailTextLabel.frame.size.height - 15)];
+        textView.delegate = self;
         textView.backgroundColor = [UIColor clearColor];
         
         NSPredicate *pred = [NSPredicate predicateWithFormat:@"title = %@", self.titleText];
@@ -150,6 +151,11 @@
     
      self.view.backgroundColor = [UIColor colorWithHexString:@"eee4b8"];
     
+}
+
+- (void)textViewDidChange:(UITextView *)aTextView
+{
+    self.navigationItem.leftBarButtonItem.enabled = (textView.text.length == 0);
 }
 
 -(NSString *) textViewString {
