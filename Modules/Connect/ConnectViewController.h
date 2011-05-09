@@ -13,6 +13,7 @@ UITextFieldDelegate, ABPeoplePickerNavigationControllerDelegate,
 UIAlertViewDelegate, BumpAPICustomUI> {
     BOOL shouldPromptAboutAddingRecordAtNextChance;
     BOOL addressBookPickerShowing;
+    BOOL contactReceived;
 }
 
 @property (nonatomic, retain) NSDictionary *incomingABRecordDict;
