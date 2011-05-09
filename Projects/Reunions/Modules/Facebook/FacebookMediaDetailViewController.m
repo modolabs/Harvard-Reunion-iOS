@@ -514,7 +514,6 @@ ToolbarButtonTags;
             }
         }
         completion:^(BOOL finished) {
-            self.tableView.contentOffset = CGPointZero;
             if([self hideToolbarsInLandscape]) {
                 [_mediaView addGestureRecognizer:self.tapRecoginizer];
             }
@@ -817,4 +816,9 @@ ToolbarButtonTags;
     return cell;
 }
 
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if (UIInterfaceOrientationIsLandscape(displayedOrientation)) {
+        scrollView.contentOffset = CGPointZero;
+    }
+}
 @end
