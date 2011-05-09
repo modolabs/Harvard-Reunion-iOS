@@ -670,6 +670,7 @@
         [_mapView removeAnnotations:[_mapView annotations]];
         id<MKAnnotation> annotation = (id<MKAnnotation>)aResult;
         [_mapView addAnnotation:annotation];
+        [self dismissPopoverAnimated:YES];
     }
 }
 
@@ -691,15 +692,17 @@
 	
     [_mapView removeAnnotations:[_mapView annotations]];
     
+    NSMutableArray *addedAnnotations = [NSMutableArray array];
 	for (id<KGOSearchResult> aResult in controller.searchResults) {
 		if ([aResult conformsToProtocol:@protocol(MKAnnotation)]) {
-			id<MKAnnotation> annotation = (id<MKAnnotation>)aResult;
-			[_mapView addAnnotation:annotation];
+            [addedAnnotations addObject:aResult];
 		}
 	}
     
-    if (_mapView.annotations.count) {
-        _mapView.region = [MapHomeViewController regionForAnnotations:_mapView.annotations restrictedToClass:[KGOPlacemark class]];
+    [_mapView addAnnotations:addedAnnotations];
+    
+    if (addedAnnotations.count) {
+        _mapView.region = [MapHomeViewController regionForAnnotations:addedAnnotations restrictedToClass:NULL];
     }
 	
 	_searchResultsTableView = tableView;

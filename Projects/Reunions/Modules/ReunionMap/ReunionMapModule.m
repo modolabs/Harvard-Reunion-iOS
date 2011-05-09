@@ -5,6 +5,8 @@
 #import "ReunionMapHomeViewController.h"
 #import "KGOSidebarFrameViewController.h"
 #import "ScheduleDataManager.h"
+#import "KGOMapCategory.h"
+#import "ScheduleEventWrapper.h"
 
 NSString * const EventMapCategoryName = @"event"; // this is what the mobile web gives us
 NSString * const ScheduleTag = @"schedule";
@@ -138,5 +140,33 @@ NSString * const ScheduleTag = @"schedule";
 
 - (void)dealloc {
     [scheduleManager release];
+    [super dealloc];
 }
+
+- (void)request:(KGORequest *)request didReceiveResult:(id)result {
+    if (request == self.request) {
+        self.request = nil;
+        
+        NSArray *resultArray = [result arrayForKey:@"results"];
+        NSMutableArray *searchResults = [NSMutableArray arrayWithCapacity:[(NSArray *)resultArray count]];
+        for (id aResult in resultArray) {
+            KGOPlacemark *placemark = [KGOPlacemark placemarkWithDictionary:aResult];
+            if (placemark) {
+                if ([placemark.category.identifier isEqualToString:EventMapCategoryName]) {
+                    ScheduleEventWrapper *event = [[[ScheduleEventWrapper alloc] initWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:placemark.identifier, @"id", nil]] autorelease];
+                    event.coordinate = placemark.coordinate;
+                    event.title = placemark.title;
+                    [event saveToCoreData];
+                    [searchResults addObject:event];
+                } else {
+                    [searchResults addObject:placemark];
+                }
+            }
+        }
+        DLog(@"%@", searchResults);
+        [self.searchDelegate searcher:self didReceiveResults:searchResults];
+    }
+}
+
+
 @end
