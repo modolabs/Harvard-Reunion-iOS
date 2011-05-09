@@ -356,7 +356,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 
 - (void)bumpSessionStartedWith:(Bumper*)otherBumper{
     NSLog(@"Bump session started.");
-//    [self showPicker];
+    [self showPicker];
 }
 
 - (void)bumpSessionEnded:(BumpSessionEndReason)reason {
@@ -492,7 +492,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
             default:
                 // Said yes to connect.
                 [[BumpAPI sharedInstance] confirmMatch:YES];
-                [self showPicker];
+                //[self showPicker];
                 break;
         }
     }
