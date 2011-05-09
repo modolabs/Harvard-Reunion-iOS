@@ -62,6 +62,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
     [bumpObject configActionMessage:
      @"Bump with another app user to get started."];
     [bumpObject requestSession];
+    contactReceived = NO;
 }
 
 #pragma mark Address book
@@ -112,6 +113,7 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 {
     // Ask about adding person sent to us to address book.
     if (self.incomingABRecordDict) {
+        contactReceived = YES;
         NSString *alertQuestion = 
         [NSString stringWithFormat:@"Do you want to add %@ to your Contacts?",
          [[self class] nameFromAddressBookDict:self.incomingABRecordDict]];
@@ -347,6 +349,11 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 }
 
 - (void)bumpSessionEnded:(BumpSessionEndReason)reason {
+    if(contactReceived) {
+        // no need to show error messege
+        return;
+    }
+    
 	NSString *alertText;
 	switch (reason) {
 		case END_OTHER_USER_QUIT:
@@ -385,6 +392,10 @@ static const CGFloat kConnectViewSubviewMargin = 20.0f;
 }
 
 - (void)bumpSessionFailedToStart:(BumpSessionStartFailedReason)reason {
+    if (contactReceived) {
+        // no need to show error message
+        return;
+    }
 	
 	NSString *alertText;
 	switch (reason) {
