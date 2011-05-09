@@ -175,6 +175,11 @@
     [super dealloc];
 }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+    return UIInterfaceOrientationIsPortrait(toInterfaceOrientation) || UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
+}
+
 #pragma mark communication with twitter
 
 - (void)didGetBitlyURL:(NSString *)url {
