@@ -14,6 +14,7 @@ UITableViewDataSource, KGORequestDelegate> {
 
 @property(nonatomic, retain) UITableView *tableView;
 @property(nonatomic, retain) NSString *eventTitle;
+@property(nonatomic) BOOL isPopup;
 @property(nonatomic, retain) KGORequest *request;
 @property(nonatomic, retain) NSArray *attendees;
 

@@ -101,6 +101,7 @@
         AttendeesTableViewController *attendeesVC = [[[AttendeesTableViewController alloc] init] autorelease];
         attendeesVC.eventTitle = [params objectForKey:@"title"];
         attendeesVC.attendees = [params objectForKey:@"attendees"];
+        attendeesVC.isPopup = YES;
         vc = attendeesVC;
         
     } else if ([pageName isEqualToString:@"foursquareCheckins"]) {

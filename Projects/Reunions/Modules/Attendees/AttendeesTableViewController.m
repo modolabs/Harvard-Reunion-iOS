@@ -10,7 +10,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 
 @implementation AttendeesTableViewController
 
-@synthesize eventTitle, request, tableView = _tableView;
+@synthesize eventTitle, request, tableView = _tableView, isPopup;
 
 - (void)dealloc
 {
@@ -68,6 +68,9 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
 
 #pragma mark - View lifecycle
 
+#define LABEL_TAG 101
+#define BUTTON_TAG 102
+
 - (void)setupViews
 {
     NSString *listTitle = nil;
@@ -80,28 +83,44 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
         listTitle = self.eventTitle;
     }
     
-    UIFont *font = [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle];
-    CGFloat viewHeight = font.lineHeight + 24;
+    UILabel *label = (UILabel *)[self.view viewWithTag:LABEL_TAG];
+    UIButton *signoutButton = (UIButton *)[self.view viewWithTag:BUTTON_TAG];
     
-    UILabel *label = nil;
-    UIButton *signoutButton = (UIButton *)[self.view viewWithTag:100];
+    UIFont *labelFont = username ? 
+        [[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyContentTitle] : 
+        [UIFont systemFontOfSize:17];
+    CGFloat width = self.view.frame.size.width - 20;
     
     if (!label) {
-        font = [UIFont systemFontOfSize:17];
         label = [UILabel multilineLabelWithText:listTitle
-                                           font:font
-                                          width:self.view.frame.size.width - 100];
-        label.tag = 10;
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        label.textAlignment = UITextAlignmentCenter;
+                                           font:labelFont
+                                          width:width];
+        label.tag = LABEL_TAG;
+        //label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        label.textAlignment = username ? UITextAlignmentLeft : UITextAlignmentCenter;
         label.layer.shadowColor = [[UIColor blackColor] CGColor];
         label.layer.shadowOffset = CGSizeMake(0, 1);
         label.layer.shadowOpacity = 0.75;
         label.layer.shadowRadius = 1;
         label.textColor = [UIColor whiteColor];
     }
-
     
+    CGSize labelSize = [listTitle sizeWithFont:labelFont 
+                             constrainedToSize:CGSizeMake(width, labelFont.lineHeight * 4) 
+                                 lineBreakMode:UILineBreakModeTailTruncation];
+    CGRect labelFrame = label.frame;
+    labelFrame.origin.x = 10;
+    labelFrame.origin.y = 10;
+    labelFrame.size.width = width;
+    labelFrame.size.height = labelSize.height;
+    if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
+        if (self.isPopup) {
+            self.view.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
+        } else {
+            labelFrame.origin.y += 44;
+        }
+    }
+    label.frame = labelFrame;
     
     if (username) {
         if (!self.attendees) {
@@ -119,11 +138,7 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
             }
         }
         
-        CGFloat tableY = viewHeight;
-        if ([KGO_SHARED_APP_DELEGATE() navigationStyle] == KGONavigationStyleTabletSidebar) {
-            tableY = 44;
-        }
-        
+        CGFloat tableY = labelFrame.origin.y + labelFrame.size.height + 10;
         CGRect frame = CGRectMake(0, tableY, self.view.frame.size.width, self.view.frame.size.height - tableY);
         self.tableView = [[[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain] autorelease];
         self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -138,17 +153,18 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
             [signoutButton removeFromSuperview];
         }
         
+        
+        [self.view addSubview:label];
+        
     } else {
-        CGRect frameForLabel = CGRectZero;
-        frameForLabel.size = CGSizeMake(self.view.frame.size.width - 100, 100);
-        frameForLabel.origin.x = floor((self.view.frame.size.width - label.frame.size.width) / 2);
-        frameForLabel.origin.y = 100;
-        label.frame = frameForLabel;
+        CGRect labelFrame = label.frame;
+        labelFrame.origin.y = 100;
+        label.frame = labelFrame;
         
         if (!signoutButton) {
             
             signoutButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            signoutButton.tag = 100;
+            signoutButton.tag = BUTTON_TAG;
             UIImage *image = [[UIImage imageWithPathName:@"common/red-button.png"]
                               stretchableImageWithLeftCapWidth:10 topCapHeight:10];
             signoutButton.titleLabel.font = [UIFont boldSystemFontOfSize:17];
@@ -176,9 +192,6 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
             self.tableView = nil;
         }
         
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(setupViews)
-                                                     name:KGODidLoginNotification object:nil];
     }
 }
 
@@ -189,7 +202,13 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     
     self.title = @"Attendees";
     
-    [self setupViews];
+    NSDictionary *userDict = [[[KGORequestManager sharedManager] sessionInfo] dictionaryForKey:@"user"];
+    NSString *username = [userDict stringForKey:@"name" nilIfEmpty:YES];
+    if (!username) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(setupViews)
+                                                     name:KGODidLoginNotification object:nil];
+    }
 }
          
 - (void)viewDidUnload
@@ -197,6 +216,13 @@ NSString * const AllReunionAttendeesPrefKey = @"AllAttendees";
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [self setupViews];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

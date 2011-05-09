@@ -13,6 +13,7 @@
 
         ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
         attendeesVC.eventTitle = [homeModule reunionName];
+        attendeesVC.isPopup = NO;
         
         vc = attendeesVC;
     }
