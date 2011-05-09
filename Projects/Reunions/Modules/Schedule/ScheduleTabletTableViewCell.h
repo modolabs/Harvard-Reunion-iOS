@@ -1,6 +1,9 @@
 #import <UIKit/UIKit.h>
 #import "NewNoteViewController.h"
 
+#define MAP_VIEW_TAG 556
+#define DETAILS_VIEW_TAG 557
+
 @class ScheduleEventWrapper;
 
 @interface ScheduleTabletTableViewCell : UITableViewCell <UIAlertViewDelegate, NotesModalViewDelegate> {

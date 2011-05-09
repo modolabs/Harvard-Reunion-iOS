@@ -95,23 +95,61 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
-    // i have not figured out why the table view cells
-    // end up being so much narrower than their frame
+
     CGRect textLabelFrame = self.textLabel.frame;
-    textLabelFrame.origin.x = 10;
-    textLabelFrame.size.width = self.bounds.size.width - 30;
-    
     CGRect detailLabelFrame = self.detailTextLabel.frame;
-    detailLabelFrame.origin.x = 10;
-    detailLabelFrame.size.width = self.bounds.size.width - 30;
-    
-    // make sure textLabel and detailTextLabel are still positioned at the top
-    CGFloat gap = detailLabelFrame.origin.y - textLabelFrame.origin.y;
+    CGFloat gap = detailLabelFrame.origin.y - textLabelFrame.origin.y - textLabelFrame.size.height;
+
     textLabelFrame.origin.y = 10;
-    detailLabelFrame.origin.y = textLabelFrame.origin.y + gap;
+    textLabelFrame.origin.x = 10;
+    detailLabelFrame.origin.x = 10;
     
+    if (!_notesButton.hidden) {
+        // leave room for notes icons
+        textLabelFrame.size.width = self.frame.size.width - 150;
+        detailLabelFrame.size.width = self.frame.size.width - 150;
+    } else if (!_bookmarkView.hidden) {
+        // leave room for bookmark icons
+        textLabelFrame.size.width = self.frame.size.width - 90;
+        detailLabelFrame.size.width = self.frame.size.width - 90;
+    } else {
+        textLabelFrame.size.width = self.bounds.size.width - 30;
+        detailLabelFrame.size.width = self.bounds.size.width - 30;
+    }
+    
+    // Allow for multiline titles when selected
+    self.textLabel.numberOfLines = (self.isLast || self.isSelected) ? 3 : 1;
+    self.textLabel.lineBreakMode = UILineBreakModeTailTruncation;
+        
+    CGSize maxSize = CGSizeMake(textLabelFrame.size.width, self.textLabel.font.lineHeight * self.textLabel.numberOfLines);
+    CGSize textLabelSize = [self.textLabel.text sizeWithFont:self.textLabel.font
+                                           constrainedToSize:maxSize
+                                               lineBreakMode:UILineBreakModeTailTruncation];
+    textLabelFrame.size.height = textLabelSize.height;
+    detailLabelFrame.origin.y = textLabelFrame.origin.y + textLabelFrame.size.height + gap;
+    
+    // adjust map view and detail view
+    UIView *detailsView = [self viewWithTag:DETAILS_VIEW_TAG];
+    UIView *mapView = [self viewWithTag:MAP_VIEW_TAG];
+    
+    CGRect detailsViewFrame = detailsView.frame;
+    CGFloat detailsY = detailLabelFrame.origin.y + detailLabelFrame.size.height;
+    detailsViewFrame.origin.y = detailsY;
+    detailsViewFrame.size.height = self.frame.size.height - detailsY;
+    detailsView.frame = detailsViewFrame;
+    
+    CGRect mapViewFrame = mapView.frame;
+    CGFloat mapY = detailLabelFrame.origin.y + detailLabelFrame.size.height + 10;
+    mapViewFrame.origin.y = mapY;
+    mapViewFrame.size.height = self.frame.size.height - mapY - 10;
+    mapView.frame = mapViewFrame;
+    
+    self.textLabel.frame = textLabelFrame;
+    self.detailTextLabel.frame = detailLabelFrame;
+
     [_bookmarkView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+    _bookmarkView.userInteractionEnabled = self.isSelected;
+    _notesButton.userInteractionEnabled = self.isSelected;
 
     if (self.isLast || self.isSelected) {
         // activate bookmark view
@@ -125,8 +163,6 @@
         ScheduleDetailTableView *tableView = (ScheduleDetailTableView *)[self.contentView viewWithTag:TABLE_TAG];
         [tableView flashScrollIndicators];
     }
-    _bookmarkView.userInteractionEnabled = self.isSelected;
-    _notesButton.userInteractionEnabled = self.isSelected;
     
     // activate note view
     if ([self.event note]) {
@@ -136,18 +172,6 @@
         [_notesButton setImage:[UIImage imageWithPathName:@"modules/schedule/list-note-off.png"] forState:UIControlStateNormal];
     }
 
-    if (!_notesButton.hidden) {
-        // leave room for notes icons
-        textLabelFrame.size.width = self.frame.size.width - 150;
-        detailLabelFrame.size.width = self.frame.size.width - 150;
-    } else if (!_bookmarkView.hidden) {
-        // leave room for bookmark icons
-        textLabelFrame.size.width = self.frame.size.width - 90;
-        detailLabelFrame.size.width = self.frame.size.width - 90;
-    }
-    
-    self.textLabel.frame = textLabelFrame;
-    self.detailTextLabel.frame = detailLabelFrame;
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
