@@ -123,7 +123,7 @@
         } else {
             [_bookmarkedItem addBookmark];
         }
-        [self layoutBookmarkButton];
+        [self setupBookmarkButtonImages];
         
     } else {
         [super toggleBookmark:sender];
@@ -177,10 +177,8 @@
     }
 }
 
-- (void)layoutBookmarkButton
+- (void)setupBookmarkButtonImages
 {
-    [super layoutBookmarkButton];
-    
     if (_bookmarkedItem) {
         UIImage *buttonImage = nil;
         UIImage *pressedButtonImage = nil;

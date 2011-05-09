@@ -203,9 +203,22 @@
         [self.detailItem addBookmark];
     }
 
-    [self layoutBookmarkButton];
+    [self setupBookmarkButtonImages];
 }
 
+- (void)setupBookmarkButtonImages
+{
+    UIImage *buttonImage, *pressedButtonImage;
+    if ([self.detailItem isBookmarked]) {
+        buttonImage = [UIImage imageWithPathName:@"common/bookmark_on.png"];
+        pressedButtonImage = [UIImage imageWithPathName:@"common/bookmark_on_pressed.png"];
+    } else {
+        buttonImage = [UIImage imageWithPathName:@"common/bookmark_off.png"];
+        pressedButtonImage = [UIImage imageWithPathName:@"common/bookmark_off_pressed.png"];
+    }
+    [_bookmarkButton setImage:buttonImage forState:UIControlStateNormal];
+    [_bookmarkButton setImage:pressedButtonImage forState:UIControlStateHighlighted];
+}
 
 - (void)layoutBookmarkButton
 {
@@ -222,16 +235,7 @@
         
     }
     
-    UIImage *buttonImage, *pressedButtonImage;
-    if ([self.detailItem isBookmarked]) {
-        buttonImage = [UIImage imageWithPathName:@"common/bookmark_on.png"];
-        pressedButtonImage = [UIImage imageWithPathName:@"common/bookmark_on_pressed.png"];
-    } else {
-        buttonImage = [UIImage imageWithPathName:@"common/bookmark_off.png"];
-        pressedButtonImage = [UIImage imageWithPathName:@"common/bookmark_off_pressed.png"];
-    }
-    [_bookmarkButton setImage:buttonImage forState:UIControlStateNormal];
-    [_bookmarkButton setImage:pressedButtonImage forState:UIControlStateHighlighted];
+    [self setupBookmarkButtonImages];
     
     CGRect frame = _bookmarkButton.frame;
     if (_shareButton) {

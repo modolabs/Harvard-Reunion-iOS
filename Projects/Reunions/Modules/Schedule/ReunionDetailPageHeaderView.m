@@ -141,7 +141,7 @@
         [self.detailItem addBookmark];
     }
     
-    [self layoutBookmarkButton];
+    [self setupBookmarkButtonImages];
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex

@@ -344,16 +344,17 @@
     NSString *search = nil;
     
     if (indexPath.section == _eventSection) {
-        // more info
-        NSIndexPath *currentIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-        NSString *sectionID = @"aSectionID"; // usually this is date strings
-        NSArray *events = [NSArray arrayWithObject:self.annotation];
-        NSDictionary *eventsBySection = [NSDictionary dictionaryWithObject:events forKey:sectionID];
-        NSArray *sections = [NSArray arrayWithObject:sectionID];
 
         KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
         
-        if (![appDelegate navigationStyle] == KGONavigationStyleTabletSidebar) {
+        if ([appDelegate navigationStyle] != KGONavigationStyleTabletSidebar) {
+            // more info
+            NSIndexPath *currentIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+            NSString *sectionID = @"aSectionID"; // usually this is date strings
+            NSArray *events = [NSArray arrayWithObject:self.annotation];
+            NSDictionary *eventsBySection = [NSDictionary dictionaryWithObject:events forKey:sectionID];
+            NSArray *sections = [NSArray arrayWithObject:sectionID];
+            
             NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                                     currentIndexPath, @"currentIndexPath",
                                     eventsBySection, @"eventsBySection",
