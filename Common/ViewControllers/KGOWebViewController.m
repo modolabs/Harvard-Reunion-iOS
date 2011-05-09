@@ -3,6 +3,7 @@
 #import "KGOAppDelegate.h"
 #import "KGOHTMLTemplate.h"
 #import <QuartzCore/QuartzCore.h>
+#import "UIKit+KGOAdditions.h"
 
 // UIWebView throws WebKit errors, but the WebKit framework can't be imported
 // in iOS so we'll just reproduce the error constants here
@@ -69,21 +70,29 @@ enum {
 {
     if (!_dismissView) {
         _dismissView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 44, self.view.frame.size.width, 44)];
-        _dismissView.backgroundColor = [UIColor colorWithWhite:0.6 alpha:0.8];
+        UIImageView *backgroundImageView = [[[UIImageView alloc] initWithFrame:_dismissView.frame] autorelease];
+        [backgroundImageView setImage:[UIImage imageNamed:@"common/linkback-bar"]];
+        _dismissView = backgroundImageView;
+        
+        UIImage *buttonImage = [UIImage imageNamed:@"common/toolbar-button"];
+        UIImage *buttomImagePressed = [UIImage imageNamed:@"common/toolbar-button-pressed"];
         
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
         button.titleLabel.textColor = [UIColor whiteColor];
-        button.backgroundColor = [UIColor clearColor];
-        button.layer.borderColor = [[UIColor colorWithWhite:0.8 alpha:1] CGColor];
-        button.layer.borderWidth = 1;
+        //button.layer.borderColor = [[UIColor colorWithWhite:0.2 alpha:1] CGColor];
+        //button.layer.borderWidth = 1;
         button.frame = CGRectMake(floor(self.view.frame.size.width / 4), 5, floor(self.view.frame.size.width / 2), 34);
+        [button setBackgroundImage:buttonImage forState:UIControlStateNormal];
+        [button setBackgroundImage:buttomImagePressed forState:UIControlStateHighlighted];
+        
         [button setTitle:NSLocalizedString(@"Exit this screen", nil) forState:UIControlStateNormal];
         [button addTarget:self.parentViewController
                    action:@selector(dismissModalViewControllerAnimated:)
          forControlEvents:UIControlEventTouchUpInside];
         [_dismissView addSubview:button];
+        _dismissView.userInteractionEnabled = YES;
         
-        if (animated) {
+       if (animated) {
             _dismissView.alpha = 0;
         }
         [self.view addSubview:_dismissView];
