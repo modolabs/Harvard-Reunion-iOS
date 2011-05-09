@@ -88,7 +88,8 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 }
 
 - (void)shutdownPolling {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookDidLoginNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookDidLogoutNotification object:nil];
     [self stopPollingStatusUpdates];
 }
 
@@ -158,6 +159,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookDidLogoutNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(facebookDidLogin:)
                                                  name:FacebookDidLoginNotification

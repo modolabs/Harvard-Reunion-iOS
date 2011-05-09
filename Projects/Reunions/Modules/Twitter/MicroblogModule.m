@@ -137,10 +137,12 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
         
         CGFloat bubbleHPadding = 10;
         CGFloat bubbleVPadding = isTablet ? 8 : 6;
+        CGFloat textHeight = isTablet ? floor(bubbleView.frame.size.height * 0.6) : bubbleView.frame.size.height - 44 - bubbleVPadding;
+        
         frame = CGRectMake(bubbleHPadding + bubbleView.frame.origin.x,
                            bubbleVPadding,
                            bubbleView.frame.size.width - bubbleHPadding * 2,
-                           floor(bubbleView.frame.size.height * (isTablet ? 0.5 : 0.6)) - bubbleVPadding);
+                           textHeight - bubbleVPadding);
 
         _chatBubbleTitleLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
         _chatBubbleTitleLabel.numberOfLines = 0;
@@ -154,7 +156,7 @@ NSString * const TwitterStatusDidUpdateNotification = @"TwitterUpdate";
 
         if (isTablet) {
             CGFloat oldWidth = frame.size.width;
-            frame.size.width = frame.size.height;
+            frame.size = CGSizeMake(44, 44);
             _chatBubbleThumbnail = [[[MITThumbnailView alloc] initWithFrame:frame] autorelease];
             [_chatBubble addSubview:_chatBubbleThumbnail];
             frame.origin.x += frame.size.width + 5;
