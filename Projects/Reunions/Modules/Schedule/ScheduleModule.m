@@ -59,6 +59,9 @@
         } else {
             scheduleVC = [[[ScheduleHomeViewController_iPad alloc] initWithNibName:@"CalendarHomeViewController"
                                                                             bundle:nil] autorelease];
+            
+            ScheduleEventWrapper *event = [params objectForKey:@"selectedEvent"];
+            [(ScheduleHomeViewController_iPad *)scheduleVC setPreselectedEvent:event];
         }
         
         scheduleVC.moduleTag = self.tag;
