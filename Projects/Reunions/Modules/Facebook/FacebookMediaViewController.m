@@ -203,12 +203,37 @@
             _loginHintLabel.text = @"Please wait. Loading Facebook Group...";
             [_loginButton setTitle:@"Open facebook.com" forState:UIControlStateNormal];
         } else if(![fbModule isMemberOfFBGroup]) {
-            _loginHintLabel.text = @"Oops! It appears you’re not a member of your classes Facebook group. Tap the button below to open the Facebook web page, then join the group. When you've successfully joined, return to this web page to view the group's posts.";
+            ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
+            _loginHintLabel.text = [NSString stringWithFormat:@"Oops! It looks like you’re not a member of the %@ group in Facebook.  Tap the link below to open the Facebook web page in a new browser, then join the group.  When you've successfully joined, return to this web page to view the group's posts.\n\nDue to limitations in Facebook's mobile web site, you may need to visit the desktop website to join the group.", [homeModule fbGroupName]];
             [_loginButton setTitle:@"Open facebook.com" forState:UIControlStateNormal];
         }
     } else {
         _loginHintLabel.text = NSLocalizedString(@"Photos and videos are posted to the Facebook group page for each class. To view and comment on them, you must sign into Facebook, and you must be a member of the class Facebook group.", nil);
         [_loginButton setTitle:@"Sign in to Facebook" forState:UIControlStateNormal];
+    }
+    
+    if (_loginHintLabel && _loginButton) {
+        // Make sure the button doesn't overlap the text
+        
+        CGSize superSize = _loginHintLabel.superview.bounds.size;
+        superSize.width -= _loginHintLabel.frame.origin.x * 2; // Assumes centered
+        superSize.height -= _loginButton.frame.size.height + 20; // Room for button
+        CGSize labelSize = [_loginHintLabel.text sizeWithFont:_loginHintLabel.font
+                                            constrainedToSize:superSize
+                                                lineBreakMode:UILineBreakModeWordWrap];
+        CGRect hintFrame = _loginHintLabel.frame;
+        if (hintFrame.size.height < labelSize.height) {
+            hintFrame.size.height = labelSize.height;
+        }
+        _loginHintLabel.frame = hintFrame;
+        
+        CGRect buttonFrame = _loginButton.frame;
+        CGFloat y = hintFrame.origin.y + hintFrame.size.height + 20;
+        if (buttonFrame.origin.y < y) {
+            buttonFrame.origin.y = y;
+        }
+        _loginButton.frame = buttonFrame;
+
     }
 }
 

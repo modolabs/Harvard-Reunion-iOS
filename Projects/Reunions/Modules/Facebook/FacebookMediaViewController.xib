@@ -3,12 +3,12 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1056</int>
 		<string key="IBDocument.SystemVersion">10J869</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1306</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1305</string>
 		<string key="IBDocument.AppKitVersion">1038.35</string>
 		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-			<string key="NS.object.0">301</string>
+			<string key="NS.object.0">300</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -52,6 +52,7 @@
 						<string key="NSFrame">{{0, 44}, {320, 372}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MSAxIDEgMAA</bytes>
@@ -138,6 +139,7 @@
 								<float key="IBUIMinimumFontSize">10</float>
 								<int key="IBUINumberOfLines">0</int>
 								<int key="IBUITextAlignment">1</int>
+								<int key="IBUILineBreakMode">0</int>
 							</object>
 							<object class="IBUIButton" id="555573580">
 								<reference key="NSNextResponder" ref="28924118"/>
@@ -312,6 +314,7 @@
 							<reference ref="555573580"/>
 						</object>
 						<reference key="parent" ref="191373211"/>
+						<string key="objectName">View</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">14</int>
@@ -466,6 +469,7 @@
 							<string>_loginHintLabel</string>
 							<string>_loginView</string>
 							<string>_scrollView</string>
+							<string>_uploadBarButtonItem</string>
 							<string>_uploadButton</string>
 							<string>subheadToolbar</string>
 						</object>
@@ -477,6 +481,7 @@
 							<string>UIView</string>
 							<string>UIScrollView</string>
 							<string>UIBarButtonItem</string>
+							<string>UIButton</string>
 							<string>KGOToolbar</string>
 						</object>
 					</object>
@@ -489,6 +494,7 @@
 							<string>_loginHintLabel</string>
 							<string>_loginView</string>
 							<string>_scrollView</string>
+							<string>_uploadBarButtonItem</string>
 							<string>_uploadButton</string>
 							<string>subheadToolbar</string>
 						</object>
@@ -515,8 +521,12 @@
 								<string key="candidateClassName">UIScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">_uploadButton</string>
+								<string key="name">_uploadBarButtonItem</string>
 								<string key="candidateClassName">UIBarButtonItem</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_uploadButton</string>
+								<string key="candidateClassName">UIButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">subheadToolbar</string>
@@ -567,6 +577,6 @@
 		</object>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
-		<string key="IBCocoaTouchPluginVersion">301</string>
+		<string key="IBCocoaTouchPluginVersion">300</string>
 	</data>
 </archive>
