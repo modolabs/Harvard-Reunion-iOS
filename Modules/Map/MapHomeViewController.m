@@ -261,19 +261,22 @@
     categoryVC.categoriesRequest = [self.mapModule subcategoriesRequestForCategory:nil
                                                                           delegate:categoryVC];
     
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:categoryVC] autorelease];
+    navC.modalPresentationStyle = UIModalPresentationFormSheet;
+    navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
+
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:categoryVC] autorelease];
         UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                target:self
                                                                                action:@selector(dismissModalViewControllerAnimated:)] autorelease];
         categoryVC.navigationItem.rightBarButtonItem = item;
-        navC.modalPresentationStyle = UIModalPresentationFormSheet;
-        navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
         [self presentModalViewController:navC animated:YES];
 
     } else {
         [self dismissPopoverAnimated:YES];
-        self.selectedPopover = [[[UIPopoverController alloc] initWithContentViewController:categoryVC] autorelease];
+        self.selectedPopover = [[[UIPopoverController alloc] initWithContentViewController:navC] autorelease];
+        // 320 and 600 are the minimum width and maximum height specified in the documentation
+        self.selectedPopover.popoverContentSize = CGSizeMake(320, 600);
         self.selectedPopover.delegate = self;
         [self.selectedPopover presentPopoverFromBarButtonItem:_browseBarButtonItem
                                      permittedArrowDirections:UIPopoverArrowDirectionUp
@@ -289,15 +292,18 @@
     vc.bookmarkedItems = array;
     vc.searchResultsDelegate = self;
 
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+    navC.modalPresentationStyle = UIModalPresentationFormSheet;
+    navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
+
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
-        navC.modalPresentationStyle = UIModalPresentationFormSheet;
-        navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
         [self presentModalViewController:navC animated:YES];
         
     } else {
         [self dismissPopoverAnimated:YES];
-        self.selectedPopover = [[[UIPopoverController alloc] initWithContentViewController:vc] autorelease];
+        self.selectedPopover = [[[UIPopoverController alloc] initWithContentViewController:navC] autorelease];
+        // 320 and 600 are the minimum width and maximum height specified in the documentation
+        self.selectedPopover.popoverContentSize = CGSizeMake(320, 600);
         self.selectedPopover.delegate = self;
         [self.selectedPopover presentPopoverFromBarButtonItem:_bookmarksBarButtonItem
                                      permittedArrowDirections:UIPopoverArrowDirectionUp
@@ -310,19 +316,21 @@
     vc.title = NSLocalizedString(@"Map Settings", nil);
     vc.view.backgroundColor = [[KGOTheme sharedTheme] backgroundColorForApplication];
     
+    UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
+    navC.modalPresentationStyle = UIModalPresentationFormSheet;
+    navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
+
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        UINavigationController *navC = [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
         UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                target:self
                                                                                action:@selector(dismissModalViewControllerAnimated:)] autorelease];
         vc.navigationItem.rightBarButtonItem = item;
-        navC.modalPresentationStyle = UIModalPresentationFormSheet;
-        navC.navigationBar.barStyle = [[KGOTheme sharedTheme] defaultNavBarStyle];
         [self presentModalViewController:navC animated:YES];
         
     } else {
         [self dismissPopoverAnimated:YES];
-        self.selectedPopover = [[[UIPopoverController alloc] initWithContentViewController:vc] autorelease];
+        self.selectedPopover = [[[UIPopoverController alloc] initWithContentViewController:navC] autorelease];
+        self.selectedPopover.popoverContentSize = CGSizeMake(320, 240);
         self.selectedPopover.delegate = self;
         [self.selectedPopover presentPopoverFromBarButtonItem:_settingsBarButtonItem
                                      permittedArrowDirections:UIPopoverArrowDirectionUp
