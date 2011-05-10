@@ -109,7 +109,11 @@
     [_mapView centerAndZoomToDefaultRegion];
     if (self.annotations.count) { // these would have been set before _mapView was set up
         [_mapView addAnnotations:self.annotations];
-        _mapView.region = [MapHomeViewController regionForAnnotations:self.annotations restrictedToClass:NULL];
+        // TODO: rewrite regionForAnnotations: to return a success value
+        MKCoordinateRegion region = [MapHomeViewController regionForAnnotations:self.annotations restrictedToClass:NULL];
+        if (region.center.latitude && region.center.longitude) {
+            _mapView.region = region;
+        }
     }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapTypeDidChange:) name:MapTypePreferenceChanged object:nil];
 
@@ -402,7 +406,7 @@
 
     DLog(@"%@ %@", location, _userLocation);
     // TODO: make maximum distance a config parameter
-    if ([_userLocation distanceFromLocation:location] <= 4000) {
+    if ([_userLocation distanceFromLocation:location] <= 40000) {
         if (!_mapView.showsUserLocation) {
             _mapView.showsUserLocation = YES;
         } else {
@@ -722,7 +726,11 @@
     [_mapView addAnnotations:addedAnnotations];
     
     if (addedAnnotations.count) {
-        _mapView.region = [MapHomeViewController regionForAnnotations:addedAnnotations restrictedToClass:NULL];
+        // TODO: rewrite regionForAnnotations: to return a success value
+        MKCoordinateRegion region = [MapHomeViewController regionForAnnotations:addedAnnotations restrictedToClass:NULL];
+        if (region.center.latitude && region.center.longitude) {
+            _mapView.region = region;
+        }
     }
 	
 	_searchResultsTableView = tableView;

@@ -17,7 +17,10 @@
     if (self.annotations.count) {
         [_mapView addAnnotations:self.annotations];
         if (!_didSetRegion) {
-            _mapView.region = [MapHomeViewController regionForAnnotations:self.annotations restrictedToClass:NULL];
+            MKCoordinateRegion region = [MapHomeViewController regionForAnnotations:self.annotations restrictedToClass:NULL];
+            if (region.center.latitude && region.center.longitude) {
+                _mapView.region = region;
+            }
         }
     } else {
         [_mapView centerAndZoomToDefaultRegion];
