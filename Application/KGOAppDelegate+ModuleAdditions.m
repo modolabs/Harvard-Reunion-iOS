@@ -148,6 +148,9 @@
                 break;
             }
         }
+        // TODO: see if there is a better place to put this
+        NSString *pagePath = [NSString stringWithFormat:@"/%@/%@", homeModule.tag, LocalPathPageNameHome];
+        [[AnalyticsWrapper sharedWrapper] trackPageview:pagePath];
     }
 }
 
