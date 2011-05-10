@@ -306,6 +306,9 @@
     } else {
         [self dismissPopoverAnimated:YES];
         self.selectedPopover = [[[UIPopoverController alloc] initWithContentViewController:navC] autorelease];
+        vc.navigationItem.rightBarButtonItem = nil;
+        vc.navigationItem.leftBarButtonItem = nil;
+        
         // 320 and 600 are the minimum width and maximum height specified in the documentation
         self.selectedPopover.popoverContentSize = CGSizeMake(320, 600);
         self.selectedPopover.delegate = self;
