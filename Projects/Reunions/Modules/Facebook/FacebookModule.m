@@ -25,6 +25,8 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 - (void)setupPolling;
 - (void)shutdownPolling;
+- (void)pausePolling;
+- (void)resumePolling;
 
 @end
 
@@ -73,17 +75,9 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     NSLog(@"setting up polling...");
     if (![[KGOSocialMediaController facebookService] isSignedIn]) {
         NSLog(@"waiting for facebook to log in...");
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(facebookDidLogin:)
-                                                     name:FacebookDidLoginNotification
-                                                   object:nil];
+        [self facebookDidLogout:nil];
     } else {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(facebookDidLogout:)
-                                                     name:FacebookDidLogoutNotification
-                                                   object:nil];
-        
-        [self requestGroupOrStartPolling];
+        [self facebookDidLogin:nil];
     }
 }
 
@@ -93,8 +87,8 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     [self stopPollingStatusUpdates];
 }
 
-- (void)startPollingStatusUpdates {
-    
+- (void)startPollingStatusUpdates
+{    
     if (!_statusPoller) {
         NSLog(@"scheduling timer...");
         NSTimeInterval interval = FACEBOOK_STATUS_POLL_FREQUENCY;
@@ -126,11 +120,25 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     
 }
 
+- (void)pausePolling
+{
+    if (_statusPoller) {
+        _shouldResume = YES;
+        [self stopPollingStatusUpdates];
+    }
+}
+
+- (void)resumePolling
+{
+    if (_shouldResume) {
+        [self startPollingStatusUpdates];
+    }
+}
+
 #pragma mark facebook connection
 
 - (void)requestGroupOrStartPolling {
     _lastMessageDate = [[NSDate distantPast] retain];
-    _memberOfFBGroupKnown = NO;
     if (!_gid || ![self isMemberOfFBGroup]) {
         if (!_requestingGroups) {
             _requestingGroups = [[KGOSocialMediaController facebookService] requestFacebookGraphPath:@"me/groups"
@@ -144,26 +152,34 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 - (void)facebookDidLogin:(NSNotification *)aNotification
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookDidLoginNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(facebookDidLogout:)
+                                                 name:FacebookDidLogoutNotification
+                                               object:nil];
     NSLog(@"facebook logged in");
     [self requestGroupOrStartPolling];
 }
 
 - (void)facebookDidLogout:(NSNotification *)aNotification
 {
-    [_latestFeedPosts release];
-    _latestFeedPosts = nil;
-    
-    [self shutdownPolling];
-    
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupIsMemberKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookGroupKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
     [[NSNotificationCenter defaultCenter] removeObserver:self name:FacebookDidLogoutNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(facebookDidLogin:)
                                                  name:FacebookDidLoginNotification
                                                object:nil];
+    
+    [_latestFeedPosts release];
+    _latestFeedPosts = nil;
+    
+    _memberOfFBGroupKnown = NO;
+    
+    [self hideChatBubble:nil];
+    
+    for (NSString *aDefault in [self userDefaults]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:aDefault];
+    }
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (NSString *)groupID {
@@ -184,7 +200,10 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
             [[NSUserDefaults standardUserDefaults] setObject:_gid forKey:FacebookGroupIsMemberKey];
             [[NSUserDefaults standardUserDefaults] synchronize];
 
+            [self requestStatusUpdates:nil];
             [self startPollingStatusUpdates];
+            
+            break;
         }
     }
     
@@ -317,20 +336,6 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 
 #pragma mark -
 
-/*
-- (void)launch {
-    [super launch];
-    [[KGOSocialMediaController sharedController] startupFacebook];
-    [self setupPolling];
-}
-
-
-- (void)terminate {
-    [super terminate];
-    [[KGOSocialMediaController sharedController] shutdownFacebook];
-    [self shutdownPolling];
-}
-*/
 - (void)applicationDidFinishLaunching {
     [[KGOSocialMediaController facebookService] startup];
     _gid = [[[NSUserDefaults standardUserDefaults] objectForKey:FacebookGroupKey] retain];
@@ -344,11 +349,11 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 }
 
 - (void)applicationDidEnterBackground {
-    [self shutdownPolling];
+    [self pausePolling];
 }
 
 - (void)applicationWillEnterForeground {
-    [self setupPolling];
+    [self resumePolling];
 }
 
 #pragma mark View on home screen

@@ -17,6 +17,8 @@ extern NSString * const FacebookFeedDidUpdateNotification;
     
     BOOL _requestingGroups;
     BOOL _memberOfFBGroupKnown;
+    
+    BOOL _shouldResume;
 }
 
 // code from http://developer.apple.com/library/ios/#qa/qa2010/qa1480.html

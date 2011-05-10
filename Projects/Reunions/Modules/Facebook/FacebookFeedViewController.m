@@ -52,14 +52,27 @@
         
         NSString *warning = nil;
         NSString *buttonTitle = nil;
+        BOOL buttonEnabled = YES;
         
         if (![[KGOSocialMediaController facebookService] isSignedIn]) {
             warning = @"Sign into Facebook to post an update.";
             buttonTitle = @"Sign in to Facebook";
             
-        } else  {
+        } else if (![_facebookModule isMemberOfFBGroupKnown]) {
+            warning = @"Please wait while we retrieve your groups...";
+            buttonTitle = @"Open facebook.com";
+            buttonEnabled = NO;
+            
+        } else {
             ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
-            warning = [NSString stringWithFormat:@"Oops! It looks like you’re not a member of the %@ group in Facebook.  Tap the link below to open the Facebook web page in a new browser, then join the group.  When you've successfully joined, return to this web page to view the group's posts.\n\nDue to limitations in Facebook's mobile web site, you may need to visit the desktop website to join the group.", [homeModule fbGroupName]];
+            warning = [NSString stringWithFormat:
+                       @"Oops! It looks like you’re not a member of the %@ group in Facebook.  "
+                       "Tap the link below to open the Facebook web page in a new browser, "
+                       "then join the group.  When you've successfully joined, "
+                       "return to this web page to view the group's posts.\n\n"
+                       "Due to limitations in Facebook's mobile web site, "
+                       "you may need to visit the desktop website to join the group.",
+                       [homeModule fbGroupName]];
             buttonTitle = @"Open facebook.com";
         }
         
@@ -121,6 +134,7 @@
             frame.origin.y += 20;
         }
         button.frame = frame;
+        button.enabled = buttonEnabled;
         
         self.view.autoresizesSubviews = YES;
         self.navigationItem.rightBarButtonItem = nil;
@@ -261,23 +275,17 @@
 
 - (CellManipulator)tableView:(UITableView *)tableView manipulatorForCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *title = nil;
-    if (![[KGOSocialMediaController facebookService] isSignedIn]) {
-        title = @"Sign into Facebook to post an update";
-    }
-    
     return [[^(UITableViewCell *cell) {
-        cell.textLabel.text = title;
-        cell.selectionStyle = UITableViewCellEditingStyleNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     } copy] autorelease];
 }
 
 - (NSArray *)tableView:(UITableView *)tableView viewsForCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (![[KGOSocialMediaController facebookService] isSignedIn]) {
+    if (indexPath.row >= self.feedPosts.count) {
         return nil;
     }
-
+    
     NSDictionary *aPost = [self.feedPosts objectAtIndex:indexPath.row];
 
     NSString *title = [aPost stringForKey:@"message" nilIfEmpty:YES];
@@ -337,9 +345,8 @@
 {
     if ([[KGOSocialMediaController facebookService] isSignedIn]) {
         return self.feedPosts.count;
-    } else {
-        return 1;
     }
+    return 0;
 }
 
 @end
