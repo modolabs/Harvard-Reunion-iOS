@@ -183,18 +183,19 @@
         NSString *imageURL = [aTweet stringForKey:@"profile_image_url" nilIfEmpty:YES];
         NSDate *date = [[self twitterDateFormatter] dateFromString:dateString];
         
-        if (!_lastUpdate || [_lastUpdate compare:date] == NSOrderedAscending) {
-            [_lastUpdate release];
-            _lastUpdate = [date retain];
+        FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
+        if (![fbModule lastFeedUpdate] || [date compare:[fbModule lastFeedUpdate]] == NSOrderedDescending) {
             
-            FacebookModule *fbModule = (FacebookModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"facebook"];
-            if (![fbModule lastFeedUpdate] || [_lastUpdate compare:[fbModule lastFeedUpdate]] == NSOrderedDescending) {            
-                self.chatBubble.hidden = NO;
-                self.chatBubbleTitleLabel.text = title;
-                self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:@"%@ %@", user, [date agoString]];
-                self.chatBubbleThumbnail.imageURL = imageURL;
-                [self.chatBubbleThumbnail loadImage];
-                [[NSNotificationCenter defaultCenter] postNotificationName:TwitterStatusDidUpdateNotification object:nil];
+            self.chatBubble.hidden = NO;
+            self.chatBubbleTitleLabel.text = title;
+            self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:@"%@ %@", user, [date agoString]];
+            self.chatBubbleThumbnail.imageURL = imageURL;
+            [self.chatBubbleThumbnail loadImage];
+            [[NSNotificationCenter defaultCenter] postNotificationName:TwitterStatusDidUpdateNotification object:nil];
+            
+            if (!_lastUpdate || [_lastUpdate compare:date] == NSOrderedAscending) {
+                [_lastUpdate release];
+                _lastUpdate = [date retain];
             }
         }
     }

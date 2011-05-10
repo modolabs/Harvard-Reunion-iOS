@@ -131,6 +131,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 - (void)resumePolling
 {
     if (_shouldResume) {
+        _shouldResume = NO;
         [self startPollingStatusUpdates];
     }
 }
@@ -171,10 +172,18 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
     
     [_latestFeedPosts release];
     _latestFeedPosts = nil;
+
+    [_lastMessageDate release];
+    _lastMessageDate = nil;
     
     _memberOfFBGroupKnown = NO;
     
-    [self hideChatBubble:nil];
+    if (!self.chatBubble.hidden) {
+        [self hideChatBubble:nil];
+        TwitterModule *twitterModule = (TwitterModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"twitter"];
+        [twitterModule requestStatusUpdates:nil];
+    }
+    [self stopPollingStatusUpdates];
     
     for (NSString *aDefault in [self userDefaults]) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:aDefault];
@@ -221,6 +230,8 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
         [_latestFeedPosts release];
         _latestFeedPosts = [data retain];
         
+        TwitterModule *twitterModule = (TwitterModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"twitter"];
+        
         for (NSDictionary *aPost in _latestFeedPosts) {
             NSString *type = [aPost stringForKey:@"type" nilIfEmpty:YES];
             if ([type isEqualToString:@"status"]) {
@@ -235,32 +246,29 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
                     lastUpdate = [FacebookModule dateFromRFC3339DateTimeString:dateString];
                 }
                 
-                if (lastUpdate && [lastUpdate compare:_lastMessageDate] == NSOrderedDescending) {
-                    [_lastMessageDate release];
-                    _lastMessageDate = [lastUpdate retain];
+                if (![twitterModule lastFeedUpdate] || [lastUpdate compare:[twitterModule lastFeedUpdate]] == NSOrderedDescending) {
                     
-                    TwitterModule *twitterModule = (TwitterModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"twitter"];
-                    if (![twitterModule lastFeedUpdate]
-                        || [_lastMessageDate compare:[twitterModule lastFeedUpdate]] == NSOrderedDescending
-                    ) {
-                        self.chatBubble.hidden = NO;
-                        self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:
-                                                             @"%@ %@", user.name,
-                                                             [_lastMessageDate agoString]];
-                        self.chatBubbleThumbnail.imageData = nil;
-                        self.chatBubbleThumbnail.imageURL = [[KGOSocialMediaController facebookService] imageURLForGraphObject:user.identifier];
-                        [self.chatBubbleThumbnail loadImage];
-                        self.chatBubbleTitleLabel.text = message;
-                        
-                        [[NSNotificationCenter defaultCenter] postNotificationName:FacebookStatusDidUpdateNotification object:nil];
-                    }
+                    self.chatBubble.hidden = NO;
+                    self.chatBubbleSubtitleLabel.text = [NSString stringWithFormat:
+                                                         @"%@ %@", user.name,
+                                                         [_lastMessageDate agoString]];
+                    self.chatBubbleThumbnail.imageData = nil;
+                    self.chatBubbleThumbnail.imageURL = [[KGOSocialMediaController facebookService] imageURLForGraphObject:user.identifier];
+                    [self.chatBubbleThumbnail loadImage];
+                    self.chatBubbleTitleLabel.text = message;
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:FacebookStatusDidUpdateNotification object:nil];
 
-                    break;
+                    if (lastUpdate && [lastUpdate compare:_lastMessageDate] == NSOrderedDescending) {
+                        [_lastMessageDate release];
+                        _lastMessageDate = [lastUpdate retain];
+                    }
+                    
                 }
+                [[NSNotificationCenter defaultCenter] postNotificationName:FacebookFeedDidUpdateNotification object:self];
+                break;
             }
         }
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:FacebookFeedDidUpdateNotification object:self];
     }
 }
 
