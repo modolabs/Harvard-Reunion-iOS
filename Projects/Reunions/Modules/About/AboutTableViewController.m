@@ -63,10 +63,7 @@ NSString * const AboutSectionsPrefKey = @"AboutSections";
 {
     if (indexPath.section < _paragraphs.count) {
         NSString *text = [_paragraphs objectAtIndex:indexPath.section];
-        // i have no idea what the grouped table view margins are, except that 
-        // they are "much wider on the ipad" (35px is what i measured)
-        // http://stackoverflow.com/questions/5290057/how-to-get-calculate-margin-width-of-grouped-uitableview-on-ipad-or-iphone
-        CGFloat tableMargin = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 35 : 10;
+        CGFloat tableMargin = [tableView marginWidth];
         UILabel *label = [UILabel multilineLabelWithText:text
                                                     font:[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText]
                                                    width:tableView.frame.size.width - (tableMargin + 10) * 2]; // 10px internal padding

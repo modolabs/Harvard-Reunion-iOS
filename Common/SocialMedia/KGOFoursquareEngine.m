@@ -333,7 +333,7 @@ NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
                                                      name:FoursquareDidLoginNotification
                                                    object:nil];
         [visibleVC presentModalViewController:_webVC animated:YES];
-        [_webVC performSelector:@selector(fadeInDismissControls) withObject:nil afterDelay:10];
+        [_webVC performSelector:@selector(fadeInDismissControls) withObject:nil afterDelay:8];
     }
 }
 
