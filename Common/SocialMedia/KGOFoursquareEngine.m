@@ -787,6 +787,8 @@ NSString * const FoursquareOAuthExpirationDate = @"4squareExpiration";
 - (void)webViewControllerFrameLoadInterrupted:(KGOWebViewController *)webVC
 {
     [_webVC.parentViewController dismissModalViewControllerAnimated:YES];
+    
+    [_webVC.parentViewController performSelector:@selector(dismissModalViewControllerAnimated:) withObject:nil afterDelay:1];
 }
 
 - (void)disconnectRequestsForDelegate:(id<KGOFoursquareCheckinDelegate>)delegate

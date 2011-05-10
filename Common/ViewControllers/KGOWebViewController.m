@@ -69,10 +69,14 @@ enum {
 - (void)showDismissControlsAnimated:(BOOL)animated
 {
     if (!_dismissView) {
-        _dismissView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 44, self.view.frame.size.width, 44)];
+        CGFloat viewWidth = self.view.bounds.size.width;
+        CGFloat viewHeight = self.view.bounds.size.height;
+        
+        _dismissView = [[UIView alloc] initWithFrame:CGRectMake(0, viewHeight - 44, viewWidth, 44)];
         UIImageView *backgroundImageView = [[[UIImageView alloc] initWithFrame:_dismissView.frame] autorelease];
         [backgroundImageView setImage:[UIImage imageNamed:@"common/linkback-bar"]];
         _dismissView = backgroundImageView;
+        _dismissView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
         
         UIImage *buttonImage = [[UIImage imageNamed:@"common/toolbar-button"] 
                                  stretchableImageWithLeftCapWidth:10 topCapHeight:10];
@@ -83,7 +87,8 @@ enum {
         button.titleLabel.textColor = [UIColor whiteColor];
         //button.layer.borderColor = [[UIColor colorWithWhite:0.2 alpha:1] CGColor];
         //button.layer.borderWidth = 1;
-        button.frame = CGRectMake(floor(self.view.frame.size.width / 4), 5, floor(self.view.frame.size.width / 2), 34);
+        button.frame = CGRectMake(floor(viewWidth / 4), 5, floor(viewWidth / 2), 34);
+        button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         [button setBackgroundImage:buttonImage forState:UIControlStateNormal];
         [button setBackgroundImage:buttomImagePressed forState:UIControlStateHighlighted];
         
@@ -92,9 +97,9 @@ enum {
                    action:@selector(dismissModalViewControllerAnimated:)
          forControlEvents:UIControlEventTouchUpInside];
         [_dismissView addSubview:button];
-        _dismissView.userInteractionEnabled = YES;
+        //_dismissView.userInteractionEnabled = YES;
         
-       if (animated) {
+        if (animated) {
             _dismissView.alpha = 0;
         }
         [self.view addSubview:_dismissView];
@@ -103,6 +108,8 @@ enum {
             [UIView animateWithDuration:1 animations:^(void) {
                 _dismissView.alpha = 1;
             }];
+        } else {
+            _dismissView.alpha = 1;
         }
     }
 }
