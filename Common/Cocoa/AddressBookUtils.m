@@ -49,22 +49,22 @@
 
 + (NSString *)stringFromRecord:(ABRecordRef)record 
                     propertyID:(ABPropertyID)propertyID {
-    
-    NSString* refString = 
-    (NSString *)ABRecordCopyValue(record, propertyID);
-    NSString *value = refString;
-    [refString release];
-    return value;
+
+    CFStringRef refString = ABRecordCopyValue(record, propertyID);
+    if (refString) {
+        return [(NSString *)refString autorelease];
+    }
+    return nil;
 }
 
 + (NSDate *)dateFromRecord:(ABRecordRef)record 
                     propertyID:(ABPropertyID)propertyID {
     
-    NSDate* refDate = 
-    (NSDate *)ABRecordCopyValue(record, propertyID);
-    NSDate *value = refDate;
-    [refDate release];
-    return value;
+    CFDataRef refDate = ABRecordCopyValue(record, propertyID);
+    if (refDate) {
+        return [(NSDate *)refDate autorelease];
+    }
+    return nil;
 }
 
 + (void)setSimpleValue:(id)value
