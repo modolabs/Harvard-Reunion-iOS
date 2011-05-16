@@ -66,7 +66,8 @@ NSString * const NewsTagBody            = @"body";
 - (void)requestCategories {
     NSArray *categories = [self fetchCategoriesFromCoreData];
     if(categories) {
-        for(id<NewsDataDelegate> delegate in delegates) {
+        NSSet *safeDelegates = [NSSet setWithSet:delegates];
+        for(id<NewsDataDelegate> delegate in safeDelegates) {
             if([delegate respondsToSelector:@selector(categoriesUpdated:)]) {
                 [delegate categoriesUpdated:categories];
             }
