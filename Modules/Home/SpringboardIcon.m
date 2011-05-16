@@ -29,14 +29,14 @@
             
             [self setImage:image forState:UIControlStateNormal];
             
-            self.titleLabel.numberOfLines = 0;
-            self.titleLabel.lineBreakMode = UILineBreakModeWordWrap;
-            self.titleLabel.textAlignment = UITextAlignmentCenter;
-            
             // TODO: add config setting for icon titles to be displayed on springboard
             NSString *title = self.module.longName;
             [self setTitle:title forState:UIControlStateNormal];
 
+            self.titleLabel.numberOfLines = 0;
+            self.titleLabel.lineBreakMode = UILineBreakModeWordWrap;
+            self.titleLabel.textAlignment = UITextAlignmentCenter;
+            
             UIFont *titleFont;
 
             if (self.module.secondary) {
