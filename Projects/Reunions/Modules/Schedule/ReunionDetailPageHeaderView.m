@@ -96,6 +96,20 @@
     }
 }
 
+- (void)setupBookmarkButtonImages
+{
+    UIImage *buttonImage, *pressedButtonImage;
+    if ([self.detailItem isBookmarked]) {
+        buttonImage = [UIImage imageWithPathName:@"common/bookmark-ribbon-on.png"];
+        pressedButtonImage = [UIImage imageWithPathName:@"common/bookmark-ribbon-on.png"];
+    } else {
+        buttonImage = [UIImage imageWithPathName:@"common/bookmark-ribbon-off.png"];
+        pressedButtonImage = [UIImage imageWithPathName:@"common/bookmark-ribbon-off.png"];
+    }
+    [_bookmarkButton setImage:buttonImage forState:UIControlStateNormal];
+    [_bookmarkButton setImage:pressedButtonImage forState:UIControlStateHighlighted];
+}
+
 - (CGFloat)headerWidthWithButtons
 {
     return self.frame.size.width - 70;
