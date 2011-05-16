@@ -111,6 +111,7 @@
         }
         
     } else {
+        [self setShowsBookmarkButton: YES];
         [super layoutSubviews];
     }
 }
@@ -191,6 +192,8 @@
         }
         [_bookmarkButton setImage:buttonImage forState:UIControlStateNormal];
         [_bookmarkButton setImage:pressedButtonImage forState:UIControlStateHighlighted];
+    } else {
+        [super setupBookmarkButtonImages];
     }
 }
 
