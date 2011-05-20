@@ -115,6 +115,7 @@
         [mutableSections addObject:extendedInfo];
     }
     
+    [_sections release];
     _sections = [mutableSections copy];
     
     [self reloadData];
@@ -147,7 +148,7 @@
         
         basicInfo = [NSArray arrayWithObject:locationDict];
     }
-    NSLog(@"%@", basicInfo);
+    DLog(@"%@", basicInfo);
     return basicInfo;
 }
 
@@ -195,7 +196,7 @@
                     accessory = KGOAccessoryTypeNone;
                 }
                 
-                NSDictionary *cellInfo;
+                NSDictionary *cellInfo = nil;
                 if (url) {
                     cellInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                 type, @"title", aContact.value, @"subtitle", accessory, @"accessory", url, @"url", nil];
