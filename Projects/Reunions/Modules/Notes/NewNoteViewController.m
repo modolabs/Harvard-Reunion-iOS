@@ -1,10 +1,10 @@
-//
-//  NewNoteViewController.m
-//  Reunions
-//
-//  Created by Muhammad J Amjad on 4/16/11.
-//  Copyright 2011 ModoLabs Inc. All rights reserved.
-//
+
+/****************************************************************
+ *
+ *  Copyright 2011 The President and Fellows of Harvard College
+ *  Copyright 2011 Modo Labs Inc.
+ *
+ *****************************************************************/
 
 #import "NewNoteViewController.h"
 #import "UIKit+KGOAdditions.h"

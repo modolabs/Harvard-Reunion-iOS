@@ -1,3 +1,11 @@
+
+/****************************************************************
+ *
+ *  Copyright 2011 The President and Fellows of Harvard College
+ *  Copyright 2011 Modo Labs Inc.
+ *
+ *****************************************************************/
+
 // this is a temporary file that just searches a hash tag
 // may evolve into a more complete twitter api controller
 

@@ -1,3 +1,11 @@
+
+/****************************************************************
+ *
+ *  Copyright 2011 The President and Fellows of Harvard College
+ *  Copyright 2011 Modo Labs Inc.
+ *
+ *****************************************************************/
+
 #import "FoursquareCheckinViewController.h"
 #import "FoursquareAddCheckinViewController.h"
 #import "Foundation+KGOAdditions.h"
