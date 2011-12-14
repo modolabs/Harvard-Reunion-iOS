@@ -65,6 +65,9 @@
         DLog(@"invoking dismiss");
         [self.parentViewController dismissModalViewControllerAnimated:YES];
     }
+
+    // in iOS 5 modal views aren't dismissed via the parent
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
