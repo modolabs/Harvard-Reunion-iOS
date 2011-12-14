@@ -493,6 +493,10 @@
                 KGOAttendeeWrapper *attendee = (KGOAttendeeWrapper *)obj;
                 [attendees addObject:[NSDictionary dictionaryWithObjectsAndKeys:attendee.name, @"display_name", nil]];
             }];
+            NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"display_name" ascending:YES];
+            NSArray *sort = [NSArray arrayWithObject:sortDescriptor];
+            [attendees sortUsingDescriptors:sort];
+
             NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                                     self.event.title, @"title",
                                     attendees, @"attendees",
