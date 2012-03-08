@@ -43,6 +43,9 @@
         titleHeight = _titleLabel.frame.size.height + LABEL_SPACING;
     }
     
+    [self layoutCalendarButton];
+    labelWidth = CGRectGetWidth(self.frame) - CGRectGetWidth(_calendarButton.frame) - 2 * LABEL_SPACING;
+
     if (_subtitleLabel) {
         CGSize constraintSize = CGSizeMake(labelWidth, _subtitleLabel.font.lineHeight * MAX_SUBTITLE_LINES);
         CGSize textSize = [_subtitleLabel.text sizeWithFont:_subtitleLabel.font constrainedToSize:constraintSize];
@@ -64,7 +67,7 @@
     }
     
     CGRect frame = self.frame;
-    frame.size.height = fmaxf(titleHeight + subtitleHeight, buttonHeight) + LABEL_SPACING;
+    frame.size.height = fmaxf(CGRectGetMaxY(_subtitleLabel.frame), CGRectGetMaxY(_calendarButton.frame)) + LABEL_SPACING;
     self.frame = frame;
     
     if ((self.frame.size.width != oldFrame.size.width || self.frame.size.height != oldFrame.size.height)
@@ -173,6 +176,30 @@
     }
     
     [self layoutBookmarkButton];
+}
+
+- (void)layoutCalendarButton
+{
+    if (!_calendarButton) {
+        UIImage *buttonImage = [UIImage imageWithPathName:@"modules/calendar/calendar.png"];
+        CGFloat buttonX = CGRectGetWidth(self.frame) - buttonImage.size.width - LABEL_SPACING;
+        CGFloat buttonY = (_titleLabel == nil ? 0 : CGRectGetMaxY(_titleLabel.frame) + LABEL_SPACING);
+        buttonY = fmaxf(buttonY, CGRectGetHeight(_bookmarkButton.frame)) + LABEL_SPACING;
+        
+        _calendarButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+        _calendarButton.frame = CGRectMake(buttonX, buttonY, buttonImage.size.width, buttonImage.size.height);
+        [_calendarButton setImage:buttonImage forState:UIControlStateNormal];
+        [_calendarButton setImage:[UIImage imageWithPathName:@"modules/calendar/calendar_pressed.png"] forState:UIControlStateHighlighted];
+        if ([self.delegate respondsToSelector:@selector(calendarButtonPressed:)]) {
+            [_calendarButton addTarget:self.delegate action:@selector(calendarButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        }
+        [self addSubview:_calendarButton];
+        
+    } else {
+        CGRect frame = _calendarButton.frame;
+        frame.origin.y = LABEL_SPACING + (_titleLabel == nil ? 0 : _titleLabel.frame.size.height + LABEL_SPACING);
+        _calendarButton.frame = frame;
+    }
 }
 
 - (void)layoutShareButton

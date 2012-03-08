@@ -225,6 +225,7 @@
 		EB7F32D310CD6FB300188BCD /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB7F32D210CD6FB300188BCD /* AddressBook.framework */; };
 		EB7F32D710CD6FBB00188BCD /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB7F32D610CD6FBB00188BCD /* AddressBookUI.framework */; };
 		EB85A55A13551E96002E966E /* FacebookFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB85A55913551E96002E966E /* FacebookFeedViewController.m */; };
+		EB8A0A2815095C5300C6AB3D /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB8A0A2715095C5300C6AB3D /* EventKitUI.framework */; };
 		EB8BF5951333DC07009ED854 /* TwitterFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8BF5941333DC07009ED854 /* TwitterFeedViewController.m */; };
 		EB913B841347CC7F00D2EEF6 /* dev_server.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EB913B7E1347CC7F00D2EEF6 /* dev_server.xcconfig */; };
 		EB913B851347CC7F00D2EEF6 /* kurogo.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EB913B7F1347CC7F00D2EEF6 /* kurogo.xcconfig */; };
@@ -695,6 +696,7 @@
 		EB7F32D610CD6FBB00188BCD /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		EB85A55813551E96002E966E /* FacebookFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookFeedViewController.h; sourceTree = "<group>"; };
 		EB85A55913551E96002E966E /* FacebookFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookFeedViewController.m; sourceTree = "<group>"; };
+		EB8A0A2715095C5300C6AB3D /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
 		EB8BF5931333DC07009ED854 /* TwitterFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterFeedViewController.h; sourceTree = "<group>"; };
 		EB8BF5941333DC07009ED854 /* TwitterFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TwitterFeedViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		EB913B7E1347CC7F00D2EEF6 /* dev_server.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = dev_server.xcconfig; sourceTree = "<group>"; };
@@ -746,8 +748,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BDDE7E31353F9D400660FD1 /* MediaPlayer.framework in Frameworks */,
+				EB8A0A2815095C5300C6AB3D /* EventKitUI.framework in Frameworks */,
 				EB0CF934133FC924003B8E45 /* EventKit.framework in Frameworks */,
+				4BDDE7E31353F9D400660FD1 /* MediaPlayer.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				3AA219501039D74700DB7637 /* CoreData.framework in Frameworks */,
@@ -804,6 +807,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EB8A0A2715095C5300C6AB3D /* EventKitUI.framework */,
 				4BDDE7E21353F9D400660FD1 /* MediaPlayer.framework */,
 				EB4C2CDE127F138100058748 /* libsqlite3.dylib */,
 				EB4C2CE0127F138900058748 /* CFNetwork.framework */,

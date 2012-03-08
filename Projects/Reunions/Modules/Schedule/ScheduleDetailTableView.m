@@ -18,6 +18,7 @@
 #import "KGOModule.h"
 #import "ScheduleHomeViewController-iPad.h"
 #import "KGOSidebarFrameViewController.h"
+#import <EventKit/EventKit.h>
 
 #define CHECKIN_STATUS_CHECKED_IN 438
 #define CHECKIN_STATUS_NOT_CHECKED_IN 41
@@ -184,6 +185,34 @@
     }
     
     return attendeeInfo;
+}
+
+- (void)calendarButtonPressed:(id)sender
+{
+    EKEventStore *eventStore = [[[EKEventStore alloc] init] autorelease];
+    EKEvent *ekEvent = [EKEvent eventWithEventStore:eventStore];
+
+    ekEvent = [EKEvent eventWithEventStore:eventStore];
+    ekEvent.calendar = [eventStore defaultCalendarForNewEvents];
+    ekEvent.location = self.event.location;
+    ekEvent.title = self.event.title;
+    ekEvent.endDate = self.event.endDate;
+    ekEvent.startDate = self.event.startDate;
+    ekEvent.notes = self.event.summary;
+    ekEvent.allDay = self.event.allDay;
+    
+    EKEventEditViewController *vc = [[[EKEventEditViewController alloc] init] autorelease];
+    vc.event = ekEvent;
+    vc.eventStore = eventStore;
+    vc.editViewDelegate = self;
+
+    [self.viewController presentModalViewController:vc animated:YES];
+}
+
+- (void)eventEditViewController:(EKEventEditViewController *)controller 
+          didCompleteWithAction:(EKEventEditViewAction)action
+{
+    [self.viewController dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark foursquare cell

@@ -9,8 +9,10 @@
 #import "EventDetailTableView.h"
 #import "KGOFoursquareEngine.h"
 #import <MapKit/MapKit.h>
+#import <EventKitUI/EventKitUI.h>
 
-@interface ScheduleDetailTableView : EventDetailTableView <KGOFoursquareCheckinDelegate, MKMapViewDelegate> {
+@interface ScheduleDetailTableView : EventDetailTableView <KGOFoursquareCheckinDelegate,
+MKMapViewDelegate, EKEventEditViewDelegate> {
     
     UILabel *_checkinHeader;
 
@@ -19,7 +21,6 @@
     NSInteger _checkedInUserCount;
     
     NSInteger _checkinStatus;
-    
     
 }
 
