@@ -51,7 +51,8 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
 - (NSArray *)moduleOrder
 {
     return [NSArray arrayWithObjects:
-            @"schedule", @"map", @"photos", @"video", @"info", @"news", @"connect", @"notes", @"attendees", nil];
+            @"schedule", @"map", @"photos", @"video", @"info", @"news", // @"connect",
+            @"notes", @"attendees", nil];
 }
 
 - (void)dealloc {
