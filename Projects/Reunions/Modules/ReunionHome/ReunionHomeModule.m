@@ -50,9 +50,9 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
 
 - (NSArray *)moduleOrder
 {
+    // this array is only used for sorting purposes. it is not a list of what will be instantiated.
     return [NSArray arrayWithObjects:
-            @"schedule", @"map", @"photos", @"video", @"info", @"news", // @"connect",
-            @"notes", @"attendees", nil];
+            @"schedule", @"map", @"photos", @"video", @"info", @"news", @"connect", @"notes", @"attendees", nil];
 }
 
 - (void)dealloc {

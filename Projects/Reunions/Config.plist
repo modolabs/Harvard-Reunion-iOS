@@ -64,18 +64,6 @@
 		</dict>
 		<dict>
 			<key>class</key>
-			<string>ConnectModule</string>
-			<key>longName</key>
-			<string>Connect</string>
-			<key>secondary</key>
-			<false/>
-			<key>shortName</key>
-			<string>Connect</string>
-			<key>tag</key>
-			<string>connect</string>
-		</dict>
-		<dict>
-			<key>class</key>
 			<string>TwitterModule</string>
 			<key>longName</key>
 			<string>Twitter</string>
@@ -231,14 +219,6 @@
 				<string>Used for photos, videos and updates</string>
 				<key>title</key>
 				<string>Facebook</string>
-			</dict>
-			<dict>
-				<key>service</key>
-				<string>foursquare</string>
-				<key>subtitle</key>
-				<string>Used for checkins</string>
-				<key>title</key>
-				<string>foursquare</string>
 			</dict>
 			<dict>
 				<key>service</key>

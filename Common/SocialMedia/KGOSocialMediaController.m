@@ -79,8 +79,8 @@ static KGOSocialMediaController *s_controller = nil;
                 service = [[[KGOFacebookService alloc] initWithConfig:config] autorelease];
             } else if ([type isEqualToString:KGOSocialMediaTypeTwitter]) {
                 service = [[[KGOTwitterService alloc] initWithConfig:config] autorelease];
-            } else if ([type isEqualToString:KGOSocialMediaTypeFoursquare]) {
-                service = [[[KGOFoursquareService alloc] initWithConfig:config] autorelease];
+            //} else if ([type isEqualToString:KGOSocialMediaTypeFoursquare]) {
+            //    service = [[[KGOFoursquareService alloc] initWithConfig:config] autorelease];
             }
             
             if (service) {

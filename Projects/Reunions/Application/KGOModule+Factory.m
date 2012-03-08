@@ -99,8 +99,8 @@
     else if ([className isEqualToString:@"VideosModule"])
         module = [[[VideosModule alloc] initWithDictionary:args] autorelease];    
     
-    //else if ([className isEqualToString:@"ConnectModule"])
-    //    module = [[[ConnectModule alloc] initWithDictionary:args] autorelease];   
+    else if ([className isEqualToString:@"ConnectModule"])
+        module = [[[ConnectModule alloc] initWithDictionary:args] autorelease];   
     
     else if ([className isEqualToString:@"NotesModule"]) {
         
