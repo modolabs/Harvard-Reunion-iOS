@@ -187,7 +187,7 @@
         id<MKAnnotation> annotation = [_annotations lastObject];
         if ([annotation isKindOfClass:[KGOPlacemark class]] && !annotation.coordinate.latitude && !annotation.coordinate.longitude) {
             [_pendingPlacemark release];
-            _pendingPlacemark = [annotation retain];
+            _pendingPlacemark = [(KGOPlacemark *)annotation retain];
             
             // TODO: server needs a detail API
             NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:

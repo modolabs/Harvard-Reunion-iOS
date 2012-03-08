@@ -491,7 +491,7 @@
     if ([sender isKindOfClass:[UIControl class]] || [sender isKindOfClass:[MKMapView class]]) {
         MKMapView *mapView = nil;
         
-        if ([sender tag] == SELECTED_MAP_TAG) {
+        if ([(UIView *)sender tag] == SELECTED_MAP_TAG) {
             mapView = _mapViewForSelectedCell;
         } else {
             mapView = _mapViewForLastCell;

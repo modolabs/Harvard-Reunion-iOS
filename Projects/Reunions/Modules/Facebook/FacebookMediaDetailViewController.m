@@ -61,7 +61,7 @@ ToolbarButtonTags;
 
 - (BOOL)currentUserLikesThisPost {
     
-    KGOFacebookService *fbService = [[KGOSocialMediaController sharedController] serviceWithType:KGOSocialMediaTypeFacebook];
+    KGOFacebookService *fbService = (KGOFacebookService *)[[KGOSocialMediaController sharedController] serviceWithType:KGOSocialMediaTypeFacebook];
     if([self.post.likes member:[fbService currentFacebookUser]]) {
         return YES;
     } else {
