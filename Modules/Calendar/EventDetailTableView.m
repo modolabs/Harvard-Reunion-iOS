@@ -9,10 +9,18 @@
 #import "MITMailComposeController.h"
 #import "KGOAppDelegate+ModuleAdditions.h"
 #import "CalendarDetailViewController.h"
+#import <EventKit/EventKit.h>
+
+@interface EventDetailTableView (Private)
+
+- (void)calendarButtonPressed:(id)sender;
+
+@end
 
 @implementation EventDetailTableView
 
 @synthesize dataManager, viewController, headerView = _headerView, sections = _sections;
+@synthesize canAddToCalendar;
 
 - (id)initWithFrame:(CGRect)frame style:(UITableViewStyle)style
 {
@@ -113,6 +121,14 @@
     NSArray *extendedInfo = [self sectionForExtendedInfo];
     if (extendedInfo.count) {
         [mutableSections addObject:extendedInfo];
+    }
+    
+    if (self.canAddToCalendar) {
+        NSArray *calendarRow = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                         @"Add to Calendar", @"title",
+                                                         KGOAccessoryTypeCalendar, @"accessory",
+                                                         nil]];
+        [mutableSections addObject:calendarRow];
     }
     
     [_sections release];
@@ -359,6 +375,8 @@
             NSArray *annotations = [NSArray arrayWithObject:_event];
             NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:annotations, @"annotations", nil];
             [KGO_SHARED_APP_DELEGATE() showPage:LocalPathPageNameHome forModuleTag:MapTag params:params];
+        } else if ([accessory isEqualToString:KGOAccessoryTypeCalendar]) {
+            [self calendarButtonPressed:nil];
         }
 
         // strangely the cell stays selected with only the first row...
@@ -417,6 +435,36 @@
     if ([self.viewController isKindOfClass:[CalendarDetailViewController class]]) {
         [(CalendarDetailViewController *)self.viewController shareButtonPressed:sender];
     }
+}
+
+#pragma mark - EKEvent
+
+- (void)calendarButtonPressed:(id)sender
+{
+    EKEventStore *eventStore = [[[EKEventStore alloc] init] autorelease];
+    EKEvent *ekEvent = [EKEvent eventWithEventStore:eventStore];
+    
+    ekEvent = [EKEvent eventWithEventStore:eventStore];
+    ekEvent.calendar = [eventStore defaultCalendarForNewEvents];
+    ekEvent.location = self.event.location;
+    ekEvent.title = self.event.title;
+    ekEvent.endDate = self.event.endDate;
+    ekEvent.startDate = self.event.startDate;
+    ekEvent.notes = self.event.summary;
+    ekEvent.allDay = self.event.allDay;
+    
+    EKEventEditViewController *vc = [[[EKEventEditViewController alloc] init] autorelease];
+    vc.event = ekEvent;
+    vc.eventStore = eventStore;
+    vc.editViewDelegate = self;
+    
+    [self.viewController presentModalViewController:vc animated:YES];
+}
+
+- (void)eventEditViewController:(EKEventEditViewController *)controller 
+          didCompleteWithAction:(EKEventEditViewAction)action
+{
+    [self.viewController dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark detail

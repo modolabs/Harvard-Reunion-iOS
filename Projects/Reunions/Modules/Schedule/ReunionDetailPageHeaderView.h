@@ -10,10 +10,6 @@
 
 @interface ReunionDetailPageHeaderView : KGODetailPageHeaderView <UIAlertViewDelegate> {
     
-    UIButton *_calendarButton;
-    
 }
-
-- (void)layoutCalendarButton;
 
 @end

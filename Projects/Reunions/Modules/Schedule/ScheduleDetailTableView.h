@@ -9,10 +9,9 @@
 #import "EventDetailTableView.h"
 #import "KGOFoursquareEngine.h"
 #import <MapKit/MapKit.h>
-#import <EventKitUI/EventKitUI.h>
 
 @interface ScheduleDetailTableView : EventDetailTableView <KGOFoursquareCheckinDelegate,
-MKMapViewDelegate, EKEventEditViewDelegate> {
+MKMapViewDelegate> {
     
     UILabel *_checkinHeader;
 

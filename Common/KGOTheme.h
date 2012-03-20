@@ -5,6 +5,7 @@ extern NSString * const KGOUserPreferencesDidChangeNotification;
 
 extern NSString * const KGOAccessoryTypeNone;
 extern NSString * const KGOAccessoryTypeBlank;
+extern NSString * const KGOAccessoryTypeCalendar;
 extern NSString * const KGOAccessoryTypeCheckmark;
 extern NSString * const KGOAccessoryTypeChevron;
 extern NSString * const KGOAccessoryTypePhone;

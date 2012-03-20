@@ -8,6 +8,7 @@ NSString * const KGOUserPreferencesDidChangeNotification = @"KGOUserPrefsChanged
 
 NSString * const KGOAccessoryTypeNone = @"None";
 NSString * const KGOAccessoryTypeBlank = @"Blank";
+NSString * const KGOAccessoryTypeCalendar = @"Calendar";
 NSString * const KGOAccessoryTypeChevron = @"Chevron";
 NSString * const KGOAccessoryTypeCheckmark = @"Check";
 NSString * const KGOAccessoryTypePhone = @"Phone";
@@ -264,6 +265,7 @@ static KGOTheme *s_sharedTheme = nil;
     if (CellAccessoryImages == nil) {
         CellAccessoryImages = [[NSDictionary alloc] initWithObjectsAndKeys:
                                @"common/action-blank", KGOAccessoryTypeBlank,
+                               @"common/action-calendar", KGOAccessoryTypeCalendar,
                                @"common/action-checkmark", KGOAccessoryTypeCheckmark,
                                @"common/action-arrow", KGOAccessoryTypeChevron,
                                @"common/action-phone", KGOAccessoryTypePhone,
@@ -275,6 +277,7 @@ static KGOTheme *s_sharedTheme = nil;
     }
     if (CellAccessoryImagesHighlighted == nil) {
         CellAccessoryImagesHighlighted = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                          @"common/action-calendar-highlighted", KGOAccessoryTypeCalendar,
                                           @"common/action-checkmark-highlighted", KGOAccessoryTypeCheckmark,
                                           @"common/action-arrow-highlighted", KGOAccessoryTypeChevron,
                                           @"common/action-phone-highlighted", KGOAccessoryTypePhone,

@@ -2,6 +2,7 @@
 #import "KGOShareButtonController.h"
 #import "KGODetailPageHeaderView.h"
 #import <MessageUI/MFMailComposeViewController.h>
+#import <EventKitUI/EventKitUI.h>
 #import "KGORequest.h"
 
 @class KGOEventWrapper, CalendarDataManager;
@@ -9,7 +10,7 @@
 
 @interface EventDetailTableView : UITableView <UITableViewDelegate,
 UITableViewDataSource, KGODetailPageHeaderDelegate, MFMailComposeViewControllerDelegate,
-KGORequestDelegate> {
+KGORequestDelegate, EKEventEditViewDelegate> {
     
     NSArray *_sections;
     KGOEventWrapper *_event;
@@ -28,6 +29,8 @@ KGORequestDelegate> {
 @property (nonatomic, retain) NSArray * sections;
 @property (nonatomic, retain) CalendarDataManager *dataManager;
 @property (nonatomic, retain) KGODetailPageHeaderView *headerView;
+
+@property (nonatomic) BOOL canAddToCalendar;
 
 // functions split out for subclassing
 

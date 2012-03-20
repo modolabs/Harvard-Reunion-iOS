@@ -22,6 +22,7 @@
         _tableView.dataManager = self.dataManager;
         _tableView.viewController = self;
         _tableView.rowHeight += 2;
+        _tableView.canAddToCalendar = YES;
         
         [self.view addSubview:_tableView];
     }
