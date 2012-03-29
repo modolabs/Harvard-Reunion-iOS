@@ -406,6 +406,7 @@
     }
     
     if (needsInitialize) {
+        tableView.canAddToCalendar = YES;
         tableView.backgroundColor = [UIColor clearColor];
         tableView.backgroundView = nil;
         tableView.tag = DETAILS_VIEW_TAG;

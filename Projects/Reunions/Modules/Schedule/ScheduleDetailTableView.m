@@ -102,7 +102,7 @@
 
 - (void)eventDetailsDidChange
 {
-    [super eventDetailsDidChange];
+    //[super eventDetailsDidChange];
     
     if (self.mapView && ![self.mapView annotations].count && self.event.coordinate.latitude) {
         [self.mapView addAnnotation:self.event];
@@ -110,7 +110,8 @@
     }
     
     NSString *foursquareVenue = nil;
-    
+
+    /*
     if ([self.event isKindOfClass:[ScheduleEventWrapper class]]) {
 #if defined(USE_MOBILE_DEV) || defined(USE_MOBILE_TEST) || defined(USE_MOBILE_STAGE)
         // Fake that the event is happening now so we can test the foursquare checkin
@@ -128,6 +129,7 @@
             foursquareVenue = [(ScheduleEventWrapper *)self.event foursquareID];
         }
     }
+     */
     
     if (!foursquareVenue || ![_foursquareVenue isEqualToString:foursquareVenue]) {
         [_foursquareVenue release];

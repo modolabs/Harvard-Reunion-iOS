@@ -265,7 +265,7 @@ static KGOTheme *s_sharedTheme = nil;
     if (CellAccessoryImages == nil) {
         CellAccessoryImages = [[NSDictionary alloc] initWithObjectsAndKeys:
                                @"common/action-blank", KGOAccessoryTypeBlank,
-                               @"common/action-calendar", KGOAccessoryTypeCalendar,
+                               @"common/action_cal_add", KGOAccessoryTypeCalendar,
                                @"common/action-checkmark", KGOAccessoryTypeCheckmark,
                                @"common/action-arrow", KGOAccessoryTypeChevron,
                                @"common/action-phone", KGOAccessoryTypePhone,
@@ -277,7 +277,7 @@ static KGOTheme *s_sharedTheme = nil;
     }
     if (CellAccessoryImagesHighlighted == nil) {
         CellAccessoryImagesHighlighted = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                          @"common/action-calendar-highlighted", KGOAccessoryTypeCalendar,
+                                          @"common/action_cal_add", KGOAccessoryTypeCalendar,
                                           @"common/action-checkmark-highlighted", KGOAccessoryTypeCheckmark,
                                           @"common/action-arrow-highlighted", KGOAccessoryTypeChevron,
                                           @"common/action-phone-highlighted", KGOAccessoryTypePhone,
