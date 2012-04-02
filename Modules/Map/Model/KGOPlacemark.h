@@ -11,7 +11,7 @@
 @property (nonatomic, retain) NSNumber * longitude;
 @property (nonatomic, retain) NSString * street;
 @property (nonatomic, retain) NSString * geometryType;
-@property (nonatomic, retain) NSString * title;
+@property (nonatomic, copy) NSString * title;
 @property (nonatomic, retain) NSNumber * latitude;
 @property (nonatomic, retain) NSString * photoURL;
 @property (nonatomic, retain) NSString * identifier;
