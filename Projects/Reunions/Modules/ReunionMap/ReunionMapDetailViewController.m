@@ -389,7 +389,7 @@
             [appDelegate showPage:LocalPathPageNameHome forModuleTag:@"schedule" params:params];
         }
         
-    } else if (_googleSection) {
+    } else if (indexPath.section == _googleSection) {
         
         if (self.annotation.coordinate.latitude || self.annotation.coordinate.longitude) {
             search = [NSString stringWithFormat:@"%.5f,%.5f", self.annotation.coordinate.latitude, self.annotation.coordinate.longitude];
