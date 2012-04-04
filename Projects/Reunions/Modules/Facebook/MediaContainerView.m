@@ -84,11 +84,9 @@
                                                    fitToWidth:_previewView.frame.size.width
                                                      maxHeight:_maximumPreviewHeight];
     
-    if(newHeight < _maximumPreviewHeight) { 
-        _previewView.contentMode = UIViewContentModeScaleAspectFill;
-    } else {
-        _previewView.contentMode = UIViewContentModeScaleAspectFit;
-    }
+    // never crop or we might hide something important
+    _previewView.contentMode = UIViewContentModeScaleAspectFit;
+    _previewView.clipsToBounds = YES;
     
     [self setFrame:self.frame withImageHeight:newHeight];
 }
