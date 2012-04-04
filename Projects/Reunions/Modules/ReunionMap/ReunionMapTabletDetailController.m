@@ -162,9 +162,20 @@
 {
     NSInteger count = [self numberOfSectionsInTableView:self.tableView];
     CGRect rect = [self.tableView rectForSection:count-1];
-    CGFloat height = rect.origin.y + rect.size.height;
-    
-    _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, IPAD_TABLEVIEW_ORIGIN_Y + height);
+    CGFloat height = CGRectGetMaxY(rect) + IPAD_TABLEVIEW_ORIGIN_Y;
+
+    if (_scrollView.contentSize.height != height) {
+        _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, height);
+    }
+
+    CGFloat tableHeight = CGRectGetHeight(self.tableView.frame);
+    CGFloat contentHeight = fmaxf(self.tableView.contentSize.height, tableHeight);
+    if (contentHeight != tableHeight) {
+        // adjust tableview frame so the background view fits
+        CGRect frame = self.tableView.frame;
+        frame.size.height = contentHeight;
+        self.tableView.frame = frame;
+    }
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
