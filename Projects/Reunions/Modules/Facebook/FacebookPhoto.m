@@ -39,7 +39,9 @@ NSInteger widthSort(id imageDict1, id imageDict2, void *context);
     return photo;
 }
 
-+ (FacebookPhoto *)photoWithDictionary:(NSDictionary *)dictionary size:(FacebookPhotoSize)size {
++ (FacebookPhoto *)photoWithDictionary:(NSDictionary *)dictionary size:(FacebookPhotoSize)size
+{
+    DLog(@"getting photo with dictionary %@", dictionary);
     
     FacebookPhoto *photo = nil;
     id identifier = [dictionary objectForKey:@"object_id"]; // via feed or FQL
@@ -47,8 +49,8 @@ NSInteger widthSort(id imageDict1, id imageDict2, void *context);
         identifier = [dictionary objectForKey:@"id"]; // via Photo Graph API
     }
     // not sure yet if this is a string or number or if anything else is possible
-    NSLog(@"object_id is %@ of type %@", identifier, [[identifier class] description]);
-    
+    DLog(@"object_id is %@ of type %@", identifier, [[identifier class] description]);
+
     if (identifier) {
         photo = [FacebookPhoto photoWithID:identifier];
         [photo updateWithDictionary:dictionary size:size];
@@ -60,9 +62,9 @@ NSInteger widthSort(id imageDict1, id imageDict2, void *context);
 - (void)updateWithDictionary:(NSDictionary *)dictionary size:(FacebookPhotoSize)size {
     
     NSString *theSrc = [dictionary stringForKey:@"source" nilIfEmpty:YES]; // from Graph API
-    if(!theSrc) {
-        theSrc = [dictionary stringForKey:@"picture" nilIfEmpty:YES]; // from feed
-    }
+    //if(!theSrc) {
+    //    theSrc = [dictionary stringForKey:@"picture" nilIfEmpty:YES]; // from feed
+    //}
     if (!theSrc) {
         theSrc = [dictionary objectForKey:@"src"]; // from FQL
     }
@@ -126,7 +128,7 @@ NSInteger widthSort(id imageDict1, id imageDict2, void *context);
     }
     
     if (!self.thumbData) {
-        self.thumbSrc = [dictionary stringForKey:@"src_small" nilIfEmpty:YES]; // fql
+        self.thumbSrc = [dictionary stringForKey:@"picture" nilIfEmpty:YES]; // fql
         if (!self.thumbSrc) {
             // This currently assume the smallest image is tiny
             // and third smallest is medium
