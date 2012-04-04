@@ -44,7 +44,11 @@
     NSMutableString *output = [NSMutableString stringWithString:self.templateString];
     [replacementDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         NSString *keyPattern = [NSString stringWithFormat:@"__%@__", key];
-        [output replaceOccurrencesOfString:keyPattern withString:obj options:NSLiteralSearch range:NSMakeRange(0, output.length)];
+        NSString *objPattern = [obj isKindOfClass:[NSString class]] ? obj : [obj description];
+        [output replaceOccurrencesOfString:keyPattern
+                                withString:objPattern
+                                   options:NSLiteralSearch
+                                     range:NSMakeRange(0, output.length)];
     }];
     return output;
 }
