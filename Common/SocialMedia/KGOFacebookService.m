@@ -71,7 +71,7 @@ NSString * const FacebookUsernameKey = @"FBUsername";
 {
     if (_facebook && (!_facebook.accessToken || !_facebook.expirationDate)) {
         NSDate *validDate = [[NSUserDefaults standardUserDefaults] objectForKey:FacebookTokenExpirationSetting];
-        if ([validDate timeIntervalSinceNow] < 0) {
+        if (!validDate || [validDate timeIntervalSinceNow] < 0) {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:FacebookTokenKey];
         } else {
             NSArray *storedPermissions = [[NSUserDefaults standardUserDefaults] objectForKey:FacebookTokenPermissions];
@@ -125,7 +125,7 @@ NSString * const FacebookUsernameKey = @"FBUsername";
     
     if (!_facebook) {
         NSLog(@"starting up facebook");
-        _facebook = [[Facebook alloc] initWithAppId:_appID];
+        _facebook = [[Facebook alloc] initWithAppId:_appID andDelegate:self];
         
         [self refreshPermissionList];
         
@@ -181,14 +181,14 @@ NSString * const FacebookUsernameKey = @"FBUsername";
 	} else {
         NSArray *permissions = [_apiSettings objectForKey:@"permissions"];
         DLog(@"asking for permission: %@", [permissions description]);
-		[_facebook authorize:permissions delegate:self];
+		[_facebook authorize:permissions];
 	}
 }
 
 - (void)signout
 {
     if (_facebook) {
-        [_facebook logout:self];
+        [_facebook logout];
     }
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -238,11 +238,37 @@ NSString * const FacebookUsernameKey = @"FBUsername";
 }
 
 /**
+ * Called after the access token was extended. If your application has any
+ * references to the previous access token (for example, if your application
+ * stores the previous access token in persistent storage), your application
+ * should overwrite the old access token with the new one in this method.
+ * See extendAccessToken for more details.
+ */
+- (void)fbDidExtendToken:(NSString*)accessToken
+               expiresAt:(NSDate*)expiresAt
+{
+    DLog(@"facebook extended access token!");
+}
+
+/**
  * Called when the request logout has succeeded.
  */
 - (void)fbDidLogout {
     [[NSNotificationCenter defaultCenter] postNotificationName:FacebookDidLogoutNotification object:self];
 }
+
+/**
+ * Called when the current session has expired. This might happen when:
+ *  - the access token expired
+ *  - the app has been disabled
+ *  - the user revoked the app's permissions
+ *  - the user changed his or her password
+ */
+- (void)fbSessionInvalidated
+{
+    DLog(@"facebook session invalidated!");
+}
+
 
 #pragma mark Facebook - FBRequestDelegate
 
@@ -258,30 +284,19 @@ NSString * const FacebookUsernameKey = @"FBUsername";
 
 #pragma mark Dialog
 
-- (void)shareOnFacebook:(NSDictionary *)params {
-    NSMutableDictionary *mutableParams = [[params mutableCopy] autorelease];
+- (void)shareOnFacebookWithTitle:(NSString *)title url:(NSString *)url body:(NSString *)body  {
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params setObject:title forKey:@"title"];
+    [params setObject:url forKey:@"link"];
+    [params setObject:body forKey:@"description"];
+    
     [self startup];
-    [_facebook dialog:@"feed" andParams:mutableParams andDelegate:self];
+    [_facebook dialog:@"feed" andParams:params andDelegate:self];
 }
 
 // FBDialogDelegate
-
-- (void)dialog:(FBDialog *)dialog didFailWithError:(NSError *)error
-{
-    DLog(@"dialogFailedWithError: %@", error);
-}
-
-- (void)dialogCompleteWithUrl:(NSURL *)url
-{
-    DLog(@"dialogCompleteWithURL: %@", url);
-}
-
-- (void)dialogDidNotCompleteWithUrl:(NSURL *)url
-{
-    DLog(@"dialogDidNotCompleteWithURL: %@", url);
-}
-
-// these two methods are called at the end
+// these two methods are called at the very end of the FBDialog chain.
+// other success/error messages may be sent before these.
 
 - (void)dialogDidComplete:(FBDialog *)dialog {
     DLog(@"published successfully");
