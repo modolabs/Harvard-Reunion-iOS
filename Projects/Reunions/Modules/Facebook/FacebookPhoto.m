@@ -68,7 +68,7 @@ NSInteger widthSort(id imageDict1, id imageDict2, void *context);
     if (!theSrc) {
         theSrc = [dictionary objectForKey:@"src"]; // from FQL
     }
-    if (![theSrc isEqualToString:self.src]) {
+    if (theSrc && ![theSrc isEqualToString:self.src]) {
         self.src = theSrc;
     }
     
