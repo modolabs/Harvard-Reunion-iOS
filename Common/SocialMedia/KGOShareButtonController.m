@@ -100,13 +100,9 @@
                                                        delegate:self];
 
 	} else if ([method isEqualToString:KGOSocialMediaTypeFacebook]) {
-        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                                self.shareTitle, @"name",
-                                self.shareBody, @"description",
-                                self.shareURL, @"link",
-                                nil];
-        
-        [[KGOSocialMediaController facebookService] shareOnFacebook:params];
+        [[KGOSocialMediaController facebookService] shareOnFacebookWithTitle:self.shareTitle
+                                                                         url:self.shareURL 
+                                                                        body:self.shareBody];
 
         // facebook will return success even if the user taps cancel
         [[AnalyticsWrapper sharedWrapper] trackGroupAction:@"Facebook Share" label:self.shareURL];

@@ -26,6 +26,6 @@ FBSessionDelegate, FBDialogDelegate, FBRequestDelegate> {
 }
 
 - (void)parseCallbackURL:(NSURL *)url;
-- (void)shareOnFacebook:(NSDictionary *)params;
+- (void)shareOnFacebookWithTitle:(NSString *)title url:(NSString *)url body:(NSString *)body;
 
 @end
