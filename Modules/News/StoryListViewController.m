@@ -91,8 +91,15 @@
     [self.dataManager requestCategories];
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [self.dataManager unregisterDelegate:self];
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self.dataManager registerDelegate:self];
 	if (showingBookmarks) {
 		self.stories = [self.dataManager bookmarkedStories];
         
