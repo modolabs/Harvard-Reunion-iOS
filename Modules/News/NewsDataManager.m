@@ -60,7 +60,7 @@ NSString * const NewsTagBody            = @"body";
 }
 
 - (void)unregisterDelegate:(id<NewsDataDelegate>)delegate {
-    [delegates addObject:delegate];
+    [delegates removeObject:delegate];
 }
 
 - (void)requestCategories {
