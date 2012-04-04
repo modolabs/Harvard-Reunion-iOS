@@ -90,6 +90,11 @@
     ReunionHomeModule *homeModule = (ReunionHomeModule *)[KGO_SHARED_APP_DELEGATE() moduleForTag:@"home"];
     self.labelText = [homeModule twitterHashTag];
     _hashTag = [[homeModule twitterHashTag] retain];
+    if (_latestTweets) {
+        [self hideChatBubble:aNotification];
+        [_latestTweets release];
+        _latestTweets = nil;
+    }
     
     [[NSUserDefaults standardUserDefaults] setObject:_hashTag forKey:TwitterHashTagKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
