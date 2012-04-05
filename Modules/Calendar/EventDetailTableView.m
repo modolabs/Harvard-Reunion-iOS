@@ -240,6 +240,7 @@
         UILabel *label = [UILabel multilineLabelWithText:_event.summary
                                                     font:[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText]
                                                    width:self.frame.size.width - 40];
+        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyBodyText];
         label.tag = DESCRIPTION_LABEL_TAG;
         CGRect frame = label.frame;
@@ -322,7 +323,17 @@
 {
     id cellData = [[_sections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     if ([cellData isKindOfClass:[UILabel class]]) {
-        return [(UILabel *)cellData frame].size.height + 20;
+        UILabel *label = (UILabel *)cellData;
+        CGFloat width = CGRectGetWidth(self.bounds) - [self marginWidth] * 2 - 20;
+        CGFloat height = [label.text sizeWithFont:label.font
+                                constrainedToSize:CGSizeMake(width, 1000)
+                                    lineBreakMode:UILineBreakModeWordWrap].height;
+        CGRect frame = label.frame;
+        frame.size.height = height;
+        frame.size.width = width;
+        label.frame = frame;
+
+        return height + 20;
     }
     return tableView.rowHeight;
 }
