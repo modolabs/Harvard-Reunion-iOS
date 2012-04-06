@@ -9,10 +9,11 @@
 #import "KGOTableViewController.h"
 #import "MITThumbnailView.h"
 #import "KGOSocialMediaController+FacebookAPI.h"
+#import "FacebookCommentViewController.h"
 
 @class FacebookModule;
 
-@interface FacebookFeedViewController : KGOTableViewController <FacebookUploadDelegate, UITextViewDelegate> {
+@interface FacebookFeedViewController : KGOTableViewController <FacebookUploadDelegate, FacebookCommentDelegate, UITextViewDelegate> {
     
     FacebookModule *_facebookModule;
     //UITextView *_inputView;

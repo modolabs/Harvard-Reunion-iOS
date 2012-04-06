@@ -421,12 +421,8 @@ ToolbarButtonTags;
         [backButton setBackgroundImage:toolbarButtonImage forState:UIControlStateNormal];
         [backButton setTitle:[self closeButtonName] forState:UIControlStateNormal];
     } 
-         
-    if (!_mediaView) {
-        CGRect frame = self.view.bounds;
-        frame.size.height = floor(frame.size.width * 9 / 16); // need to tweak this aspect ratio
-        _mediaView = [[[UIView alloc] initWithFrame:frame] autorelease];
-    } 
+
+    NSAssert(_mediaView != nil, @"Nib file does not contain MediaContainerView!");
     
     [_mediaView initPreviewView:_mediaPreviewView];
  
@@ -644,6 +640,7 @@ ToolbarButtonTags;
     // subclasses hsould override this
     return nil;
 }
+
 
 #pragma mark - KGODetailPager
 
