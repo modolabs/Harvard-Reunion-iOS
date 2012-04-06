@@ -816,6 +816,9 @@ ToolbarButtonTags;
     if (indexPath.row == 0) {
         cell.backgroundColor = [UIColor colorWithWhite:0.4 alpha:1];
         cell.contentView.backgroundColor = [UIColor colorWithWhite:0.4 alpha:1];
+    } else {
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.contentView.backgroundColor = [UIColor whiteColor];        
     }
     
     return cell;
