@@ -97,10 +97,31 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     return  [parts2 objectAtIndex:0];
 }
 
+- (void)loadVideo
+{
+    if (self.player) {
+        [self.player prepareToPlay];
+        
+    } else if (self.webView) {
+        // For some reason [self.webView reload] does not reliably work here
+        NSString *urlString;
+        
+        NSString *videoSourceName = [self.video videoSourceName];
+        if ([videoSourceName isEqualToString:@"YouTube"]) {
+            urlString =  [NSString stringWithFormat:@"http://www.youtube.com/embed/%@", [self youtubeId:self.video.src]];
+        } else if ([videoSourceName isEqualToString:@"Vimeo"]) {
+            urlString = [NSString stringWithFormat:@"http://player.vimeo.com/video/%@", [self vimeoId:self.video.src]];
+        } else {
+            urlString = self.video.src;
+        }
+        [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlString]]];
+    }
+}
+
 - (void)displayPost {
-    NSString *src = self.video.src;
-    if ([src rangeOfString:@"fbcdn.net"].location != NSNotFound) {
-        NSURL *url = [NSURL URLWithString:src];
+    NSURL *url = [NSURL URLWithString:self.video.src];
+ 
+    if (url != nil && [[url host] rangeOfString:@"fbcdn"].location != NSNotFound) {
         self.player = 
         [[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
         player.shouldAutoplay = NO;
@@ -109,19 +130,12 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerLoadStateDidChange:) name:MPMoviePlayerLoadStateDidChangeNotification object:nil];
     } else {
         CGSize aspectRatio = CGSizeMake(16, 9); // default aspect ratio 
-        NSString *urlString;
-        
-        NSString *videoSourceName = [self.video videoSourceName];
-        if ([videoSourceName isEqualToString:@"YouTube"]) {
+        if ([[self.video videoSourceName] isEqualToString:@"YouTube"]) {
             aspectRatio = CGSizeMake(10, 10);
-            urlString =  [NSString stringWithFormat:@"http://www.youtube.com/embed/%@", [self youtubeId:src]];
-        } else if ([videoSourceName isEqualToString:@"Vimeo"]) {
-            urlString = [NSString stringWithFormat:@"http://player.vimeo.com/video/%@", [self vimeoId:src]];
-        } else {
-            urlString = src;
         }
-                
+        
         self.webView = [[[UIWebView alloc] init] autorelease];
+        self.webView.allowsInlineMediaPlayback = YES;
         self.webView.delegate = self;
         // prevent webView from scrolling separately from the parent scrollview
         for (id subview in webView.subviews) {
@@ -131,10 +145,8 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
         }
         [self.mediaView setPreviewView:self.webView];
         [self.mediaView setPreviewSize:aspectRatio];
-        NSURL *url = [NSURL URLWithString:urlString];
-        NSURLRequest *request = [NSURLRequest requestWithURL:url];
-        [self.webView loadRequest:request];
     }
+    [self loadVideo];
     
     if (!self.video.comments.count) {
         [self getCommentsForPost];
@@ -242,6 +254,18 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     return NO;
 }
 
+#pragma mark - FacebookCommentDelegate
+
+- (void)didPostComment
+{
+    [self loadVideo];
+}
+
+- (void)didCancelComment
+{
+    [self loadVideo];
+}
+
 #pragma mark UIWebViewDelegate
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
     [self fadeOutLoadingCurtainView];
@@ -251,7 +275,7 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
     [self fadeOutLoadingCurtainView];    
 }
 
-#pragma player state change notification 
+#pragma mark player state change notification 
 //(used for facebook videos which play directly in MPMoviePlayer)
 
 - (void)playerLoadStateDidChange:(id)notification {

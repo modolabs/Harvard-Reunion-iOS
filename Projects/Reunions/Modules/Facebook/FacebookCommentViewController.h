@@ -10,13 +10,16 @@
 
 @class FacebookComment;
 @protocol FacebookUploadDelegate;
-/*
+
 @protocol FacebookCommentDelegate <NSObject>
 
-- (void)didPostComment:(FacebookComment *)aComment;
+@optional
+
+- (void)didPostComment;
+- (void)didCancelComment;
 
 @end
-*/
+
 @class FacebookParentPost;
 
 @interface FacebookCommentViewController : UIViewController <UITextViewDelegate> {
@@ -29,8 +32,7 @@
 
 @property(nonatomic, retain) FacebookParentPost *post;
 @property(nonatomic, retain) NSString *profileID;
-//@property(nonatomic, assign) id<FacebookCommentDelegate> delegate;
-@property(nonatomic, assign) id<FacebookUploadDelegate> delegate;
+@property(nonatomic, assign) id<FacebookUploadDelegate, FacebookCommentDelegate> delegate;
 
 - (IBAction)submitButtonPressed:(id)sender;
 - (IBAction)cancelButtonPressed:(id)sender;

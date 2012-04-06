@@ -67,10 +67,17 @@
     }
     
     [[AnalyticsWrapper sharedWrapper] trackGroupAction:action label:label];
+    
+    if ([self.delegate respondsToSelector:@selector(didPostComment:)]) {
+        [self.delegate didPostComment];
+    }
 }
 
 - (IBAction)cancelButtonPressed:(id)sender {
     [self dismissModalViewControllerAnimated:YES];
+    if ([self.delegate respondsToSelector:@selector(didCancelComment)]) {
+        [self.delegate didCancelComment];
+    }
 }
 
 #pragma mark - View lifecycle

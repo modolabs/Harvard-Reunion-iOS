@@ -19,7 +19,7 @@
 @class FacebookParentPost;
 
 @interface FacebookMediaDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate,
-KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate> {
+KGODetailPagerController, KGODetailPagerDelegate, FacebookUploadDelegate, FacebookCommentDelegate> {
     IBOutlet UITableView *_tableView;
     IBOutlet UIButton *_commentButton;
     IBOutlet UIButton *_likeButton;
