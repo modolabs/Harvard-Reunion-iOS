@@ -102,9 +102,8 @@
                 insetWidth = floor((MINIMUM_BUTTON_WIDTH - buttonWidth) / 2);
                 buttonWidth = MINIMUM_BUTTON_WIDTH;
             }
-            _bookmarkButton.imageEdgeInsets = UIEdgeInsetsMake(-1, insetWidth, 0, insetWidth);
-            CGFloat yOrigin = floor((self.frame.size.height - image.size.height) / 2);
-            _bookmarkButton.frame = CGRectMake(0, yOrigin, buttonWidth, image.size.height);
+            CGFloat yOrigin = floor((self.frame.size.height - stretchableButtonImage.size.height) / 2);
+            _bookmarkButton.frame = CGRectMake(0, yOrigin, buttonWidth, stretchableButtonImage.size.height);
             [_bookmarkButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
         } else {
             [_bookmarkButton release];
