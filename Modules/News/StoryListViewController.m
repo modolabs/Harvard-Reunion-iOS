@@ -487,7 +487,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger n = self.stories.count;
-    if (!showingBookmarks) {
+    if (!showingBookmarks && self.activeCategoryId) {
         NSInteger moreStories = [self.dataManager loadMoreStoriesQuantityForCategoryId:activeCategoryId];
         // don't show "load x more" row if
         if (moreStories > 0 ) { // category has more stories
@@ -510,8 +510,7 @@
         } copy] autorelease];
     }
     
-    if (indexPath.row == self.stories.count) {
-
+    if (self.activeCategoryId && indexPath.row == self.stories.count) {
         NSInteger loadMoreQuantity = [self.dataManager loadMoreStoriesQuantityForCategoryId:self.activeCategoryId];
 
         NSString *title = [NSString stringWithFormat:@"Load %d more articles...", loadMoreQuantity];
