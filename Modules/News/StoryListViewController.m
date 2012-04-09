@@ -505,7 +505,7 @@
     if (showingBookmarks && !self.stories.count) {
         return [[^(UITableViewCell *cell) {
             cell.accessoryType = UITableViewCellAccessoryNone;
-            cell.selectionStyle = UITableViewCellSelectionStyleGray;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.textLabel.text = @"No bookmarks";
         } copy] autorelease];
     }
@@ -646,8 +646,9 @@
     [self.dataManager saveImageData:data url:thumbnail.imageURL];
 }
 
-- (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	if(indexPath.row == self.stories.count) {
+- (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if (indexPath.row == self.stories.count && !showingBookmarks) {
         if(![self.dataManager busy]) {
             [self.dataManager requestStoriesForCategory:self.activeCategoryId loadMore:YES forceRefresh:NO];
         }
