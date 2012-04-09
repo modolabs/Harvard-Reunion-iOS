@@ -481,28 +481,35 @@
 #pragma mark KGOTableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return (self.stories.count > 0) ? 1 : 0;
+    return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSInteger n = 0;
-    switch (section) {
-        case 0:
-            n = self.stories.count;
-            
-            if(!showingBookmarks) {
-                NSInteger moreStories = [self.dataManager loadMoreStoriesQuantityForCategoryId:activeCategoryId];
-                // don't show "load x more" row if
-                if (moreStories > 0 ) { // category has more stories
-                    n += 1; // + 1 for the "Load more articles..." row
-                }
-                break;
-            }
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    NSInteger n = self.stories.count;
+    if (!showingBookmarks) {
+        NSInteger moreStories = [self.dataManager loadMoreStoriesQuantityForCategoryId:activeCategoryId];
+        // don't show "load x more" row if
+        if (moreStories > 0 ) { // category has more stories
+            n += 1; // + 1 for the "Load more articles..." row
+        }
     }
-	return n;
+    if (n == 0) { // 1 row for "no results"
+        n = 1;
+    }
+    return n;
 }
 
-- (CellManipulator)tableView:(UITableView *)tableView manipulatorForCellAtIndexPath:(NSIndexPath *)indexPath {
+- (CellManipulator)tableView:(UITableView *)tableView manipulatorForCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (showingBookmarks && !self.stories.count) {
+        return [[^(UITableViewCell *cell) {
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.selectionStyle = UITableViewCellSelectionStyleGray;
+            cell.textLabel.text = @"No bookmarks";
+        } copy] autorelease];
+    }
+    
     if (indexPath.row == self.stories.count) {
 
         NSInteger loadMoreQuantity = [self.dataManager loadMoreStoriesQuantityForCategoryId:self.activeCategoryId];
@@ -525,13 +532,13 @@
             cell.textLabel.textColor = textColor;
         } copy] autorelease];
         
-    } else {
-        return [[^(UITableViewCell *cell) {
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.textLabel.text = nil;
-            cell.selectionStyle = UITableViewCellSelectionStyleGray;
-        } copy] autorelease];
     }
+
+    return [[^(UITableViewCell *cell) {
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.textLabel.text = nil;
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
+    } copy] autorelease];
 }
 
 #define FEATURE_IMAGE_HEIGHT 180.0

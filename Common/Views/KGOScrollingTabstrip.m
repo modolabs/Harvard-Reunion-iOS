@@ -90,7 +90,11 @@
             _bookmarkButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
             UIImage *image = [UIImage imageWithPathName:@"common/bookmark.png"];
             [_bookmarkButton setImage:image forState:UIControlStateNormal];
-            _bookmarkButton.adjustsImageWhenHighlighted = NO;
+
+            UIImage *stretchableButtonImage = [[UIImage imageWithPathName:@"common/scrolltabs-selected.png"] stretchableImageWithLeftCapWidth:15 topCapHeight:0];
+            [_bookmarkButton setBackgroundImage:nil forState:UIControlStateNormal];
+            [_bookmarkButton setBackgroundImage:stretchableButtonImage forState:UIControlStateHighlighted];
+            
             // ensure that button is wide enough to tap
             CGFloat buttonWidth = image.size.width;
             CGFloat insetWidth = 0;

@@ -288,7 +288,7 @@ static NSString * const FromLibraryOption = @"From photo library";
     NSArray *photos = [[CoreDataManager sharedManager] objectsForEntity:FacebookPhotoEntityName matchingPredicate:nil];
     for (FacebookPhoto *aPhoto in photos) {
         [_photosByID setObject:aPhoto forKey:aPhoto.identifier];
-        NSLog(@"found cached photo %@", aPhoto.identifier);
+        DLog(@"found cached photo %@", aPhoto.identifier);
         [self displayPhoto:aPhoto];
     }
     [self updateIconGrid];
@@ -623,7 +623,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex >= 0 && buttonIndex < [actionSheet numberOfButtons]) {
+    if (buttonIndex >= 0 && buttonIndex != [actionSheet cancelButtonIndex] && buttonIndex < [actionSheet numberOfButtons]) {
         NSString *title = [actionSheet buttonTitleAtIndex:buttonIndex];
         if ([title isEqualToString:TakePhotoOption]) {
             [self showUploadPhotoController:UIImagePickerControllerSourceTypeCamera];
