@@ -529,8 +529,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         navC.navigationBar.barStyle = UIBarStyleBlack;
         [picker presentModalViewController:navC animated:YES];
     }
-
-    [self presentModalViewController:navC animated:YES];
     
     // doing this doesn't call the popover delegate methods,
     // so we assign self.photoPickerPopover to nil when the upload terminates.
