@@ -79,6 +79,10 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     
+    if (buttonIndex < 0) {
+        return;
+    }
+    
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         if (buttonIndex == [actionSheet cancelButtonIndex]) {
             return;
