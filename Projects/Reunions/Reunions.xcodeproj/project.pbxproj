@@ -83,6 +83,7 @@
 		EB03396F1340E47D00ACF2BB /* StoryGalleryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB03394C1340E47D00ACF2BB /* StoryGalleryViewController.m */; };
 		EB0339701340E47D00ACF2BB /* StoryImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = EB03394E1340E47D00ACF2BB /* StoryImageView.m */; };
 		EB0339711340E47D00ACF2BB /* StoryListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0339501340E47D00ACF2BB /* StoryListViewController.m */; };
+		EB0A21E515361E4000646E96 /* FBDialog.bundle in Resources */ = {isa = PBXBuildFile; fileRef = EB0A21E415361E4000646E96 /* FBDialog.bundle */; };
 		EB0CF90D133FC86E003B8E45 /* AnalyticsWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0CF8BA133FC86E003B8E45 /* AnalyticsWrapper.m */; };
 		EB0CF90E133FC86E003B8E45 /* Foundation+KGOAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0CF8BD133FC86E003B8E45 /* Foundation+KGOAdditions.m */; };
 		EB0CF90F133FC86E003B8E45 /* MapKit+KGOAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0CF8BF133FC86E003B8E45 /* MapKit+KGOAdditions.m */; };
@@ -442,6 +443,7 @@
 		EB03394E1340E47D00ACF2BB /* StoryImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoryImageView.m; sourceTree = "<group>"; };
 		EB03394F1340E47D00ACF2BB /* StoryListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoryListViewController.h; sourceTree = "<group>"; };
 		EB0339501340E47D00ACF2BB /* StoryListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoryListViewController.m; sourceTree = "<group>"; };
+		EB0A21E415361E4000646E96 /* FBDialog.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = FBDialog.bundle; path = "../../../Contrib/facebook-ios-sdk/src/FBDialog.bundle"; sourceTree = "<group>"; };
 		EB0CF8B9133FC86E003B8E45 /* AnalyticsWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalyticsWrapper.h; sourceTree = "<group>"; };
 		EB0CF8BA133FC86E003B8E45 /* AnalyticsWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsWrapper.m; sourceTree = "<group>"; };
 		EB0CF8BC133FC86E003B8E45 /* Foundation+KGOAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Foundation+KGOAdditions.h"; sourceTree = "<group>"; };
@@ -1534,6 +1536,7 @@
 				EB163AB2136CFA4D003C69E2 /* Default-Portrait~ipad.png */,
 				EB163AB3136CFA4D003C69E2 /* Icon-Small-50.png */,
 				EB163AB4136CFA4D003C69E2 /* Icon-Small@2x.png */,
+				EB0A21E415361E4000646E96 /* FBDialog.bundle */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1834,6 +1837,7 @@
 				EB163AB7136CFA4D003C69E2 /* Icon-Small-50.png in Resources */,
 				EB163AB8136CFA4D003C69E2 /* Icon-Small@2x.png in Resources */,
 				A1D51881136DEAAE009ADBB5 /* FoursquareAddCheckinViewController.xib in Resources */,
+				EB0A21E515361E4000646E96 /* FBDialog.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
