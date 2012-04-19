@@ -207,6 +207,7 @@
 
 - (void)dealloc
 {
+    [_bookmarkedItem release];
     [_placeSubtitleLabel release];
     [_placeTitleLabel release];
     [super dealloc];

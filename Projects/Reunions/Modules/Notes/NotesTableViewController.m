@@ -223,6 +223,7 @@
     [notesArray release];
     [selectedRowIndexPath release];
     [notesTextView release];
+    [selectedNote release];
     [super dealloc];
 }
 
@@ -336,7 +337,7 @@
     NSString * noteTitle = note.title;
     NSString * noteText = note.details;
     
-    if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath) || indexPath.row == notesArray.count - 1) {
+    if (((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)) || indexPath.row == notesArray.count - 1) {
         static NSString *CellIdentifier = @"CellNotesSelected";
         
         NotesUnselectedTableViewCell *cell = (NotesUnselectedTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -398,7 +399,7 @@
     NSString * noteTitle = note.title;
     NSString * noteText = note.details;
     
-    if ((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath) || indexPath.row == notesArray.count - 1) {
+    if (((selectedRowIndexPath != nil) && (selectedRowIndexPath == indexPath)) || indexPath.row == notesArray.count - 1) {
         
         NotesTextView * temp = [[[NotesTextView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 4, 500) 
                                                                     titleText:noteTitle
