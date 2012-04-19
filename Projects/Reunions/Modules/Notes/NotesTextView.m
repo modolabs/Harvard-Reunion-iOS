@@ -183,6 +183,7 @@
 {
     [deleteButton release];
     [detailsView release];
+    [note release];
     self.delegate = nil;
     [super dealloc];
 }

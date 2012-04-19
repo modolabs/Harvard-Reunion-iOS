@@ -133,6 +133,8 @@ ToolbarButtonTags;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[KGOSocialMediaController facebookService] disconnectFacebookRequests:self];
     self.tapRecoginizer = nil;
+    [post release];
+    self.tableView = nil;
     [super dealloc];
 }
 

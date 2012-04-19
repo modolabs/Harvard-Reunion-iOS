@@ -44,6 +44,12 @@
 {
     [deleteButton release];
     [textView release];
+    self.titleText = nil;
+    self.dateText = nil;
+    self.date = nil;
+    self.eventIdentifier = nil;
+    self.textViewString = nil;
+    self.viewControllerBackground = nil;
     [super dealloc];
 }
 

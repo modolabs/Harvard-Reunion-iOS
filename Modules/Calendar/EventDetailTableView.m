@@ -58,7 +58,7 @@
         [_eventDetailRequest cancel];
         [_eventDetailRequest release];
     }
-    self.event = nil;
+    self.event = nil; // frees _sections
     self.delegate = nil;
     self.dataSource = nil;
     self.headerView = nil;
@@ -455,7 +455,6 @@
     EKEventStore *eventStore = [[[EKEventStore alloc] init] autorelease];
     EKEvent *ekEvent = [EKEvent eventWithEventStore:eventStore];
     
-    ekEvent = [EKEvent eventWithEventStore:eventStore];
     ekEvent.calendar = [eventStore defaultCalendarForNewEvents];
     ekEvent.location = self.event.location;
     ekEvent.title = self.event.title;

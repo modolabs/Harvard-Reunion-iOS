@@ -126,7 +126,7 @@
     }
 
     // set up search bar
-    _searchBar.placeholder = NSLocalizedString(@"Map Search Placeholder", nil);
+    _searchBar.placeholder = NSLocalizedString(@"Search Harvard Campus", nil);
 	_searchController = [[KGOSearchDisplayController alloc] initWithSearchBar:_searchBar delegate:self contentsController:self];
     if (self.searchTerms) {
         _searchBar.text = self.searchTerms;
@@ -526,12 +526,15 @@
     // TODO: fine-tune when to enable this, e.g under proximity and gps enabled conditions
     [_locateUserButton setEnabled:YES];
     
+    _searchResultsTableView.hidden = YES;
+    
     _mapListToggle.selectedSegmentIndex = 0;
 }
 
 - (void)switchToListView {
 	if (_searchResultsTableView) {
 		[self.view bringSubviewToFront:_searchResultsTableView];
+        _searchResultsTableView.hidden = NO;
 	}
     
     [_locateUserButton setEnabled:NO];
@@ -687,11 +690,23 @@
 	return MapTag;
 }
 
-- (void)resultsHolder:(id<KGOSearchResultsHolder>)resultsHolder didSelectResult:(id<KGOSearchResult>)aResult {
+- (void)resultsHolder:(id<KGOSearchResultsHolder>)resultsHolder didSelectResult:(id<KGOSearchResult>)aResult
+{
+    
     if ([resultsHolder isKindOfClass:[KGOSearchDisplayController class]]) {
         NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:aResult, @"place", resultsHolder, @"pagerController", nil];
         KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
-        [appDelegate showPage:LocalPathPageNameDetail forModuleTag:MapTag params:params];
+
+        KGONavigationStyle navStyle = [appDelegate navigationStyle];
+        // TODO: clean up sidebar home screen so we don't have to deal with this
+        if (navStyle == KGONavigationStyleTabletSidebar) {
+            UIViewController *vc = [self.mapModule modulePage:LocalPathPageNameDetail params:params];
+            [self switchToMapView];
+            [_mapView selectAnnotation:(id<MKAnnotation>)aResult animated:NO];
+            [(KGOSidebarFrameViewController *)[appDelegate homescreen] showDetailViewController:vc];
+        } else {
+            [appDelegate showPage:LocalPathPageNameDetail forModuleTag:self.mapModule.tag params:params];
+        }
 
     } else if ([aResult conformsToProtocol:@protocol(MKAnnotation)]) { // TODO: check if search is bookmarks, not by the result selected
         [_mapView removeAnnotations:[_mapView annotations]];

@@ -223,6 +223,7 @@
     [notesArray release];
     [selectedRowIndexPath release];
     [notesTextView release];
+    [selectedNote release];
     [super dealloc];
 }
 

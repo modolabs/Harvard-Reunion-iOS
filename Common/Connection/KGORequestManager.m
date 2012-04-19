@@ -401,11 +401,13 @@ NSString * const KGODeviceTokenKey = @"KGODeviceToken";
 {
     if (!_sessionRequest) {
         DLog(@"requesting session info");
+        /*
         for (NSHTTPCookie *aCookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]) {
             if ([aCookie.domain rangeOfString:[self host]].location != NSNotFound) {
                 DLog(@"%@", aCookie);
             }
         }
+         */
         
         _sessionRequest = [self requestWithDelegate:self module:@"login" path:@"session" params:nil];
         _sessionRequest.expectedResponseType = [NSDictionary class];

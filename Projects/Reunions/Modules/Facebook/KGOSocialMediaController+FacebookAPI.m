@@ -47,7 +47,7 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
 
 - (BOOL)queueFacebookRequest:(FBRequest *)request withReceiver:(id)receiver callback:(SEL)callback {
     if ([receiver respondsToSelector:callback]) {
-        NSLog(@"queueing request %@ params %@", request.url, request.params);
+        DLog(@"queueing request %@ params %@", request.url, request.params);
         FBRequestIdentifier *identifier = [[[FBRequestIdentifier alloc] init] autorelease];
         identifier.receiver = receiver;
         identifier.callback = callback;
