@@ -10,7 +10,8 @@
 @class KGOPlacemark;
 
 @interface MapHomeViewController : UIViewController <MKMapViewDelegate,
-KGOSearchDisplayDelegate, KGODetailPagerController, CLLocationManagerDelegate,
+KGOSearchDisplayDelegate, KGODetailPagerController,
+//CLLocationManagerDelegate,
 KGORequestDelegate, UIPopoverControllerDelegate> {
 	
 	IBOutlet KGOSearchBar *_searchBar;
@@ -26,9 +27,10 @@ KGORequestDelegate, UIPopoverControllerDelegate> {
 	UIButton *_settingsButton;
     UIBarButtonItem *_settingsBarButtonItem;
     
-    CLLocationManager *_locationManager;
-    CLLocation *_userLocation;
+    //CLLocationManager *_locationManager;
+    //CLLocation *_userLocation;
     BOOL _didCenter;
+    BOOL _trackingUserLocation;
     
     IBOutlet UIView *_mapBorder; // ipad only
 
@@ -64,7 +66,7 @@ KGORequestDelegate, UIPopoverControllerDelegate> {
 - (IBAction)bookmarksButtonPressed;
 - (IBAction)settingsButtonPressed;
 
-- (void)showUserLocationIfInRange;
+//- (void)showUserLocationIfInRange;
 
 - (void)setupToolbarButtons;
 - (void)toolbarButtonPressed:(id)sender;
