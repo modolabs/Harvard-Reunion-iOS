@@ -31,6 +31,8 @@
 
 - (void)dealloc {
     [_dateFormatter release];
+    [_displayDate release];
+    [_date release];
     [super dealloc];
 }
 
