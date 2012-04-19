@@ -58,7 +58,7 @@
         [_eventDetailRequest cancel];
         [_eventDetailRequest release];
     }
-    self.event = nil;
+    self.event = nil; // frees _sections
     self.delegate = nil;
     self.dataSource = nil;
     self.headerView = nil;

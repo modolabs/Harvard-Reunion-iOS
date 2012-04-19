@@ -44,9 +44,12 @@ bool isOverOneHour(NSTimeInterval interval) {
 
 - (void)dealloc
 {
+    [_groupTitles release];
     self.dataManager = nil;
-    [self clearCalendars];
-    [self clearEvents];
+    self.moduleTag = nil;
+    self.searchTerms = nil;
+    [self clearCalendars]; // frees currentCategories
+    [self clearEvents]; // frees currentSections, currentEventsBySection
     [super dealloc];
 }
 
@@ -143,6 +146,7 @@ bool isOverOneHour(NSTimeInterval interval) {
         if (group.calendars.count > 1) {
             style = UITableViewStyleGrouped;
             // TODO: sort
+            [_currentCategories release];
             _currentCategories = [[group.calendars allObjects] retain];
             _datePager.hidden = YES;
         } else {
