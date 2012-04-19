@@ -58,6 +58,10 @@
         [_placeTitleLabel removeFromSuperview];
     }
     
+    if (![_closeButton isDescendantOfView:self]) {
+        [self addSubview:self.closeButton];
+    }
+    
     if ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]]) {
         CGRect oldFrame = self.frame;
         
@@ -79,10 +83,6 @@
             CGSize textSize = [_subtitleLabel.text sizeWithFont:_subtitleLabel.font constrainedToSize:constraintSize];
             _subtitleLabel.frame = CGRectMake(LABEL_PADDING_LARGE, y, maxWidth, textSize.height);
             y += _subtitleLabel.frame.size.height;
-        }
-        
-        if (![_closeButton isDescendantOfView:self]) {
-            [self addSubview:self.closeButton];
         }
         
         y += LABEL_PADDING_LARGE;
