@@ -114,6 +114,8 @@
 {
     [_request cancel];
     [_tableView release];
+    self.placemark = nil;
+    self.pager = nil;
     [super dealloc];
 }
 

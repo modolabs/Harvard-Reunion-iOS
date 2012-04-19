@@ -198,6 +198,7 @@
 
 - (void)dealloc
 {
+    [_closeButton release];
     [super dealloc];
 }
 

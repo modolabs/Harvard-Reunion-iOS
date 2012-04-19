@@ -33,7 +33,7 @@
     
     NSMutableDictionary *modulesByTag = nil;
     if (_modulesByTag) {
-        modulesByTag = [_modulesByTag mutableCopy];
+        modulesByTag = [[_modulesByTag mutableCopy] autorelease];
     } else {
         modulesByTag = [NSDictionary dictionaryWithObject:module forKey:module.tag];
     }

@@ -40,6 +40,24 @@ userInfo = _userInfo;
     return s_eventStore;
 }
 
+- (void)dealloc
+{
+    self.identifier = nil;
+    self.startDate = nil;
+    self.endDate = nil;
+    self.lastUpdate = nil;
+    self.location = nil;
+    self.briefLocation = nil;
+    self.title = nil;
+    self.summary = nil;
+    self.rrule = nil;
+    self.calendars = nil;
+    self.userInfo = nil;
+    [_organizers release];
+    [_attendees release];
+    [super dealloc];
+}
+
 - (id)initWithDictionary:(NSDictionary *)dictionary
 {
     NSString *identifier = [dictionary stringForKey:@"id" nilIfEmpty:YES];

@@ -15,11 +15,11 @@ KGORequestDelegate, EKEventEditViewDelegate> {
     NSArray *_sections;
     KGOEventWrapper *_event;
 
-    UIButton *_shareButton;
-    UIButton *_bookmarkButton;
+    //UIButton *_shareButton;
+    //UIButton *_bookmarkButton;
     
     KGODetailPageHeaderView *_headerView;
-    UILabel *_descriptionLabel;
+    //UILabel *_descriptionLabel;
     
     KGORequest *_eventDetailRequest;
 }

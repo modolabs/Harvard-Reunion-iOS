@@ -22,6 +22,19 @@ organizedEvent;
     return self;
 }
 
+- (void)dealloc
+{
+    self.event = nil;
+    self.organizedEvent = nil;
+    self.identifier = nil;
+    self.name = nil;
+    self.contactInfo = nil;
+    [_ekAttendee release];
+    [_kgoAttendee release];
+    [_relation release];
+    [super dealloc];
+}
+
 #pragma mark EventKit
 
 - (EKParticipant *)EKAttendee
