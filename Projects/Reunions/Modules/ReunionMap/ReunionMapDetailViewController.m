@@ -99,7 +99,7 @@
         if ([self.placemark.category.identifier isEqualToString:EventMapCategoryName]) {
             KGOEvent *storedEvent = [KGOEvent eventWithID:self.placemark.identifier];
             if (storedEvent) {
-                self.annotation = [[ScheduleEventWrapper alloc] initWithKGOEvent:storedEvent];
+                self.annotation = [[[ScheduleEventWrapper alloc] initWithKGOEvent:storedEvent] autorelease];
             }
         }
         

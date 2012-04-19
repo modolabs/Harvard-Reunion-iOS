@@ -455,7 +455,6 @@
     EKEventStore *eventStore = [[[EKEventStore alloc] init] autorelease];
     EKEvent *ekEvent = [EKEvent eventWithEventStore:eventStore];
     
-    ekEvent = [EKEvent eventWithEventStore:eventStore];
     ekEvent.calendar = [eventStore defaultCalendarForNewEvents];
     ekEvent.location = self.event.location;
     ekEvent.title = self.event.title;
