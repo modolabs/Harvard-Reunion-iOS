@@ -41,6 +41,7 @@
     ReunionMapTabletDetailView *rootView = [[[ReunionMapTabletDetailView alloc] initWithFrame:self.view.frame] autorelease];
     rootView.hitBoxView = self.tableView; // subview which needs touches
     rootView.clipsToBounds = NO;
+    rootView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
     self.view = rootView;
     
     _currentTableWidth = 0;
