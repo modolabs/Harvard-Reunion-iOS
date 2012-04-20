@@ -8,6 +8,13 @@
 
 #import "ReunionMapDetailViewController.h"
 
+@interface ReunionMapTabletDetailView : UIScrollView {
+}
+@property(nonatomic, retain) UIView *hitBoxView;
+
+@end
+
+
 @interface ReunionMapTabletDetailController : ReunionMapDetailViewController <UIScrollViewDelegate> {
     
     UIScrollView *_scrollView;
