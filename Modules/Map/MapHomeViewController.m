@@ -85,19 +85,22 @@
                  _settingsBarButtonItem,
                  nil];
 	}
-    
+    /*
     if ([CLLocationManager respondsToSelector:@selector(authorizationStatus)]) { // 4.2 and above only
         CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
         if (status == kCLAuthorizationStatusRestricted || status == kCLAuthorizationStatusDenied) {
             _locateUserButton.enabled = NO;
         }
     }
+     */
     
 	_bottomBar.items = items;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _trackingUserLocation = NO;
     
     if (_mapBorder) {
         _mapBorder.layer.cornerRadius = 4;
@@ -347,24 +350,39 @@
 
 - (IBAction)locateUserButtonPressed
 {
+    _trackingUserLocation = !_trackingUserLocation;
+    
+    if (_trackingUserLocation) {
+        [_locateUserButton setBackgroundImage:[UIImage imageWithPathName:@"common/secondary-toolbar-button-pressed"]
+                                     forState:UIControlStateNormal];
+    } else {
+        [_locateUserButton setBackgroundImage:[UIImage imageWithPathName:@"common/secondary-toolbar-button"]
+                                     forState:UIControlStateNormal];
+    }
+    
+    _mapView.showsUserLocation = _trackingUserLocation;
     _didCenter = NO;
     
-    if (!_userLocation) {
-        if (!_locationManager) {
-            _locationManager = [[CLLocationManager alloc] init];
-            _locationManager.distanceFilter = kCLDistanceFilterNone;
-            _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-            _locationManager.delegate = self;
+    /*
+    if (_trackingUserLocation) {
+        if (!_userLocation) {
+            if (!_locationManager) {
+                _locationManager = [[CLLocationManager alloc] init];
+                _locationManager.distanceFilter = kCLDistanceFilterNone;
+                _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+                _locationManager.delegate = self;
+            }
+            _userLocation = [[_locationManager location] retain];
         }
-        _userLocation = [[_locationManager location] retain];
-    }
-    
-    if (_userLocation) {
-        [self showUserLocationIfInRange];
         
-    } else {
-        [_locationManager startUpdatingLocation];
+        if (_userLocation) {
+            [self showUserLocationIfInRange];
+            
+        } else {
+            [_locationManager startUpdatingLocation];
+        }
     }
+     */
 }
 
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
@@ -382,56 +400,20 @@
 
 #pragma mark User location
 
+/*
 - (void)showUserLocationIfInRange
 {
     if (_didCenter) {
         return;
     }
-    
-    // TODO: remove this thing about NSUserDefaults if we aren't actually
-    // going to use it
-    CLLocation *location = nil;
-    NSDictionary *locationPreferences = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"Location"];
-    if (!locationPreferences) {    
-        KGOAppDelegate *appDelegate = KGO_SHARED_APP_DELEGATE();
-        locationPreferences = [[appDelegate appConfig] dictionaryForKey:@"Location"];
-    }
-    
-    NSString *latLonString = [locationPreferences stringForKey:@"DefaultCenter" nilIfEmpty:YES];
-    if (latLonString) {
-        NSArray *parts = [latLonString componentsSeparatedByString:@","];
-        if (parts.count == 2) {
-            NSString *lat = [parts objectAtIndex:0];
-            NSString *lon = [parts objectAtIndex:1];
-            location = [[[CLLocation alloc] initWithLatitude:[lat floatValue] longitude:[lon floatValue]] autorelease];
-        }
-    }
 
-    DLog(@"%@ %@", location, _userLocation);
-    // TODO: make maximum distance a config parameter
-    if ([_userLocation distanceFromLocation:location] <= 40000) {
-        if (!_mapView.showsUserLocation) {
-            _mapView.showsUserLocation = YES;
-        } else {
-            if (!_didCenter) {
-                _mapView.centerCoordinate = _userLocation.coordinate;
-                _didCenter = YES;
-            }
-        }
-        
+    if (!_mapView.showsUserLocation) {
+        _mapView.showsUserLocation = YES;
     } else {
-        DLog(@"distance %.1f is out of bounds", [_userLocation distanceFromLocation:location]);
-        
-        NSString *message = NSLocalizedString(@"Cannot show your location because you are too far away", @"map home screen geo button");
-        UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
-                                                             message:message
-                                                            delegate:nil
-                                                   cancelButtonTitle:@"OK"
-                                                   otherButtonTitles:nil] autorelease];
-        [alertView show];
-        
-        _mapView.showsUserLocation = NO;
-        _locateUserButton.enabled = NO;
+        if (!_didCenter) {
+            _mapView.centerCoordinate = _userLocation.coordinate;
+            _didCenter = YES;
+        }
     }
 }
 
@@ -466,12 +448,13 @@
     [_userLocation release];
     _userLocation = [newLocation retain];
     
-    [_locationManager stopUpdatingHeading];
+    [_locationManager stopUpdatingLocation];
     [_locationManager release];
     _locationManager = nil;
     
     [self showUserLocationIfInRange];
 }
+*/
 
 #pragma mark Map/List
 

@@ -17,18 +17,38 @@
 #define IPAD_TABLEVIEW_ORIGIN_Y 500
 #define CLOSE_BUTTON_TAG 15
 
+
+@implementation ReunionMapTabletDetailView
+
+@synthesize hitBoxView;
+
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
+{
+    return [self.hitBoxView pointInside:[self convertPoint:point toView:self.hitBoxView] 
+                              withEvent:event];
+}
+
+@end
+
+
 @implementation ReunionMapTabletDetailController
 
 - (void)loadView
 {
     [super loadView];
     
+    // replace regular main view with touch-clipping view so transparent views don't absorb touches
+    ReunionMapTabletDetailView *rootView = [[[ReunionMapTabletDetailView alloc] initWithFrame:self.view.frame] autorelease];
+    rootView.hitBoxView = self.tableView; // subview which needs touches
+    rootView.clipsToBounds = NO;
+    rootView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
+    self.view = rootView;
+    
     _currentTableWidth = 0;
     
     _scrollView = [[[UIScrollView alloc] initWithFrame:self.view.bounds] autorelease];
     _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _scrollView.bounces = NO;
-    [_scrollView addSubview:self.tableView];
     _scrollView.delegate = self;
     _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, 500 + self.tableView.frame.size.height);
     _scrollView.showsVerticalScrollIndicator = NO;
