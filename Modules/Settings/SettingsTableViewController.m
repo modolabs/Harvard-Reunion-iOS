@@ -378,9 +378,13 @@ static NSString * const KGOSettingsSocialMedia = @"SocialMedia";
             }
             
         } else if ([key isEqualToString:KGOSettingsLogin]) {
+            // pop self off navigation stack if there is a nav stack (sidebar will select default module on login)
+            if ([KGO_SHARED_APP_DELEGATE() navigationStyle] != KGONavigationStyleTabletSidebar) {
+                [self.navigationController popToRootViewControllerAnimated:YES]; // go back to home screen
+            }
+
             // currently assuming the user has to be logged in to get here
             [[KGORequestManager sharedManager] logoutKurogoServer];
-            
         }
     }
     
