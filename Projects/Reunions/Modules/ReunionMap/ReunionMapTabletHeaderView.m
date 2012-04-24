@@ -14,6 +14,7 @@
 #import "ScheduleEventWrapper.h"
 
 #define CLOSE_BUTTON_WIDTH 60
+#define PULLTAB_BUTTON_OFFSET 24
 // this is from KGOSidebarFrameViewController
 #define DETAIL_VIEW_WIDTH 340
 
@@ -31,8 +32,7 @@
         UIImage *image = [[UIImage imageWithPathName:@"common/light-button-background"] stretchableImageWithLeftCapWidth:5 topCapHeight:5];
         UIImage *pressedImage = [[UIImage imageWithPathName:@"common/light-button-background-pressed"] stretchableImageWithLeftCapWidth:5 topCapHeight:5];
         
-        _closeButton.frame = CGRectMake(DETAIL_VIEW_WIDTH - CLOSE_BUTTON_WIDTH - LABEL_PADDING_LARGE,
-                                        LABEL_PADDING_LARGE,
+        _closeButton.frame = CGRectMake(DETAIL_VIEW_WIDTH - CLOSE_BUTTON_WIDTH - LABEL_PADDING_LARGE, PULLTAB_BUTTON_OFFSET,
                                         CLOSE_BUTTON_WIDTH, 31);
 
         [_closeButton setBackgroundImage:image forState:UIControlStateNormal];
@@ -49,6 +49,21 @@
     return _closeButton;
 }
 
+- (UIButton *)pulltabButton
+{
+    if (!_pulltabButton) {
+        _pulltabButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+        UIImage *image = [UIImage imageWithPathName:@"ipad/common/pulltab"];
+        _pulltabButton.frame = CGRectMake((DETAIL_VIEW_WIDTH / 2) - (image.size.width / 2), 0, 
+                                          image.size.width, image.size.height);
+        [_pulltabButton setBackgroundImage:image forState:UIControlStateNormal];
+        [_pulltabButton setBackgroundImage:image forState:UIControlStateHighlighted];
+        
+        [_pulltabButton addTarget:self.delegate action:@selector(toggleExpand) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _pulltabButton;
+}
+
 - (void)layoutSubviews
 {
     if (_placeSubtitleLabel) {
@@ -62,13 +77,17 @@
         [self addSubview:self.closeButton];
     }
     
+    if (![_pulltabButton isDescendantOfView:self]) {
+        [self addSubview:self.pulltabButton];
+    }
+    
     if ([self.detailItem isKindOfClass:[ScheduleEventWrapper class]]) {
         CGRect oldFrame = self.frame;
         
         ScheduleEventWrapper *event = (ScheduleEventWrapper *)self.detailItem;
         
         CGFloat maxWidth = self.bounds.size.width - CLOSE_BUTTON_WIDTH - 3 * LABEL_PADDING_LARGE;
-        CGFloat y = LABEL_PADDING_LARGE;
+        CGFloat y = PULLTAB_BUTTON_OFFSET;
         
         if (_titleLabel) {
             CGSize constraintSize = CGSizeMake(maxWidth, _titleLabel.font.lineHeight * MAX_TITLE_LINES);
@@ -155,7 +174,7 @@
         CGRect oldFrame = self.frame;
         
         CGFloat maxWidth = self.bounds.size.width - CLOSE_BUTTON_WIDTH - 3 * LABEL_PADDING_LARGE;
-        CGFloat y = LABEL_PADDING_LARGE;
+        CGFloat y = PULLTAB_BUTTON_OFFSET;
         
         if (_titleLabel) {
             CGSize constraintSize = CGSizeMake(maxWidth, _titleLabel.font.lineHeight * MAX_TITLE_LINES);

@@ -122,7 +122,8 @@ NSString * const CoreDataDidDeleteStoreNotification = @"CoreDataDidDelete";
 }
 
 - (void)saveData {
-    NSLog(@"saving: %@", self.managedObjectContext);
+    DLog(@"saving: %@", self.managedObjectContext);
+    DLog(@"deleted %d objects", [[self.managedObjectContext deletedObjects] count]);
 	NSError *error;
 	if (![self.managedObjectContext save:&error]) {
         DLog(@"Failed to save to data store: %@", [error localizedDescription]);

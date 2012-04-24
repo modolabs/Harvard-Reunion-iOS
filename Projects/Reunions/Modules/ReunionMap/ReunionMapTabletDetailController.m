@@ -170,6 +170,18 @@
     }
 }
 
+- (void)toggleExpand
+{
+    [self updateScrollView];
+    
+    CGFloat expandedYOffset = self.tableView.contentSize.height - 410;
+    if (_scrollView.contentOffset.y >= expandedYOffset) {
+        [_scrollView setContentOffset:CGPointMake(_scrollView.contentOffset.x, 0) animated:YES];
+    } else {
+        [_scrollView setContentOffset:CGPointMake(_scrollView.contentOffset.x, expandedYOffset) animated:YES];
+    }
+}
+
 - (void)dealloc
 {
     [_detailFields release];

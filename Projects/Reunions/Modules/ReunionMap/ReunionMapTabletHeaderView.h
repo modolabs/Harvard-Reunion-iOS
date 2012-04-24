@@ -12,9 +12,11 @@
 @interface ReunionMapTabletHeaderView : ReunionMapDetailHeaderView {
     
     UIButton *_closeButton;
+    UIButton *_pulltabButton;
     
 }
 
 @property (nonatomic, readonly) UIButton *closeButton;
+@property (nonatomic, readonly) UIButton *pulltabButton;
 
 @end
