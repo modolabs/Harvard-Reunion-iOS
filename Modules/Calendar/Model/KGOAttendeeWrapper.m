@@ -66,7 +66,7 @@ organizedEvent;
 - (void)convertToKGOAttendee
 {
     if (!_kgoAttendee) {
-        _kgoAttendee = [[CoreDataManager sharedManager] insertNewObjectForEntityForName:KGOEntityNameEventAttendee];
+        _kgoAttendee = [[[CoreDataManager sharedManager] insertNewObjectForEntityForName:KGOEntityNameEventAttendee] retain];
         _kgoAttendee.name = self.name;
         _kgoAttendee.identifier = self.identifier;
     }
