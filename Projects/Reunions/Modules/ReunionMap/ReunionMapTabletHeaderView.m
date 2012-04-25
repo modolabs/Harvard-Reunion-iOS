@@ -14,7 +14,7 @@
 #import "ScheduleEventWrapper.h"
 
 #define CLOSE_BUTTON_WIDTH 60
-#define PULLTAB_BUTTON_OFFSET 24
+#define PULLTAB_BUTTON_OFFSET 26
 // this is from KGOSidebarFrameViewController
 #define DETAIL_VIEW_WIDTH 340
 
