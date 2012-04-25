@@ -232,7 +232,7 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     if (buttonIndex == 0) {// destructive button pressed
-        NSLog(@"delete button pressed from notes-listview");
+        DLog(@"delete button pressed from notes-listview");
     }
 }
 */

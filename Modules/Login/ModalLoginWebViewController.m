@@ -123,8 +123,8 @@
         if (request != _request) {
             [_request release];
             _request = [request mutableCopy];
-            NSLog(@"%p request method: %@", _request, [_request HTTPMethod]);
-            NSLog(@"post data: %@", [[[NSString alloc] initWithData:[_request HTTPBody] encoding:NSUTF8StringEncoding] autorelease]);
+            DLog(@"%p request method: %@", _request, [_request HTTPMethod]);
+            DLog(@"post data: %@", [[[NSString alloc] initWithData:[_request HTTPBody] encoding:NSUTF8StringEncoding] autorelease]);
             
             self.data = [NSMutableData data];
             
@@ -140,10 +140,10 @@
             [_request release];
             _request = [request mutableCopy];
             
-            NSLog(@"last response was %@", [_latestResponse URL]);
+            DLog(@"last response was %@", [_latestResponse URL]);
             
-            NSLog(@"%@", [_request HTTPMethod]);
-            NSLog(@"post data: %@", [[[NSString alloc] initWithData:[_request HTTPBody] encoding:NSUTF8StringEncoding] autorelease]);
+            DLog(@"%@", [_request HTTPMethod]);
+            DLog(@"post data: %@", [[[NSString alloc] initWithData:[_request HTTPBody] encoding:NSUTF8StringEncoding] autorelease]);
             
             NSMutableArray *oldComponents = [[[[_latestResponse URL] pathComponents] mutableCopy] autorelease];
             NSArray *newComponents = [[_request URL] pathComponents];
@@ -158,7 +158,7 @@
                                                  path,
                                                  [[_latestResponse URL] query]]];
             
-            NSLog(@"modified url to %@", _request.URL);
+            DLog(@"modified url to %@", _request.URL);
             
             self.data = [NSMutableData data];
             
@@ -186,7 +186,7 @@
 #pragma mark - NSURLConnection
 /*
 - (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse {
-    NSLog(@"response: %@, storage: %d, userInfo: %@",
+    DLog(@"response: %@, storage: %d, userInfo: %@",
           [cachedResponse description], cachedResponse.storagePolicy, cachedResponse.userInfo);
     
     return cachedResponse;
@@ -235,7 +235,7 @@
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    NSLog(@"connection finshed for %@", [connection description]);
+    DLog(@"connection finshed for %@", [connection description]);
     
     self.connection = nil;
     NSString *htmlString = [[[NSString alloc] initWithData:_data encoding:NSUTF8StringEncoding] autorelease];

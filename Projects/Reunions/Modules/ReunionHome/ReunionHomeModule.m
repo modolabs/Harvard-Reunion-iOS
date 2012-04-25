@@ -83,7 +83,7 @@ NSString * const HomeScreenConfigPrefKey = @"homeScreenConfig";
 
 - (void)request:(KGORequest *)request didReceiveResult:(id)result
 {
-    NSLog(@"received home config: %@", result);
+    DLog(@"received home config: %@", result);
     
     NSString *reunionYear = [[[self reunionYear] copy] autorelease];
     

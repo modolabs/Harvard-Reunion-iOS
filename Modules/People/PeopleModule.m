@@ -95,7 +95,7 @@
     NSArray *resultArray = [result arrayForKey:@"results"];
     NSMutableArray *searchResults = [NSMutableArray arrayWithCapacity:[(NSArray *)resultArray count]];
     for (id aResult in resultArray) {
-        NSLog(@"%@", [aResult description]);
+        DLog(@"%@", [aResult description]);
         KGOPersonWrapper *person = [[[KGOPersonWrapper alloc] initWithDictionary:aResult] autorelease];
         if (person)
             [searchResults addObject:person];

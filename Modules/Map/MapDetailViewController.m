@@ -104,7 +104,7 @@
         if (aPlacemark)
             [searchResults addObject:aPlacemark];
     }
-    NSLog(@"%@", searchResults);
+    DLog(@"%@", searchResults);
     [_tableView searcher:self didReceiveResults:searchResults];
 }
 

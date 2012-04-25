@@ -147,10 +147,6 @@ static const NSInteger kLoadingCurtainViewTag = 0x937;
         [self.mediaView setPreviewSize:aspectRatio];
     }
     [self loadVideo];
-    
-    if (!self.video.comments.count) {
-        [self getCommentsForPost];
-    }
 }
 
 - (void)setVideo:(FacebookVideo *)aVideo {

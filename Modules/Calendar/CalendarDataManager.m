@@ -233,7 +233,7 @@
 */
 - (void)request:(KGORequest *)request didReceiveResult:(id)result
 {
-    NSLog(@"%@", [result description]);
+    DLog(@"%@", [result description]);
 
 #pragma mark Request - groups
     if (request == _groupsRequest) {

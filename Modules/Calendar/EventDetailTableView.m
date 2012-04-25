@@ -485,7 +485,7 @@
                             _event.identifier, @"id",
                             [NSString stringWithFormat:@"%.0f", [_event.startDate timeIntervalSince1970]], @"start",
                             nil];
-    NSLog(@"%@", params);
+    DLog(@"%@", params);
     if (_eventDetailRequest) {
         [_eventDetailRequest cancel];
         [_eventDetailRequest release];

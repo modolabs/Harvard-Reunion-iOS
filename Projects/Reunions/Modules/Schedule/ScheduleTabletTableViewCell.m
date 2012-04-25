@@ -463,8 +463,8 @@
 {
     [super drawRect:rect];
     
-    NSLog(@"superview: %@", self.superview);
-    NSLog(@"rect: %.1f %.1f %.1f %.1f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    DLog(@"superview: %@", self.superview);
+    DLog(@"rect: %.1f %.1f %.1f %.1f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
     CGContextRef context = UIGraphicsGetCurrentContext();
 

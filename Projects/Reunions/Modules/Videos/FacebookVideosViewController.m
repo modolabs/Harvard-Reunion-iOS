@@ -56,10 +56,10 @@ VideosViewTags;
             for (NSDictionary *aPost in fbModule.latestFeedPosts) {
                 NSString *type = [aPost stringForKey:@"type" nilIfEmpty:YES];
                 if ([type isEqualToString:@"video"]) {
-                    NSLog(@"video data: %@", [aPost description]);
+                    DLog(@"video data: %@", [aPost description]);
                     FacebookVideo *aVideo = [FacebookVideo videoWithDictionary:aPost];
                     if (aVideo && ![_videoIDs containsObject:aVideo.identifier]) {
-                        NSLog(@"created video %@", [aVideo description]);
+                        DLog(@"created video %@", [aVideo description]);
                         [_videos addObject:aVideo];
                         [_videoIDs addObject:aVideo.identifier];
                     }
@@ -207,10 +207,10 @@ VideosViewTags;
     for (NSDictionary *aPost in data) {
         NSString *type = [aPost stringForKey:@"type" nilIfEmpty:YES];
         if ([type isEqualToString:@"video"]) {
-            NSLog(@"video data: %@", [aPost description]);
+            DLog(@"video data: %@", [aPost description]);
             FacebookVideo *aVideo = [FacebookVideo videoWithDictionary:aPost];
             if (aVideo && ![_videoIDs containsObject:aVideo.identifier]) {
-                NSLog(@"created video %@", [aVideo description]);
+                DLog(@"created video %@", [aVideo description]);
                 [_videos addObject:aVideo];
                 [_videoIDs addObject:aVideo.identifier];
             }

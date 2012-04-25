@@ -281,7 +281,7 @@ ToolbarButtonTags;
 }
 
 - (void)didUnlikePost:(id)result {
-    NSLog(@"%@", [result description]);
+    DLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
 
         KGOFacebookService *fbService = [KGOSocialMediaController facebookService];
@@ -343,7 +343,7 @@ ToolbarButtonTags;
 }
 
 - (void)didReceiveComments:(id)result {
-    NSLog(@"%@", [result description]);
+    DLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]]) {
         NSDictionary *resultDict = (NSDictionary *)result;
         NSArray *comments = [resultDict arrayForKey:@"data"];
@@ -654,9 +654,9 @@ ToolbarButtonTags;
     self.post = (FacebookParentPost *)content;
     [self displayPost];
     
-    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:YES];
     [_comments release];
-    _comments = [[self.post.comments sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] retain];
+    _comments = [[NSArray array] retain];
+    [self getCommentsForPost];
     
     [_tableView reloadData];
     [_tableView performSelector:@selector(setTableHeaderView:) withObject:_tableView.tableHeaderView afterDelay:0.1];

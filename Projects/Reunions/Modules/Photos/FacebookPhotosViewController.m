@@ -91,7 +91,7 @@ static NSString * const FromLibraryOption = @"From photo library";
                             if (aPhoto) {
                                 aPhoto.postIdentifier = 
                                 [aPost stringForKey:@"id" nilIfEmpty:YES];
-                                NSLog(@"%@", [aPhoto description]);
+                                DLog(@"%@", [aPhoto description]);
                                 [[CoreDataManager sharedManager] saveData];
                                 [_photosByID setObject:aPhoto forKey:pid];
                             }
@@ -369,7 +369,7 @@ static NSString * const FromLibraryOption = @"From photo library";
     [_icons enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         FacebookThumbnail *thumbnail = (FacebookThumbnail *)obj;
         FacebookPhoto *photo = (FacebookPhoto *)thumbnail.thumbSource;
-        NSLog(@"adding photo with id %@", photo.identifier);
+        DLog(@"adding photo with id %@", photo.identifier);
         [photos addObject:photo];
     }];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:photo, @"photo", _displayedPhotos, @"photos", nil];
@@ -419,7 +419,7 @@ static NSString * const FromLibraryOption = @"From photo library";
                 FacebookPhoto *aPhoto = [FacebookPhoto photoWithDictionary:info size:[self thumbSize]];
                 if (aPhoto) {
                     aPhoto.postIdentifier = objectId;
-                    NSLog(@"%@", [aPhoto description]);
+                    DLog(@"%@", [aPhoto description]);
                     [[CoreDataManager sharedManager] saveData];
                     [_photosByID setObject:aPhoto forKey:pid];
                 }

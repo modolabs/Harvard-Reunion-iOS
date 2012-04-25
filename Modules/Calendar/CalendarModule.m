@@ -117,7 +117,7 @@ NSString * const KGODataModelNameCalendar = @"Calendar";
     NSArray *resultArray = [result arrayForKey:@"results"];
     NSMutableArray *searchResults = [NSMutableArray arrayWithCapacity:[(NSArray *)resultArray count]];
     for (id aResult in resultArray) {
-        NSLog(@"%@", [aResult description]);
+        DLog(@"%@", [aResult description]);
         KGOEventWrapper *anEvent = [[[KGOEventWrapper alloc] initWithDictionary:aResult] autorelease];
         [searchResults addObject:anEvent];
     }
