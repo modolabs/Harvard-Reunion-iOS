@@ -654,9 +654,9 @@ ToolbarButtonTags;
     self.post = (FacebookParentPost *)content;
     [self displayPost];
     
-    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:YES];
     [_comments release];
-    _comments = [[self.post.comments sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] retain];
+    _comments = [[NSArray array] retain];
+    [self getCommentsForPost];
     
     [_tableView reloadData];
     [_tableView performSelector:@selector(setTableHeaderView:) withObject:_tableView.tableHeaderView afterDelay:0.1];

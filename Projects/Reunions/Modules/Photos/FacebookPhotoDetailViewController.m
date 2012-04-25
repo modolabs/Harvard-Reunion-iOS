@@ -59,7 +59,7 @@
 #pragma mark -
 
 - (void)displayPost {
-    NSLog(@"%@", self.photo);
+    DLog(@"%@", self.photo);
     
     UIImage *image = nil;
     if (self.photo.data) {
@@ -72,10 +72,6 @@
     UIImageView *imageView = [[[UIImageView alloc] initWithImage:image] autorelease];
     [self.mediaView setPreviewView:imageView];
     [self.mediaView setPreviewSize:image.size];
-    
-    if (!self.photo.comments.count) {
-        [self getCommentsForPost];
-    }
 }
 
 - (void)setPhoto:(FacebookPhoto *)photo {

@@ -257,7 +257,7 @@ NSString * const FacebookDidGetSelfInfoNotification = @"didGetSelf";
  */
 - (void)request:(FBRequest *)request didLoad:(id)result {
     DLog(@"request succeeded for url: %@ params: %@", request.url, request.params);
-    //NSLog(@"%@", [result description]);
+    DLog(@"%@", [result description]);
     NSInteger index = [_fbRequestQueue indexOfObject:request];
     
     if (index != NSNotFound) {

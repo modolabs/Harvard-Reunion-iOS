@@ -143,6 +143,11 @@ NSInteger widthSort(id imageDict1, id imageDict2, void *context);
         }
     }
     
+    /*
+     * Currently Facebook querys for post and photo objects are returning 
+     * different ids for the same comment.  Avoid copying the comments here
+     * so we don't end up with two copies of each comment!
+     *
     NSDictionary *comments = [dictionary dictionaryForKey:@"comments"];
     if (comments) {
         NSArray *commentData = [comments arrayForKey:@"data"];
@@ -151,6 +156,7 @@ NSInteger widthSort(id imageDict1, id imageDict2, void *context);
             aComment.parent = self;
         }
     }
+     */
     
     NSDictionary *likes = [dictionary dictionaryForKey:@"likes"];
     if (likes) {
