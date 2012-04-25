@@ -154,10 +154,13 @@ NSString * const AboutSectionsPrefKey = @"AboutSections";
         
         return [[^(UITableViewCell *cell) {
             cell.accessoryView = [[KGOTheme sharedTheme] accessoryViewForType:accessory];
+            cell.selectionStyle = UITableViewCellSelectionStyleGray;
         } copy] autorelease];
         
     } else {
-        return nil;
+        return [[^(UITableViewCell *cell) {
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        } copy] autorelease];
     }
 }
 
