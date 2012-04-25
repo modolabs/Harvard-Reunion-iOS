@@ -78,7 +78,7 @@ NSString * const KGOEntityNameCalendarGroup = @"KGOCalendarGroup";
             }
         }
     }
-    NSLog(@"%@", [group.calendars description]);
+    DLog(@"%@", [group.calendars description]);
     
     return group;
 }

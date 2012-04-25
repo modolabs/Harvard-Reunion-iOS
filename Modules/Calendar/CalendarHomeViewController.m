@@ -134,7 +134,7 @@ bool isOverOneHour(NSTimeInterval interval) {
 
 - (void)groupDataDidChange:(KGOCalendarGroup *)group
 {
-    NSLog(@"calendars: %@", [group.calendars description]);
+    DLog(@"calendars: %@", [group.calendars description]);
 
     [self clearCalendars];
     [self clearEvents];

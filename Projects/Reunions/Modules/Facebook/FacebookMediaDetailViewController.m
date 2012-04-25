@@ -281,7 +281,7 @@ ToolbarButtonTags;
 }
 
 - (void)didUnlikePost:(id)result {
-    NSLog(@"%@", [result description]);
+    DLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]] && [[result stringForKey:@"result" nilIfEmpty:YES] isEqualToString:@"true"]) {
 
         KGOFacebookService *fbService = [KGOSocialMediaController facebookService];
@@ -343,7 +343,7 @@ ToolbarButtonTags;
 }
 
 - (void)didReceiveComments:(id)result {
-    NSLog(@"%@", [result description]);
+    DLog(@"%@", [result description]);
     if ([result isKindOfClass:[NSDictionary class]]) {
         NSDictionary *resultDict = (NSDictionary *)result;
         NSArray *comments = [resultDict arrayForKey:@"data"];

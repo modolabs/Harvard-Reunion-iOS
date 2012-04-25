@@ -171,7 +171,7 @@
             }
             _appConfig = [mutableDict copy];
         }
-        NSLog(@"%@", [_appConfig description]);
+        DLog(@"%@", [_appConfig description]);
     }
     return _appConfig;
 }
@@ -185,7 +185,7 @@
 - (void)hideNetworkActivityIndicator {
     if (networkActivityRefCount > 0) {
         networkActivityRefCount--;
-        NSLog(@"network indicator -- %d", networkActivityRefCount);
+        DLog(@"network indicator -- %d", networkActivityRefCount);
     }
     if (networkActivityRefCount == 0) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;

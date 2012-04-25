@@ -102,7 +102,7 @@ NSString * const ScheduleTag = @"schedule";
         
         NSArray *annotations = [params objectForKey:@"annotations"];
         if (annotations) {
-            NSLog(@"annotations: %@", annotations);
+            DLog(@"annotations: %@", annotations);
             mapVC.annotations = annotations;
         }
         

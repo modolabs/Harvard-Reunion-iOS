@@ -80,9 +80,9 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 #pragma mark polling
 
 - (void)setupPolling {
-    NSLog(@"setting up polling...");
+    DLog(@"setting up polling...");
     if (![[KGOSocialMediaController facebookService] isSignedIn]) {
-        NSLog(@"waiting for facebook to log in...");
+        DLog(@"waiting for facebook to log in...");
         [self facebookDidLogout:nil];
     } else {
         [self facebookDidLogin:nil];
@@ -98,7 +98,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
 - (void)startPollingStatusUpdates
 {    
     if (!_statusPoller) {
-        NSLog(@"scheduling timer...");
+        DLog(@"scheduling timer...");
         NSTimeInterval interval = FACEBOOK_STATUS_POLL_FREQUENCY;
         _statusPoller = [[NSTimer timerWithTimeInterval:interval
                                                  target:self
@@ -166,7 +166,7 @@ NSString * const FacebookFeedDidUpdateNotification = @"FBFeedReceived";
                                              selector:@selector(facebookDidLogout:)
                                                  name:FacebookDidLogoutNotification
                                                object:nil];
-    NSLog(@"facebook logged in");
+    DLog(@"facebook logged in");
     [self requestGroupOrStartPolling];
 }
 

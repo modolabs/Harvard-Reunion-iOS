@@ -25,7 +25,7 @@ NSString * const KGOEntityNameEventCategory = @"KGOCalendar";
         category.identifier = identifier;
     }
     
-    NSLog(@"%@ %d", category.identifier, category.events.count);
+    DLog(@"%@ %d", category.identifier, category.events.count);
     
     return category;
 }

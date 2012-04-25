@@ -118,7 +118,7 @@ NSInteger widthSort(id imageDict1, id imageDict2, void *context);
         // TODO: remove this line which is just for type debugging
         owner = [ownerDict objectForKey:@"id"];
     }
-    NSLog(@"owner is %@ of type %@", owner, [[owner class] description]);
+    DLog(@"owner is %@ of type %@", owner, [[owner class] description]);
     
     if (ownerDict) {
         self.owner = [FacebookUser userWithDictionary:ownerDict];

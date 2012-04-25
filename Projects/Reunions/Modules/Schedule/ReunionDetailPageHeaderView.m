@@ -39,7 +39,7 @@
         _titleLabel.layer.shadowOffset = CGSizeMake(0, 1);
         _titleLabel.layer.shadowOpacity = 0.5;
         _titleLabel.layer.shadowRadius = 1;
-        NSLog(@"%@", _titleLabel);
+        DLog(@"%@", _titleLabel);
         titleHeight = _titleLabel.frame.size.height + LABEL_SPACING;
     }
     

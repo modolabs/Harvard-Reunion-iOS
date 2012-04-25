@@ -241,7 +241,7 @@ NSString * const KGORequestErrorDomain = @"com.modolabs.KGORequest.ErrorDomain";
 	}
     
 	if (self.handler != nil) {
-        NSLog(@"%@", self.delegate);
+        DLog(@"%@", self.delegate);
         _thread = [[NSThread alloc] initWithTarget:self selector:@selector(runHandlerOnResult:) object:result];
 		[self performSelector:@selector(setHandler:) onThread:_thread withObject:self.handler waitUntilDone:NO];
 		[_thread start];

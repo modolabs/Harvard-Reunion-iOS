@@ -124,13 +124,13 @@ NSString * const FacebookUsernameKey = @"FBUsername";
         _fbUploadData = [[NSMutableArray alloc] init];
     
     if (!_facebook) {
-        NSLog(@"starting up facebook");
+        DLog(@"starting up facebook");
         _facebook = [[Facebook alloc] initWithAppId:_appID andDelegate:self];
         
         [self refreshPermissionList];
         
     } else {
-        NSLog(@"facebook already started");
+        DLog(@"facebook already started");
     }
     
     if ([self isSignedIn]) {
@@ -144,7 +144,7 @@ NSString * const FacebookUsernameKey = @"FBUsername";
         _facebookStartupCount--;
     
     if (_facebookStartupCount <= 0) {
-        NSLog(@"shutting down facebook");
+        DLog(@"shutting down facebook");
         [_fbRequestQueue enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             [(FBRequest *)obj setDelegate:nil];
         }];
