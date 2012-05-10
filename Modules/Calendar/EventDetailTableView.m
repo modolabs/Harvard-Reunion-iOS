@@ -240,7 +240,6 @@
         UILabel *label = [UILabel multilineLabelWithText:_event.summary
                                                     font:[[KGOTheme sharedTheme] fontForThemedProperty:KGOThemePropertyBodyText]
                                                    width:self.frame.size.width - 40];
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         label.textColor = [[KGOTheme sharedTheme] textColorForThemedProperty:KGOThemePropertyBodyText];
         label.tag = DESCRIPTION_LABEL_TAG;
         CGRect frame = label.frame;
@@ -312,6 +311,7 @@
     } else {
         if ([cellData isKindOfClass:[UILabel class]]) {
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.accessoryView = nil;
             [cell.contentView addSubview:cellData];
         }
     }
